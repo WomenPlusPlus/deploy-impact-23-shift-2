@@ -1,0 +1,16 @@
+{
+    "trailingComma": "none",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true,
+    "endOfLine": "lf",
+    "arrowParens": "always",
+    "printWidth": 120,
+    "importOrder": [
+        "^@angular/(.*)$",
+        "^@ngrx/(.*)$",
+        "^[../]",
+        "^[./]"
+    ],
+    "importOrderSeparation": true
+}
