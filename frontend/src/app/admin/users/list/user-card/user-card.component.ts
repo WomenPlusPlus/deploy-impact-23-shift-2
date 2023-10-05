@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { UserListItemModel } from '../../common/models/user-card.model';
 
@@ -12,4 +12,7 @@ import { UserListItemModel } from '../../common/models/user-card.model';
 })
 export class UserCardComponent {
     @Input() user!: UserListItemModel;
+    @Input() loggedIn!: boolean;
+
+    @Output() logIn = new EventEmitter<void>();
 }
