@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TemporaryComponent } from './temporary.component';
+import { UserCardComponent } from './user-card.component';
 
-describe('TemporaryComponent', () => {
-    let component: TemporaryComponent;
-    let fixture: ComponentFixture<TemporaryComponent>;
+describe('UserCardComponent', () => {
+    let component: UserCardComponent;
+    let fixture: ComponentFixture<UserCardComponent>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [TemporaryComponent]
+            imports: [UserCardComponent]
         });
-        fixture = TestBed.createComponent(TemporaryComponent);
+        fixture = TestBed.createComponent(UserCardComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
