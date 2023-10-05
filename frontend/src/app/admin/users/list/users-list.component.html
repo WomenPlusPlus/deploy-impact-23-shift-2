@@ -1,9 +1,16 @@
 <h1>Users List</h1>
-<ng-container *ngIf="list$ | async as list">
-    <app-user-card
-        *ngFor="let item of list.items"
-        [loggedIn]="(loggedIn$ | async)!"
-        [user]="item"
-        (logIn)="onLogin()"
-    ></app-user-card>
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error"> Error... </ng-container>
+    <ng-container *ngIf="vm.loading"> Loading... </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container *ngIf="vm.list?.items?.length; else emptyContainer">
+            <app-user-card
+                *ngFor="let item of vm.list!.items!"
+                [loggedIn]="(loggedIn$ | async)!"
+                [user]="item"
+                (logIn)="onLogin()"
+            ></app-user-card>
+        </ng-container>
+        <ng-template #emptyContainer> Empty... </ng-template>
+    </ng-container>
 </ng-container>

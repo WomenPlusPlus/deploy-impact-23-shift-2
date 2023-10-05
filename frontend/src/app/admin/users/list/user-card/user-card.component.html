@@ -1,4 +1,4 @@
-<div *ngIf="user; else errorContainer" class="card w-96 bg-base-100 shadow-xl">
+<div class="card w-96 bg-base-100 shadow-xl">
     <figure><img [src]="user.imageUrl" class="h-40" alt="avatar" /></figure>
     <div class="card-body">
         <h2 class="card-title">{{ user.title }}</h2>
@@ -8,6 +8,3 @@
         </div>
     </div>
 </div>
-<ng-template #errorContainer>
-    <div>Error...</div>
-</ng-template>
