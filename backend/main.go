@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	gindump "github.com/tpkeeper/gin-dump"
 	"gitlab.com/pragmaticreviews/golang-gin-poc/controller"
 	"gitlab.com/pragmaticreviews/golang-gin-poc/middlewares"
 	"gitlab.com/pragmaticreviews/golang-gin-poc/service"
@@ -24,7 +25,7 @@ func main() {
 	setupLogOutput()
 
 	server := gin.New()
-	server.Use(gin.Recovery(), middlewares.Logger())
+	server.Use(gin.Recovery(), middlewares.Logger(), gindump.Dump())
 
 	server.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
