@@ -1,10 +1,5 @@
 import { JobStatusEnum } from '@app/common/models/jobs.model';
-import {
-    AssociationUserRoleEnum,
-    CompanyUserRoleEnum,
-    UserKindEnum,
-    UserStateEnum
-} from '@app/common/models/users.model';
+import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 
 export interface UsersListModel {
     items: UsersListItemModel[];
@@ -30,11 +25,11 @@ export interface UsersListCandidateModel extends UsersListItemModel {
 }
 
 export interface UsersListAssociationModel extends UsersListItemModel {
-    role: AssociationUserRoleEnum;
+    role: UserRoleEnum;
 }
 
 export interface UsersListCompanyModel extends UsersListItemModel {
-    role: CompanyUserRoleEnum;
+    role: UserRoleEnum;
 }
 
 export type UsersListMode = 'short' | 'detailed';

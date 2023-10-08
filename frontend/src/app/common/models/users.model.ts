@@ -5,12 +5,7 @@ export enum UserKindEnum {
     CANDIDATE = 'CANDIDATE'
 }
 
-export enum AssociationUserRoleEnum {
-    ADMIN = 'ADMIN',
-    USER = 'USER'
-}
-
-export enum CompanyUserRoleEnum {
+export enum UserRoleEnum {
     ADMIN = 'ADMIN',
     USER = 'USER'
 }

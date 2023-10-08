@@ -5,12 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
 import { JobStatusEnum } from '@app/common/models/jobs.model';
-import {
-    AssociationUserRoleEnum,
-    CompanyUserRoleEnum,
-    UserKindEnum,
-    UserStateEnum
-} from '@app/common/models/users.model';
+import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 
 @Injectable({
     providedIn: 'root'
@@ -57,7 +52,7 @@ export class AdminUsersService {
                     email: 'kat@perry.com',
                     kind: UserKindEnum.COMPANY,
                     state: UserStateEnum.ACTIVE,
-                    role: CompanyUserRoleEnum.ADMIN
+                    role: UserRoleEnum.ADMIN
                 },
                 {
                     id: 3,
@@ -68,7 +63,7 @@ export class AdminUsersService {
                     email: 'tom-jerry@movies.com',
                     kind: UserKindEnum.COMPANY,
                     state: UserStateEnum.ANONYMOUS,
-                    role: CompanyUserRoleEnum.USER
+                    role: UserRoleEnum.USER
                 },
                 {
                     id: 4,
@@ -79,7 +74,7 @@ export class AdminUsersService {
                     email: 'tom-cruise@movies.com',
                     kind: UserKindEnum.ASSOCIATION,
                     state: UserStateEnum.ACTIVE,
-                    role: AssociationUserRoleEnum.ADMIN
+                    role: UserRoleEnum.ADMIN
                 },
                 {
                     id: 5,
@@ -89,7 +84,7 @@ export class AdminUsersService {
                     email: 'dion@email.com',
                     kind: UserKindEnum.ASSOCIATION,
                     state: UserStateEnum.ACTIVE,
-                    role: AssociationUserRoleEnum.USER
+                    role: UserRoleEnum.USER
                 }
             ]
         });
