@@ -6,8 +6,8 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 
+import { UsersFiltersComponent } from '@app/admin/users/list/users-filters/users-filters.component';
 import { UsersListState, UsersListStore } from '@app/admin/users/list/users-list.store';
-import { AuthActions } from '@app/common/stores/auth/auth.actions';
 import { authFeature } from '@app/common/stores/auth/auth.reducer';
 
 import { UserCardComponent } from './user-card/user-card.component';
@@ -15,7 +15,7 @@ import { UserCardComponent } from './user-card/user-card.component';
 @Component({
     selector: 'app-users-list',
     standalone: true,
-    imports: [CommonModule, UserCardComponent],
+    imports: [CommonModule, UserCardComponent, UsersFiltersComponent],
     providers: [provideComponentStore(UsersListStore)],
     templateUrl: './users-list.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,10 +33,6 @@ export class UsersListComponent implements OnInit {
     ngOnInit(): void {
         this.loadData();
         this.initSubscription();
-    }
-
-    onLogin(): void {
-        this.store.dispatch(AuthActions.login());
     }
 
     private loadData(): void {
