@@ -8,7 +8,7 @@
                     type="radio"
                     value="Candidate"
                     name="role"
-                    [(ngModel)]="role"
+                    [(ngModel)]="form.role"
                     class="radio relative float-left"
                 />
                 <label for="candidate" class="inline-block pl-[0.5rem] hover:cursor-pointer">Candidate</label>
@@ -19,7 +19,7 @@
                     type="radio"
                     value="Company"
                     name="role"
-                    [(ngModel)]="role"
+                    [(ngModel)]="form.role"
                     class="radio relative float-left"
                 />
                 <label class="inline-block pl-[0.5rem] hover:cursor-pointer" for="company">Company</label>
@@ -30,7 +30,7 @@
                     type="radio"
                     value="Company User"
                     name="role"
-                    [(ngModel)]="role"
+                    [(ngModel)]="form.role"
                     class="radio relative float-left"
                 />
                 <label for="company-user" class="inline-block pl-[0.5rem] hover:cursor-pointer">Company User</label>
@@ -41,7 +41,7 @@
                     type="radio"
                     value="Association"
                     name="role"
-                    [(ngModel)]="role"
+                    [(ngModel)]="form.role"
                     class="radio relative float-left"
                 />
                 <label for="association" class="inline-block pl-[0.5rem] hover:cursor-pointer">Association</label>
@@ -52,7 +52,7 @@
                     type="radio"
                     value="Association User"
                     name="role"
-                    [(ngModel)]="role"
+                    [(ngModel)]="form.role"
                     class="radio relative float-left"
                 />
                 <label for="association-user" class="inline-block pl-[0.5rem] hover:cursor-pointer"
@@ -62,15 +62,15 @@
         </fieldset>
         <fieldset id="edit-email" class="form-control w-full my-4">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" [(ngModel)]="email" class="input-bordered" />
+            <input type="email" id="email" name="email" [(ngModel)]="form.email" class="input-bordered" />
         </fieldset>
         <fieldset id="edit-subject" class="form-control w-full my-4">
             <label for="subject">Subject:</label>
-            <input type="text" id="subject" name="subject" [(ngModel)]="subject" class="input-bordered" />
+            <input type="text" id="subject" name="subject" [(ngModel)]="form.subject" class="input-bordered" />
         </fieldset>
         <fieldset id="edit-message" class="form-control w-full my-4">
             <label for="message">Message:</label>
-            <textarea id="message" name="message" [(ngModel)]="message" rows="5" class="input-bordered"></textarea>
+            <textarea id="message" name="message" [(ngModel)]="form.message" rows="5" class="input-bordered"></textarea>
         </fieldset>
         <button class="btn btn-primary btn-wide float-right" type="submit">Send</button>
     </form>
