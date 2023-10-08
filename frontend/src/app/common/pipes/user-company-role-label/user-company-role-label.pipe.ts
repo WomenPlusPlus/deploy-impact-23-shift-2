@@ -1,17 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { CompanyUserRoleEnum } from '@app/common/models/users.model';
+import { UserRoleEnum } from '@app/common/models/users.model';
 
 @Pipe({
     name: 'userCompanyRoleLabel',
     standalone: true
 })
 export class UserCompanyRoleLabelPipe implements PipeTransform {
-    transform(role: CompanyUserRoleEnum): string {
+    transform(role: UserRoleEnum): string {
         switch (role) {
-            case CompanyUserRoleEnum.ADMIN:
+            case UserRoleEnum.ADMIN:
                 return 'Admin';
-            case CompanyUserRoleEnum.USER:
+            case UserRoleEnum.USER:
                 return 'User';
             default:
                 return 'N/A';
