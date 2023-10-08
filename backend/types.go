@@ -2,7 +2,7 @@ package main
 
 import "math/rand"
 
-type Account struct {
+type User struct {
 	ID            int
 	FirstName     string
 	LastName      string
@@ -13,8 +13,8 @@ type Account struct {
 	Role          string
 }
 
-func NewAccount(firstName, lastName, preferredName, email, state, imageUrl, role string) *Account {
-	return &Account{
+func NewUser(firstName, lastName, preferredName, email, state, imageUrl, role string) *User {
+	return &User{
 		ID:            rand.Intn(1000),
 		FirstName:     firstName,
 		LastName:      lastName,
