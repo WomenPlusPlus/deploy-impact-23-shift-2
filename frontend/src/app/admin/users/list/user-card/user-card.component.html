@@ -1,10 +1,107 @@
-<div class="card w-96 bg-base-100 shadow-xl">
-    <figure><img [src]="user.imageUrl" class="h-40" alt="avatar" /></figure>
-    <div class="card-body">
-        <h2 class="card-title">{{ user.title }}</h2>
-        <p>{{ user.content }}</p>
-        <div class="flex justify-end">
-            <button class="btn btn-primary" (click)="logIn.emit()">{{ loggedIn ? 'Logout' : 'Log in' }}</button>
+<a
+    class="card w-full bg-base-200 shadow-xl"
+    [class.opacity-60]="user.state === userStateEnum.ANONYMOUS"
+    [class.opacity-30]="user.state === userStateEnum.DELETED"
+    [routerLink]="['.', user.id]"
+>
+    <figure class="relative h-40">
+        <img [src]="user.imageUrl" alt="image" class="object-center object-cover" loading="lazy" />
+    </figure>
+    <div class="card-body relative">
+        <h2 class="card-title">
+            {{ user.preferredName || user.firstName + ' ' + user.lastName }}
+        </h2>
+        <div class="flex gap-1">
+            <span
+                class="badge text-base-100 badge-sm"
+                [class.bg-yellow-400]="user.kind === userKindEnum.ADMIN"
+                [class.bg-red-400]="user.kind === userKindEnum.CANDIDATE"
+                [class.bg-blue-400]="user.kind === userKindEnum.COMPANY"
+                [class.bg-green-600]="user.kind === userKindEnum.ASSOCIATION"
+                >{{ user.kind | userKindLabel }}</span
+            >
+            <span class="badge bg-gray-400 text-base-100 badge-sm" *ngIf="user.kind === userKindEnum.COMPANY">{{
+                $company(user).role | userCompanyRoleLabel
+            }}</span>
+            <span class="badge bg-gray-400 text-base-100 badge-sm" *ngIf="user.kind === userKindEnum.ASSOCIATION">{{
+                $association(user).role | userAssociationRoleLabel
+            }}</span>
         </div>
+        <p class="break-all">[{{ user.id }}]: {{ user.email }}</p>
     </div>
+</a>
+
+<div class="card-body absolute inset-0 bg-base-100 bg-opacity-90 pr-3" *ngIf="mode === 'detailed'">
+    <app-description-list class="overflow-auto">
+        <app-item size="sm">
+            <ng-container data-selector="header">ID</ng-container>
+            <a [routerLink]="['.', user.id]" class="text-xs drop-shadow-md">
+                {{ user.id }}
+                <fa-icon [icon]="faExternalLink" class="ml-2"></fa-icon>
+            </a>
+        </app-item>
+        <app-item size="sm">
+            <ng-container data-selector="header">Kind</ng-container>
+            {{ user.kind | userKindLabel }}
+            <ng-container *ngIf="user.kind === userKindEnum.COMPANY">
+                | {{ $company(user).role | userCompanyRoleLabel }}
+            </ng-container>
+            <ng-container *ngIf="user.kind === userKindEnum.ASSOCIATION">
+                | {{ $association(user).role | userAssociationRoleLabel }}
+            </ng-container>
+        </app-item>
+        <app-item size="sm">
+            <ng-container data-selector="header">Email</ng-container>
+            {{ user.email }}
+        </app-item>
+        <ng-container *ngIf="user.kind === userKindEnum.CANDIDATE" ngProjectAs="app-item">
+            <app-item size="sm" *appLet="$candidate(user) as candidate">
+                <ng-container data-selector="header">Phone Number</ng-container>
+                {{ candidate.phoneNumber }}
+            </app-item>
+        </ng-container>
+        <app-item size="sm">
+            <ng-container data-selector="header">First Name</ng-container>
+            {{ user.firstName }}
+        </app-item>
+        <app-item size="sm">
+            <ng-container data-selector="header">Last Name</ng-container>
+            {{ user.lastName }}
+        </app-item>
+        <app-item size="sm">
+            <ng-container data-selector="header">Preferred Name</ng-container>
+            {{ user.preferredName || 'N/A' }}
+        </app-item>
+        <ng-container *ngIf="user.kind === userKindEnum.CANDIDATE" ngProjectAs="app-item">
+            <ng-container *appLet="$candidate(user) as candidate">
+                <app-item size="sm">
+                    <ng-container data-selector="header">Rating Skill</ng-container>
+                    {{ candidate.ratingSkill }}
+                </app-item>
+                <app-item size="sm">
+                    <ng-container data-selector="header">Job Status</ng-container>
+                    {{ candidate.jobStatus }}
+                </app-item>
+                <app-item size="sm">
+                    <ng-container data-selector="header">Has CV?</ng-container>
+                    {{ candidate.hasCV }}
+                </app-item>
+                <app-item size="sm">
+                    <ng-container data-selector="header">Has video?</ng-container>
+                    {{ candidate.hasVideo }}
+                </app-item>
+            </ng-container>
+        </ng-container>
+    </app-description-list>
 </div>
+
+<span
+    class="absolute top-2 left-2 text-sm font-bold drop-shadow-lg text-white"
+    *ngIf="user.state !== userStateEnum.ACTIVE"
+>
+    {{ user.state | userStateLabel | uppercase }}
+</span>
+
+<button class="absolute top-2 right-2 text-white" (click)="onToggleMode()">
+    <fa-icon [icon]="faEye" class="text-lg drop-shadow-md"></fa-icon>
+</button>

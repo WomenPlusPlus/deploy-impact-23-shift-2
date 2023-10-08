@@ -8,7 +8,17 @@
             "schematics": {
                 "@schematics/angular:component": {
                     "standalone": true,
-                    "style": "scss"
+                    "style": "scss",
+                    "inlineStyle": true,
+                    "flat": false
+                },
+                "@schematics/angular:directive": {
+                    "standalone": true,
+                    "flat": false
+                },
+                "@schematics/angular:pipe": {
+                    "standalone": true,
+                    "flat": false
                 }
             },
             "root": "",
@@ -26,7 +36,8 @@
                         "inlineStyleLanguage": "scss",
                         "assets": ["src/favicon.ico", "src/assets"],
                         "styles": ["src/styles.scss"],
-                        "scripts": []
+                        "scripts": [],
+                        "allowedCommonJsDependencies": ["lodash"]
                     },
                     "configurations": {
                         "production": {

@@ -8,22 +8,22 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
 import { UsersListStore } from '@app/admin/users/list/users-list.store';
 
-import { UsersListComponent } from './users-list.component';
+import { UsersFiltersComponent } from './users-filters.component';
 
-describe('UsersListComponent', () => {
-    let component: UsersListComponent;
-    let fixture: ComponentFixture<UsersListComponent>;
+describe('UsersFiltersComponent', () => {
+    let component: UsersFiltersComponent;
+    let fixture: ComponentFixture<UsersFiltersComponent>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [UsersListComponent],
+            imports: [UsersFiltersComponent],
             providers: [
                 { provide: AdminUsersService, useValue: { getList: () => EMPTY } },
                 provideMockStore(),
                 provideComponentStore(UsersListStore)
             ]
         });
-        fixture = TestBed.createComponent(UsersListComponent);
+        fixture = TestBed.createComponent(UsersFiltersComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

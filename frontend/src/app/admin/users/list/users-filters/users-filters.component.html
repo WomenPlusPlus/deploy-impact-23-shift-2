@@ -1,0 +1,40 @@
+<div class="flex flex-wrap-reverse items-center justify-between gap-10 p-4">
+    <div class="flex flex-wrap md:flex-nowrap gap-4">
+        <label class="flex items-center gap-2" *ngFor="let userKind of userKindsOptions$ | async">
+            <span>{{ userKind.label | userKindLabel }}</span>
+            <input
+                type="checkbox"
+                class="checkbox checkbox-sm"
+                [ngModel]="userKind.value"
+                (ngModelChange)="onKindChange(userKind.label)"
+            />
+        </label>
+    </div>
+    <div class="flex align-middle gap-4 ml-auto">
+        <div class="dropdown">
+            <label tabindex="0" class="align-middle">
+                <fa-icon [icon]="faCog" class="inline-block mt-1 ml-5 mr-1"></fa-icon>
+            </label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                <li>
+                    <label class="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            class="checkbox checkbox-sm"
+                            [ngModel]="(mode$ | async) === 'detailed'"
+                            (ngModelChange)="onDetailedModeChange($event)"
+                        />
+                        <span class="whitespace-nowrap">Detailed mode</span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+        <input
+            type="search"
+            placeholder="Search"
+            class="input input-ghost input-sm rounded w-full sm:w-80"
+            [ngModel]="searchTerm$ | async"
+            (ngModelChange)="onSearchTermChange($event)"
+        />
+    </div>
+</div>
