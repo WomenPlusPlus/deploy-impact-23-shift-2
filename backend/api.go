@@ -75,8 +75,8 @@ func (s *APIServer) handleUser(w http.ResponseWriter, r *http.Request) error {
 
 // handleGetUser handles GET requests for user account information.
 func (s *APIServer) handleGetUser(w http.ResponseWriter, r *http.Request) error {
-	user := NewUser("Test", "User", "Mrs.", "test_user@testusers.test", "Online", "https://placehold.co/400", "Candidate")
-	return WriteJSON(w, http.StatusOK, user)
+	// user := NewUser("Test", "User", "Mrs.", "test_user@testusers.test", "Online", "https://placehold.co/400", "Candidate")
+	return WriteJSON(w, http.StatusOK, &User{})
 }
 
 // handleCreateUser handles POST requests to create a new user account.
@@ -86,7 +86,15 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 		return err
 	}
 
-	user := NewUser("Test", "User", "Mrs.", "test_user@testusers.test", "Online", "https://placehold.co/400", "Candidate")
+	user := NewUser(
+		userRequest.FirstName,
+		userRequest.LastName,
+		userRequest.PreferredName,
+		userRequest.Email,
+		userRequest.State,
+		userRequest.ImageUrl,
+		userRequest.Role,
+	)
 	if err := s.userDB.CreateUser(user); err != nil {
 		return err
 	}
