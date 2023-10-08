@@ -1,7 +1,5 @@
 package main
 
-import "math/rand"
-
 type User struct {
 	ID            int
 	FirstName     string
@@ -15,7 +13,7 @@ type User struct {
 
 func NewUser(firstName, lastName, preferredName, email, state, imageUrl, role string) *User {
 	return &User{
-		ID:            rand.Intn(1000),
+		ID:            1,
 		FirstName:     firstName,
 		LastName:      lastName,
 		PreferredName: preferredName,
