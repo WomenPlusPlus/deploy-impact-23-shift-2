@@ -15,8 +15,13 @@ type User struct {
 }
 
 type CreateUserRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName     string `json:"first_name"`
+	LastName      string `json:"last_name"`
+	PreferredName string `json:"preferred_name"`
+	Email         string `json:"email"`
+	State         string `json:"state"`
+	ImageUrl      string `json:"image_url"`
+	Role          string `json:"role"`
 }
 
 func NewUser(firstName, lastName, preferredName, email, state, imageUrl, role string) *User {
