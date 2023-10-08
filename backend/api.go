@@ -49,7 +49,7 @@ func NewAPIServer(address string) *APIServer {
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/account", makeHTTPHandleFunc(s.handleUser))
+	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUser))
 
 	log.Println("JSON API Server is running on port:", s.address)
 
