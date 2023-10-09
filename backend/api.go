@@ -29,7 +29,7 @@ type apiFunc func(http.ResponseWriter, *http.Request) error
 
 // apiError represents an API error response.
 type apiError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 // WriteJSON writes a JSON response with the given status code and value.

@@ -109,7 +109,7 @@ func (s *PostgresDB) GetUserByID(id int) (*User, error) {
 		return scanIntoUser(rows)
 	}
 
-	return nil, fmt.Errorf("User %d not found", id)
+	return nil, fmt.Errorf("user with id: %d not found", id)
 }
 
 // GetUsers retrieves a list of all users from the "users" table.
