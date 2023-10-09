@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// UserDB is an interface for managing user data.
 type UserDB interface {
 	CreateUser(*User) error
 	DeleteUser(int) error
@@ -15,10 +16,12 @@ type UserDB interface {
 	GetUserByID(int) (*User, error)
 }
 
+// PostgresDB is a concrete implementation of the UserDB interface using PostgreSQL.
 type PostgresDB struct {
 	db *sql.DB
 }
 
+// NewPostgresDB creates a new PostgresDB instance and initializes the database connection.
 func NewPostgresDB() (*PostgresDB, error) {
 	connStr := "user=postgres dbname=postgres password=shift sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
@@ -36,10 +39,12 @@ func NewPostgresDB() (*PostgresDB, error) {
 	}, nil
 }
 
+// Init initializes the database by creating the user table.
 func (s *PostgresDB) Init() error {
 	return s.CreateUserTable()
 }
 
+// CreateUserTable creates the "users" table if it does not exist.
 func (s *PostgresDB) CreateUserTable() error {
 	query := `create table if not exists users (
 		id serial primary key,
@@ -57,6 +62,7 @@ func (s *PostgresDB) CreateUserTable() error {
 	return err
 }
 
+// CreateUser inserts a new user record into the "users" table.
 func (s *PostgresDB) CreateUser(u *User) error {
 	query := `insert into users
 		(first_name, last_name, preferred_name, email, state, image_url, role, created)
@@ -81,14 +87,17 @@ func (s *PostgresDB) CreateUser(u *User) error {
 	return nil
 }
 
+// UpdateUser updates a user's information in the "users" table.
 func (s *PostgresDB) UpdateUser(*User) error {
 	return nil
 }
 
+// DeleteUser deletes a user from the "users" table based on their ID.
 func (s *PostgresDB) DeleteUser(id int) error {
 	return nil
 }
 
+// GetUserByID retrieves a user's information from the "users" table based on their ID.
 func (s *PostgresDB) GetUserByID(id int) (*User, error) {
 	rows, err := s.db.Query("select * from users where id = $1", id)
 
@@ -103,6 +112,7 @@ func (s *PostgresDB) GetUserByID(id int) (*User, error) {
 	return nil, fmt.Errorf("User %d not found", id)
 }
 
+// GetUsers retrieves a list of all users from the "users" table.
 func (s *PostgresDB) GetUsers() ([]*User, error) {
 	rows, err := s.db.Query("select * from users")
 
@@ -123,6 +133,7 @@ func (s *PostgresDB) GetUsers() ([]*User, error) {
 	return users, nil
 }
 
+// scanIntoUser scans a row from the database into a User struct.
 func scanIntoUser(rows *sql.Rows) (*User, error) {
 	var createdAt sql.NullTime
 	user := new(User)
