@@ -52,6 +52,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUser))
+	router.HandleFunc("/users{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 
 	log.Println("JSON API Server is running on port:", s.address)
 
@@ -61,7 +62,7 @@ func (s *APIServer) Run() {
 // handleUser handles requests related to user accounts.
 func (s *APIServer) handleUser(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
-		return s.handleGetUser(w, r)
+		return s.handleGetUsers(w, r)
 	}
 	if r.Method == "POST" {
 		return s.handleCreateUser(w, r)
@@ -74,8 +75,21 @@ func (s *APIServer) handleUser(w http.ResponseWriter, r *http.Request) error {
 }
 
 // handleGetUser handles GET requests for user account information.
-func (s *APIServer) handleGetUser(w http.ResponseWriter, r *http.Request) error {
-	// user := NewUser("Test", "User", "Mrs.", "test_user@testusers.test", "Online", "https://placehold.co/400", "Candidate")
+func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error {
+	users, err := s.userDB.GetUsers()
+
+	if err != nil {
+		return err
+	}
+
+	return WriteJSON(w, http.StatusOK, users)
+}
+
+func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
+	id := mux.Vars(r)["id"]
+
+	fmt.Println(id)
+
 	return WriteJSON(w, http.StatusOK, &User{})
 }
 

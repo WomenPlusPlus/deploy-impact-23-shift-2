@@ -11,7 +11,7 @@ type User struct {
 	State         string    `json:"state"`
 	ImageUrl      string    `json:"image_url"`
 	Role          string    `json:"role"`
-	Created       time.Time `json:"created"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 type CreateUserRequest struct {
@@ -33,6 +33,6 @@ func NewUser(firstName, lastName, preferredName, email, state, imageUrl, role st
 		State:         state,
 		ImageUrl:      imageUrl,
 		Role:          role,
-		Created:       time.Now().UTC(),
+		CreatedAt:     time.Now().UTC(),
 	}
 }

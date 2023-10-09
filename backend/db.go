@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/lib/pq"
 )
@@ -10,6 +11,7 @@ type UserDB interface {
 	CreateUser(*User) error
 	DeleteUser(int) error
 	UpdateUser(*User) error
+	GetUsers() ([]*User, error)
 	GetUserByID(int) (*User, error)
 }
 
@@ -55,7 +57,27 @@ func (s *PostgresDB) CreateUserTable() error {
 	return err
 }
 
-func (s *PostgresDB) CreateUser(*User) error {
+func (s *PostgresDB) CreateUser(u *User) error {
+	query := `insert into users
+		(first_name, last_name, preferred_name, email, state, image_url, role, created)
+		values ($1, $2, $3, $4, $5, $6, $7, $8)`
+
+	resp, err := s.db.Query(
+		query,
+		u.FirstName,
+		u.LastName,
+		u.PreferredName,
+		u.Email,
+		u.State,
+		u.ImageUrl,
+		u.Role,
+		u.CreatedAt)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", resp)
+
 	return nil
 }
 
@@ -69,4 +91,36 @@ func (s *PostgresDB) DeleteUser(id int) error {
 
 func (s *PostgresDB) GetUserByID(id int) (*User, error) {
 	return nil, nil
+}
+
+func (s *PostgresDB) GetUsers() ([]*User, error) {
+	rows, err := s.db.Query("select * from users")
+
+	if err != nil {
+		return nil, err
+	}
+
+	users := []*User{}
+	var createdAt sql.NullTime
+	for rows.Next() {
+		user := new(User)
+		err := rows.Scan(
+			&user.ID,
+			&user.FirstName,
+			&user.LastName,
+			&user.PreferredName,
+			&user.Email,
+			&user.State,
+			&user.ImageUrl,
+			&user.Role,
+			&createdAt)
+
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
 }
