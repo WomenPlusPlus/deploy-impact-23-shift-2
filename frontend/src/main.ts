@@ -1,3 +1,5 @@
+import { provideHotToastConfig } from '@ngneat/hot-toast';
+
 import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
@@ -9,5 +11,11 @@ import { AppComponent } from '@app/app.component';
 import { authFeature } from '@app/common/stores/auth/auth.reducer';
 
 bootstrapApplication(AppComponent, {
-    providers: [provideHttpClient(), provideRouter(routes), provideStore(), provideState(authFeature)]
+    providers: [
+        provideHttpClient(),
+        provideRouter(routes),
+        provideStore(),
+        provideState(authFeature),
+        provideHotToastConfig()
+    ]
 }).catch((err) => console.error(err));

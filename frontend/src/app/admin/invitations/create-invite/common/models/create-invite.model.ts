@@ -11,9 +11,9 @@ export interface CreateInviteFormGroup {
 }
 
 export interface CreateInviteFormModel {
-    kind: UserKindEnum;
-    role: UserRoleEnum;
-    email: string;
-    subject: string;
-    message: string;
+    kind: UserKindEnum | null;
+    role: UserRoleEnum | null;
+    email: string | null;
+    subject: string | null;
+    message: string | null;
 }
