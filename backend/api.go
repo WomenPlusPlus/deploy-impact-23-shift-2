@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -52,7 +53,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUser))
-	router.HandleFunc("/users{id}", makeHTTPHandleFunc(s.handleGetUserByID))
+	router.HandleFunc("/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 
 	log.Println("JSON API Server is running on port:", s.address)
 
@@ -86,11 +87,21 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 }
 
 func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
-	id := mux.Vars(r)["id"]
+	idStr := mux.Vars(r)["id"]
 
-	fmt.Println(id)
+	id, err := strconv.Atoi(idStr)
 
-	return WriteJSON(w, http.StatusOK, &User{})
+	if err != nil {
+		return fmt.Errorf("invalid id given %s", idStr)
+	}
+
+	user, err := s.userDB.GetUserByID(id)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteJSON(w, http.StatusOK, user)
 }
 
 // handleCreateUser handles POST requests to create a new user account.

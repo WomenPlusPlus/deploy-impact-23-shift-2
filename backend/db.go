@@ -90,7 +90,17 @@ func (s *PostgresDB) DeleteUser(id int) error {
 }
 
 func (s *PostgresDB) GetUserByID(id int) (*User, error) {
-	return nil, nil
+	rows, err := s.db.Query("select * from users where id = $1", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		return scanIntoUser(rows)
+	}
+
+	return nil, fmt.Errorf("User %d not found", id)
 }
 
 func (s *PostgresDB) GetUsers() ([]*User, error) {
@@ -101,26 +111,31 @@ func (s *PostgresDB) GetUsers() ([]*User, error) {
 	}
 
 	users := []*User{}
-	var createdAt sql.NullTime
-	for rows.Next() {
-		user := new(User)
-		err := rows.Scan(
-			&user.ID,
-			&user.FirstName,
-			&user.LastName,
-			&user.PreferredName,
-			&user.Email,
-			&user.State,
-			&user.ImageUrl,
-			&user.Role,
-			&createdAt)
 
+	for rows.Next() {
+		user, err := scanIntoUser(rows)
 		if err != nil {
 			return nil, err
 		}
-
 		users = append(users, user)
 	}
 
 	return users, nil
+}
+
+func scanIntoUser(rows *sql.Rows) (*User, error) {
+	var createdAt sql.NullTime
+	user := new(User)
+	err := rows.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.PreferredName,
+		&user.Email,
+		&user.State,
+		&user.ImageUrl,
+		&user.Role,
+		&createdAt)
+
+	return user, err
 }
