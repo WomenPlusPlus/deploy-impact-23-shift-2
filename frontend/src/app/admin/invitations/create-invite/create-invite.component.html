@@ -1,6 +1,6 @@
 <div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto">
     <h1 class="text-3xl mb-3">Send an invitation</h1>
-    <form (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <fieldset id="kind" class="my-4 pr-5">
             <span class="label">Select the kind of user:</span>
             <ul class="flex flex-wrap gap-y-1 gap-x-8">
@@ -10,7 +10,7 @@
                         type="radio"
                         name="kind"
                         [value]="userKind"
-                        [(ngModel)]="form.kind"
+                        formControlName="kind"
                         class="radio relative float-left"
                     />
                     <label [for]="'kind-' + userKind" class="inline-block pl-[0.5rem] hover:cursor-pointer">{{
@@ -24,13 +24,13 @@
             <ul class="flex flex-wrap gap-y-1 gap-x-8">
                 <li class="inline-block" *ngFor="let userRole of userRoles">
                     <input
+                        *appLet="form.controls.kind.value as kind"
                         [id]="'role-' + userRole"
                         type="radio"
                         name="role"
                         [value]="userRole"
-                        [(ngModel)]="form.role"
+                        formControlName="role"
                         class="radio relative float-left"
-                        [disabled]="form.kind !== userKindEnum.ASSOCIATION && form.kind !== userKindEnum.COMPANY"
                     />
                     <label [for]="'role-' + userRole" class="inline-block pl-[0.5rem] hover:cursor-pointer">{{
                         userRole | userCompanyRoleLabel
@@ -39,24 +39,50 @@
             </ul>
         </fieldset>
         <hr />
-        <fieldset id="edit-email" class="form-control w-full my-4">
+        <fieldset id="edit-email" class="form-control w-full my-4" *appLet="form.controls.email as control">
             <label for="email" class="mb-1">Email:</label>
-            <input type="email" id="email" name="email" [(ngModel)]="form.email" class="input input-bordered" />
+            <input
+                type="email"
+                id="email"
+                name="email"
+                formControlName="email"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                form.controls.email.errors | formErrorMessage
+            }}</span>
         </fieldset>
-        <fieldset id="edit-subject" class="form-control w-full my-4">
+        <fieldset id="edit-subject" class="form-control w-full my-4" *appLet="form.controls.subject as control">
             <label for="subject" class="mb-1">Subject:</label>
-            <input type="text" id="subject" name="subject" [(ngModel)]="form.subject" class="input input-bordered" />
+            <input
+                type="text"
+                id="subject"
+                name="subject"
+                formControlName="subject"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                form.controls.subject.errors | formErrorMessage
+            }}</span>
         </fieldset>
-        <fieldset id="edit-message" class="form-control w-full my-4">
+        <fieldset id="edit-message" class="form-control w-full my-4" *appLet="form.controls.message as control">
             <label for="message" class="mb-1">Message:</label>
             <textarea
                 id="message"
                 name="message"
-                [(ngModel)]="form.message"
+                formControlName="message"
                 rows="5"
                 class="textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
             ></textarea>
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                form.controls.message.errors | formErrorMessage
+            }}</span>
         </fieldset>
-        <button class="btn btn-primary btn-wide float-right" type="submit">Send</button>
+        <button class="btn btn-primary btn-wide float-right" type="submit" [disabled]="form.pristine || form.invalid">
+            Send
+        </button>
     </form>
 </div>
