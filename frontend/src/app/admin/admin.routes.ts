@@ -6,6 +6,10 @@ const routes: Routes = [
         loadChildren: () => import('./users/admin-users.routes')
     },
     {
+        path: 'invitations',
+        loadChildren: () => import('./invitations/admin-invitations.routes')
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'users'
