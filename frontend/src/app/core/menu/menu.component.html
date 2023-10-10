@@ -48,9 +48,9 @@
         </a>
     </li>
     <li class="mt-auto">
-        <button title="Collapse" (click)="expandedChange.emit(!expanded)">
+        <button title="Toggle navigation" (click)="expandedChange.emit(!expanded)">
             <fa-icon [icon]="expanded ? faSquareCaretLeft : faSquareCaretRight" class="text-center w-6" />
-            <span *ngIf="expanded" class="ml-1 truncate">Collapse</span>
+            <span *ngIf="expanded" class="ml-1 truncate">Toggle navigation</span>
         </button>
     </li>
 </ul>
