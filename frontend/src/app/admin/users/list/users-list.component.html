@@ -18,9 +18,10 @@
             </a>
             <ng-container *ngIf="vm.list?.items?.length">
                 <app-user-card
-                    *ngFor="let item of vm.list!.items!"
+                    *ngFor="let item of $any(vm.list!.items!)"
                     [user]="item"
                     [mode]="vm.mode"
+                    [deleting]="vm.deleting"
                     class="max-w-xs"
                 ></app-user-card>
             </ng-container>

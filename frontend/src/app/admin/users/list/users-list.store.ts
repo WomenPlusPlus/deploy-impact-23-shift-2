@@ -1,3 +1,4 @@
+import { HotToastService } from '@ngneat/hot-toast';
 import Fuse from 'fuse.js';
 import { pick } from 'lodash';
 import { exhaustMap, Observable, tap } from 'rxjs';
@@ -8,12 +9,13 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { UsersListMode, UsersListModel } from '@app/admin/users/common/models/users-list.model';
 import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
-import { UserKindEnum } from '@app/common/models/users.model';
+import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 
 export interface UsersListState {
     list: UsersListModel | null;
     loading: boolean;
     error: boolean;
+    deleting: boolean;
     filters: UsersListFiltersState;
     mode: UsersListMode;
 }
@@ -26,6 +28,7 @@ export interface UsersListFiltersState {
 const initialState: UsersListState = {
     list: null,
     loading: false,
+    deleting: false,
     error: false,
     filters: {
         searchTerm: '',
@@ -49,12 +52,14 @@ export class UsersListStore extends ComponentStore<UsersListState> {
     filters$ = this.select((state) => state.filters);
     filterKinds$ = this.select(this.filters$, (filters) => filters.kinds);
     filterSearchTerm$ = this.select(this.filters$, (filters) => filters.searchTerm);
+    deleting$ = this.select((state) => state.deleting);
     vm$ = this.select({
         list: this.select(this.list$, this.filters$, (list, filters) => this.extractFilteredList(list, filters)),
         loading: this.select((state) => state.loading),
         error: this.select((state) => state.error),
         filters: this.filters$,
-        mode: this.mode$
+        mode: this.mode$,
+        deleting: this.deleting$
     });
 
     getList = this.effect((trigger$: Observable<void>) =>
@@ -65,6 +70,30 @@ export class UsersListStore extends ComponentStore<UsersListState> {
                     tapResponse(
                         (list) => this.getListLoadedSuccess(list),
                         () => this.getListLoadedError()
+                    )
+                )
+            )
+        )
+    );
+
+    deleteItem = this.effect((trigger$: Observable<number>) =>
+        trigger$.pipe(
+            tap(() => this.patchState({ deleting: true })),
+            exhaustMap((id: number) =>
+                this.adminUsersService.deleteUser(id).pipe(
+                    tapResponse(
+                        () => {
+                            const items = this.state().list?.items || [];
+                            items.forEach((item) => item.id === id && (item.state = UserStateEnum.DELETED));
+                            this.patchState({
+                                deleting: false,
+                                list: { items }
+                            });
+                        },
+                        () => {
+                            this.patchState({ deleting: false });
+                            this.toast.error('Could not delete user! Please try again later or contact the support.');
+                        }
                     )
                 )
             )
@@ -112,7 +141,10 @@ export class UsersListStore extends ComponentStore<UsersListState> {
         })
     );
 
-    constructor(private readonly adminUsersService: AdminUsersService) {
+    constructor(
+        private readonly adminUsersService: AdminUsersService,
+        private readonly toast: HotToastService
+    ) {
         super(initialState);
     }
 
