@@ -18,7 +18,7 @@ export class AppStore extends ComponentStore<AppState> {
 
     constructor() {
         super({
-            menuExpanded: localStorage.getItem(MENU_EXPANDED_KEY) === 'true'
+            menuExpanded: localStorage.getItem(MENU_EXPANDED_KEY) !== 'true'
         });
     }
 
