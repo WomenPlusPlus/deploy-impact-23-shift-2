@@ -30,10 +30,12 @@
             </ul>
         </div>
         <input
+            *appLet="searchTerm$ | async as searchTerm"
             type="search"
             placeholder="Search"
-            class="input input-ghost input-sm rounded w-full sm:w-80"
-            [ngModel]="searchTerm$ | async"
+            class="input input-bordered input-sm rounded w-full sm:w-80"
+            [class.input-error]="searchTerm.length && searchTerm.length < 3"
+            [ngModel]="searchTerm"
             (ngModelChange)="onSearchTermChange($event)"
         />
     </div>

@@ -11,3 +11,7 @@
 .inset-center {
     @apply top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
 }
+
+.grid-rows-auto-\[20rem\] {
+    grid-auto-rows: 20rem;
+}
