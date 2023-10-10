@@ -10,7 +10,7 @@ import { provideComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 
 import { UsersFiltersComponent } from '@app/admin/users/list/users-filters/users-filters.component';
-import { UsersListState, UsersListStore } from '@app/admin/users/list/users-list.store';
+import { UsersListStore } from '@app/admin/users/list/users-list.store';
 import { UserAssociationRoleLabelPipe } from '@app/common/pipes/user-association-role-label/user-association-role-label.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
@@ -42,7 +42,7 @@ import { UserCardComponent } from './user-card/user-card.component';
 export class UsersListComponent implements OnInit {
     loggedIn$!: Observable<boolean>;
 
-    readonly vm$: Observable<UsersListState> = this.usersListStore.vm$;
+    readonly vm$ = this.usersListStore.vm$;
 
     protected readonly faAdd = faAdd;
 

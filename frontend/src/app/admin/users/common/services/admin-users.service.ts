@@ -3,6 +3,8 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import environment from '@envs/environment';
+
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
 import { JobStatusEnum } from '@app/common/models/jobs.model';
 import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
@@ -89,6 +91,10 @@ export class AdminUsersService {
             ]
         });
         /*return this.httpClient
-            .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/admin/users`);;*/
+            .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/admin/users`);*/
+    }
+
+    deleteUser(id: number): Observable<void> {
+        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/admin/users/${id}`);
     }
 }
