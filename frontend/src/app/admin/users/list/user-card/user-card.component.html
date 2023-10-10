@@ -1,5 +1,5 @@
 <a
-    class="card w-full bg-base-200 shadow-xl"
+    class="card w-full h-full bg-base-200 shadow-xl"
     [class.opacity-60]="user.state === userStateEnum.ANONYMOUS"
     [class.opacity-30]="user.state === userStateEnum.DELETED"
     [routerLink]="['.', user.id]"
@@ -96,12 +96,12 @@
 </div>
 
 <span
-    class="absolute top-2 left-2 text-sm font-bold drop-shadow-lg text-white"
+    class="absolute top-3 left-3 text-sm font-bold drop-shadow-lg text-gray-800 dark:text-white"
     *ngIf="user.state !== userStateEnum.ACTIVE"
 >
     {{ user.state | userStateLabel | uppercase }}
 </span>
 
-<button class="absolute top-2 right-2 text-white" (click)="onToggleMode()">
+<button class="absolute top-2 right-2 text-gray-800 dark:text-white" (click)="onToggleMode()">
     <fa-icon [icon]="faEye" class="text-lg drop-shadow-md"></fa-icon>
 </button>
