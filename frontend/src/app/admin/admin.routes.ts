@@ -10,6 +10,10 @@ const routes: Routes = [
         loadChildren: () => import('./invitations/admin-invitations.routes')
     },
     {
+        path: 'company',
+        loadChildren: () => import('./company/admin-company.routes')
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'users'
