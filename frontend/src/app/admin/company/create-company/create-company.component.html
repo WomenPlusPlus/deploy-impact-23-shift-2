@@ -1,0 +1,172 @@
+<div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="!vm.submitted; else submittedContainer">
+        <h1 class="text-3xl mb-3">Create Company</h1>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <fieldset id="edit-name" class="form-control w-full my-4" *appLet="form.controls.name as control">
+                <label for="name" class="mb-1">Company Name:</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    formControlName="name"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.name.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-address" class="form-control w-full my-4" *appLet="form.controls.address as control">
+                <label for="address" class="mb-1">Address:</label>
+                <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    formControlName="address"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.address.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
+                <label for="logo" class="mb-1">Logo:</label>
+                <input
+                    type="file"
+                    id="logo"
+                    name="logo"
+                    class="file-input file-input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                    (change)="onFileSelected($event)"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.logo.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-linkedin" class="form-control w-full my-4" *appLet="form.controls.linkedin as control">
+                <label for="linkedin" class="mb-1">LinkedIn URL:</label>
+                <input
+                    type="text"
+                    id="linkedin"
+                    name="linkedin"
+                    formControlName="linkedin"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.linkedin.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-kununu" class="form-control w-full my-4" *appLet="form.controls.kununu as control">
+                <label for="kununu" class="mb-1">Kununu URL:</label>
+                <input
+                    type="text"
+                    id="kununu"
+                    name="kununu"
+                    formControlName="kununu"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.kununu.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-phone" class="form-control w-full my-4" *appLet="form.controls.phone as control">
+                <label for="phone" class="mb-1">Phone Number:</label>
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    formControlName="phone"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.phone.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-email" class="form-control w-full my-4" *appLet="form.controls.email as control">
+                <label for="email" class="mb-1">Email:</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    formControlName="email"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.email.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-values" class="form-control w-full my-4" *appLet="form.controls.values as control">
+                <label for="values" class="mb-1">Company Values:</label>
+                <textarea
+                    id="values"
+                    name="values"
+                    formControlName="values"
+                    rows="5"
+                    class="textarea textarea-bordered resize-y"
+                    [class.textarea-error]="control.invalid && control.touched"
+                ></textarea>
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.values.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-jobtypes" class="form-control w-full my-4" *appLet="form.controls.jobtypes as control">
+                <label for="jobtypes" class="mb-1">Job Types:</label>
+                <textarea
+                    id="jobtypes"
+                    name="jobtypes"
+                    formControlName="jobtypes"
+                    rows="5"
+                    class="textarea textarea-bordered resize-y"
+                    [class.textarea-error]="control.invalid && control.touched"
+                ></textarea>
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.jobtypes.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset
+                id="edit-expectation"
+                class="form-control w-full my-4"
+                *appLet="form.controls.expectation as control"
+            >
+                <label for="expectation" class="mb-1">Expectations we offer:</label>
+                <textarea
+                    id="expectation"
+                    name="expectation"
+                    formControlName="expectation"
+                    rows="5"
+                    class="textarea textarea-bordered resize-y"
+                    [class.textarea-error]="control.invalid && control.touched"
+                ></textarea>
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.expectation.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <button
+                class="btn btn-primary btn-wide float-right"
+                type="submit"
+                [disabled]="form.invalid || form.pristine || vm.submitting"
+            >
+                Save
+            </button>
+        </form>
+    </ng-container>
+    <ng-template #submittedContainer>
+        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+            <div class="mx-auto max-w-screen-sm text-center">
+                <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
+                    Company {{ form.controls.name.value }} was created!
+                </p>
+                <a
+                    [routerLink]="['/']"
+                    class="inline-flex text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                    >Back to Homepage</a
+                >
+            </div>
+        </div>
+    </ng-template>
+</div>
