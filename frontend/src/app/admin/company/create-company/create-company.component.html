@@ -36,7 +36,6 @@
                     type="file"
                     id="logo"
                     name="logo"
-                    formControlName="logo"
                     class="file-input file-input-bordered"
                     [class.input-error]="control.invalid && control.touched"
                     (change)="onFileSelected($event)"
@@ -134,7 +133,7 @@
                 class="form-control w-full my-4"
                 *appLet="form.controls.expectation as control"
             >
-                <label for="expectation" class="mb-1">Expecations we offer:</label>
+                <label for="expectation" class="mb-1">Expectations we offer:</label>
                 <textarea
                     id="expectation"
                     name="expectation"

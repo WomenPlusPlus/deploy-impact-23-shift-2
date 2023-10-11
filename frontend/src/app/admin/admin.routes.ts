@@ -10,7 +10,7 @@ const routes: Routes = [
         loadChildren: () => import('./invitations/admin-invitations.routes')
     },
     {
-        path: 'company',
+        path: 'companies',
         loadChildren: () => import('./company/admin-company.routes')
     },
     {

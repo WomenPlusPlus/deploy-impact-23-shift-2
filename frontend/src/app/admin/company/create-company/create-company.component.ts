@@ -36,24 +36,23 @@ export class CreateCompanyComponent implements OnInit {
 
     onSubmit(): void {
         const formData = new FormData();
-        for (const key of Object.keys(this.form.controls)) {
-            formData.append(key, this.form.get(key)?.value);
-        }
-        if (this.selectedFile) {
-            formData.append('file', this.selectedFile);
+        const formValue = this.form.getRawValue();
+        for (const key of Object.keys(formValue)) {
+            formData.append(key, formValue[key as keyof CreateCompanyFormGroup]!);
         }
         this.createCompanyStore.submitForm(formData);
     }
 
-    onFileSelected(event: any): void {
-        this.selectedFile = event.target.files[0];
+    onFileSelected(event: Event): void {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        this.form.controls.logo.setValue(file || null);
     }
 
     private initForm(): void {
         this.form = this.fb.group({
             name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
             address: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control('', Validators.required),
+            logo: this.fb.control(new File([], ''), Validators.required),
             linkedin: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             kununu: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             phone: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
