@@ -14,6 +14,7 @@ export class AdminCompanyService {
     constructor(private readonly httpClient: HttpClient) {}
 
     createCompany(payload: CreateCompanyFormModel): Observable<void> {
+        // post company data to back
         return this.httpClient.post<void>(`${environment.API_BASE_URL}/api/v1/admin/company`, payload);
     }
 }

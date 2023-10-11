@@ -40,7 +40,7 @@ export class CreateCompanyComponent implements OnInit {
         this.form = this.fb.group({
             name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
             address: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control(''),
+            logo: this.fb.control('', Validators.required),
             linkedin: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             kununu: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             phone: this.fb.control('', [Validators.required, Validators.maxLength(256)]),

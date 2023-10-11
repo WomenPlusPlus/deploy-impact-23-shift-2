@@ -30,7 +30,20 @@
                     form.controls.address.errors | formErrorMessage
                 }}</span>
             </fieldset>
-            <!-- TODO: logo upload-->
+            <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
+                <label for="logo" class="mb-1">Logo:</label>
+                <input
+                    type="file"
+                    id="logo"
+                    name="logo"
+                    formControlName="logo"
+                    class="file-input file-input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.logo.errors | formErrorMessage
+                }}</span>
+            </fieldset>
             <fieldset id="edit-linkedin" class="form-control w-full my-4" *appLet="form.controls.linkedin as control">
                 <label for="linkedin" class="mb-1">LinkedIn URL:</label>
                 <input
