@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
 // APIServer represents an HTTP server for the JSON API.
@@ -42,10 +43,35 @@ func WriteJSON(w http.ResponseWriter, status int, value interface{}) error {
 // makeHTTPHandleFunc creates an HTTP request handler function for the provided apiFunc.
 func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := f(w, r); err != nil {
-			WriteJSON(w, http.StatusBadRequest, apiError{Error: err.Error()})
+		logger := logrus.New()
+		logger.SetFormatter(&logrus.JSONFormatter{}) // Use JSON format for structured logs
+
+		err := f(w, r)
+		if err != nil {
+			switch {
+			case IsNotFoundError(err):
+				WriteJSON(w, http.StatusNotFound, apiError{Error: "Resource not found"})
+			case IsPermissionError(err):
+				WriteJSON(w, http.StatusForbidden, apiError{Error: "Permission denied"})
+			default:
+				// Log the internal error without exposing details to the client
+				logger.Error(err)
+				WriteJSON(w, http.StatusInternalServerError, apiError{Error: "Internal server error"})
+			}
 		}
 	}
+}
+
+// IsNotFoundError checks if an error is a not found error.
+func IsNotFoundError(err error) bool {
+	// Implement your custom logic to check for not found errors
+	return false
+}
+
+// IsPermissionError checks if an error is a permission error.
+func IsPermissionError(err error) bool {
+	// Implement your custom logic to check for permission errors
+	return false
 }
 
 // Run starts the HTTP server and listens for incoming requests.
