@@ -51,9 +51,10 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
+	router.Use(mux.CORSMethodMiddleware(router))
 	// rootPath := "api/v1/"
 	// Admin
-	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
+	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers))
 	// router.HandleFunc("/admin/invites", makeHTTPHandleFunc(s.handleAdminInvites))
 	// router.HandleFunc("/admin/associations", makeHTTPHandleFunc(s.handleAdminAssociations))
 	// router.HandleFunc("/admin/companies", makeHTTPHandleFunc(s.handleAdmin))
