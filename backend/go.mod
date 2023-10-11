@@ -1,4 +1,4 @@
-module github.com/WomenPlusPlus/deploy-impact-23-shift-2
+module shift
 
 go 1.20
 

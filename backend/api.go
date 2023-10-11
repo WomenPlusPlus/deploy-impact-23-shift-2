@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -141,12 +142,12 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
 	}
-	// if r.Method == "POST" {
-	// return s.handleCreateUser(w, r)
-	// }
-	// if r.Method == "DELETE" {
-	// return s.handleDeleteUser(w, r)
-	// }
+	if r.Method == "POST" {
+		return s.handleCreateUser(w, r)
+	}
+	if r.Method == "DELETE" {
+		return s.handleDeleteUser(w, r)
+	}
 
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
@@ -162,52 +163,52 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 	return WriteJSON(w, http.StatusOK, users)
 }
 
-// func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
-// 	idStr := mux.Vars(r)["id"]
+func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
+	idStr := mux.Vars(r)["id"]
 
-// 	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(idStr)
 
-// 	if err != nil {
-// 		return fmt.Errorf("invalid id given %s", idStr)
-// 	}
+	if err != nil {
+		return fmt.Errorf("invalid id given %s", idStr)
+	}
 
-// 	user, err := s.userDB.GetUserByID(id)
+	user, err := s.userDB.GetUserByID(id)
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if err != nil {
+		return err
+	}
 
-// 	return WriteJSON(w, http.StatusOK, user)
-// }
+	return WriteJSON(w, http.StatusOK, user)
+}
 
 // handleCreateUser handles POST requests to create a new user account.
-// func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-// 	userRequest := new(CreateUserRequest)
-// 	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
-// 		return err
-// 	}
+func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
+	userRequest := new(CreateUserRequest)
+	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
+		return err
+	}
 
-// 	user := NewUser(
-// 		userRequest.FirstName,
-// 		userRequest.LastName,
-// 		userRequest.PreferredName,
-// 		userRequest.Email,
-// 		userRequest.State,
-// 		userRequest.ImageUrl,
-// 		userRequest.Role,
-// 	)
-// 	if err := s.userDB.CreateUser(user); err != nil {
-// 		return err
-// 	}
-// 	return WriteJSON(w, http.StatusOK, user)
-// }
+	user := NewUser(
+		userRequest.FirstName,
+		userRequest.LastName,
+		userRequest.PreferredName,
+		userRequest.Email,
+		userRequest.State,
+		userRequest.ImageUrl,
+		userRequest.Role,
+	)
+	if err := s.userDB.CreateUser(user); err != nil {
+		return err
+	}
+	return WriteJSON(w, http.StatusOK, user)
+}
 
 // handleDeleteUser handles DELETE requests to delete a user account.
-// func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
-// 	return nil
-// }
+func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
 
 // handleUpdateUser handles PUT requests to update a user account.
-// func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {
-// 	return nil
-// }
+func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
