@@ -8,18 +8,18 @@ import (
 
 type User struct {
 	ID              int             `json:"id"`
-	FirstName       string          `json:"first_name"`
-	LastName        string          `json:"last_name"`
-	BirthDate       time.Time       `json:"birth_date"`
-	PreferredName   string          `json:"preferred_name"`
+	FirstName       string          `json:"firstName"`
+	LastName        string          `json:"lastName"`
+	BirthDate       time.Time       `json:"birthDate"`
+	PreferredName   string          `json:"preferredName"`
 	Email           string          `json:"email"`
 	Phone           string          `json:"phone"`
 	State           string          `json:"state"`
-	ImageUrl        string          `json:"image_url"`
+	ImageUrl        string          `json:"imageUrl"`
 	Role            string          `json:"role"`
-	CreatedAt       time.Time       `json:"created_at"`
+	CreatedAt       time.Time       `json:"createdAt"`
 	Technical       Technical       `json:"technical"`
-	JobExpectations JobExpectations `json:"job_expectations"`
+	JobExpectations JobExpectations `json:"jobExpectations"`
 }
 
 // UserDB is an interface for managing user data.
@@ -32,12 +32,12 @@ type UserDB interface {
 }
 
 type CreateUserRequest struct {
-	FirstName     string `json:"first_name"`
-	LastName      string `json:"last_name"`
-	PreferredName string `json:"preferred_name"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	PreferredName string `json:"preferredName"`
 	Email         string `json:"email"`
 	State         string `json:"state"`
-	ImageUrl      string `json:"image_url"`
+	ImageUrl      string `json:"imageUrl"`
 	Role          string `json:"role"`
 }
 
@@ -56,31 +56,31 @@ func NewUser(firstName, lastName, preferredName, email, state, imageUrl, role st
 
 type Technical struct {
 	Skills                   []string  `json:"skills"`
-	YearsOfExp               int       `json:"years_of_exp"`
-	RatingScale              string    `json:"rating_scale"`
-	WorkPermit               string    `json:"work_permit"`
-	NoticePeriod             time.Time `json:"notice_period"`
-	SpokenLanguages          []string  `json:"spoken_languages"`
-	LevelOfLanguageKnowledge string    `json:"level_of_language_knowledge"`
-	JobStatus                string    `json:"job_status"`
+	YearsOfExp               int       `json:"yearsOfExp"`
+	RatingScale              string    `json:"ratingScale"`
+	WorkPermit               string    `json:"workPermit"`
+	NoticePeriod             time.Time `json:"noticePeriod"`
+	SpokenLanguages          []string  `json:"spokenLanguages"`
+	LevelOfLanguageKnowledge string    `json:"levelOfLanguageKnowledge"`
+	JobStatus                string    `json:"jobStatus"`
 	CV                       any       `json:"cv"`
 	Documents                []any     `json:"documents"`
-	VideoPresentation        any       `json:"video_presentation"`
-	ListOfValues             []string  `json:"list_of_values"`
-	EducationHistory         []string  `json:"education_history"`
-	EmploymentHistory        []string  `json:"employment_history"`
+	VideoPresentation        any       `json:"videoPresentation"`
+	ListOfValues             []string  `json:"listOfValues"`
+	EducationHistory         []string  `json:"educationHistory"`
+	EmploymentHistory        []string  `json:"employmentHistory"`
 	Portfolio                any       `json:"portfolio"`
 }
 
 type JobExpectations struct {
 	Values       []string `json:"values"`
-	JobTypes     []string `json:"job_types"`
+	JobTypes     []string `json:"jopTypes"`
 	Expectations []string `json:"expectations"`
 }
 
 type PersonalDetails struct {
 	Photos              []any `json:"photo"`
-	SocialMediaProfiles []any `json:"social_media_profiles"`
+	SocialMediaProfiles []any `json:"socialMediaProfiles"`
 }
 
 // INVITATION
