@@ -12,16 +12,3 @@ export interface CreateCompanyFormGroup {
     jobtypes: FormControl<string | null>;
     expectation: FormControl<string | null>;
 }
-
-export interface CreateCompanyFormModel {
-    name: string | null;
-    address: string | null;
-    logo: string | null;
-    linkedin: string | null;
-    kununu: string | null;
-    phone: string | null;
-    email: string | null;
-    values: string | null;
-    jobtypes: string | null;
-    expectation: string | null;
-}

@@ -39,6 +39,7 @@
                     formControlName="logo"
                     class="file-input file-input-bordered"
                     [class.input-error]="control.invalid && control.touched"
+                    (change)="onFileSelected($event)"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
                     form.controls.logo.errors | formErrorMessage

@@ -23,6 +23,8 @@ export class CreateCompanyComponent implements OnInit {
 
     vm$: Observable<CreateCompanyState> = this.createCompanyStore.vm$;
 
+    selectedFile: File | null = null;
+
     constructor(
         private readonly fb: FormBuilder,
         private readonly createCompanyStore: CreateCompanyStore
@@ -33,7 +35,18 @@ export class CreateCompanyComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.createCompanyStore.submitForm(this.form.getRawValue());
+        const formData = new FormData();
+        for (const key of Object.keys(this.form.controls)) {
+            formData.append(key, this.form.get(key)?.value);
+        }
+        if (this.selectedFile) {
+            formData.append('file', this.selectedFile);
+        }
+        this.createCompanyStore.submitForm(formData);
+    }
+
+    onFileSelected(event: any): void {
+        this.selectedFile = event.target.files[0];
     }
 
     private initForm(): void {

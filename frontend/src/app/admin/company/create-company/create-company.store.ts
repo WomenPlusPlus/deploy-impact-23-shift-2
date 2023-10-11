@@ -6,7 +6,6 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { AdminCompanyService } from '../common/services/admin-company.service';
-import { CreateCompanyFormModel } from './common/models/create-company.model';
 
 export interface CreateCompanyState {
     submitting: boolean;
@@ -25,7 +24,7 @@ export class CreateCompanyStore extends ComponentStore<CreateCompanyState> {
         submitted: this.select((state) => state.submitted)
     });
 
-    submitForm = this.effect((trigger$: Observable<CreateCompanyFormModel>) =>
+    submitForm = this.effect((trigger$: Observable<FormData>) =>
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             exhaustMap((payload) =>
