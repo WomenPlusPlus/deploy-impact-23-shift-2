@@ -211,7 +211,6 @@ export class CreateUserCandidateComponent implements OnInit {
                     Validators.maxLength(128)
                 ]),
                 preferredName: this.fb.control<string | null>(null, [
-                    Validators.required,
                     Validators.minLength(3),
                     Validators.maxLength(256)
                 ]),

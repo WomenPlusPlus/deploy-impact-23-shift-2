@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { CreateUserCandidateComponent } from '@app/admin/users/creation/candidate/create-user-candidate.component';
 import { CreateUserFormGroup } from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserStore } from '@app/admin/users/creation/create-user.store';
 import { CreateUserGenericComponent } from '@app/admin/users/creation/generic/create-user-generic.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum } from '@app/common/models/users.model';
@@ -18,13 +20,15 @@ type CreateUserFormComponent = { form: FormGroup<CreateUserFormGroup> };
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
         CreateUserGenericComponent,
         CreateUserCandidateComponent,
         FormErrorMessagePipe,
         LetDirective,
-        ReactiveFormsModule,
         UserKindLabelPipe
     ],
+    providers: [CreateUserStore],
     templateUrl: './create-user.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -34,9 +38,13 @@ export class CreateUserComponent {
         this.childForm = el?.form;
     }
 
+    vm$ = this.createUserStore.vm$;
+    childForm?: FormGroup<CreateUserFormGroup>;
     selectedKind = UserKindEnum.CANDIDATE;
 
-    childForm?: FormGroup<CreateUserFormGroup>;
+    get userEmail(): string {
+        return this.childForm?.controls.details.controls.email.value || 'N/A';
+    }
 
     protected readonly userKindsEnum = UserKindEnum;
     protected readonly userKinds: UserKindEnum[] = [
@@ -46,9 +54,12 @@ export class CreateUserComponent {
         UserKindEnum.ASSOCIATION
     ];
 
+    constructor(private readonly createUserStore: CreateUserStore) {}
+
     onSubmit(): void {
         if (!this.childForm?.valid) {
             return;
         }
+        this.createUserStore.submitForm(this.childForm.getRawValue());
     }
 }

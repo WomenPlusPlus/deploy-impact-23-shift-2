@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 import environment from '@envs/environment';
 
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
+import { CreateUserFormModel } from '@app/admin/users/creation/common/models/create-user.model';
 import { JobStatusEnum } from '@app/common/models/jobs.model';
 import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 
@@ -91,10 +92,21 @@ export class AdminUsersService {
             ]
         });
         /*return this.httpClient
-            .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/admin/users`);*/
+            .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);*/
+    }
+
+    createUser(user: CreateUserFormModel): Observable<{ id: number }> {
+        const formData = new FormData();
+        for (const key of Object.keys(user)) {
+            const wrapper = user[key as keyof CreateUserFormModel];
+            for (const key of Object.keys(wrapper)) {
+                formData.append(key, wrapper[key as keyof typeof wrapper]);
+            }
+        }
+        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/users`, formData);
     }
 
     deleteUser(id: number): Observable<void> {
-        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/admin/users/${id}`);
+        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
     }
 }
