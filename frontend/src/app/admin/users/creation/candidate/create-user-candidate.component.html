@@ -1,0 +1,741 @@
+<div class="grid lg:grid-cols-[20rem-1fr]" [formGroup]="form">
+    <span class="text-3xl m-3">Personal details</span>
+    <section formGroupName="details">
+        <fieldset id="photo-field" class="form-control w-full my-4" *appLet="detailsForm.controls.photo as control">
+            <label for="photo" class="mb-1">Profile Picture:</label>
+            <input
+                type="file"
+                accept="image/*"
+                id="photo"
+                name="photo"
+                class="file-input file-input-ghost w-full max-w-xs"
+                (input)="onPhotoUpload($event)"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+            <div class="h-72 mt-8 mb-4">
+                <img
+                    [src]="imagePreviewUrl$ | async"
+                    class="h-full aspect-video object-center object-cover rounded"
+                    alt="profile-picture"
+                />
+            </div>
+        </fieldset>
+        <fieldset
+            id="first-name-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.firstName as control"
+        >
+            <label for="first-name" class="mb-1">First Name:</label>
+            <input
+                type="text"
+                id="first-name"
+                name="first-name"
+                formControlName="firstName"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="last-name-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.lastName as control"
+        >
+            <label for="last-name" class="mb-1">Last Name:</label>
+            <input
+                type="text"
+                id="last-name"
+                name="last-name"
+                formControlName="lastName"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="preferred-name-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.preferredName as control"
+        >
+            <label for="preferred-name" class="mb-1">Preferred Name:</label>
+            <input
+                type="text"
+                id="preferred-name"
+                name="preferred-name"
+                formControlName="preferredName"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="email-field" class="form-control w-full my-4" *appLet="detailsForm.controls.email as control">
+            <label for="email" class="mb-1">Email:</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                formControlName="email"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="phone-number-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.phoneNumber as control"
+        >
+            <label for="phone-number" class="mb-1">Phone:</label>
+            <input
+                type="text"
+                id="phone-number"
+                name="phone-number"
+                formControlName="phoneNumber"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="birth-date-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.birthDate as control"
+        >
+            <label for="birth-date" class="mb-1">Birth Date:</label>
+            <input
+                type="date"
+                id="birth-date"
+                name="birth-date"
+                formControlName="birthDate"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+    </section>
+    <div class="divider col-start-1 col-end-[-1]"></div>
+    <span class="text-3xl m-3">Job related</span>
+    <section formGroupName="job">
+        <fieldset
+            id="job-status-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.jobStatus as control"
+        >
+            <label for="job-status" class="mb-1">Current status:</label>
+            <input
+                type="text"
+                id="job-status"
+                name="job-status"
+                formControlName="jobStatus"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="years-of-experience-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.yearsOfExperience as control"
+        >
+            <label for="years-of-experience" class="mb-1">Years of experience:</label>
+            <input
+                type="number"
+                id="years-of-experience"
+                name="years-of-experience"
+                formControlName="yearsOfExperience"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <div class="divider"></div>
+        <fieldset
+            id="seek-company-size-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.seekCompanySize as control"
+        >
+            <label for="seek-company-size" class="mb-1">Preferred company size:</label>
+            <input
+                type="text"
+                id="seek-company-size"
+                name="seek-company-size"
+                formControlName="seekCompanySize"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="seek-locations-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.seekLocations as control"
+        >
+            <label for="seek-locations" class="mb-1">Preferred locations:</label>
+            <input
+                type="text"
+                id="seek-locations"
+                name="seek-locations"
+                formControlName="seekLocations"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="seek-location-type-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.seekLocationType as control"
+        >
+            <label for="seek-location-type" class="mb-1">Preferred location type:</label>
+            <input
+                type="text"
+                id="seek-location-type"
+                name="seek-location-type"
+                formControlName="seekLocationType"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="seek-salary-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.seekSalary as control"
+        >
+            <label for="seek-salary" class="mb-1">Expected salary:</label>
+            <input
+                type="number"
+                id="seek-salary"
+                name="seek-salary"
+                formControlName="seekSalary"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="seek-values-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.seekValues as control"
+        >
+            <label for="seek-values" class="mb-1">Expected values:</label>
+            <textarea
+                id="seek-values"
+                name="seek-values"
+                formControlName="seekValues"
+                rows="5"
+                class="textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
+            ></textarea>
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <div class="divider"></div>
+        <fieldset
+            id="work-permit-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.workPermit as control"
+        >
+            <label for="work-permit" class="mb-1">Work permit:</label>
+            <input
+                type="text"
+                id="work-permit"
+                name="work-permit"
+                formControlName="workPermit"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="notice-period-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.noticePeriod as control"
+        >
+            <label for="notice-period" class="mb-1">Notice period (weeks):</label>
+            <input
+                type="number"
+                id="notice-period"
+                name="notice-period"
+                formControlName="noticePeriod"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+    </section>
+    <div class="divider col-start-1 col-end-[-1]"></div>
+    <span class="text-3xl m-3">My experience</span>
+    <section formGroupName="technical">
+        <fieldset id="cv-field" class="form-control w-full my-4" *appLet="technicalForm.controls.cv as control">
+            <label for="cv" class="mb-1">Resume:</label>
+            <input
+                type="file"
+                accept="application/pdf"
+                id="cv"
+                name="cv"
+                class="file-input file-input-ghost w-full max-w-xs"
+                (input)="onCVUpload($event)"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="attachments-field"
+            class="form-control w-full my-4"
+            *appLet="technicalForm.controls.attachments as control"
+        >
+            <label for="attachments" class="mb-1">Other attachments:</label>
+            <input
+                type="file"
+                accept="application/*"
+                multiple
+                id="attachments"
+                name="attachments"
+                class="file-input file-input-ghost w-full max-w-xs"
+                (input)="onAttachmentsUpload($event)"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="video-field" class="form-control w-full my-4" *appLet="technicalForm.controls.video as control">
+            <label for="video" class="mb-1">Upload a video:</label>
+            <input
+                type="file"
+                accept="video/*"
+                id="video"
+                name="video"
+                class="file-input file-input-ghost w-full max-w-xs"
+                (input)="onVideoUpload($event)"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <div class="divider"></div>
+        <span class="block text-xl mt-4 mb-6">Spoken Languages</span>
+        <div [formGroup]="spokenLanguagesForm" class="flex flex-col md:flex-row gap-4 mb-4 w-full">
+            <div class="grid md:grid-cols-2 gap-4 flex-grow">
+                <fieldset
+                    id="spoken-language-field"
+                    class="form-control w-full"
+                    *appLet="spokenLanguagesForm.controls.language as control"
+                >
+                    <label for="spoken-language" class="mb-1">Language:</label>
+                    <input
+                        type="text"
+                        id="spoken-language"
+                        name="spoken-language"
+                        formControlName="language"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset
+                    id="spoken-language-level-field"
+                    class="form-control w-full"
+                    *appLet="spokenLanguagesForm.controls.level as control"
+                >
+                    <label for="spoken-language-level" class="mb-1">Level:</label>
+                    <input
+                        type="number"
+                        id="spoken-language-level"
+                        name="spoken-language-level"
+                        formControlName="level"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+            </div>
+            <button
+                class="btn btn-primary md:mt-7 w-full md:w-14"
+                [disabled]="spokenLanguagesForm.invalid"
+                (click)="onAddSpokenLanguage()"
+            >
+                <fa-icon [icon]="faAdd"></fa-icon>
+            </button>
+        </div>
+        <div class="flex gap-4 w-full mb-2" *ngFor="let spokenLanguage of spokenLanguages; let index = index">
+            <div class="grid grid-cols-2 items-center gap-4 flex-grow">
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1 block md:hidden">Language:</span>
+                    {{ spokenLanguage.language }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1 block md:hidden">Level:</span>
+                    {{ spokenLanguage.level }}
+                </span>
+            </div>
+            <button class="btn btn-ghost w-14" (click)="onRemoveSpokenLanguage(index)">
+                <fa-icon [icon]="faRemove"></fa-icon>
+            </button>
+        </div>
+        <div class="divider"></div>
+        <span class="block text-xl mt-4 mb-6">Skills</span>
+        <div [formGroup]="skillsForm" class="flex flex-col md:flex-row gap-4 mb-4 w-full">
+            <div class="grid md:grid-cols-2 gap-4 flex-grow">
+                <fieldset
+                    id="skill-name-field"
+                    class="form-control w-full"
+                    *appLet="skillsForm.controls.name as control"
+                >
+                    <label for="skill-name" class="mb-1">Skill:</label>
+                    <input
+                        type="text"
+                        id="skill-name"
+                        name="skill-name"
+                        formControlName="name"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset
+                    id="skill-years-field"
+                    class="form-control w-full"
+                    *appLet="skillsForm.controls.years as control"
+                >
+                    <label for="skill-years" class="mb-1">Years:</label>
+                    <input
+                        type="number"
+                        id="skill-years"
+                        name="skill-years"
+                        formControlName="years"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+            </div>
+            <button
+                class="btn btn-primary md:mt-7 w-full md:w-14"
+                [disabled]="skillsForm.invalid"
+                (click)="onAddSkill()"
+            >
+                <fa-icon [icon]="faAdd"></fa-icon>
+            </button>
+        </div>
+        <div class="flex gap-4 w-full mb-2" *ngFor="let skill of skills; let index = index">
+            <div class="grid grid-cols-2 items-center gap-4 flex-grow">
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1 block md:hidden">Skill:</span>
+                    {{ skill.name }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1 block md:hidden">Years:</span>
+                    {{ skill.years }}
+                </span>
+            </div>
+            <button class="btn btn-ghost w-14" (click)="onRemoveSkill(index)">
+                <fa-icon [icon]="faRemove"></fa-icon>
+            </button>
+        </div>
+        <div class="divider"></div>
+        <span class="block text-xl mt-4 mb-6">Education</span>
+        <div [formGroup]="educationHistoryForm" class="flex flex-col gap-4 mb-4 w-full">
+            <div class="grid gap-4 flex-grow">
+                <fieldset
+                    id="education-title-field"
+                    class="form-control w-full"
+                    *appLet="educationHistoryForm.controls.title as control"
+                >
+                    <label for="education-title" class="mb-1">Title:</label>
+                    <input
+                        type="text"
+                        id="education-title"
+                        name="education-title"
+                        formControlName="title"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset
+                    id="education-description-field"
+                    class="form-control w-full"
+                    *appLet="educationHistoryForm.controls.description as control"
+                >
+                    <label for="education-description" class="mb-1">Description:</label>
+                    <input
+                        type="text"
+                        id="education-description"
+                        name="education-description"
+                        formControlName="description"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset
+                    id="education-entity-field"
+                    class="form-control w-full"
+                    *appLet="educationHistoryForm.controls.entity as control"
+                >
+                    <label for="education-entity" class="mb-1">Entity:</label>
+                    <input
+                        type="text"
+                        id="education-entity"
+                        name="education-entity"
+                        formControlName="entity"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset id="education-date-field" class="form-control w-full">
+                    <label for="education-from-date" class="mb-1">Data range:</label>
+                    <div class="join w-full">
+                        <input
+                            type="date"
+                            id="education-from-date"
+                            name="education-from-date"
+                            formControlName="fromDate"
+                            class="input input-bordered join-item flex-grow"
+                            [class.input-error]="control.invalid && control.touched"
+                            *appLet="educationHistoryForm.controls.fromDate as control"
+                        />
+                        <input
+                            type="date"
+                            id="education-to-date"
+                            name="education-to-date"
+                            formControlName="toDate"
+                            class="input input-bordered join-item flex-grow"
+                            [class.input-error]="control.invalid && control.touched"
+                            *appLet="educationHistoryForm.controls.toDate as control"
+                        />
+                        <label class="btn join-item rounded-r">
+                            <input
+                                type="checkbox"
+                                class="checkbox"
+                                formControlName="onGoing"
+                                (change)="onGoingEducationCheck($event)"
+                            />
+                            On going
+                        </label>
+                    </div>
+                    <ng-container *appLet="educationHistoryForm.controls.fromDate as control">
+                        <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                            {{ control.errors | formErrorMessage }}
+                        </span>
+                    </ng-container>
+                </fieldset>
+            </div>
+            <button
+                class="btn btn-primary mx-auto md:mt-7 w-full md:w-14"
+                [disabled]="educationHistoryForm.invalid"
+                (click)="onAddEducation()"
+            >
+                <fa-icon [icon]="faAdd"></fa-icon>
+            </button>
+        </div>
+        <div
+            class="flex gap-4 w-full mb-2 py-4 even:bg-base-200 even:rounded"
+            *ngFor="let education of educationHistory; let index = index"
+        >
+            <div class="grid items-center gap-4 flex-grow">
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Title:</span>
+                    {{ education.title }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Description:</span>
+                    {{ education.description }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Entity:</span>
+                    {{ education.entity }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Date:</span>
+                    {{ education.fromDate | date }} - {{ education.toDate ? (education.toDate | date) : 'on going' }}
+                </span>
+            </div>
+            <button class="btn btn-ghost w-14 relative bottom-4" (click)="onRemoveEducation(index)">
+                <fa-icon [icon]="faRemove"></fa-icon>
+            </button>
+        </div>
+        <div class="divider"></div>
+        <span class="block text-xl mt-4 mb-6">Employment</span>
+        <div [formGroup]="employmentHistoryForm" class="flex flex-col gap-4 mb-4 w-full">
+            <div class="grid gap-4 flex-grow">
+                <fieldset
+                    id="employment-title-field"
+                    class="form-control w-full"
+                    *appLet="employmentHistoryForm.controls.title as control"
+                >
+                    <label for="employment-title" class="mb-1">Title:</label>
+                    <input
+                        type="text"
+                        id="employment-title"
+                        name="employment-title"
+                        formControlName="title"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset
+                    id="employment-description-field"
+                    class="form-control w-full"
+                    *appLet="employmentHistoryForm.controls.description as control"
+                >
+                    <label for="employment-description" class="mb-1">Description:</label>
+                    <input
+                        type="text"
+                        id="employment-description"
+                        name="employment-description"
+                        formControlName="description"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset
+                    id="employment-company-field"
+                    class="form-control w-full"
+                    *appLet="employmentHistoryForm.controls.company as control"
+                >
+                    <label for="employment-company" class="mb-1">Company:</label>
+                    <input
+                        type="text"
+                        id="employment-company"
+                        name="employment-company"
+                        formControlName="company"
+                        class="input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+                <fieldset id="employment-date-field" class="form-control w-full">
+                    <label for="employment-from-date" class="mb-1">Data range:</label>
+                    <div class="join w-full">
+                        <input
+                            type="date"
+                            id="employment-from-date"
+                            name="employment-from-date"
+                            formControlName="fromDate"
+                            class="input input-bordered join-item flex-grow"
+                            [class.input-error]="control.invalid && control.touched"
+                            *appLet="employmentHistoryForm.controls.fromDate as control"
+                        />
+                        <input
+                            type="date"
+                            id="employment-to-date"
+                            name="employment-to-date"
+                            formControlName="toDate"
+                            class="input input-bordered join-item flex-grow"
+                            [class.input-error]="control.invalid && control.touched"
+                            *appLet="employmentHistoryForm.controls.toDate as control"
+                        />
+                        <label class="btn join-item rounded-r">
+                            <input
+                                type="checkbox"
+                                class="checkbox"
+                                formControlName="onGoing"
+                                (change)="onGoingEmploymentCheck($event)"
+                            />
+                            On going
+                        </label>
+                    </div>
+                    <ng-container *appLet="employmentHistoryForm.controls.fromDate as control">
+                        <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                            {{ control.errors | formErrorMessage }}
+                        </span>
+                    </ng-container>
+                </fieldset>
+            </div>
+            <button
+                class="btn btn-primary mx-auto md:mt-7 w-full md:w-14"
+                [disabled]="employmentHistoryForm.invalid"
+                (click)="onAddEmployment()"
+            >
+                <fa-icon [icon]="faAdd"></fa-icon>
+            </button>
+        </div>
+        <div
+            class="flex gap-4 w-full mb-2 py-4 even:bg-base-200 even:rounded"
+            *ngFor="let employment of employmentHistory; let index = index"
+        >
+            <div class="grid items-center gap-4 flex-grow">
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Title:</span>
+                    {{ employment.title }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Description:</span>
+                    {{ employment.description }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Company:</span>
+                    {{ employment.company }}
+                </span>
+                <span class="px-2 text-lg">
+                    <span class="font-bold mr-1">Date:</span>
+                    {{ employment.fromDate | date }} - {{ employment.toDate ? (employment.toDate | date) : 'on going' }}
+                </span>
+            </div>
+            <button class="btn btn-ghost w-14 relative bottom-4" (click)="onRemoveEmployment(index)">
+                <fa-icon [icon]="faRemove"></fa-icon>
+            </button>
+        </div>
+    </section>
+</div>
