@@ -1,19 +1,13 @@
 package main
 
 import (
-	"log"
+	"shift/api"
+	"shift/db"
 )
 
 func main() {
-	userDB, err := NewPostgresDB()
-	if err != nil {
-		log.Fatal(err)
-	}
+	userDB := db.NewPostgresDB()
 
-	if err := userDB.Init(); err != nil {
-		log.Fatal(err)
-	}
-
-	server := NewAPIServer(":8080", userDB)
+	server := api.NewAPIServer(":8080", userDB)
 	server.Run()
 }
