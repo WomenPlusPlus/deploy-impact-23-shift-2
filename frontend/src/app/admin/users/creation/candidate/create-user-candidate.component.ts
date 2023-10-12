@@ -60,6 +60,10 @@ export class CreateUserCandidateComponent implements OnInit {
         return this.form.controls.technical;
     }
 
+    get socialForm(): CreateUserCandidateFormGroup['social'] {
+        return this.form.controls.social;
+    }
+
     get spokenLanguages(): CandidateSpokenLanguagesFormModel[] {
         return this.technicalForm.controls.spokenLanguages.value || [];
     }

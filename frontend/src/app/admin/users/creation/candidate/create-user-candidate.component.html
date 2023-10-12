@@ -738,4 +738,62 @@
             </button>
         </div>
     </section>
+    <div class="divider col-start-1 col-end-[-1]"></div>
+    <span class="text-3xl m-3">Social media</span>
+    <section formGroupName="social">
+        <fieldset
+            id="linkedin-url-field"
+            class="form-control w-full my-4"
+            *appLet="socialForm.controls.linkedInUrl as control"
+        >
+            <label for="linkedin-url" class="mb-1">LinkedIn URL:</label>
+            <input
+                type="text"
+                id="linkedin-url"
+                name="linkedin-url"
+                formControlName="linkedInUrl"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="github-url-field"
+            class="form-control w-full my-4"
+            *appLet="socialForm.controls.githubUrl as control"
+        >
+            <label for="github-url" class="mb-1">Github URL:</label>
+            <input
+                type="text"
+                id="github-url"
+                name="github-url"
+                formControlName="githubUrl"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="portfolio-url-field"
+            class="form-control w-full my-4"
+            *appLet="socialForm.controls.portfolioUrl as control"
+        >
+            <label for="portfolio-url" class="mb-1">Portfolio URL:</label>
+            <input
+                type="text"
+                id="portfolio-url"
+                name="portfolio-url"
+                formControlName="portfolioUrl"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+    </section>
 </div>

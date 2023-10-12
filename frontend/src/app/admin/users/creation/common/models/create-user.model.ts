@@ -3,41 +3,47 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
 
 export interface CreateUserCandidateFormModel {
-    details: {
-        firstName: string | null;
-        lastName: string | null;
-        preferredName: string | null;
-        email: string | null;
-        phoneNumber: string | null;
-        birthDate: Date | null;
-        photo: File | null;
-    };
-    job: {
-        yearsOfExperience: number | null;
-        jobStatus: string | null; // TODO: enum
-        seekJobType: string | null; // TODO: enum
-        seekCompanySize: string | null; // TODO: enum
-        seekLocations: string[] | null; // TODO: location service?
-        seekLocationType: string | null; // TODO: enum
-        seekSalary: number | null;
-        seekValues: string | null;
-        workPermit: string | null; // TODO: enum
-        noticePeriod: string | null;
-    };
-    technical: {
-        spokenLanguages: CandidateSpokenLanguagesFormModel[] | null;
-        skills: CandidateSkillsFormModel[] | null;
-        cv: File | null;
-        attachments: File[] | null;
-        video: File | null;
-        educationHistory: CandidateEducationHistoryFormModel[] | null;
-        employmentHistory: CandidateEmploymentHistoryFormModel[] | null;
-    };
-    social: {
-        linkedInUrl: string | null;
-        githubUrl: string | null;
-        portfolioUrl: string | null;
-    };
+    details: UserDetailsFormModel;
+    job: UserJobFormModel;
+    technical: UserTechnicalFormModel;
+    social: UserSocialFormModel;
+}
+
+export interface UserDetailsFormModel {
+    firstName: string | null;
+    lastName: string | null;
+    preferredName: string | null;
+    email: string | null;
+    phoneNumber: string | null;
+    birthDate: Date | null;
+    photo: File | null;
+}
+export interface UserJobFormModel {
+    yearsOfExperience: number | null;
+    jobStatus: string | null; // TODO: enum
+    seekJobType: string | null; // TODO: enum
+    seekCompanySize: string | null; // TODO: enum
+    seekLocations: string[] | null; // TODO: location service?
+    seekLocationType: string | null; // TODO: enum
+    seekSalary: number | null;
+    seekValues: string | null;
+    workPermit: string | null; // TODO: enum
+    noticePeriod: string | null;
+}
+export interface UserTechnicalFormModel {
+    spokenLanguages: CandidateSpokenLanguagesFormModel[] | null;
+    skills: CandidateSkillsFormModel[] | null;
+    cv: File | null;
+    attachments: File[] | null;
+    video: File | null;
+    educationHistory: CandidateEducationHistoryFormModel[] | null;
+    employmentHistory: CandidateEmploymentHistoryFormModel[] | null;
+}
+
+export interface UserSocialFormModel {
+    linkedInUrl: string | null;
+    githubUrl: string | null;
+    portfolioUrl: string | null;
 }
 
 export type CandidateSpokenLanguagesFormGroup = FormModel<CandidateSpokenLanguagesFormModel>;
