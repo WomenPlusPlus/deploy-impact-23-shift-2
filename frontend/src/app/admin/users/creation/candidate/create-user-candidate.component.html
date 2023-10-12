@@ -28,7 +28,7 @@
             class="form-control w-full my-4"
             *appLet="detailsForm.controls.firstName as control"
         >
-            <label for="first-name" class="mb-1">First Name:</label>
+            <label for="first-name" class="mb-1">First Name<span class="text-red-400">*</span>:</label>
             <input
                 type="text"
                 id="first-name"
@@ -46,7 +46,7 @@
             class="form-control w-full my-4"
             *appLet="detailsForm.controls.lastName as control"
         >
-            <label for="last-name" class="mb-1">Last Name:</label>
+            <label for="last-name" class="mb-1">Last Name<span class="text-red-400">*</span>:</label>
             <input
                 type="text"
                 id="last-name"
@@ -78,7 +78,7 @@
             </span>
         </fieldset>
         <fieldset id="email-field" class="form-control w-full my-4" *appLet="detailsForm.controls.email as control">
-            <label for="email" class="mb-1">Email:</label>
+            <label for="email" class="mb-1">Email<span class="text-red-400">*</span>:</label>
             <input
                 type="email"
                 id="email"
@@ -96,7 +96,7 @@
             class="form-control w-full my-4"
             *appLet="detailsForm.controls.phoneNumber as control"
         >
-            <label for="phone-number" class="mb-1">Phone:</label>
+            <label for="phone-number" class="mb-1">Phone<span class="text-red-400">*</span>:</label>
             <input
                 type="text"
                 id="phone-number"
@@ -114,7 +114,7 @@
             class="form-control w-full my-4"
             *appLet="detailsForm.controls.birthDate as control"
         >
-            <label for="birth-date" class="mb-1">Birth Date:</label>
+            <label for="birth-date" class="mb-1">Birth Date<span class="text-red-400">*</span>:</label>
             <input
                 type="date"
                 id="birth-date"
@@ -136,7 +136,7 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.jobStatus as control"
         >
-            <label for="job-status" class="mb-1">Current status:</label>
+            <label for="job-status" class="mb-1">Current status<span class="text-red-400">*</span>:</label>
             <input
                 type="text"
                 id="job-status"
@@ -154,7 +154,9 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.yearsOfExperience as control"
         >
-            <label for="years-of-experience" class="mb-1">Years of experience:</label>
+            <label for="years-of-experience" class="mb-1"
+                >Years of experience<span class="text-red-400">*</span>:</label
+            >
             <input
                 type="number"
                 id="years-of-experience"
@@ -191,7 +193,9 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.seekLocations as control"
         >
-            <label for="seek-locations" class="mb-1">Preferred locations (cities):</label>
+            <label for="seek-locations" class="mb-1"
+                >Preferred locations (cities)<span class="text-red-400">*</span>:</label
+            >
             <div class="dropdown">
                 <input
                     #seekLocationInput
@@ -213,7 +217,10 @@
                 >
                     <cdk-virtual-scroll-viewport itemSize="20" class="h-72">
                         <li *cdkVirtualFor="let result of cities | filterCity: filterLocationsForm.valueChanges">
-                            <button (click)="onAddPreferredLocation(result.item); seekLocationInput.focus()">
+                            <button
+                                type="button"
+                                (click)="onAddPreferredLocation(result.item); seekLocationInput.focus()"
+                            >
                                 {{ result.item.name }}
                             </button>
                         </li>
@@ -224,7 +231,7 @@
                 <li *ngFor="let location of control.value; let index = index">
                     <span class="badge badge-outline">
                         {{ location.name }}
-                        <button class="ml-2" (click)="onRemovePreferredLocation(index)">
+                        <button type="button" class="ml-2" (click)="onRemovePreferredLocation(index)">
                             <fa-icon [icon]="faRemove" class="text-xs"></fa-icon>
                         </button>
                     </span>
@@ -239,7 +246,9 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.seekLocationType as control"
         >
-            <label for="seek-location-type" class="mb-1">Preferred location type:</label>
+            <label for="seek-location-type" class="mb-1"
+                >Preferred location type<span class="text-red-400">*</span>:</label
+            >
             <input
                 type="text"
                 id="seek-location-type"
@@ -294,7 +303,7 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.workPermit as control"
         >
-            <label for="work-permit" class="mb-1">Work permit:</label>
+            <label for="work-permit" class="mb-1">Work permit<span class="text-red-400">*</span>:</label>
             <input
                 type="text"
                 id="work-permit"
@@ -421,6 +430,7 @@
                 </fieldset>
             </div>
             <button
+                type="button"
                 class="btn btn-primary md:mt-7 w-full md:w-14"
                 [disabled]="spokenLanguagesForm.invalid"
                 (click)="onAddSpokenLanguage()"
@@ -439,7 +449,7 @@
                     {{ spokenLanguage.level }}
                 </span>
             </div>
-            <button class="btn btn-ghost w-14" (click)="onRemoveSpokenLanguage(index)">
+            <button type="button" class="btn btn-ghost w-14" (click)="onRemoveSpokenLanguage(index)">
                 <fa-icon [icon]="faRemove"></fa-icon>
             </button>
         </div>
@@ -485,6 +495,7 @@
                 </fieldset>
             </div>
             <button
+                type="button"
                 class="btn btn-primary md:mt-7 w-full md:w-14"
                 [disabled]="skillsForm.invalid"
                 (click)="onAddSkill()"
@@ -503,7 +514,7 @@
                     {{ skill.years }}
                 </span>
             </div>
-            <button class="btn btn-ghost w-14" (click)="onRemoveSkill(index)">
+            <button type="button" class="btn btn-ghost w-14" (click)="onRemoveSkill(index)">
                 <fa-icon [icon]="faRemove"></fa-icon>
             </button>
         </div>
@@ -604,6 +615,7 @@
                 </fieldset>
             </div>
             <button
+                type="button"
                 class="btn btn-primary mx-auto md:mt-7 w-full md:w-14"
                 [disabled]="educationHistoryForm.invalid"
                 (click)="onAddEducation()"
@@ -633,7 +645,7 @@
                     {{ education.fromDate | date }} - {{ education.toDate ? (education.toDate | date) : 'on going' }}
                 </span>
             </div>
-            <button class="btn btn-ghost w-14 relative bottom-4" (click)="onRemoveEducation(index)">
+            <button type="button" class="btn btn-ghost w-14 relative bottom-4" (click)="onRemoveEducation(index)">
                 <fa-icon [icon]="faRemove"></fa-icon>
             </button>
         </div>
@@ -734,6 +746,7 @@
                 </fieldset>
             </div>
             <button
+                type="button"
                 class="btn btn-primary mx-auto md:mt-7 w-full md:w-14"
                 [disabled]="employmentHistoryForm.invalid"
                 (click)="onAddEmployment()"
@@ -763,7 +776,7 @@
                     {{ employment.fromDate | date }} - {{ employment.toDate ? (employment.toDate | date) : 'on going' }}
                 </span>
             </div>
-            <button class="btn btn-ghost w-14 relative bottom-4" (click)="onRemoveEmployment(index)">
+            <button type="button" class="btn btn-ghost w-14 relative bottom-4" (click)="onRemoveEmployment(index)">
                 <fa-icon [icon]="faRemove"></fa-icon>
             </button>
         </div>
