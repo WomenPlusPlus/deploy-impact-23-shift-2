@@ -3,10 +3,14 @@ import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CreateUserCandidateComponent } from '@app/admin/users/creation/candidate/create-user-candidate.component';
+import { CreateUserFormGroup } from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserGenericComponent } from '@app/admin/users/creation/generic/create-user-generic.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+
+type CreateUserFormComponent = { form: FormGroup<CreateUserFormGroup> };
 
 @Component({
     selector: 'app-create-user',
@@ -14,6 +18,7 @@ import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-l
     imports: [
         CommonModule,
         FormsModule,
+        CreateUserGenericComponent,
         CreateUserCandidateComponent,
         FormErrorMessagePipe,
         LetDirective,
@@ -25,13 +30,13 @@ import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-l
 })
 export class CreateUserComponent {
     @ViewChild('childFormEl', { static: false })
-    set childFormComponent(el: { form: FormGroup } | undefined) {
+    set childFormComponent(el: CreateUserFormComponent | undefined) {
         this.childForm = el?.form;
     }
 
     selectedKind = UserKindEnum.CANDIDATE;
 
-    childForm?: FormGroup;
+    childForm?: FormGroup<CreateUserFormGroup>;
 
     protected readonly userKindsEnum = UserKindEnum;
     protected readonly userKinds: UserKindEnum[] = [
@@ -42,6 +47,8 @@ export class CreateUserComponent {
     ];
 
     onSubmit(): void {
-        // TODO
+        if (!this.childForm?.valid) {
+            return;
+        }
     }
 }

@@ -1,12 +1,16 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
+export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
 export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
 
-export interface CreateUserCandidateFormModel {
+export interface CreateUserFormModel {
     details: UserDetailsFormModel;
+    social: UserSocialFormModel;
+}
+
+export interface CreateUserCandidateFormModel extends CreateUserFormModel {
     job: UserJobFormModel;
     technical: UserTechnicalFormModel;
-    social: UserSocialFormModel;
 }
 
 export interface UserDetailsFormModel {

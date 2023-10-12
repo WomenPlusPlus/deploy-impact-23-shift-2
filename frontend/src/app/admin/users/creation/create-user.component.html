@@ -15,8 +15,10 @@
         </div>
     </fieldset>
     <div class="divider"></div>
-    <app-create-user-candidate *ngIf="userKindsEnum.CANDIDATE" #childFormEl></app-create-user-candidate>
-    <ng-container [ngSwitch]="selectedKind"> </ng-container>
+    <ng-container [ngSwitch]="selectedKind">
+        <app-create-user-candidate *ngSwitchCase="userKindsEnum.CANDIDATE" #childFormEl></app-create-user-candidate>
+        <app-create-user-generic *ngSwitchDefault #childFormEl></app-create-user-generic>
+    </ng-container>
     <div class="sticky flex flex-col bottom-0 pb-4 bg-base-100 w-full">
         <div class="divider mt-0"></div>
         <button type="submit" class="btn btn-primary ml-auto" [disabled]="!childForm || childForm.invalid">
