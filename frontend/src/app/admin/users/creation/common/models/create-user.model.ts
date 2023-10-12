@@ -1,5 +1,7 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
+import { LocationCity } from '@app/common/models/location.model';
+
 export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
 export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
 
@@ -27,7 +29,7 @@ export interface UserJobFormModel {
     jobStatus: string | null; // TODO: enum
     seekJobType: string | null; // TODO: enum
     seekCompanySize: string | null; // TODO: enum
-    seekLocations: string[] | null; // TODO: location service?
+    seekLocations: LocationCity[] | null;
     seekLocationType: string | null; // TODO: enum
     seekSalary: number | null;
     seekValues: string | null;

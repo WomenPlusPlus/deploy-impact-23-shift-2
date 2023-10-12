@@ -100,7 +100,16 @@ export class AdminUsersService {
         for (const key of Object.keys(user)) {
             const wrapper = user[key as keyof CreateUserFormModel];
             for (const key of Object.keys(wrapper)) {
-                formData.append(key, wrapper[key as keyof typeof wrapper]);
+                const value = wrapper[key as keyof typeof wrapper];
+                if (typeof value !== 'object') {
+                    formData.append(key, value);
+                    continue;
+                }
+                try {
+                    formData.append(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }
         return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/users`, formData);

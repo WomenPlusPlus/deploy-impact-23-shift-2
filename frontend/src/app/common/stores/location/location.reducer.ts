@@ -50,3 +50,5 @@ export const locationFeature = createFeature({
         )
     )
 });
+
+export const { selectCities: selectLocationCities } = locationFeature;

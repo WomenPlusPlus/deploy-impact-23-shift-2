@@ -191,15 +191,45 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.seekLocations as control"
         >
-            <label for="seek-locations" class="mb-1">Preferred locations:</label>
-            <input
-                type="text"
-                id="seek-locations"
-                name="seek-locations"
-                formControlName="seekLocations"
-                class="input input-bordered"
-                [class.input-error]="control.invalid && control.touched"
-            />
+            <label for="seek-locations" class="mb-1">Preferred locations (cities):</label>
+            <div class="dropdown">
+                <input
+                    #seekLocationInput
+                    type="text"
+                    id="seek-locations"
+                    name="seek-locations"
+                    class="input input-bordered w-full"
+                    [formControl]="filterLocationsForm"
+                    [class.input-error]="
+                        (control.invalid && control.touched) ||
+                        (filterLocationsForm.invalid && filterLocationsForm.invalid)
+                    "
+                    (keyup.escape)="seekLocationInput.blur()"
+                />
+                <ul
+                    tabindex="0"
+                    class="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box max-h-[32rem] overflow-auto flex-nowrap w-full"
+                    *appLet="cities$ | async as cities"
+                >
+                    <cdk-virtual-scroll-viewport itemSize="20" class="h-72">
+                        <li *cdkVirtualFor="let result of cities | filterCity: filterLocationsForm.valueChanges">
+                            <button (click)="onAddPreferredLocation(result.item); seekLocationInput.focus()">
+                                {{ result.item.name }}
+                            </button>
+                        </li>
+                    </cdk-virtual-scroll-viewport>
+                </ul>
+            </div>
+            <ul class="flex flex-wrap gap-2 p-4 empty:hidden">
+                <li *ngFor="let location of control.value; let index = index">
+                    <span class="badge badge-outline">
+                        {{ location.name }}
+                        <button class="ml-2" (click)="onRemovePreferredLocation(index)">
+                            <fa-icon [icon]="faRemove" class="text-xs"></fa-icon>
+                        </button>
+                    </span>
+                </li>
+            </ul>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>

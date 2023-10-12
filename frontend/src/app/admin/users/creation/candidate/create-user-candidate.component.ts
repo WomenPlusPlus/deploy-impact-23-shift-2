@@ -2,9 +2,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAdd, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { map, Observable, startWith } from 'rxjs';
 
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { Store } from '@ngrx/store';
 
 import {
     CandidateEducationHistoryFormGroup,
@@ -18,9 +21,12 @@ import {
     CreateUserCandidateFormGroup
 } from '@app/admin/users/creation/common/models/create-user.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
+import { LocationCity } from '@app/common/models/location.model';
+import { FilterCityPipe } from '@app/common/pipes/filter-city/filter-city.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { selectLocationCities } from '@app/common/stores/location/location.reducer';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
 
@@ -30,12 +36,14 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
     imports: [
         CommonModule,
         ReactiveFormsModule,
+        FontAwesomeModule,
+        ScrollingModule,
         FormErrorMessagePipe,
         LetDirective,
         ReactiveFormsModule,
         UserCompanyRoleLabelPipe,
         UserKindLabelPipe,
-        FontAwesomeModule
+        FilterCityPipe
     ],
     templateUrl: './create-user-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -46,7 +54,9 @@ export class CreateUserCandidateComponent implements OnInit {
     skillsForm!: FormGroup<CandidateSkillsFormGroup>;
     educationHistoryForm!: FormGroup<CandidateEducationHistoryFormGroup>;
     employmentHistoryForm!: FormGroup<CandidateEmploymentHistoryFormGroup>;
+    filterLocationsForm!: FormControl<string | null>;
     imagePreviewUrl$!: Observable<string>;
+    cities$!: Observable<LocationCity[]>;
 
     get detailsForm(): CreateUserCandidateFormGroup['details'] {
         return this.form.controls.details;
@@ -80,7 +90,13 @@ export class CreateUserCandidateComponent implements OnInit {
         return this.technicalForm.controls.employmentHistory.value || [];
     }
 
-    constructor(private readonly fb: FormBuilder) {}
+    protected readonly faAdd = faAdd;
+    protected readonly faRemove = faRemove;
+
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly store: Store
+    ) {}
 
     ngOnInit(): void {
         this.initForm();
@@ -197,6 +213,23 @@ export class CreateUserCandidateComponent implements OnInit {
         );
     }
 
+    onAddPreferredLocation(city: LocationCity): void {
+        const control = this.jobForm.controls.seekLocations;
+        if (control.value?.includes(city)) {
+            return;
+        }
+        control.setValue((control.value || []).concat(city));
+        control.markAsTouched();
+        this.filterLocationsForm.reset();
+    }
+
+    onRemovePreferredLocation(index: number): void {
+        const control = this.jobForm.controls.seekLocations;
+        const value = control.value || [];
+        control.setValue(value.slice(0, index).concat(value.slice(index + 1)));
+        control.markAsTouched();
+    }
+
     private initForm(): void {
         this.form = this.fb.group({
             details: this.fb.group({
@@ -232,7 +265,10 @@ export class CreateUserCandidateComponent implements OnInit {
                 jobStatus: this.fb.control<string | null>(null, [Validators.required]),
                 seekJobType: this.fb.control<string | null>(null),
                 seekCompanySize: this.fb.control<string | null>(null),
-                seekLocations: this.fb.control<string[] | null>(null, [Validators.required, Validators.max(5)]),
+                seekLocations: this.fb.control<LocationCity[] | null>(
+                    [],
+                    [Validators.required, Validators.minLength(1)]
+                ),
                 seekLocationType: this.fb.control<string | null>(null, [Validators.required]),
                 seekSalary: this.fb.control<number | null>(null),
                 seekValues: this.fb.control<string | null>(null),
@@ -302,6 +338,7 @@ export class CreateUserCandidateComponent implements OnInit {
             toDate: this.fb.control<Date | null>(null),
             onGoing: this.fb.control<boolean | null>(false)
         });
+        this.filterLocationsForm = this.fb.control<string | null>(null, [Validators.minLength(3)]);
     }
 
     private initSubscriptions(): void {
@@ -319,8 +356,7 @@ export class CreateUserCandidateComponent implements OnInit {
                 }
             })
         );
-    }
 
-    protected readonly faAdd = faAdd;
-    protected readonly faRemove = faRemove;
+        this.cities$ = this.store.select(selectLocationCities);
+    }
 }
