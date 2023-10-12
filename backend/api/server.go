@@ -1,10 +1,11 @@
-package main
+package api
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"shift/entity"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -14,11 +15,11 @@ import (
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
 	address string
-	userDB  UserDB
+	userDB  entity.UserDB
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
-func NewAPIServer(address string, userDB UserDB) *APIServer {
+func NewAPIServer(address string, userDB entity.UserDB) *APIServer {
 	return &APIServer{
 		address: address,
 		userDB:  userDB,
@@ -78,9 +79,12 @@ func IsPermissionError(err error) bool {
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
-	// rootPath := "api/v1/"
+	// Users
+	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers)).
+		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
+	router.HandleFunc("/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID)).
+		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
 	// Admin
-	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers))
 	// router.HandleFunc("/admin/invites", makeHTTPHandleFunc(s.handleAdminInvites))
 	// router.HandleFunc("/admin/associations", makeHTTPHandleFunc(s.handleAdminAssociations))
 	// router.HandleFunc("/admin/companies", makeHTTPHandleFunc(s.handleAdmin))
@@ -210,12 +214,12 @@ func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) er
 
 // handleCreateUser handles POST requests to create a new user account.
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	userRequest := new(CreateUserRequest)
+	userRequest := new(entity.CreateUserRequest)
 	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
 		return err
 	}
 
-	user := NewUser(
+	user := entity.NewUser(
 		userRequest.FirstName,
 		userRequest.LastName,
 		userRequest.PreferredName,
@@ -236,6 +240,6 @@ func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) err
 }
 
 // handleUpdateUser handles PUT requests to update a user account.
-func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
+// func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {
+// 	return nil
+// }
