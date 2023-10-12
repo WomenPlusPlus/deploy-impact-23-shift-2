@@ -1,71 +1,72 @@
-package main
+package db
 
 import (
 	"database/sql"
 	"fmt"
+	"shift/entity"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 // UserDB is an interface for managing user data.
 type UserDB interface {
-	CreateUser(*User) error
+	CreateUser(*entity.User) error
 	DeleteUser(int) error
-	UpdateUser(*User) error
-	GetUsers() ([]*User, error)
-	GetUserByID(int) (*User, error)
+	UpdateUser(*entity.User) error
+	GetUsers() ([]*entity.User, error)
+	GetUserByID(int) (*entity.User, error)
 }
 
 // PostgresDB is a concrete implementation of the UserDB interface using PostgreSQL.
 type PostgresDB struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 // NewPostgresDB creates a new PostgresDB instance and initializes the database connection.
-func NewPostgresDB() (*PostgresDB, error) {
-	connStr := "user=postgres dbname=postgres password=shift sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
+func NewPostgresDB() *PostgresDB {
+	connStr := "user=postgres dbname=postgres sslmode=disable"
+	db, err := sqlx.Open("postgres", connStr)
 
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, err
+		return nil
 	}
 
 	return &PostgresDB{
 		db: db,
-	}, nil
+	}
 }
 
 // Init initializes the database by creating the user table.
-func (s *PostgresDB) Init() error {
-	return s.CreateUserTable()
+func (s *PostgresDB) Init() {
+	// return s.CreateUserTable()
 }
 
 // CreateUserTable creates the "users" table if it does not exist.
-func (s *PostgresDB) CreateUserTable() error {
-	query := `create table if not exists users (
+func (s *PostgresDB) CreateUserTable() {
+	query := `
+	CREATE TABLE users (
 		id serial primary key,
-		first_name varchar(55),
-		last_name varchar(55),
-		preferred_name varchar(20),
+		firstName varchar(55),
+		lastName varchar(55),
+		preferredName varchar(20),
 		email varchar(55),
 		state varchar(20),
-		image_url varchar(255),
+		imageUrl varchar(255),
 		role varchar(20),
-		created timestamp
+		createdAt timestamp
 	)`
-
-	_, err := s.db.Exec(query)
-	return err
+	s.db.MustExec(query)
 }
 
 // CreateUser inserts a new user record into the "users" table.
-func (s *PostgresDB) CreateUser(u *User) error {
-	query := `insert into users
-		(first_name, last_name, preferred_name, email, state, image_url, role, created)
+func (s *PostgresDB) CreateUser(u *entity.User) error {
+	query := `INSERT INTO users
+		(firstName, lastName, preferredName, email, state, imageUrl, role, createdAt)
 		values ($1, $2, $3, $4, $5, $6, $7, $8)`
 
 	resp, err := s.db.Query(
@@ -88,7 +89,7 @@ func (s *PostgresDB) CreateUser(u *User) error {
 }
 
 // UpdateUser updates a user's information in the "users" table.
-func (s *PostgresDB) UpdateUser(*User) error {
+func (s *PostgresDB) UpdateUser(*entity.User) error {
 	return nil
 }
 
@@ -98,7 +99,7 @@ func (s *PostgresDB) DeleteUser(id int) error {
 }
 
 // GetUserByID retrieves a user's information from the "users" table based on their ID.
-func (s *PostgresDB) GetUserByID(id int) (*User, error) {
+func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
 	rows, err := s.db.Query("select * from users where id = $1", id)
 
 	if err != nil {
@@ -113,14 +114,14 @@ func (s *PostgresDB) GetUserByID(id int) (*User, error) {
 }
 
 // GetUsers retrieves a list of all users from the "users" table.
-func (s *PostgresDB) GetUsers() ([]*User, error) {
+func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	rows, err := s.db.Query("select * from users")
 
 	if err != nil {
 		return nil, err
 	}
 
-	users := []*User{}
+	users := []*entity.User{}
 
 	for rows.Next() {
 		user, err := scanIntoUser(rows)
@@ -133,10 +134,10 @@ func (s *PostgresDB) GetUsers() ([]*User, error) {
 	return users, nil
 }
 
-// scanIntoUser scans a row from the database into a User struct.
-func scanIntoUser(rows *sql.Rows) (*User, error) {
+// scanIntoUser scans a row from the database into a entity.User struct.
+func scanIntoUser(rows *sql.Rows) (*entity.User, error) {
 	var createdAt sql.NullTime
-	user := new(User)
+	user := new(entity.User)
 	err := rows.Scan(
 		&user.ID,
 		&user.FirstName,
