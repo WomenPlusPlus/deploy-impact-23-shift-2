@@ -1,6 +1,8 @@
+import { HotToastService } from '@ngneat/hot-toast';
 import { exhaustMap, Observable, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
@@ -34,7 +36,11 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
                 this.companyProfileService.getCompanyInfo(id).pipe(
                     tapResponse(
                         (profile) => this.profileLoadSuccess(profile),
-                        () => this.profileLoadError()
+                        () => {
+                            this.profileLoadError();
+                            this.router.navigate(['/companies']);
+                            this.toast.error('Company with id ' + id + ' not found.');
+                        }
                     )
                 )
             )
@@ -63,7 +69,11 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
         })
     );
 
-    constructor(private readonly companyProfileService: CompanyProfileService) {
+    constructor(
+        private readonly companyProfileService: CompanyProfileService,
+        private router: Router,
+        private readonly toast: HotToastService
+    ) {
         super(initialState);
     }
 }

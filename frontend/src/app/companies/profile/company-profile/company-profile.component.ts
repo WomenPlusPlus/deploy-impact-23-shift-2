@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
 
@@ -22,13 +22,16 @@ export class CompanyProfileComponent implements OnInit {
 
     constructor(
         private readonly companyProfileStore: CompanyProfileStore,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
         this.id = Number(this.route.snapshot.paramMap.get('id'));
         if (this.id) {
             this.companyProfileStore.getProfile(this.id);
+        } else {
+            this.router.navigate(['/companies']);
         }
     }
 }
