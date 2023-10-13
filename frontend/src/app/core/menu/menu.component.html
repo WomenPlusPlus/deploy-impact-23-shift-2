@@ -47,7 +47,7 @@
             <span *ngIf="expanded" class="ml-1 truncate">Variables</span>
         </a>
     </li>
-    <li class="mt-auto">
+    <li class="mt-auto" *ngIf="showExpanded">
         <button title="Toggle navigation" (click)="expandedChange.emit(!expanded)">
             <fa-icon [icon]="expanded ? faSquareCaretLeft : faSquareCaretRight" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Toggle navigation</span>
