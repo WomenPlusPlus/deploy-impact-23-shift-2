@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.store.dispatch(LocationActions.load());
+        this.store.dispatch(LocationActions.loadCities());
     }
 
     onToggleMenuExpanded(): void {

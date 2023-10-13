@@ -3,10 +3,10 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { LocationCity } from '@app/common/models/location.model';
 
 export const LocationActions = createActionGroup({
-    source: 'Locations',
+    source: 'Location',
     events: {
-        Load: emptyProps(),
-        loadSuccess: props<{ cities: LocationCity[] }>(),
-        loadError: props<{ errorMsg: string }>()
+        LoadCities: emptyProps(),
+        loadCitiesSuccess: props<{ cities: LocationCity[] }>(),
+        loadCitiesError: props<{ errorMsg: string }>()
     }
 });

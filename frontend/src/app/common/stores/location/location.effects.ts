@@ -11,12 +11,12 @@ import { LocationActions } from './location.actions';
 export const loadActors = createEffect(
     (actions$ = inject(Actions), locationsService = inject(LocationsService)) => {
         return actions$.pipe(
-            ofType(LocationActions.load),
+            ofType(LocationActions.loadCities),
             exhaustMap(() =>
                 locationsService.getCities().pipe(
-                    map((cities) => LocationActions.loadSuccess({ cities })),
+                    map((cities) => LocationActions.loadCitiesSuccess({ cities })),
                     catchError((error: { message: string }) =>
-                        of(LocationActions.loadError({ errorMsg: error.message }))
+                        of(LocationActions.loadCitiesError({ errorMsg: error.message }))
                     )
                 )
             )

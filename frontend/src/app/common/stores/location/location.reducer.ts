@@ -5,17 +5,17 @@ import { LocationCity } from '@app/common/models/location.model';
 import { LocationActions } from './location.actions';
 
 interface State {
-    loading: boolean;
-    loaded: boolean;
+    loadingCities: boolean;
+    loadedCities: boolean;
     cities: LocationCity[];
-    errorMsg: string | null;
+    errorMsgCities: string | null;
 }
 
 const initialState: State = {
-    loading: false,
-    loaded: false,
+    loadingCities: false,
+    loadedCities: false,
     cities: [],
-    errorMsg: null
+    errorMsgCities: null
 };
 
 export const locationFeature = createFeature({
@@ -23,29 +23,29 @@ export const locationFeature = createFeature({
     reducer: createReducer(
         initialState,
         on(
-            LocationActions.load,
+            LocationActions.loadCities,
             (state): State => ({
                 ...state,
-                loading: true,
-                loaded: false,
-                errorMsg: null
+                loadingCities: true,
+                loadedCities: false,
+                errorMsgCities: null
             })
         ),
         on(
-            LocationActions.loadSuccess,
+            LocationActions.loadCitiesSuccess,
             (state, { cities }): State => ({
                 ...state,
-                loading: false,
-                loaded: true,
+                loadingCities: false,
+                loadedCities: true,
                 cities
             })
         ),
         on(
-            LocationActions.loadError,
+            LocationActions.loadCitiesError,
             (state, { errorMsg }): State => ({
                 ...state,
-                loading: false,
-                errorMsg
+                loadingCities: false,
+                errorMsgCities: errorMsg
             })
         )
     )
