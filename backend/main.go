@@ -1,8 +1,8 @@
 package main
 
 import (
-	"shift/api"
-	"shift/db"
+	"shift/internal/api"
+	"shift/internal/db"
 )
 
 func main() {
