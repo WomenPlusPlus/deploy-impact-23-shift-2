@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 
-import { LocationCity } from '@app/common/models/location.model';
+import { Language, LocationCity } from '@app/common/models/location.model';
 
 import { LocationActions } from './location.actions';
 
@@ -9,13 +9,21 @@ interface State {
     loadedCities: boolean;
     cities: LocationCity[];
     errorMsgCities: string | null;
+    loadingLanguages: boolean;
+    loadedLanguages: boolean;
+    languages: Language[];
+    errorMsgLanguages: string | null;
 }
 
 const initialState: State = {
     loadingCities: false,
     loadedCities: false,
     cities: [],
-    errorMsgCities: null
+    errorMsgCities: null,
+    loadingLanguages: false,
+    loadedLanguages: false,
+    languages: [],
+    errorMsgLanguages: null
 };
 
 export const locationFeature = createFeature({
@@ -47,8 +55,34 @@ export const locationFeature = createFeature({
                 loadingCities: false,
                 errorMsgCities: errorMsg
             })
+        ),
+        on(
+            LocationActions.loadLanguages,
+            (state): State => ({
+                ...state,
+                loadingLanguages: true,
+                loadedLanguages: false,
+                errorMsgLanguages: null
+            })
+        ),
+        on(
+            LocationActions.loadLanguagesSuccess,
+            (state, { languages }): State => ({
+                ...state,
+                loadingLanguages: false,
+                loadedLanguages: true,
+                languages
+            })
+        ),
+        on(
+            LocationActions.loadLanguagesError,
+            (state, { errorMsg }): State => ({
+                ...state,
+                loadingLanguages: false,
+                errorMsgLanguages: errorMsg
+            })
         )
     )
 });
 
-export const { selectCities: selectLocationCities } = locationFeature;
+export const { selectCities: selectLocationCities, selectLanguages } = locationFeature;

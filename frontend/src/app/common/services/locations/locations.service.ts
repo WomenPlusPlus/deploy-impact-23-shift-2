@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import environment from '@envs/environment';
 
-import { LocationCity } from '@app/common/models/location.model';
+import { Language, LocationCity } from '@app/common/models/location.model';
 
 @Injectable({
     providedIn: 'root'
@@ -15,5 +15,9 @@ export class LocationsService {
 
     getCities(): Observable<LocationCity[]> {
         return this.httpClient.get<LocationCity[]>(`${environment.API_BASE_URL}/locations/city`);
+    }
+
+    getLanguages(): Observable<Language[]> {
+        return this.httpClient.get<Language[]>(`${environment.API_BASE_URL}/locations/language`);
     }
 }
