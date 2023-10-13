@@ -236,7 +236,7 @@
                     [formControl]="filterLocationsForm"
                     [class.input-error]="
                         (control.invalid && control.touched) ||
-                        (filterLocationsForm.invalid && filterLocationsForm.invalid)
+                        (filterLocationsForm.invalid && filterLocationsForm.touched)
                     "
                     (keyup.escape)="seekLocationInput.blur()"
                 />
@@ -428,14 +428,42 @@
                     *appLet="spokenLanguagesForm.controls.language as control"
                 >
                     <label for="spoken-language" class="mb-1">Language:</label>
-                    <input
-                        type="text"
-                        id="spoken-language"
-                        name="spoken-language"
-                        formControlName="language"
-                        class="input input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                    />
+                    <div class="dropdown">
+                        <input
+                            #spokenLanguageInput
+                            type="text"
+                            id="spoken-language"
+                            name="spoken-language"
+                            class="input input-bordered w-full"
+                            [formControl]="filterLanguageForm"
+                            [class.input-error]="
+                                (control.invalid && control.touched) ||
+                                (filterLanguageForm.invalid && filterLanguageForm.touched)
+                            "
+                            (keyup.escape)="spokenLanguageInput.blur()"
+                            (change)="control.value && control.setValue(null)"
+                        />
+                        <ul
+                            tabindex="0"
+                            class="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box max-h-[32rem] overflow-auto flex-nowrap w-full"
+                            *appLet="languages$ | async as languages"
+                        >
+                            <cdk-virtual-scroll-viewport itemSize="20" class="h-72">
+                                <li
+                                    *cdkVirtualFor="
+                                        let result of languages | filterLanguage: filterLanguageForm.valueChanges
+                                    "
+                                >
+                                    <button
+                                        type="button"
+                                        (click)="onSelectSpokenLanguage(result.item); spokenLanguageInput.blur()"
+                                    >
+                                        {{ result.item.name }}
+                                    </button>
+                                </li>
+                            </cdk-virtual-scroll-viewport>
+                        </ul>
+                    </div>
                     <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                         {{ control.errors | formErrorMessage }}
                     </span>
@@ -472,7 +500,7 @@
             <div class="grid grid-cols-2 items-center gap-4 flex-grow">
                 <span class="px-2 text-lg">
                     <span class="font-bold mr-1 block md:hidden">Language:</span>
-                    {{ spokenLanguage.language }}
+                    {{ spokenLanguage.language?.name }} ({{ spokenLanguage.language?.shortName }})
                 </span>
                 <span class="px-2 text-lg">
                     <span class="font-bold mr-1 block md:hidden">Level:</span>

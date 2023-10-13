@@ -2,7 +2,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
-import { LocationCity } from '@app/common/models/location.model';
+import { Language, LocationCity } from '@app/common/models/location.model';
 
 export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
 export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
@@ -59,7 +59,7 @@ export interface UserSocialFormModel {
 export type CandidateSpokenLanguagesFormGroup = FormModel<CandidateSpokenLanguagesFormModel>;
 
 export interface CandidateSpokenLanguagesFormModel {
-    language: string | null; // TODO: enum
+    language: Language | null;
     level: number | null;
 }
 

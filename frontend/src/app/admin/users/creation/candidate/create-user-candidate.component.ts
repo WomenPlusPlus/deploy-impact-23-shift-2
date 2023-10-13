@@ -23,9 +23,10 @@ import {
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
-import { LocationCity } from '@app/common/models/location.model';
+import { Language, LocationCity } from '@app/common/models/location.model';
 import { CompanySizePipe } from '@app/common/pipes/company-size/company-size.pipe';
 import { FilterCityPipe } from '@app/common/pipes/filter-city/filter-city.pipe';
+import { FilterLanguagePipe } from '@app/common/pipes/filter-language/filter-language.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
 import { JobStatusPipe } from '@app/common/pipes/job-status/job-status.pipe';
@@ -33,7 +34,7 @@ import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
-import { selectLocationCities } from '@app/common/stores/location/location.reducer';
+import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
 
@@ -55,7 +56,8 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
         JobTypePipe,
         CompanySizePipe,
         JobLocationTypePipe,
-        WorkPermitPipe
+        WorkPermitPipe,
+        FilterLanguagePipe
     ],
     templateUrl: './create-user-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -67,8 +69,10 @@ export class CreateUserCandidateComponent implements OnInit {
     educationHistoryForm!: FormGroup<CandidateEducationHistoryFormGroup>;
     employmentHistoryForm!: FormGroup<CandidateEmploymentHistoryFormGroup>;
     filterLocationsForm!: FormControl<string | null>;
+    filterLanguageForm!: FormControl<string | null>;
     imagePreviewUrl$!: Observable<string>;
     cities$!: Observable<LocationCity[]>;
+    languages$!: Observable<Language[]>;
 
     get detailsForm(): CreateUserCandidateFormGroup['details'] {
         return this.form.controls.details;
@@ -174,6 +178,9 @@ export class CreateUserCandidateComponent implements OnInit {
         this.technicalForm.controls.spokenLanguages.patchValue([...this.spokenLanguages, control.getRawValue()]);
         control.markAsPristine();
         control.reset();
+
+        this.filterLanguageForm.markAsPristine();
+        this.filterLanguageForm.reset();
     }
 
     onRemoveSpokenLanguage(index: number): void {
@@ -273,6 +280,11 @@ export class CreateUserCandidateComponent implements OnInit {
         control.markAsTouched();
     }
 
+    onSelectSpokenLanguage(language: Language): void {
+        this.filterLanguageForm.setValue(language.name);
+        this.spokenLanguagesForm.controls.language.setValue(language);
+    }
+
     private initForm(): void {
         this.form = this.fb.group({
             details: this.fb.group({
@@ -334,7 +346,7 @@ export class CreateUserCandidateComponent implements OnInit {
             })
         });
         this.spokenLanguagesForm = this.fb.group({
-            language: this.fb.control<string | null>(null, [Validators.required]),
+            language: this.fb.control<Language | null>(null, [Validators.required]),
             level: this.fb.control<number | null>(null, [Validators.required, Validators.min(0), Validators.max(5)])
         });
         this.skillsForm = this.fb.group({
@@ -382,6 +394,7 @@ export class CreateUserCandidateComponent implements OnInit {
             onGoing: this.fb.control<boolean | null>(false)
         });
         this.filterLocationsForm = this.fb.control<string | null>(null, [Validators.minLength(3)]);
+        this.filterLanguageForm = this.fb.control<string | null>(null, [Validators.minLength(3)]);
     }
 
     private initSubscriptions(): void {
@@ -401,5 +414,6 @@ export class CreateUserCandidateComponent implements OnInit {
         );
 
         this.cities$ = this.store.select(selectLocationCities);
+        this.languages$ = this.store.select(selectLanguages);
     }
 }
