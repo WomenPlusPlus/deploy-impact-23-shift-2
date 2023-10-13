@@ -1,0 +1,189 @@
+<div class="grid lg:grid-cols-[20rem-1fr]" [formGroup]="form">
+    <span class="text-3xl m-3">Personal details</span>
+    <section formGroupName="details">
+        <fieldset id="photo-field" class="form-control w-full my-4" *appLet="detailsForm.controls.photo as control">
+            <label for="photo" class="mb-1">Profile Picture:</label>
+            <input
+                type="file"
+                accept="image/*"
+                id="photo"
+                name="photo"
+                class="file-input file-input-ghost w-full max-w-xs"
+                (input)="onPhotoUpload($event)"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+            <div class="h-72 mt-8 mb-4">
+                <img
+                    [src]="imagePreviewUrl$ | async"
+                    class="h-full aspect-video object-center object-cover rounded"
+                    alt="profile-picture"
+                />
+            </div>
+        </fieldset>
+        <fieldset
+            id="first-name-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.firstName as control"
+        >
+            <label for="first-name" class="mb-1">First Name<span class="text-red-400">*</span>:</label>
+            <input
+                type="text"
+                id="first-name"
+                name="first-name"
+                formControlName="firstName"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="last-name-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.lastName as control"
+        >
+            <label for="last-name" class="mb-1">Last Name<span class="text-red-400">*</span>:</label>
+            <input
+                type="text"
+                id="last-name"
+                name="last-name"
+                formControlName="lastName"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="preferred-name-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.preferredName as control"
+        >
+            <label for="preferred-name" class="mb-1">Preferred Name:</label>
+            <input
+                type="text"
+                id="preferred-name"
+                name="preferred-name"
+                formControlName="preferredName"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="email-field" class="form-control w-full my-4" *appLet="detailsForm.controls.email as control">
+            <label for="email" class="mb-1">Email<span class="text-red-400">*</span>:</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                formControlName="email"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="phone-number-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.phoneNumber as control"
+        >
+            <label for="phone-number" class="mb-1">Phone<span class="text-red-400">*</span>:</label>
+            <input
+                type="text"
+                id="phone-number"
+                name="phone-number"
+                formControlName="phoneNumber"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="birth-date-field"
+            class="form-control w-full my-4"
+            *appLet="detailsForm.controls.birthDate as control"
+        >
+            <label for="birth-date" class="mb-1">Birth Date<span class="text-red-400">*</span>:</label>
+            <input
+                type="date"
+                id="birth-date"
+                name="birth-date"
+                formControlName="birthDate"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+    </section>
+    <div class="divider col-start-1 col-end-[-1]"></div>
+    <span class="text-3xl m-3">Social media</span>
+    <section formGroupName="social">
+        <fieldset
+            id="linkedin-url-field"
+            class="form-control w-full my-4"
+            *appLet="socialForm.controls.linkedInUrl as control"
+        >
+            <label for="linkedin-url" class="mb-1">LinkedIn URL:</label>
+            <input
+                type="text"
+                id="linkedin-url"
+                name="linkedin-url"
+                formControlName="linkedInUrl"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="github-url-field"
+            class="form-control w-full my-4"
+            *appLet="socialForm.controls.githubUrl as control"
+        >
+            <label for="github-url" class="mb-1">Github URL:</label>
+            <input
+                type="text"
+                id="github-url"
+                name="github-url"
+                formControlName="githubUrl"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="portfolio-url-field"
+            class="form-control w-full my-4"
+            *appLet="socialForm.controls.portfolioUrl as control"
+        >
+            <label for="portfolio-url" class="mb-1">Portfolio URL:</label>
+            <input
+                type="text"
+                id="portfolio-url"
+                name="portfolio-url"
+                formControlName="portfolioUrl"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+    </section>
+</div>
