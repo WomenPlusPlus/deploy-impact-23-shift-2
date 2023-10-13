@@ -10,6 +10,13 @@ const routes: Routes = [
         loadChildren: () => import('./invitations/admin-invitations.routes')
     },
     {
+        path: 'companies/:id',
+        loadComponent: () =>
+            import('@app/companies/profile/company-profile/company-profile.component').then(
+                (m) => m.CompanyProfileComponent
+            )
+    },
+    {
         path: 'companies',
         loadChildren: () => import('./company/admin-company.routes')
     },
