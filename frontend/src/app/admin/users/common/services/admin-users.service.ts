@@ -42,7 +42,7 @@ export class AdminUsersService {
                     state: UserStateEnum.DELETED,
                     phoneNumber: '999 000 555',
                     ratingSkill: 10,
-                    jobStatus: JobStatusEnum.TEMPORARY,
+                    jobStatus: JobStatusEnum.SEARCHING,
                     hasCV: true,
                     hasVideo: false
                 },

@@ -21,11 +21,18 @@ import {
     CreateUserCandidateFormGroup
 } from '@app/admin/users/creation/common/models/create-user.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
+import { CompanySizeEnum } from '@app/common/models/companies.model';
+import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { LocationCity } from '@app/common/models/location.model';
+import { CompanySizePipe } from '@app/common/pipes/company-size/company-size.pipe';
 import { FilterCityPipe } from '@app/common/pipes/filter-city/filter-city.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
+import { JobStatusPipe } from '@app/common/pipes/job-status/job-status.pipe';
+import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { selectLocationCities } from '@app/common/stores/location/location.reducer';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
@@ -38,12 +45,17 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
         ReactiveFormsModule,
         FontAwesomeModule,
         ScrollingModule,
-        FormErrorMessagePipe,
         LetDirective,
+        FormErrorMessagePipe,
         ReactiveFormsModule,
         UserCompanyRoleLabelPipe,
         UserKindLabelPipe,
-        FilterCityPipe
+        FilterCityPipe,
+        JobStatusPipe,
+        JobTypePipe,
+        CompanySizePipe,
+        JobLocationTypePipe,
+        WorkPermitPipe
     ],
     templateUrl: './create-user-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -90,6 +102,37 @@ export class CreateUserCandidateComponent implements OnInit {
         return this.technicalForm.controls.employmentHistory.value || [];
     }
 
+    protected readonly jobStatuses: JobStatusEnum[] = [
+        JobStatusEnum.SEARCHING,
+        JobStatusEnum.OPEN_TO,
+        JobStatusEnum.NOT_SEARCHING
+    ];
+    protected readonly jobTypes: JobTypeEnum[] = [
+        JobTypeEnum.FULL_TIME,
+        JobTypeEnum.PART_TIME,
+        JobTypeEnum.INTERNSHIP,
+        JobTypeEnum.TEMPORARY
+    ];
+    protected readonly jobLocationTypes: JobLocationTypeEnum[] = [
+        JobLocationTypeEnum.ON_SITE,
+        JobLocationTypeEnum.HYBRID,
+        JobLocationTypeEnum.REMOTE
+    ];
+    protected readonly workPermits: WorkPermitEnum[] = [
+        WorkPermitEnum.CITIZEN,
+        WorkPermitEnum.PERMANENT_RESIDENT,
+        WorkPermitEnum.WORK_VISA,
+        WorkPermitEnum.STUDENT_VISA,
+        WorkPermitEnum.TEMPORARY_RESIDENT,
+        WorkPermitEnum.NO_WORK_PERMIT,
+        WorkPermitEnum.OTHER
+    ];
+    protected readonly companySizes: CompanySizeEnum[] = [
+        CompanySizeEnum.ANY,
+        CompanySizeEnum.SMALL,
+        CompanySizeEnum.MEDIUM,
+        CompanySizeEnum.LARGE
+    ];
     protected readonly faAdd = faAdd;
     protected readonly faRemove = faRemove;
 
@@ -262,17 +305,17 @@ export class CreateUserCandidateComponent implements OnInit {
             }),
             job: this.fb.group({
                 yearsOfExperience: this.fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
-                jobStatus: this.fb.control<string | null>(null, [Validators.required]),
-                seekJobType: this.fb.control<string | null>(null),
-                seekCompanySize: this.fb.control<string | null>(null),
+                jobStatus: this.fb.control<JobStatusEnum | null>(null, [Validators.required]),
+                seekJobType: this.fb.control<JobTypeEnum | null>(null),
+                seekCompanySize: this.fb.control<CompanySizeEnum | null>(null),
                 seekLocations: this.fb.control<LocationCity[] | null>(
                     [],
                     [Validators.required, Validators.minLength(1)]
                 ),
-                seekLocationType: this.fb.control<string | null>(null, [Validators.required]),
+                seekLocationType: this.fb.control<JobLocationTypeEnum | null>(null, [Validators.required]),
                 seekSalary: this.fb.control<number | null>(null),
                 seekValues: this.fb.control<string | null>(null),
-                workPermit: this.fb.control<string | null>(null, [Validators.required]),
+                workPermit: this.fb.control<WorkPermitEnum | null>(null, [Validators.required]),
                 noticePeriod: this.fb.control<string | null>(null)
             }),
             technical: this.fb.group({

@@ -136,15 +136,19 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.jobStatus as control"
         >
-            <label for="job-status" class="mb-1">Current status<span class="text-red-400">*</span>:</label>
-            <input
-                type="text"
-                id="job-status"
-                name="job-status"
-                formControlName="jobStatus"
-                class="input input-bordered"
-                [class.input-error]="control.invalid && control.touched"
-            />
+            <span class="mb-1">Current status<span class="text-red-400">*</span>:</span>
+            <div class="flex flex-wrap lg:flex-nowrap gap-6">
+                <label class="flex items-center gap-2" *ngFor="let jobStatus of jobStatuses">
+                    <input
+                        type="radio"
+                        class="radio checkbox-xs"
+                        name="jobStatus"
+                        formControlName="jobStatus"
+                        [value]="jobStatus"
+                    />
+                    <span>{{ jobStatus | jobStatusLabel }}</span>
+                </label>
+            </div>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
@@ -171,19 +175,45 @@
         </fieldset>
         <div class="divider"></div>
         <fieldset
+            id="seek-job-type-field"
+            class="form-control w-full my-4"
+            *appLet="jobForm.controls.seekJobType as control"
+        >
+            <span class="mb-1">Preferred job type:</span>
+            <div class="flex flex-wrap lg:flex-nowrap gap-6">
+                <label class="flex items-center gap-2" *ngFor="let jobType of jobTypes">
+                    <input
+                        type="radio"
+                        class="radio checkbox-xs"
+                        name="seekJobType"
+                        formControlName="seekJobType"
+                        [value]="jobType"
+                    />
+                    <span>{{ jobType | jobTypeLabel }}</span>
+                </label>
+            </div>
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
             id="seek-company-size-field"
             class="form-control w-full my-4"
             *appLet="jobForm.controls.seekCompanySize as control"
         >
-            <label for="seek-company-size" class="mb-1">Preferred company size:</label>
-            <input
-                type="text"
-                id="seek-company-size"
-                name="seek-company-size"
-                formControlName="seekCompanySize"
-                class="input input-bordered"
-                [class.input-error]="control.invalid && control.touched"
-            />
+            <span class="mb-1">Preferred company size:</span>
+            <div class="flex flex-wrap lg:flex-nowrap gap-6">
+                <label class="flex items-center gap-2" *ngFor="let companySize of companySizes">
+                    <input
+                        type="radio"
+                        class="radio checkbox-xs"
+                        name="seekCompanySize"
+                        formControlName="seekCompanySize"
+                        [value]="companySize"
+                    />
+                    <span>{{ companySize | companySizeLabel }}</span>
+                </label>
+            </div>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
@@ -246,17 +276,19 @@
             class="form-control w-full my-4"
             *appLet="jobForm.controls.seekLocationType as control"
         >
-            <label for="seek-location-type" class="mb-1"
-                >Preferred location type<span class="text-red-400">*</span>:</label
-            >
-            <input
-                type="text"
-                id="seek-location-type"
-                name="seek-location-type"
-                formControlName="seekLocationType"
-                class="input input-bordered"
-                [class.input-error]="control.invalid && control.touched"
-            />
+            <span class="mb-1">Preferred location type<span class="text-red-400">*</span>:</span>
+            <div class="flex flex-wrap lg:flex-nowrap gap-6">
+                <label class="flex items-center gap-2" *ngFor="let jobLocationType of jobLocationTypes">
+                    <input
+                        type="radio"
+                        class="radio checkbox-xs"
+                        name="seekLocationType"
+                        formControlName="seekLocationType"
+                        [value]="jobLocationType"
+                    />
+                    <span>{{ jobLocationType | jobLocationTypeLabel }}</span>
+                </label>
+            </div>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
@@ -304,14 +336,12 @@
             *appLet="jobForm.controls.workPermit as control"
         >
             <label for="work-permit" class="mb-1">Work permit<span class="text-red-400">*</span>:</label>
-            <input
-                type="text"
-                id="work-permit"
-                name="work-permit"
-                formControlName="workPermit"
-                class="input input-bordered"
-                [class.input-error]="control.invalid && control.touched"
-            />
+            <select id="work-permit" name="work-permit" formControlName="workPermit" class="select select-bordered">
+                <option disabled selected [value]="null">Select an option</option>
+                <option *ngFor="let workPermit of workPermits" [value]="workPermit">
+                    {{ workPermit | workPermitLabel }}
+                </option>
+            </select>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>

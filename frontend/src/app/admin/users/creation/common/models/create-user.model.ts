@@ -1,5 +1,7 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
+import { CompanySizeEnum } from '@app/common/models/companies.model';
+import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { LocationCity } from '@app/common/models/location.model';
 
 export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
@@ -24,18 +26,20 @@ export interface UserDetailsFormModel {
     birthDate: Date | null;
     photo: File | null;
 }
+
 export interface UserJobFormModel {
     yearsOfExperience: number | null;
-    jobStatus: string | null; // TODO: enum
-    seekJobType: string | null; // TODO: enum
-    seekCompanySize: string | null; // TODO: enum
+    jobStatus: JobStatusEnum | null;
+    seekJobType: JobTypeEnum | null;
+    seekCompanySize: CompanySizeEnum | null;
     seekLocations: LocationCity[] | null;
-    seekLocationType: string | null; // TODO: enum
+    seekLocationType: JobLocationTypeEnum | null;
     seekSalary: number | null;
     seekValues: string | null;
-    workPermit: string | null; // TODO: enum
+    workPermit: WorkPermitEnum | null;
     noticePeriod: string | null;
 }
+
 export interface UserTechnicalFormModel {
     spokenLanguages: CandidateSpokenLanguagesFormModel[] | null;
     skills: CandidateSkillsFormModel[] | null;
@@ -62,7 +66,7 @@ export interface CandidateSpokenLanguagesFormModel {
 export type CandidateSkillsFormGroup = FormModel<CandidateSkillsFormModel>;
 
 export interface CandidateSkillsFormModel {
-    name: string | null; // TODO: enum
+    name: string | null; // TODO: select
     years: number | null;
 }
 
