@@ -25,6 +25,7 @@ import { RouterModule } from '@angular/router';
 })
 export class MenuComponent {
     @Input() expanded = true;
+    @Input() showExpanded = true;
     @Output() expandedChange = new EventEmitter<boolean>();
 
     protected readonly faEnvelope = faEnvelope;
