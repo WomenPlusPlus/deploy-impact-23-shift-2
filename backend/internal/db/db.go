@@ -7,7 +7,6 @@ import (
 	"shift/internal/entity"
 
 	"github.com/jmoiron/sqlx"
-
 	_ "github.com/lib/pq"
 )
 
@@ -90,14 +89,14 @@ func (s *PostgresDB) UpdateUser(*entity.User) error {
 	return nil
 }
 
-// DeleteUser deletes a user from the "users" table based on their ID.
-func (s *PostgresDB) DeleteUser(id int) error {
-	return nil
-}
-
 // GetUserByID retrieves a user's information from the "users" table based on their ID.
 func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
+<<<<<<< Updated upstream
 	rows, err := s.db.Query("SELECT * FROM users WHERE id = $1", id)
+=======
+	query := "SELECT * FROM users where id = $1"
+	rows, err := s.db.Query(query, id)
+>>>>>>> Stashed changes
 
 	if err != nil {
 		return nil, err
@@ -108,6 +107,23 @@ func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
 	}
 
 	return nil, fmt.Errorf("user with id: %d not found", id)
+}
+
+// DeleteUser deletes a user from the "users" table based on their ID.
+func (s *PostgresDB) DeleteUser(id int) error {
+	query := "DELETE FROM users WHERE id = $1"
+	res, err := s.db.Exec(query, id)
+
+	if err == nil {
+		_, err := res.RowsAffected()
+		if err == nil {
+			/* check count and return true/false */
+			return err
+		}
+	}
+
+	fmt.Println("user deleted")
+	return nil
 }
 
 // GetUsers retrieves a list of all users from the "users" table.

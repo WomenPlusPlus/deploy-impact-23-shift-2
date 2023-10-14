@@ -39,8 +39,12 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
-	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
-	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
+	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers)).
+		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
+	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID)).
+		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
+	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser)).
+		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
@@ -92,6 +96,9 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	}
 	if r.Method == "POST" {
 		return s.handleCreateUser(w, r)
+	}
+	if r.Method == "DELETE" {
+		return s.handleDeleteUser(w, r)
 	}
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
@@ -146,24 +153,27 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 	return WriteJSONResponse(w, http.StatusOK, user)
 }
 
-// func (s *APIServer) handleAdminInvites(w http.ResponseWriter, r *http.Request) error {
-// 	if r.Method == "GET" {
-// 		return WriteJSONResponse(w, http.StatusOK, "admin invites")
-// 	}
-// 	return fmt.Errorf("method not allowed %s", r.Method)
-// }
-
-// func (s *APIServer) handleAdminAssociations(w http.ResponseWriter, r *http.Request) error {
-// 	if r.Method == "GET" {
-// 		return WriteJSONResponse(w, http.StatusOK, "admin associations")
-// 	}
-// 	return fmt.Errorf("method not allowed %s", r.Method)
-// }
-
 // handleDeleteUser handles DELETE requests to delete a user account.
-// func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
-// 	return nil
-// }
+func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+
+	fmt.Println("calling handle delete user")
+
+	if err != nil {
+		return NotFoundError{Message: "Invalid ID given"}
+	}
+
+	if err != nil {
+		return NotFoundError{Message: "User not found"}
+	}
+
+	if err := s.userDB.DeleteUser(id); err != nil {
+		return err
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, "User deleted successfully")
+}
 
 // handleUpdateUser handles PUT requests to update a user account.
 // func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {
