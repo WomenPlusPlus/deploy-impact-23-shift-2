@@ -3,6 +3,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { Language, LocationCity } from '@app/common/models/location.model';
+import { UserKindEnum } from '@app/common/models/users.model';
 
 export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
 export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
@@ -26,6 +27,8 @@ export interface CreateUserCompanyFormModel extends CreateUserFormModel {
 export interface CreateUserAssociationFormModel extends CreateUserFormModel {
     associationId: number | null;
 }
+
+export type CreateUserSubmissionModel = CreateUserFormModel & { kind: UserKindEnum };
 
 export interface UserDetailsFormModel {
     firstName: string | null;
