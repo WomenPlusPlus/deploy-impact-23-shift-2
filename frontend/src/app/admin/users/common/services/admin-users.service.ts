@@ -99,6 +99,10 @@ export class AdminUsersService {
         const formData = new FormData();
         for (const key of Object.keys(user)) {
             const wrapper = user[key as keyof CreateUserFormModel];
+            if (typeof wrapper !== 'object') {
+                formData.append(key, wrapper);
+                continue;
+            }
             for (const key of Object.keys(wrapper)) {
                 const value = wrapper[key as keyof typeof wrapper];
                 if (typeof value !== 'object') {

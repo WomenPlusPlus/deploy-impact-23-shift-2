@@ -3,8 +3,10 @@ import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { CreateUserAssociationComponent } from '@app/admin/users/creation/association/create-user-association.component';
 import { CreateUserCandidateComponent } from '@app/admin/users/creation/candidate/create-user-candidate.component';
 import { CreateUserFormGroup } from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserCompanyComponent } from '@app/admin/users/creation/company/create-user-company.component';
 import { CreateUserStore } from '@app/admin/users/creation/create-user.store';
 import { CreateUserGenericComponent } from '@app/admin/users/creation/generic/create-user-generic.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
@@ -26,7 +28,9 @@ type CreateUserFormComponent = { form: FormGroup<CreateUserFormGroup> };
         CreateUserCandidateComponent,
         FormErrorMessagePipe,
         LetDirective,
-        UserKindLabelPipe
+        UserKindLabelPipe,
+        CreateUserCompanyComponent,
+        CreateUserAssociationComponent
     ],
     providers: [CreateUserStore],
     templateUrl: './create-user.component.html',

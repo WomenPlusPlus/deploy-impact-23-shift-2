@@ -18,6 +18,11 @@
         <div class="divider"></div>
         <ng-container [ngSwitch]="selectedKind">
             <app-create-user-candidate *ngSwitchCase="userKindsEnum.CANDIDATE" #childFormEl></app-create-user-candidate>
+            <app-create-user-company *ngSwitchCase="userKindsEnum.COMPANY" #childFormEl></app-create-user-company>
+            <app-create-user-association
+                *ngSwitchCase="userKindsEnum.ASSOCIATION"
+                #childFormEl
+            ></app-create-user-association>
             <app-create-user-generic *ngSwitchDefault #childFormEl></app-create-user-generic>
         </ng-container>
         <div class="sticky flex flex-col bottom-0 pb-4 bg-base-100 w-full">
