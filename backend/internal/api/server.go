@@ -46,13 +46,13 @@ func (s *APIServer) Run() {
 
 // IsNotFoundError checks if an error is a not found error.
 func IsNotFoundError(err error) bool {
-	return err != nil
+	return false
 }
 
 // IsPermissionError checks if an error is a permission error.
 func IsPermissionError(err error) bool {
 	// Implement your custom logic to check for permission errors
-	return err != nil
+	return false
 }
 
 // makeHTTPHandleFunc creates an HTTP request handler function for the provided apiFunc.
@@ -60,7 +60,6 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logrus.New()
 		logger.SetFormatter(&logrus.JSONFormatter{}) // Use JSON format for structured logs
-
 		err := f(w, r)
 		if err != nil {
 			switch {
@@ -82,45 +81,41 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
 	}
-
 	if r.Method == "POST" {
 		return s.handleCreateUser(w, r)
 	}
-
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
 // handleGetUser handles GET requests for user account information.
 func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error {
 	users, err := s.userDB.GetUsers()
-
+	fmt.Println(users)
 	if err != nil {
 		return err
 	}
-
 	return WriteJSONResponse(w, http.StatusOK, users)
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	userRequest := new(entity.CreateUserRequest)
-	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
+	createUserRequest := new(entity.CreateUserRequest)
+	if err := json.NewDecoder(r.Body).Decode(createUserRequest); err != nil {
 		return err
 	}
 
 	user := entity.NewUser(
-		userRequest.FirstName,
-		userRequest.LastName,
-		userRequest.PreferredName,
-		userRequest.Email,
-		userRequest.State,
-		userRequest.ImageUrl,
-		userRequest.Role,
+		createUserRequest.FirstName,
+		createUserRequest.LastName,
+		createUserRequest.PreferredName,
+		createUserRequest.Email,
+		createUserRequest.State,
+		createUserRequest.ImageUrl,
+		createUserRequest.Role,
 	)
+
 	if err := s.userDB.CreateUser(user); err != nil {
 		return err
 	}
-
-	fmt.Println("user created")
 
 	return WriteJSONResponse(w, http.StatusOK, user)
 }

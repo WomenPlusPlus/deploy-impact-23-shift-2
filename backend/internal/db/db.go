@@ -20,6 +20,8 @@ type UserDB interface {
 	GetUserByID(int) (*entity.User, error)
 }
 
+// docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
+
 // PostgresDB is a concrete implementation of the UserDB interface using PostgreSQL.
 type PostgresDB struct {
 	db *sqlx.DB
@@ -62,12 +64,13 @@ func (db *PostgresDB) createUserTable() {
 }
 
 // CreateUser inserts a new user record into the "users" table.
-func (s *PostgresDB) CreateUser(u *entity.User) error {
-	query := `INSERT INTO users
+func (db *PostgresDB) CreateUser(u *entity.User) error {
+	query := `
+	INSERT INTO users
 		(firstName, lastName, preferredName, email, state, imageUrl, role, createdAt)
-		values ($1, $2, $3, $4, $5, $6, $7, $8)`
-
-	resp, err := s.db.Query(
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	tx := db.db.MustBegin()
+	tx.MustExec(
 		query,
 		u.FirstName,
 		u.LastName,
@@ -76,13 +79,9 @@ func (s *PostgresDB) CreateUser(u *entity.User) error {
 		u.State,
 		u.ImageUrl,
 		u.Role,
-		u.CreatedAt)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("%+v\n", resp)
-
+		u.CreatedAt,
+	)
+	tx.Commit()
 	return nil
 }
 
