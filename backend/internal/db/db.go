@@ -97,7 +97,7 @@ func (s *PostgresDB) DeleteUser(id int) error {
 
 // GetUserByID retrieves a user's information from the "users" table based on their ID.
 func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
-	rows, err := s.db.Query("select * from users where id = $1", id)
+	rows, err := s.db.Query("SELECT * FROM users WHERE id = $1", id)
 
 	if err != nil {
 		return nil, err

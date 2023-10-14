@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"shift/internal/entity"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -39,6 +40,7 @@ func (s *APIServer) Run() {
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers))
+	router.HandleFunc("/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
@@ -76,6 +78,13 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	}
 }
 
+// WriteJSONResponse writes a JSON response with the given status code and value.
+func WriteJSONResponse(w http.ResponseWriter, status int, value interface{}) error {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
+	return json.NewEncoder(w).Encode(value)
+}
+
 // handleUsers handles requests related to user accounts.
 func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
@@ -97,20 +106,37 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 	return WriteJSONResponse(w, http.StatusOK, users)
 }
 
+func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		return fmt.Errorf("invalid id given %s", idStr)
+	}
+
+	user, err := s.userDB.GetUserByID(id)
+
+	if err != nil {
+		return err
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, user)
+}
+
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	createUserRequest := new(entity.CreateUserRequest)
-	if err := json.NewDecoder(r.Body).Decode(createUserRequest); err != nil {
+	userRequest := new(entity.CreateUserRequest)
+	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
 		return err
 	}
 
 	user := entity.NewUser(
-		createUserRequest.FirstName,
-		createUserRequest.LastName,
-		createUserRequest.PreferredName,
-		createUserRequest.Email,
-		createUserRequest.State,
-		createUserRequest.ImageUrl,
-		createUserRequest.Role,
+		userRequest.FirstName,
+		userRequest.LastName,
+		userRequest.PreferredName,
+		userRequest.Email,
+		userRequest.State,
+		userRequest.ImageUrl,
+		userRequest.Role,
 	)
 
 	if err := s.userDB.CreateUser(user); err != nil {
@@ -132,31 +158,6 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 // 		return WriteJSONResponse(w, http.StatusOK, "admin associations")
 // 	}
 // 	return fmt.Errorf("method not allowed %s", r.Method)
-// }
-
-// WriteJSONResponse writes a JSON response with the given status code and value.
-func WriteJSONResponse(w http.ResponseWriter, status int, value interface{}) error {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(value)
-}
-
-// func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
-// 	idStr := mux.Vars(r)["id"]
-
-// 	id, err := strconv.Atoi(idStr)
-
-// 	if err != nil {
-// 		return fmt.Errorf("invalid id given %s", idStr)
-// 	}
-
-// 	user, err := s.userDB.GetUserByID(id)
-
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return WriteJSONResponse(w, http.StatusOK, user)
 // }
 
 // handleDeleteUser handles DELETE requests to delete a user account.
