@@ -91,12 +91,8 @@ func (s *PostgresDB) UpdateUser(*entity.User) error {
 
 // GetUserByID retrieves a user's information from the "users" table based on their ID.
 func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
-<<<<<<< Updated upstream
-	rows, err := s.db.Query("SELECT * FROM users WHERE id = $1", id)
-=======
 	query := "SELECT * FROM users where id = $1"
 	rows, err := s.db.Query(query, id)
->>>>>>> Stashed changes
 
 	if err != nil {
 		return nil, err

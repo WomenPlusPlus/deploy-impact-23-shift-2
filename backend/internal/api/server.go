@@ -156,17 +156,7 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 // handleDeleteUser handles DELETE requests to delete a user account.
 func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
-	id, err := strconv.Atoi(idStr)
-
-	fmt.Println("calling handle delete user")
-
-	if err != nil {
-		return NotFoundError{Message: "Invalid ID given"}
-	}
-
-	if err != nil {
-		return NotFoundError{Message: "User not found"}
-	}
+	id, _ := strconv.Atoi(idStr)
 
 	if err := s.userDB.DeleteUser(id); err != nil {
 		return err
