@@ -39,8 +39,8 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
-	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers))
-	router.HandleFunc("/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
+	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
+	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
