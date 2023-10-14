@@ -40,7 +40,7 @@ func (s *APIServer) Run() {
 
 	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers))
 
-	log.Println("JSON API Server is running on port:", s.address)
+	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
 }
 
@@ -82,6 +82,11 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
 	}
+
+	if r.Method == "POST" {
+		return s.handleCreateUser(w, r)
+	}
+
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
@@ -94,6 +99,30 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, users)
+}
+
+func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
+	userRequest := new(entity.CreateUserRequest)
+	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
+		return err
+	}
+
+	user := entity.NewUser(
+		userRequest.FirstName,
+		userRequest.LastName,
+		userRequest.PreferredName,
+		userRequest.Email,
+		userRequest.State,
+		userRequest.ImageUrl,
+		userRequest.Role,
+	)
+	if err := s.userDB.CreateUser(user); err != nil {
+		return err
+	}
+
+	fmt.Println("user created")
+
+	return WriteJSONResponse(w, http.StatusOK, user)
 }
 
 // func (s *APIServer) handleAdminInvites(w http.ResponseWriter, r *http.Request) error {
@@ -132,28 +161,6 @@ func WriteJSONResponse(w http.ResponseWriter, status int, value interface{}) err
 // 		return err
 // 	}
 
-// 	return WriteJSONResponse(w, http.StatusOK, user)
-// }
-
-// handleCreateUser handles POST requests to create a new user account.
-// func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-// 	userRequest := new(entity.CreateUserRequest)
-// 	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
-// 		return err
-// 	}
-
-// 	user := entity.NewUser(
-// 		userRequest.FirstName,
-// 		userRequest.LastName,
-// 		userRequest.PreferredName,
-// 		userRequest.Email,
-// 		userRequest.State,
-// 		userRequest.ImageUrl,
-// 		userRequest.Role,
-// 	)
-// 	if err := s.userDB.CreateUser(user); err != nil {
-// 		return err
-// 	}
 // 	return WriteJSONResponse(w, http.StatusOK, user)
 // }
 

@@ -3,9 +3,11 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"shift/internal/entity"
 
 	"github.com/jmoiron/sqlx"
+
 	_ "github.com/lib/pq"
 )
 
@@ -25,15 +27,11 @@ type PostgresDB struct {
 
 // NewPostgresDB creates a new PostgresDB instance and initializes the database connection.
 func NewPostgresDB() *PostgresDB {
-	connStr := "user=postgres dbname=postgres sslmode=disable"
-	db, err := sqlx.Open("postgres", connStr)
+	connStr := "user=postgres dbname=postgres password=shift2023 sslmode=disable"
+	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
-		return nil
-	}
-
-	if err := db.Ping(); err != nil {
-		return nil
+		log.Fatalln(err)
 	}
 
 	return &PostgresDB{
@@ -42,14 +40,14 @@ func NewPostgresDB() *PostgresDB {
 }
 
 // Init initializes the database by creating the user table.
-func (s *PostgresDB) Init() {
-	// return s.CreateUserTable()
+func (db *PostgresDB) Init() {
+	db.createUserTable()
 }
 
 // CreateUserTable creates the "users" table if it does not exist.
-func (s *PostgresDB) CreateUserTable() {
+func (db *PostgresDB) createUserTable() {
 	query := `
-	CREATE TABLE users (
+	CREATE TABLE IF NOT EXISTS users (
 		id serial primary key,
 		firstName varchar(55),
 		lastName varchar(55),
@@ -60,7 +58,7 @@ func (s *PostgresDB) CreateUserTable() {
 		role varchar(20),
 		createdAt timestamp
 	)`
-	s.db.MustExec(query)
+	db.db.MustExec(query)
 }
 
 // CreateUser inserts a new user record into the "users" table.

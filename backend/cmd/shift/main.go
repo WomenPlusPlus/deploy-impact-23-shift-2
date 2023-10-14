@@ -6,8 +6,9 @@ import (
 )
 
 func main() {
-	userDB := db.NewPostgresDB()
+	db := db.NewPostgresDB()
+	db.Init()
 
-	server := api.NewAPIServer(":8080", userDB)
+	server := api.NewAPIServer(":8080", db)
 	server.Run()
 }
