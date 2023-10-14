@@ -64,6 +64,9 @@ export class CreateUserComponent {
         if (!this.childForm?.valid) {
             return;
         }
-        this.createUserStore.submitForm(this.childForm.getRawValue());
+        this.createUserStore.submitForm({
+            ...this.childForm.getRawValue(),
+            kind: this.selectedKind
+        });
     }
 }

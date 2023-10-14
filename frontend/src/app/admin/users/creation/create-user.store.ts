@@ -11,7 +11,7 @@ import { AdminUsersService } from '@app/admin/users/common/services/admin-users.
 import { Association } from '@app/common/models/associations.model';
 import { Company } from '@app/common/models/companies.model';
 
-import { CreateUserFormModel } from './common/models/create-user.model';
+import { CreateUserSubmissionModel } from './common/models/create-user.model';
 
 export interface CreateUserState {
     response: { id: number } | null;
@@ -51,7 +51,7 @@ export class CreateUserStore extends ComponentStore<CreateUserState> {
         response: this.select((state) => state.response)
     });
 
-    submitForm = this.effect((trigger$: Observable<CreateUserFormModel>) =>
+    submitForm = this.effect((trigger$: Observable<CreateUserSubmissionModel>) =>
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false, response: null })),
             exhaustMap((payload) =>
