@@ -1,0 +1,43 @@
+<fieldset
+    id="associations-field"
+    class="flex flex-col sm:flex-row sm:items-center gap-y-1 gap-x-4 w-full my-4"
+    *appLet="associationIdForm as control"
+>
+    <label for="associations" class="text-lg"> Select the user association<span class="text-red-400">*</span>: </label>
+    <div class="dropdown flex-grow">
+        <input
+            #searchAssociationInput
+            type="text"
+            id="associations"
+            name="associations"
+            class="input input-bordered w-full"
+            [formControl]="searchAssociationForm"
+            [class.input-error]="
+                (control.invalid && control.touched) || (searchAssociationForm.invalid && searchAssociationForm.touched)
+            "
+            (keyup.escape)="searchAssociationInput.blur()"
+            (change)="onDeselectAssociation()"
+        />
+        <ul
+            tabindex="0"
+            class="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box max-h-[32rem] overflow-auto flex-nowrap w-full"
+            *appLet="associations$ | async as associations"
+        >
+            <cdk-virtual-scroll-viewport itemSize="20" class="h-72">
+                <li
+                    *cdkVirtualFor="
+                        let result of associations | filterFuse: searchAssociationForm.valueChanges : ['name']
+                    "
+                >
+                    <button type="button" (click)="onSelectAssociation(result.item); searchAssociationInput.focus()">
+                        {{ result.item.name }}
+                    </button>
+                </li>
+            </cdk-virtual-scroll-viewport>
+        </ul>
+    </div>
+    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+        {{ control.errors | formErrorMessage }}
+    </span>
+</fieldset>
+<app-create-user-generic></app-create-user-generic>

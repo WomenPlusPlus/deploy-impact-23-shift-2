@@ -6,6 +6,8 @@ import { Language, LocationCity } from '@app/common/models/location.model';
 
 export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
 export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
+export type CreateUserCompanyFormGroup = FormModel<CreateUserCompanyFormModel>;
+export type CreateUserAssociationFormGroup = FormModel<CreateUserAssociationFormModel>;
 
 export interface CreateUserFormModel {
     details: UserDetailsFormModel;
@@ -15,6 +17,14 @@ export interface CreateUserFormModel {
 export interface CreateUserCandidateFormModel extends CreateUserFormModel {
     job: UserJobFormModel;
     technical: UserTechnicalFormModel;
+}
+
+export interface CreateUserCompanyFormModel extends CreateUserFormModel {
+    companyId: number | null;
+}
+
+export interface CreateUserAssociationFormModel extends CreateUserFormModel {
+    associationId: number | null;
 }
 
 export interface UserDetailsFormModel {
