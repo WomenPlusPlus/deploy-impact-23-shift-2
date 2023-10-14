@@ -11,13 +11,28 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// UserDB is an interface for managing user data.
-type UserDB interface {
+// // UserDB is an interface for managing user data.
+// type UserDB interface {
+// 	CreateUser(*entity.User) error
+// 	DeleteUser(int) error
+// 	UpdateUser(*entity.User) error
+// 	GetUsers() ([]*entity.User, error)
+// 	GetUserByID(int) (*entity.User, error)
+// }
+
+// Storage is an interface for managing  data.
+type Storage interface {
 	CreateUser(*entity.User) error
 	DeleteUser(int) error
 	UpdateUser(*entity.User) error
 	GetUsers() ([]*entity.User, error)
 	GetUserByID(int) (*entity.User, error)
+
+	CreateCompany(*entity.Company) error
+	DeleteCompany(int) error
+	//UpdateCompany(*entity.Company) error
+	GetCompanies() ([]*entity.Company, error)
+	GetCompanyByID(int) (*entity.Company, error)
 }
 
 // docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
@@ -29,7 +44,9 @@ type PostgresDB struct {
 
 // NewPostgresDB creates a new PostgresDB instance and initializes the database connection.
 func NewPostgresDB() *PostgresDB {
-	connStr := "user=postgres dbname=postgres password=shift2023 sslmode=disable"
+	//connStr := "user=postgres dbname=postgres password=shift2023 sslmode=disable"
+	connStr := "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+
 	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
@@ -44,6 +61,7 @@ func NewPostgresDB() *PostgresDB {
 // Init initializes the database by creating the user table.
 func (db *PostgresDB) Init() {
 	db.createUserTable()
+	db.createCompanyTable()
 }
 
 // CreateUserTable creates the "users" table if it does not exist.
@@ -147,4 +165,135 @@ func createUser(rows *sql.Rows) (*entity.User, error) {
 		&createdAt)
 
 	return user, err
+}
+
+// COMPANY
+
+// ComapnyDB is an interface for managing company data.
+// type CompanyDB interface {
+// 	CreateCompany(*entity.Company) error
+// 	DeleteCompany(int) error
+// 	UpdateCompany(*entity.Company) error
+// 	GetCompanies() ([]*entity.Company, error)
+// 	GetCompanyByID(int) (*entity.Company, error)
+// }
+
+// CreateCompanyTable creates the "companies" table if it does not exist.
+func (db *PostgresDB) createCompanyTable() {
+	fmt.Println("in create company table ")
+	query := `
+	CREATE TABLE IF NOT EXISTS company (
+		id serial primary key,
+		companyName varchar(55),
+		linkedinUrl varchar(55),
+		kununuUrl varchar(55),
+		email varchar(55),
+		phone varchar(20),
+		logoUrl varchar(255),
+		country varchar(55),
+		city varchar(55),
+		postalCode varchar(20),
+		street varchar(55),
+		numberAddress varchar(5),
+		createdAt timestamp
+	)`
+	db.db.MustExec(query)
+}
+
+// CreateCompany inserts a new company record into the "companies" table.
+func (s *PostgresDB) CreateCompany(c *entity.Company) error {
+	fmt.Println("inCreateCompany")
+	query := `INSERT INTO company
+		(companyName, linkedinUrl, kununuUrl, email, phone, logoUrl, country, city,postalCode,street, numberAddress, createdAt)
+		values ($1, $2, $3, $4, $5, $6, $7, $8,$9, $10, $11, $12)`
+
+	resp, err := s.db.Query(
+		query,
+		c.CompanyName,
+		c.Linkedin,
+		c.Kununu,
+		c.Email,
+		c.Phone,
+		c.Logo,
+		c.Country,
+		c.City,
+		c.PostalCode,
+		c.Street,
+		c.NumberAddress,
+		c.CreatedAt)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", resp)
+
+	return nil
+}
+
+// createCompany scans a row from the database into a entity.Company struct.
+func createCompany(rows *sql.Rows) (*entity.Company, error) {
+	//var createdAt sql.NullTime
+	company := new(entity.Company)
+
+	err := rows.Scan(
+		&company.ID,
+		&company.CompanyName,
+		&company.Linkedin,
+		&company.Kununu,
+		&company.Email,
+		&company.Phone,
+		&company.Logo,
+		&company.Country,
+		&company.City,
+		&company.PostalCode,
+		&company.Street,
+		&company.NumberAddress,
+		&company.CreatedAt)
+
+	return company, err
+}
+
+// GetCompanies retrieves a list of all companies from the "company" table.
+func (s *PostgresDB) GetCompanies() ([]*entity.Company, error) {
+	fmt.Println("In get companies")
+	companies := []*entity.Company{}
+	rows, err := s.db.Query("select * from company")
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		company, err := createCompany(rows)
+		if err != nil {
+			return nil, err
+		}
+		companies = append(companies, company)
+	}
+
+	return companies, nil
+}
+
+// GetUserByID retrieves a user's information from the "users" table based on their ID.
+func (s *PostgresDB) GetCompanyByID(id int) (*entity.Company, error) {
+	fmt.Println("GetCompanyByID ")
+	fmt.Println(id)
+	rows, err := s.db.Query("select * from company where id = $1", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		return createCompany(rows)
+	}
+
+	return nil, fmt.Errorf("company with id: %d not found", id)
+}
+
+func (s *PostgresDB) DeleteCompany(id int) error {
+	fmt.Println("In DeleteCompany")
+	fmt.Println(id)
+	_, err := s.db.Query("delete from company where id = $1", id)
+	return err
 }
