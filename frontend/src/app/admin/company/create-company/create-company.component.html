@@ -13,7 +13,7 @@
                     [class.input-error]="control.invalid && control.touched"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.name.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-address" class="form-control w-full my-4" *appLet="form.controls.address as control">
@@ -27,7 +27,7 @@
                     [class.input-error]="control.invalid && control.touched"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.address.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
@@ -41,7 +41,7 @@
                     (change)="onFileSelected($event)"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.logo.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-linkedin" class="form-control w-full my-4" *appLet="form.controls.linkedin as control">
@@ -55,7 +55,7 @@
                     [class.input-error]="control.invalid && control.touched"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.linkedin.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-kununu" class="form-control w-full my-4" *appLet="form.controls.kununu as control">
@@ -69,7 +69,7 @@
                     [class.input-error]="control.invalid && control.touched"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.kununu.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-phone" class="form-control w-full my-4" *appLet="form.controls.phone as control">
@@ -83,7 +83,7 @@
                     [class.input-error]="control.invalid && control.touched"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.phone.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-email" class="form-control w-full my-4" *appLet="form.controls.email as control">
@@ -97,7 +97,21 @@
                     [class.input-error]="control.invalid && control.touched"
                 />
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.email.errors | formErrorMessage
+                    control.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-mission" class="form-control w-full my-4" *appLet="form.controls.mission as control">
+                <label for="mission" class="mb-1">Company Mission:</label>
+                <textarea
+                    id="mission"
+                    name="mission"
+                    formControlName="mission"
+                    rows="5"
+                    class="textarea textarea-bordered resize-y"
+                    [class.textarea-error]="control.invalid && control.touched"
+                ></textarea>
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-values" class="form-control w-full my-4" *appLet="form.controls.values as control">
@@ -111,7 +125,7 @@
                     [class.textarea-error]="control.invalid && control.touched"
                 ></textarea>
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.values.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset id="edit-jobtypes" class="form-control w-full my-4" *appLet="form.controls.jobtypes as control">
@@ -125,7 +139,7 @@
                     [class.textarea-error]="control.invalid && control.touched"
                 ></textarea>
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.jobtypes.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <fieldset
@@ -143,7 +157,7 @@
                     [class.textarea-error]="control.invalid && control.touched"
                 ></textarea>
                 <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.expectation.errors | formErrorMessage
+                    control.errors | formErrorMessage
                 }}</span>
             </fieldset>
             <button

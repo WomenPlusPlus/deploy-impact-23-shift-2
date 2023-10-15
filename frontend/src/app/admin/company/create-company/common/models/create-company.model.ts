@@ -8,6 +8,7 @@ export interface CreateCompanyFormGroup {
     kununu: FormControl<string | null>;
     phone: FormControl<string | null>;
     email: FormControl<string | null>;
+    mission: FormControl<string | null>;
     values: FormControl<string | null>;
     jobtypes: FormControl<string | null>;
     expectation: FormControl<string | null>;
