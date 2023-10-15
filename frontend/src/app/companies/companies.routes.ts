@@ -7,6 +7,11 @@ const routes: Routes = [
             import('@app/companies/profile/company-profile/company-profile.component').then(
                 (m) => m.CompanyProfileComponent
             )
+    },
+    {
+        path: '',
+        loadComponent: () =>
+            import('@app/companies/list/companies-list/companies-list.component').then((m) => m.CompaniesListComponent)
     }
 ];
 

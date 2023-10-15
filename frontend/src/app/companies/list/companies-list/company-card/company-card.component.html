@@ -1,0 +1,9 @@
+<a class="card w-full h-full bg-base-200 shadow-xl" [routerLink]="['.', company.id]">
+    <figure class="relative h-40">
+        <img [src]="company.logo" alt="{{ company.name }}" class="object-center object-cover" loading="lazy" />
+    </figure>
+    <div class="card-body relative">
+        <h2 class="card-title">{{ company.name }}</h2>
+        <p class="break-all">{{ company.address }}</p>
+    </div>
+</a>
