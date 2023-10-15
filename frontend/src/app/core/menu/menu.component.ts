@@ -59,7 +59,7 @@ export class MenuComponent implements OnChanges {
     ) {}
 
     ngOnChanges(): void {
-        this.zone.runOutsideAngular(() => setTimeout(() => this.checkOpenLink(), 100));
+        this.zone.runOutsideAngular(() => setTimeout(() => this.checkOpenLink(), 500));
     }
 
     private checkOpenLink(): void {
