@@ -23,8 +23,6 @@ export class CreateCompanyComponent implements OnInit {
 
     vm$: Observable<CreateCompanyState> = this.createCompanyStore.vm$;
 
-    selectedFile: File | null = null;
-
     constructor(
         private readonly fb: FormBuilder,
         private readonly createCompanyStore: CreateCompanyStore
@@ -57,6 +55,7 @@ export class CreateCompanyComponent implements OnInit {
             kununu: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             phone: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
             email: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
+            mission: this.fb.control('', [Validators.required, Validators.maxLength(1024)]),
             values: this.fb.control('', [Validators.required, Validators.maxLength(1024)]),
             jobtypes: this.fb.control('', [Validators.required, Validators.maxLength(1024)]),
             expectation: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
