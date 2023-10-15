@@ -34,17 +34,32 @@ type apiError struct {
 	Error string `json:"error"`
 }
 
+type NotFoundError struct {
+	Message string
+}
+
+func (e NotFoundError) Error() string {
+	return e.Message
+}
+
+type PermissionError struct {
+	Message string
+}
+
+func (e PermissionError) Error() string {
+	return e.Message
+}
+
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
-	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers)).
-		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
-	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID)).
-		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
-	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser)).
-		Methods(http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions)
+	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
+	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
+
+	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
+	// router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
@@ -52,13 +67,14 @@ func (s *APIServer) Run() {
 
 // IsNotFoundError checks if an error is a not found error.
 func IsNotFoundError(err error) bool {
-	return false
+	_, isNotFound := err.(NotFoundError)
+	return isNotFound
 }
 
 // IsPermissionError checks if an error is a permission error.
 func IsPermissionError(err error) bool {
-	// Implement your custom logic to check for permission errors
-	return false
+	_, isPermissionDenied := err.(PermissionError)
+	return isPermissionDenied
 }
 
 // makeHTTPHandleFunc creates an HTTP request handler function for the provided apiFunc.
@@ -70,9 +86,9 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 		if err != nil {
 			switch {
 			case IsNotFoundError(err):
-				WriteJSONResponse(w, http.StatusNotFound, apiError{Error: "Resource not found"})
+				WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 			case IsPermissionError(err):
-				WriteJSONResponse(w, http.StatusForbidden, apiError{Error: "Permission denied"})
+				WriteJSONResponse(w, http.StatusForbidden, apiError{Error: err.Error()})
 			default:
 				// Log the internal error without exposing details to the client
 				logger.Error(err)
@@ -94,9 +110,6 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
 	}
-	if r.Method == "POST" {
-		return s.handleCreateUser(w, r)
-	}
 	if r.Method == "DELETE" {
 		return s.handleDeleteUser(w, r)
 	}
@@ -106,7 +119,6 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 // handleGetUser handles GET requests for user account information.
 func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error {
 	users, err := s.userDB.GetUsers()
-	fmt.Println(users)
 	if err != nil {
 		return err
 	}
@@ -115,16 +127,12 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 
 func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
-	id, err := strconv.Atoi(idStr)
-
-	if err != nil {
-		return fmt.Errorf("invalid id given %s", idStr)
-	}
+	id, _ := strconv.Atoi(idStr)
 
 	user, err := s.userDB.GetUserByID(id)
 
 	if err != nil {
-		return err
+		return NotFoundError{Message: "User not found"}
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
@@ -141,9 +149,30 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 		userRequest.LastName,
 		userRequest.PreferredName,
 		userRequest.Email,
-		userRequest.State,
-		userRequest.ImageUrl,
-		userRequest.Role,
+		userRequest.PhoneNumber,
+		userRequest.BirthDate,
+		userRequest.Photo,
+		userRequest.YearsOfExperience,
+		userRequest.JobStatus,
+		userRequest.SeekJobType,
+		userRequest.SeekCompanySize,
+		userRequest.SeekLocations,
+		userRequest.SeekLocationType,
+		userRequest.SeekSalary,
+		userRequest.SeekValues,
+		userRequest.WorkPermit,
+		userRequest.NoticePeriod,
+		userRequest.SpokenLanguages,
+		userRequest.Skills,
+		userRequest.Cv,
+		userRequest.Attachements,
+		userRequest.Video,
+		userRequest.EducationHistory,
+		userRequest.EmploymentHistory,
+		userRequest.LinkedinUrl,
+		userRequest.GithubUrl,
+		userRequest.PortfolioUrl,
+		userRequest.Kind,
 	)
 
 	if err := s.userDB.CreateUser(user); err != nil {
@@ -156,7 +185,15 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 // handleDeleteUser handles DELETE requests to delete a user account.
 func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
-	id, _ := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		return NotFoundError{Message: "Invalid ID given"}
+	}
+
+	if err != nil {
+		return NotFoundError{Message: "User not found"}
+	}
 
 	if err := s.userDB.DeleteUser(id); err != nil {
 		return err
