@@ -21,6 +21,13 @@ const routes: Routes = [
         loadChildren: () => import('./company/admin-company.routes')
     },
     {
+        path: 'associations/:id',
+        loadComponent: () =>
+            import('@app/associations/profile/association-profile/association-profile.component').then(
+                (m) => m.AssociationProfileComponent
+            )
+    },
+    {
         path: 'associations',
         loadChildren: () => import('./associations/admin-associations.routes')
     },
