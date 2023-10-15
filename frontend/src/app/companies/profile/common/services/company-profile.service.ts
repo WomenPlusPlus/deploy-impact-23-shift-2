@@ -46,6 +46,7 @@ export class CompanyProfileService {
                     kununu: 'https://test-link-for-kununu',
                     phone: '0123456789',
                     email: 'test@test.com',
+                    mission: 'Lorem ipsum dolor sit amet',
                     values: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     jobtypes:
                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ',
@@ -60,6 +61,7 @@ export class CompanyProfileService {
                     kununu: 'https://test-link-for-kununu',
                     phone: '111222333',
                     email: 'test@test.com',
+                    mission: 'Lorem ipsum dolor sit amet',
                     values: 'We are dedicated to innovation, collaboration, and excellence. We believe in pushing boundaries and creating cutting-edge solutions to drive positive change in the world.',
                     jobtypes:
                         'Join our team to work on exciting projects in AI, machine learning, and cloud computing.',
@@ -75,6 +77,7 @@ export class CompanyProfileService {
                     kununu: 'https://test-link-for-kununu',
                     phone: '0012300123',
                     email: 'test@test.com',
+                    mission: 'Lorem ipsum dolor sit amet',
                     values: 'Our core values revolve around technical excellence, customer-centricity, and a commitment to creating software that simplifies the complex.',
                     jobtypes: 'Join us to work on exciting projects in web and mobile app development.',
                     expectation:
@@ -89,6 +92,7 @@ export class CompanyProfileService {
                     kununu: 'https://test-link-for-kununu',
                     phone: '1234512345',
                     email: 'test@test.com',
+                    mission: 'Lorem ipsum dolor sit amet',
                     values: 'At Dummy Company, we value innovation, sustainability, and diversity. We are dedicated to developing software that advances the world while protecting the environment.',
                     jobtypes: 'Join us to work on groundbreaking projects in green tech. ',
                     expectation:

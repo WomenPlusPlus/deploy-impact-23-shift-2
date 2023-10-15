@@ -14,6 +14,10 @@ const routes: Routes = [
         loadChildren: () => import('./jobs/jobs.routes')
     },
     {
+        path: 'associations',
+        loadChildren: () => import('./associations/associations.routes')
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'admin'
