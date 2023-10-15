@@ -110,6 +110,9 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
 	}
+	if r.Method == "POST" {
+		return s.handleCreateUser(w, r)
+	}
 	if r.Method == "DELETE" {
 		return s.handleDeleteUser(w, r)
 	}
