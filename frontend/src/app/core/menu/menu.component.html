@@ -1,4 +1,7 @@
-<ul class="menu flex flex-col gap-2 h-full px-3 pb-4 font-medium text-lg">
+<ul
+    class="menu flex flex-col gap-2 px-3 pb-4 font-medium text-lg h-full"
+    [ngClass]="{ 'sm:menu-horizontal sm:flex-col': !expanded }"
+>
     <li>
         <a
             [routerLink]="['/admin', 'invitations']"
@@ -22,15 +25,46 @@
         </a>
     </li>
     <li>
-        <a
-            [routerLink]="['/admin', 'companies']"
-            routerLinkActive="active"
-            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
-            data-tip="Companies"
-        >
-            <fa-icon [icon]="faBuilding" class="text-center w-6" />
-            <span *ngIf="expanded" class="ml-1 truncate">Companies</span>
-        </a>
+        <details [open]="!expanded ? false : undefined">
+            <summary
+                #toggleEl
+                class="flex sm:justify-center"
+                [ngClass]="{ 'tooltip tooltip-right after:hidden active': !expanded }"
+                data-tip="Companies"
+            >
+                <a class="flex gap-2" routerLinkActive="active" [routerLink]="['/admin', 'companies']" *ngIf="expanded">
+                    <fa-icon [icon]="faBuilding" class="text-center w-6" />
+                    <span class="ml-1 truncate">Companies</span>
+                </a>
+                <fa-icon *ngIf="!expanded" [icon]="faBuilding" class="text-center w-6" />
+            </summary>
+            <ul tabindex="0" [ngClass]="{ 'top-[-1rem] left-16': !expanded }" (click)="!expanded && toggleEl.click()">
+                <li>
+                    <a
+                        class="flex flex-nowrap gap-2"
+                        [routerLink]="['/admin', 'companies']"
+                        routerLinkActive="active"
+                        [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+                        data-tip="Companies Profile"
+                    >
+                        <fa-icon [icon]="faIdCard" class="text-center w-6" />
+                        <span class="ml-1 truncate">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a
+                        class="flex flex-nowrap gap-2"
+                        [routerLink]="['/jobs']"
+                        routerLinkActive="active"
+                        [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+                        data-tip="Job listings"
+                    >
+                        <fa-icon [icon]="faSheetPlastic" class="text-center w-6" />
+                        <span class="ml-1 truncate">Job listings</span>
+                    </a>
+                </li>
+            </ul>
+        </details>
     </li>
     <li>
         <a
