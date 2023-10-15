@@ -7,6 +7,7 @@ export interface CompanyProfileModel {
     kununu: string;
     phone: string;
     email: string;
+    mission: string;
     values: string;
     jobtypes: string;
     expectation: string;

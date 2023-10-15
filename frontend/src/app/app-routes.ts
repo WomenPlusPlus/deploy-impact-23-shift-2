@@ -10,6 +10,10 @@ const routes: Routes = [
         loadChildren: () => import('./companies/companies.routes')
     },
     {
+        path: 'jobs',
+        loadChildren: () => import('./jobs/jobs.routes')
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'admin'
