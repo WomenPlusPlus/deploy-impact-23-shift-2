@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { CompaniesListModel } from '@app/companies/common/models/company-profile.model';
-import { CompanyProfileService } from '@app/companies/common/services/company-profile.service';
+import { CompaniesListModel } from '@app/companies/profile/common/models/company-profile.model';
+import { CompanyProfileService } from '@app/companies/profile/common/services/company-profile.service';
 
 export interface CompaniesListState {
     list: CompaniesListModel | null;

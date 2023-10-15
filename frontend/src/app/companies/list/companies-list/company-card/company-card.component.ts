@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { CompanyProfileModel } from '@app/companies/common/models/company-profile.model';
+import { CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
 
 @Component({
     selector: 'app-company-card',
