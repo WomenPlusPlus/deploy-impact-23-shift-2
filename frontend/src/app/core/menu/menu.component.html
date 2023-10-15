@@ -28,8 +28,8 @@
         <details [open]="!expanded ? false : undefined">
             <summary
                 #toggleEl
-                class="flex sm:justify-center"
-                [ngClass]="{ 'tooltip tooltip-right after:hidden active': !expanded }"
+                class="flex"
+                [ngClass]="{ 'tooltip tooltip-right after:hidden sm:justify-center active': !expanded }"
                 data-tip="Companies"
             >
                 <a class="flex gap-2" routerLinkActive="active" [routerLink]="['/admin', 'companies']" *ngIf="expanded">
