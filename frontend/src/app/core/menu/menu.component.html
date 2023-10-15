@@ -1,54 +1,98 @@
-<ul class="menu flex flex-col gap-2 h-full px-3 pb-4 overflow-y-auto font-medium text-lg overflow-hidden">
+<ul class="menu flex flex-col gap-2 h-full px-3 pb-4 font-medium text-lg">
     <li>
-        <a [routerLink]="['/admin', 'invitations']" routerLinkActive="active" title="Invitations">
+        <a
+            [routerLink]="['/admin', 'invitations']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Invitations"
+        >
             <fa-icon [icon]="faEnvelope" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Invitations</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'associations']" routerLinkActive="active" title="Associations">
+        <a
+            [routerLink]="['/admin', 'associations']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Associations"
+        >
             <fa-icon [icon]="faSitemap" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Associations</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'companies']" routerLinkActive="active" title="Companies">
+        <a
+            [routerLink]="['/admin', 'companies']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Companies"
+        >
             <fa-icon [icon]="faBuilding" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Companies</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'users']" routerLinkActive="active" title="Users">
+        <a
+            [routerLink]="['/admin', 'users']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Users"
+        >
             <fa-icon [icon]="faUser" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Users</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'training']" routerLinkActive="active" title="Training">
+        <a
+            [routerLink]="['/admin', 'training']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Training"
+        >
             <fa-icon [icon]="faBrain" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Training</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'help-center']" routerLinkActive="active" title="Help Center">
+        <a
+            [routerLink]="['/admin', 'help-center']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Help Center"
+        >
             <fa-icon [icon]="faCircleInfo" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Help Center</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'requests']" routerLinkActive="active" title="Requests">
+        <a
+            [routerLink]="['/admin', 'requests']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Requests"
+        >
             <fa-icon [icon]="faListCheck" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Requests</span>
         </a>
     </li>
     <li>
-        <a [routerLink]="['/admin', 'variables']" routerLinkActive="active" title="Variables">
+        <a
+            [routerLink]="['/admin', 'variables']"
+            routerLinkActive="active"
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Variables"
+        >
             <fa-icon [icon]="faList" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Variables</span>
         </a>
     </li>
     <li class="mt-auto" *ngIf="showExpanded">
-        <button title="Toggle navigation" (click)="expandedChange.emit(!expanded)">
+        <button
+            [ngClass]="{ 'tooltip tooltip-right': !expanded }"
+            data-tip="Toggle navigation"
+            (click)="expandedChange.emit(!expanded)"
+        >
             <fa-icon [icon]="expanded ? faSquareCaretLeft : faSquareCaretRight" class="text-center w-6" />
             <span *ngIf="expanded" class="ml-1 truncate">Toggle navigation</span>
         </button>
