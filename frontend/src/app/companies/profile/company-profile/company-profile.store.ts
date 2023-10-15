@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { CompanyProfileModel } from '../common/models/company-profile.model';
-import { CompanyProfileService } from '../common/services/company-profile.service';
+import { CompanyProfileModel } from '../../common/models/company-profile.model';
+import { CompanyProfileService } from '../../common/services/company-profile.service';
 
 export interface CompanyProfileState {
     profile: CompanyProfileModel | null;

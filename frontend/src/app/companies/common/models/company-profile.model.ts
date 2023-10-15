@@ -11,3 +11,7 @@ export interface CompanyProfileModel {
     jobtypes: string;
     expectation: string;
 }
+
+export interface CompaniesListModel {
+    items: CompanyProfileModel[];
+}
