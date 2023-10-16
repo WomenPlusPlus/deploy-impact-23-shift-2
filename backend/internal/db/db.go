@@ -185,8 +185,6 @@ func (s *PostgresDB) DeleteUser(id int) error {
 			return err
 		}
 	}
-
-	fmt.Println("user deleted")
 	return nil
 }
 
@@ -202,7 +200,7 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	for rows.Next() {
 		user, err := createUser(rows)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cannot create user")
 		}
 		users = append(users, user)
 	}
@@ -248,5 +246,9 @@ func createUser(rows *sql.Rows) (*entity.User, error) {
 		&createdAt,
 	)
 
-	return user, err
+	if err != nil {
+		return nil, fmt.Errorf("cannot scan user row")
+	}
+
+	return user, nil
 }

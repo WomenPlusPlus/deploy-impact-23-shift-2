@@ -179,7 +179,7 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 	)
 
 	if err := s.userDB.CreateUser(user); err != nil {
-		return err
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
@@ -188,18 +188,10 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 // handleDeleteUser handles DELETE requests to delete a user account.
 func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
-	id, err := strconv.Atoi(idStr)
+	id, _ := strconv.Atoi(idStr)
 
-	if err != nil {
-		return NotFoundError{Message: "Invalid ID given"}
-	}
-
-	if err != nil {
-		return NotFoundError{Message: "User not found"}
-	}
-
-	if err := s.userDB.DeleteUser(id); err != nil {
-		return err
+	if _, err := s.userDB.GetUserByID(id); err != nil {
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, "User deleted successfully")
