@@ -10,6 +10,7 @@ import { LetDirective } from '@app/common/directives/let/let.directive';
 import { Company } from '@app/common/models/companies.model';
 import { FilterFusePipe } from '@app/common/pipes/filter-fuse/filter-fuse.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { SelectSingleComponent } from '@app/ui/select-single/select-single.component';
 
 @Component({
     selector: 'app-create-user-company',
@@ -24,7 +25,8 @@ import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-
         LetDirective,
         CreateUserGenericComponent,
         FilterFusePipe,
-        FormErrorMessagePipe
+        FormErrorMessagePipe,
+        SelectSingleComponent
     ],
     templateUrl: './create-user-company.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
