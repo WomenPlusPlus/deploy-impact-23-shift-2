@@ -22,7 +22,7 @@ export class AssociationProfileService {
         });
     }
 
-    getCompaniesList(): Observable<AssociationsListModel> {
+    getAssociationsList(): Observable<AssociationsListModel> {
         //return this.httpClient.get<CompanyProfileModel>(`${environment.API_BASE_URL}/api/v1/associations/`);
         return of({
             items: [
