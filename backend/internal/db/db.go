@@ -25,7 +25,7 @@ type PostgresDB struct {
 }
 
 func NewPostgresDB() *PostgresDB {
-	connStr := "user=postgres dbname=postgres password=shift2023 sslmode=disable"
+	connStr := "postgres://postgres:shift2023@localhost:5432/postgres?sslmode=disable"
 	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
@@ -51,28 +51,11 @@ func (db *PostgresDB) createUserTable() {
 		email varchar(100) not null,
 		phoneNumber varchar(20),
 		birthDate timestamp,
-		photo varchar(255),
-		yearsOfExperience integer,
-		jobStatus varchar(20),
-		seekJobType varchar(20),
-		seekCompanySize varchar(20),
-		seekLocations varchar(20),
-		seekLocationType varchar(20),
-		seekSalary varchar(20),
-		seekValues varchar(100),
-		workPermit varchar(20),
-		noticePeriod varchar(20),
-		spokenLanguages varchar(255), -- Array of languages
-		skills varchar(255), -- Array of skills
-		cv varchar(255),
-		attachments varchar(255), -- Array of attachment URLs
-		videoUrl varchar(255),
-		educationHistory varchar(255), -- Array of JSON objects for education history
-		employmentHistory varchar(255), -- Array of JSON objects for employment history
+		imageUrl varchar(255),
 		linkedinUrl varchar(250),
 		githubUrl varchar(250),
 		portfolioUrl varchar(250),
-		kind varchar(20),
+		state varchar(250),
 		createdAt timestamp
 	)`
 	db.db.MustExec(query)
@@ -88,33 +71,15 @@ func (db *PostgresDB) CreateUser(u *entity.User) error {
 			email,
 			phoneNumber,
 			birthDate,
-			photo,
-			yearsOfExperience,
-			jobStatus,
-			seekJobType,
-			seekCompanySize,
-			seekLocations,
-			seekLocationType,
-			seekSalary,
-			seekValues,
-			workPermit,
-			noticePeriod,
-			spokenLanguages,
-			skills,
-			cv,
-			attachments,
-			videoUrl,
-			educationHistory,
-			employmentHistory,
+			imageUrl,
 			linkedinUrl,
 			githubUrl,
 			portfolioUrl,
-			kind,
+			state,
 			createdAt
 	)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
-			$21, $22, $23, $24, $25, $26, $27, $28, $29)`
+			$11, $12)`
 
 	tx := db.db.MustBegin()
 	tx.MustExec(
@@ -125,28 +90,11 @@ func (db *PostgresDB) CreateUser(u *entity.User) error {
 		u.Email,
 		u.PhoneNumber,
 		u.BirthDate,
-		u.Photo,
-		u.YearsOfExperience,
-		u.JobStatus,
-		u.SeekJobType,
-		u.SeekCompanySize,
-		u.SeekLocations,
-		u.SeekLocationType,
-		u.SeekSalary,
-		u.SeekValues,
-		u.WorkPermit,
-		u.NoticePeriod,
-		u.SpokenLanguages,
-		u.Skills,
-		u.Cv,
-		u.Attachements,
-		u.Video,
-		u.EducationHistory,
-		u.EmploymentHistory,
+		u.ImageUrl,
 		u.LinkedinUrl,
 		u.GithubUrl,
 		u.PortfolioUrl,
-		u.Kind,
+		u.State,
 		u.CreatedAt,
 	)
 	tx.Commit()
@@ -221,28 +169,11 @@ func createUser(rows *sql.Rows) (*entity.User, error) {
 		&user.Email,
 		&user.PhoneNumber,
 		&user.BirthDate,
-		&user.Photo,
-		&user.YearsOfExperience,
-		&user.JobStatus,
-		&user.SeekJobType,
-		&user.SeekCompanySize,
-		&user.SeekLocations,
-		&user.SeekLocationType,
-		&user.SeekSalary,
-		&user.SeekValues,
-		&user.WorkPermit,
-		&user.NoticePeriod,
-		&user.SpokenLanguages,
-		&user.Skills,
-		&user.Cv,
-		&user.Attachements,
-		&user.Video,
-		&user.EducationHistory,
-		&user.EmploymentHistory,
+		&user.ImageUrl,
 		&user.LinkedinUrl,
 		&user.GithubUrl,
 		&user.PortfolioUrl,
-		&user.Kind,
+		&user.State,
 		&createdAt,
 	)
 
