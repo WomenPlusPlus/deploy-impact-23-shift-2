@@ -88,7 +88,7 @@ func (db *PostgresDB) CreateUser(u *entity.User) error {
 			email,
 			phoneNumber,
 			birthDate,
-			photoUrl,
+			photo,
 			yearsOfExperience,
 			jobStatus,
 			seekJobType,
