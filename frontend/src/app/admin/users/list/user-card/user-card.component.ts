@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faExternalLink, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faExternalLink, faEye } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
@@ -12,6 +12,7 @@ import {
     UsersListItemModel,
     UsersListMode
 } from '@app/admin/users/common/models/users-list.model';
+import { UsersListStore } from '@app/admin/users/list/users-list.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 import { UserAssociationRoleLabelPipe } from '@app/common/pipes/user-association-role-label/user-association-role-label.pipe';
@@ -44,6 +45,7 @@ import {
 export class UserCardComponent {
     @Input() user!: UsersListItemModel;
     @Input() mode!: UsersListMode;
+    @Input() deleting!: boolean;
 
     @HostBinding('class.relative') classRelative = true;
 
@@ -59,12 +61,24 @@ export class UserCardComponent {
         return user as UsersListAssociationModel;
     };
 
+    get disableDeleteAction(): boolean {
+        return this.user.state === UserStateEnum.DELETED || this.deleting;
+    }
+
     protected readonly faEye = faEye;
     protected readonly faExternalLink = faExternalLink;
     protected readonly userKindEnum = UserKindEnum;
     protected readonly userStateEnum = UserStateEnum;
 
+    constructor(private readonly usersListStore: UsersListStore) {}
+
+    onDelete(): void {
+        this.usersListStore.deleteItem(this.user.id);
+    }
+
     onToggleMode(): void {
         this.mode = this.mode === 'short' ? 'detailed' : 'short';
     }
+
+    protected readonly faEllipsisV = faEllipsisV;
 }

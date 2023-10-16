@@ -8,9 +8,9 @@
     <ng-container *ngIf="!vm.loading && !vm.error">
         <app-users-filters class="mb-4"></app-users-filters>
         <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-4 gap-y-8 justify-items-center p-4"
+            class="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-rows-auto-[20rem] gap-x-4 gap-y-8 justify-items-center p-4"
         >
-            <a class="card w-full bg-base-200 shadow-xl relative" [routerLink]="['.', 'create']">
+            <a class="card w-full max-w-xs bg-base-200 shadow-xl relative" [routerLink]="['.', 'create']">
                 <div class="grid gap-2 justify-items-center text-2xl absolute inset-center">
                     <fa-icon [icon]="faAdd" />
                     <span>Add new</span>
@@ -18,9 +18,10 @@
             </a>
             <ng-container *ngIf="vm.list?.items?.length">
                 <app-user-card
-                    *ngFor="let item of vm.list!.items!"
+                    *ngFor="let item of $any(vm.list!.items!)"
                     [user]="item"
                     [mode]="vm.mode"
+                    [deleting]="vm.deleting"
                     class="max-w-xs"
                 ></app-user-card>
             </ng-container>

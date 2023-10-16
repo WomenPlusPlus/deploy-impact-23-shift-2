@@ -1,0 +1,74 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error">
+        <app-content-error class="block h-screen/2-s"></app-content-error>
+    </ng-container>
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container *ngIf="vm.profile as profile">
+            <div>
+                <div class="flex mb-4">
+                    <div class="basis-1/4 flex-1 mr-4">
+                        <img
+                            class="object-center object-cover"
+                            loading="lazy"
+                            alt="{{ profile.name }} Logo"
+                            src="{{ profile.logo }}"
+                        />
+                    </div>
+                    <div class="basis-3/4 flex-1">
+                        <h1 class="text-3xl mb-3">{{ profile.name }}</h1>
+                        <p class="mb-2">{{ profile.address }}</p>
+                        <table class="table max-w-xs">
+                            <tbody>
+                                <tr>
+                                    <th class="pl-0">LinkedIn:</th>
+                                    <td>
+                                        <a target="_blank" href="{{ profile.linkedin }}">{{ profile.linkedin }}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="pl-0">Kununu:</th>
+                                    <td>
+                                        <a target="_blank" href="{{ profile.kununu }}">{{ profile.kununu }}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="pl-0">Phone:</th>
+                                    <td>
+                                        <a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="pl-0">Email:</th>
+                                    <td>
+                                        <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="divide-y divide-gray-700">
+                    <div class="py-2">
+                        <h2 class="text-xl mb-1">Company Mission</h2>
+                        <p>{{ profile.mission }}</p>
+                    </div>
+                    <div class="py-2">
+                        <h2 class="text-xl mb-1">Company Values</h2>
+                        <p>{{ profile.values }}</p>
+                    </div>
+                    <div class="py-2">
+                        <h2 class="text-xl mb-1">Job Types</h2>
+                        <p>{{ profile.jobtypes }}</p>
+                    </div>
+                    <div class="py-2">
+                        <h2 class="text-xl mb-1">Expectations We Offer</h2>
+                        <p>{{ profile.expectation }}</p>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</ng-container>

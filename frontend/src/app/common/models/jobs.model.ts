@@ -1,4 +1,28 @@
 export enum JobStatusEnum {
-    // TODO: fill with possible status
+    SEARCHING = 'SEARCHING',
+    OPEN_TO = 'OPEN_TO',
+    NOT_SEARCHING = 'NOT_SEARCHING'
+}
+
+export enum JobTypeEnum {
+    FULL_TIME = 'FULL_TIME',
+    PART_TIME = 'PART_TIME',
+    INTERNSHIP = 'INTERNSHIP',
     TEMPORARY = 'TEMPORARY'
+}
+
+export enum JobLocationTypeEnum {
+    REMOTE = 'REMOTE',
+    HYBRID = 'HYBRID',
+    ON_SITE = 'ON_SITE'
+}
+
+export enum WorkPermitEnum {
+    CITIZEN = 'CITIZEN',
+    PERMANENT_RESIDENT = 'PERMANENT_RESIDENT',
+    WORK_VISA = 'WORK_VISA',
+    STUDENT_VISA = 'STUDENT_VISA',
+    TEMPORARY_RESIDENT = 'TEMPORARY_RESIDENT',
+    NO_WORK_PERMIT = 'NO_WORK_PERMIT',
+    OTHER = 'OTHER'
 }

@@ -7,19 +7,36 @@ import (
 // USER
 
 type User struct {
-	ID              int             `json:"id"`
-	FirstName       string          `json:"firstName"`
-	LastName        string          `json:"lastName"`
-	BirthDate       time.Time       `json:"birthDate"`
-	PreferredName   string          `json:"preferredName"`
-	Email           string          `json:"email"`
-	Phone           string          `json:"phone"`
-	State           string          `json:"state"`
-	ImageUrl        string          `json:"imageUrl"`
-	Role            string          `json:"role"`
-	CreatedAt       time.Time       `json:"createdAt"`
-	Technical       Technical       `json:"technical"`
-	JobExpectations JobExpectations `json:"jobExpectations"`
+	ID                int       `json:"id"`
+	FirstName         string    `json:"firstName"`
+	LastName          string    `json:"lastName"`
+	PreferredName     string    `json:"preferredName"`
+	Email             string    `json:"email"`
+	PhoneNumber       string    `json:"phoneNumber"`
+	BirthDate         time.Time `json:"birthDate"`
+	Photo             string    `json:"photo"`
+	YearsOfExperience int       `json:"yearsOfExperience"`
+	JobStatus         string    `json:"jobStatus"`
+	SeekJobType       string    `json:"seekJobType"`
+	SeekCompanySize   string    `json:"seekCompanySize"`
+	SeekLocations     string    `json:"seekLocations"`
+	SeekLocationType  string    `json:"seekLocationType"`
+	SeekSalary        string    `json:"seekSalary"`
+	SeekValues        string    `json:"seekValues"`
+	WorkPermit        string    `json:"workPermit"`
+	NoticePeriod      string    `json:"noticePeriod"`
+	SpokenLanguages   string    `json:"spokenLanguages"`
+	Skills            string    `json:"skills"`
+	Cv                string    `json:"cv"`
+	Attachements      string    `json:"attachements"`
+	Video             string    `json:"video"`
+	EducationHistory  string    `json:"educationHistory"`
+	EmploymentHistory string    `json:"employmentHistory"`
+	LinkedinUrl       string    `json:"linkedinUrl"`
+	GithubUrl         string    `json:"githubUrl"`
+	PortfolioUrl      string    `json:"portfolioUrl"`
+	Kind              string    `json:"kind"`
+	CreatedAt         time.Time `json:"createdAt"`
 }
 
 // UserDB is an interface for managing user data.
@@ -32,63 +49,95 @@ type UserDB interface {
 }
 
 type CreateUserRequest struct {
-	FirstName     string `json:"firstName"`
-	LastName      string `json:"lastName"`
-	PreferredName string `json:"preferredName"`
-	Email         string `json:"email"`
-	State         string `json:"state"`
-	ImageUrl      string `json:"imageUrl"`
-	Role          string `json:"role"`
+	FirstName         string    `json:"firstName"`
+	LastName          string    `json:"lastName"`
+	PreferredName     string    `json:"preferredName"`
+	Email             string    `json:"email"`
+	PhoneNumber       string    `json:"phoneNumber"`
+	BirthDate         time.Time `json:"birthDate"`
+	Photo             string    `json:"photo"`
+	YearsOfExperience int       `json:"yearsOfExperience"`
+	JobStatus         string    `json:"jobStatus"`
+	SeekJobType       string    `json:"seekJobType"`
+	SeekCompanySize   string    `json:"seekCompanySize"`
+	SeekLocations     string    `json:"seekLocations"`
+	SeekLocationType  string    `json:"seekLocationType"`
+	SeekSalary        string    `json:"seekSalary"`
+	SeekValues        string    `json:"seekValues"`
+	WorkPermit        string    `json:"workPermit"`
+	NoticePeriod      string    `json:"noticePeriod"`
+	SpokenLanguages   string    `json:"spokenLanguages"`
+	Skills            string    `json:"skills"`
+	Cv                string    `json:"cv"`
+	Attachements      string    `json:"attachements"`
+	Video             string    `json:"video"`
+	EducationHistory  string    `json:"educationHistory"`
+	EmploymentHistory string    `json:"employmentHistory"`
+	LinkedinUrl       string    `json:"linkedinUrl"`
+	GithubUrl         string    `json:"githubUrl"`
+	PortfolioUrl      string    `json:"portfolioUrl"`
+	Kind              string    `json:"kind"`
 }
 
-func NewUser(firstName, lastName, preferredName, email, state, imageUrl, role string) *User {
+func NewUser(
+	firstName string,
+	lastName string,
+	preferredName string,
+	email string,
+	phoneNumber string,
+	birthDate time.Time,
+	photo string,
+	yearsOfExperience int,
+	jobStatus string,
+	seekJobType string,
+	seekCompanySize string,
+	seekLocations string,
+	seekLocationType string,
+	seekSalary string,
+	seekValues string,
+	workPermit string,
+	noticePeriod string,
+	spokenLanguages string,
+	skills string,
+	cv string,
+	attachements string,
+	video string,
+	educationHistory string,
+	employmentHistory string,
+	linkedInUrl string,
+	githubUrl string,
+	portfolioUrl string,
+	kind string) *User {
+
 	return &User{
-		FirstName:     firstName,
-		LastName:      lastName,
-		PreferredName: preferredName,
-		Email:         email,
-		State:         state,
-		ImageUrl:      imageUrl,
-		Role:          role,
-		CreatedAt:     time.Now().UTC(),
+		FirstName:         firstName,
+		LastName:          lastName,
+		PreferredName:     preferredName,
+		Email:             email,
+		PhoneNumber:       phoneNumber,
+		BirthDate:         birthDate,
+		Photo:             photo,
+		YearsOfExperience: yearsOfExperience,
+		JobStatus:         jobStatus,
+		SeekJobType:       seekJobType,
+		SeekCompanySize:   seekCompanySize,
+		SeekLocations:     seekLocations,
+		SeekLocationType:  seekLocationType,
+		SeekSalary:        seekSalary,
+		SeekValues:        seekValues,
+		WorkPermit:        workPermit,
+		NoticePeriod:      noticePeriod,
+		SpokenLanguages:   spokenLanguages,
+		Skills:            skills,
+		Cv:                cv,
+		Attachements:      attachements,
+		Video:             video,
+		EducationHistory:  educationHistory,
+		EmploymentHistory: employmentHistory,
+		LinkedinUrl:       linkedInUrl,
+		GithubUrl:         githubUrl,
+		PortfolioUrl:      portfolioUrl,
+		Kind:              kind,
+		CreatedAt:         time.Now().UTC(),
 	}
-}
-
-type Technical struct {
-	Skills                   []string  `json:"skills"`
-	YearsOfExp               int       `json:"yearsOfExp"`
-	RatingScale              string    `json:"ratingScale"`
-	WorkPermit               string    `json:"workPermit"`
-	NoticePeriod             time.Time `json:"noticePeriod"`
-	SpokenLanguages          []string  `json:"spokenLanguages"`
-	LevelOfLanguageKnowledge string    `json:"levelOfLanguageKnowledge"`
-	JobStatus                string    `json:"jobStatus"`
-	CV                       any       `json:"cv"`
-	Documents                []any     `json:"documents"`
-	VideoPresentation        any       `json:"videoPresentation"`
-	ListOfValues             []string  `json:"listOfValues"`
-	EducationHistory         []string  `json:"educationHistory"`
-	EmploymentHistory        []string  `json:"employmentHistory"`
-	Portfolio                any       `json:"portfolio"`
-}
-
-type JobExpectations struct {
-	Values       []string `json:"values"`
-	JobTypes     []string `json:"jopTypes"`
-	Expectations []string `json:"expectations"`
-}
-
-type PersonalDetails struct {
-	Photos              []any `json:"photo"`
-	SocialMediaProfiles []any `json:"socialMediaProfiles"`
-}
-
-// INVITATION
-
-type Invitation struct {
-	Email   string `json:"email"`
-	Subject string `json:"subject"`
-	Message string `json:"message"`
-	Kind    string `json:"kind"`
-	Role    string `json:"role"`
 }

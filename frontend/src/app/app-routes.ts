@@ -6,6 +6,14 @@ const routes: Routes = [
         loadChildren: () => import('./admin/admin.routes')
     },
     {
+        path: 'companies',
+        loadChildren: () => import('./companies/companies.routes')
+    },
+    {
+        path: 'jobs',
+        loadChildren: () => import('./jobs/jobs.routes')
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'admin'

@@ -56,7 +56,10 @@ func (s *APIServer) Run() {
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
+	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
+
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
+	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
@@ -110,13 +113,15 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "POST" {
 		return s.handleCreateUser(w, r)
 	}
+	if r.Method == "DELETE" {
+		return s.handleDeleteUser(w, r)
+	}
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
 // handleGetUser handles GET requests for user account information.
 func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error {
 	users, err := s.userDB.GetUsers()
-	fmt.Println(users)
 	if err != nil {
 		return err
 	}
@@ -125,11 +130,7 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 
 func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
-	id, err := strconv.Atoi(idStr)
-
-	if err != nil {
-		return NotFoundError{Message: "Invalid ID given"}
-	}
+	id, _ := strconv.Atoi(idStr)
 
 	user, err := s.userDB.GetUserByID(id)
 
@@ -151,36 +152,50 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 		userRequest.LastName,
 		userRequest.PreferredName,
 		userRequest.Email,
-		userRequest.State,
-		userRequest.ImageUrl,
-		userRequest.Role,
+		userRequest.PhoneNumber,
+		userRequest.BirthDate,
+		userRequest.Photo,
+		userRequest.YearsOfExperience,
+		userRequest.JobStatus,
+		userRequest.SeekJobType,
+		userRequest.SeekCompanySize,
+		userRequest.SeekLocations,
+		userRequest.SeekLocationType,
+		userRequest.SeekSalary,
+		userRequest.SeekValues,
+		userRequest.WorkPermit,
+		userRequest.NoticePeriod,
+		userRequest.SpokenLanguages,
+		userRequest.Skills,
+		userRequest.Cv,
+		userRequest.Attachements,
+		userRequest.Video,
+		userRequest.EducationHistory,
+		userRequest.EmploymentHistory,
+		userRequest.LinkedinUrl,
+		userRequest.GithubUrl,
+		userRequest.PortfolioUrl,
+		userRequest.Kind,
 	)
 
 	if err := s.userDB.CreateUser(user); err != nil {
-		return err
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
 }
 
-// func (s *APIServer) handleAdminInvites(w http.ResponseWriter, r *http.Request) error {
-// 	if r.Method == "GET" {
-// 		return WriteJSONResponse(w, http.StatusOK, "admin invites")
-// 	}
-// 	return fmt.Errorf("method not allowed %s", r.Method)
-// }
-
-// func (s *APIServer) handleAdminAssociations(w http.ResponseWriter, r *http.Request) error {
-// 	if r.Method == "GET" {
-// 		return WriteJSONResponse(w, http.StatusOK, "admin associations")
-// 	}
-// 	return fmt.Errorf("method not allowed %s", r.Method)
-// }
-
 // handleDeleteUser handles DELETE requests to delete a user account.
-// func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
-// 	return nil
-// }
+func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
+	idStr := mux.Vars(r)["id"]
+	id, _ := strconv.Atoi(idStr)
+
+	if _, err := s.userDB.GetUserByID(id); err != nil {
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, "User deleted successfully")
+}
 
 // handleUpdateUser handles PUT requests to update a user account.
 // func (s *APIServer) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {

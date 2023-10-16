@@ -1,0 +1,89 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error">
+        <app-content-error class="block h-screen/2-s"></app-content-error>
+    </ng-container>
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container [ngTemplateOutlet]="contentContainer"></ng-container>
+    </ng-container>
+
+    <ng-template #contentContainer>
+        <ng-container *ngIf="vm.job as job">
+            <header class="flex flex-col-reverse md:flex-row justify-between gap-8 py-4">
+                <section>
+                    <span class="block text-3xl mb-4">{{ job.title }}</span>
+                    <a class="block link mb-1" [routerLink]="['/companies', job.company.id]">{{ job.company.name }}</a>
+                    <div class="flex gap-x-2 mb-4">
+                        <span>{{ job.location.city.name }}</span>
+                        <span>•</span>
+                        <span>{{ job.location.type | jobLocationTypeLabel }}</span>
+                    </div>
+                    <span>{{ job.creationDate | dateAgo }}</span>
+                </section>
+                <section>
+                    <!-- TODO: actions -->
+                </section>
+            </header>
+            <section class="flex flex-wrap gap-y-4 gap-x-8 py-4">
+                <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.experienceYearFrom">
+                    <span class="block text-lg mb-1">Experience</span>
+                    <span
+                        >{{ job.experienceYearFrom
+                        }}{{ job.experienceYearTo ? '-' + job.experienceYearTo : '' }} Years</span
+                    >
+                </article>
+                <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52">
+                    <span class="block text-lg mb-1">Job type</span>
+                    <span>{{ job.jobType | jobTypeLabel }}</span>
+                </article>
+                <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.employmentLevelFrom">
+                    <span class="block text-lg mb-1">Employment level</span>
+                    <span
+                        >{{ job.employmentLevelFrom
+                        }}{{ job.employmentLevelTo ? '-' + job.employmentLevelTo : '' }}%</span
+                    >
+                </article>
+                <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.offerSalary">
+                    <span class="block text-lg mb-1">Salary</span>
+                    <span>{{ job.offerSalary | currency }}</span>
+                </article>
+            </section>
+            <section class="flex flex-wrap items-center gap-2 py-4" *ngIf="job.skills.length">
+                <span class="font-bold mr-1">Skills:</span>
+                <span class="badge badge-accent" *ngFor="let skill of job.skills">{{ skill }}</span>
+            </section>
+            <div class="divider"></div>
+            <section class="py-4">
+                <span class="block mb-6 text-xl font-bold">Company Mission</span>
+                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.mission"></p>
+            </section>
+            <div class="divider"></div>
+            <section class="py-4">
+                <span class="block mb-6 text-xl font-bold">Overview</span>
+                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.overview"></p>
+            </section>
+            <div class="divider"></div>
+            <section class="py-4">
+                <span class="block mb-6 text-xl font-bold">Role & Responsibilities</span>
+                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.rolesAndResponsibility"></p>
+            </section>
+            <div class="divider"></div>
+            <section class="py-4">
+                <span class="block mb-6 text-xl font-bold">Who You Are</span>
+                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.candidateOverview"></p>
+            </section>
+            <div class="divider"></div>
+            <section class="py-4">
+                <span class="block mb-6 text-xl font-bold">Benefits</span>
+                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.benefits"></p>
+            </section>
+            <div class="divider"></div>
+            <section class="py-4">
+                <span class="block mb-6 text-xl font-bold">Company Values</span>
+                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.values"></p>
+            </section>
+        </ng-container>
+    </ng-template>
+</ng-container>

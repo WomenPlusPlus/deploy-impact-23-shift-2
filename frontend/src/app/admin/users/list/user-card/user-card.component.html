@@ -1,5 +1,5 @@
 <a
-    class="card w-full bg-base-200 shadow-xl"
+    class="card w-full h-full bg-base-200 shadow-xl"
     [class.opacity-60]="user.state === userStateEnum.ANONYMOUS"
     [class.opacity-30]="user.state === userStateEnum.DELETED"
     [routerLink]="['.', user.id]"
@@ -95,13 +95,45 @@
     </app-description-list>
 </div>
 
-<span
-    class="absolute top-2 left-2 text-sm font-bold drop-shadow-lg text-white"
-    *ngIf="user.state !== userStateEnum.ACTIVE"
->
-    {{ user.state | userStateLabel | uppercase }}
-</span>
+<div class="absolute top-3 left-3 text-gray-800 dark:text-white">
+    <span *ngIf="user.state !== userStateEnum.ACTIVE" class="text-sm font-bold drop-shadow-lg">
+        {{ user.state | userStateLabel | uppercase }}
+    </span>
+</div>
 
-<button class="absolute top-2 right-2 text-white" (click)="onToggleMode()">
-    <fa-icon [icon]="faEye" class="text-lg drop-shadow-md"></fa-icon>
-</button>
+<div class="flex gap-2 absolute top-2 right-2 text-gray-800 dark:text-white">
+    <button (click)="onToggleMode()">
+        <fa-icon [icon]="faEye" class="text-lg drop-shadow-md"></fa-icon>
+    </button>
+    <div class="dropdown dropdown-end">
+        <label tabindex="0" class="text-lg drop-shadow-md cursor-pointer px-2">
+            <fa-icon [icon]="faEllipsisV" class="text-lg drop-shadow-md"></fa-icon>
+        </label>
+        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+            <li>
+                <button
+                    [ngClass]="{ 'btn-disabled opacity-50 cursor-not-allowed': disableDeleteAction }"
+                    [disabled]="disableDeleteAction"
+                    (click)="deleteConfirmation.show()"
+                >
+                    Delete
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<dialog class="modal" #deleteConfirmation tabindex="0" (keyup.escape)="deleteConfirmation.close()">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Are you sure?</h3>
+        <p class="py-4">If you delete {{ user.email }} there is no way to revert the action.</p>
+        <div class="modal-action">
+            <form method="dialog" class="flex gap-2">
+                <button type="button" class="btn btn-primary basis-16" (click)="onDelete(); deleteConfirmation.close()">
+                    Yes
+                </button>
+                <button class="btn basis-16">No</button>
+            </form>
+        </div>
+    </div>
+</dialog>
