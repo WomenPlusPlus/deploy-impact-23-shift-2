@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"shift/internal/db"
@@ -91,9 +90,13 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println("In handleUsers")
 
 	if r.Method == "GET" {
+		fmt.Println("In handleUsers GET")
+
 		return s.handleGetUsers(w, r)
 	}
 	if r.Method == "POST" {
+		fmt.Println("In handleUsers POST")
+
 		return s.handleCreateUser(w, r)
 	}
 	return fmt.Errorf("method not allowed %s", r.Method)
@@ -112,10 +115,14 @@ func (s *APIServer) handleGetUsers(w http.ResponseWriter, r *http.Request) error
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("In handleCreateUser")
 	createUserRequest := new(entity.CreateUserRequest)
+	fmt.Println("In handleCreateUser 2 ")
 	if err := json.NewDecoder(r.Body).Decode(createUserRequest); err != nil {
+		fmt.Println("In handleCreateUser 3 ")
 		return err
 	}
+	fmt.Println("In handleCreateUser 4 ")
 
 	user := entity.NewUser(
 		createUserRequest.FirstName,
@@ -204,8 +211,6 @@ func (s *APIServer) handleCompanies(w http.ResponseWriter, r *http.Request) erro
 // handleGetCompany handles GET requests for companies information.
 func (s *APIServer) handleGetCompanies(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println("In handleGetCompanies")
-
-	fmt.Println("In handleGetCompanies")
 	users, err := s.storage.GetCompanies()
 
 	if err != nil {
@@ -217,36 +222,65 @@ func (s *APIServer) handleGetCompanies(w http.ResponseWriter, r *http.Request) e
 
 func (s *APIServer) handleCreateCompany(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println("in handleCreateCompany ")
-	companyRequest := new(entity.CreateCompanyRequest)
-	fmt.Println("in handleCreateCompany 1 ")
-	b, err := io.ReadAll(r.Body)
-	// b, err := ioutil.ReadAll(resp.Body)  Go.1.15 and earlier
-	if err != nil {
-		fmt.Println("in handleCreateCompany 3")
-		log.Fatalln(err)
-	}
-	fmt.Println("in handleCreateCompany 4")
 
-	fmt.Println(string(b))
-	// if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
-	// 	fmt.Println("in handleCreateUser 2")
+	// companyRequest := new(entity.CreateCompanyRequest)
+	// fmt.Println("in handleCreateCompany 2")
+
+	// if err := json.NewDecoder(r.Body).Decode(companyRequest); err != nil {
+	// 	fmt.Println("in handleCreateCompany 3")
+
 	// 	return err
 	// }
-	fmt.Println("in handleCreateCompany 5")
+	// fmt.Println("in handleCreateCompany 4")
 
+	// company := entity.NewCompany(
+	// 	companyRequest.CompanyName,
+	// 	companyRequest.Email,
+	// )
 	company := entity.NewCompany(
-		companyRequest.CompanyName,
-		companyRequest.Email,
-		//...
+		"CompanyName",
+		"Email",
 	)
+
 	if err := s.storage.CreateCompany(company); err != nil {
 		return err
 	}
 
-	fmt.Println("company created")
-
 	return WriteJSONResponse(w, http.StatusOK, company)
 }
+
+// func (s *APIServer) handleCreateCompany(w http.ResponseWriter, r *http.Request) error {
+// 	fmt.Println("in handleCreateCompany ")
+// 	companyRequest := new(entity.CreateCompanyRequest)
+// 	fmt.Println("in handleCreateCompany 1 ")
+// 	b, err := io.ReadAll(r.Body)
+// 	// b, err := ioutil.ReadAll(resp.Body)  Go.1.15 and earlier
+// 	if err != nil {
+// 		fmt.Println("in handleCreateCompany 3")
+// 		log.Fatalln(err)
+// 	}
+// 	fmt.Println("in handleCreateCompany 4")
+
+// 	fmt.Println(string(b))
+// 	// if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
+// 	// 	fmt.Println("in handleCreateUser 2")
+// 	// 	return err
+// 	// }
+// 	fmt.Println("in handleCreateCompany 5")
+
+// 	company := entity.NewCompany(
+// 		companyRequest.CompanyName,
+// 		companyRequest.Email,
+// 		//...
+// 	)
+// 	if err := s.storage.CreateCompany(company); err != nil {
+// 		return err
+// 	}
+
+// 	fmt.Println("company created")
+
+// 	return WriteJSONResponse(w, http.StatusOK, company)
+// }
 
 func (s *APIServer) handleGetCompanyByID(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println("handleGetCompanyByID")

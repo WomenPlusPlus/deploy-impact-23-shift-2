@@ -195,19 +195,52 @@ func (db *PostgresDB) createCompanyTable() {
 		postalCode varchar(20),
 		street varchar(55),
 		numberAddress varchar(5),
+		mission varchar(200),
+		values varchar(150),
+		jobTypes varchar(200),
 		createdAt timestamp
 	)`
 	db.db.MustExec(query)
 }
 
-// CreateCompany inserts a new company record into the "companies" table.
-func (s *PostgresDB) CreateCompany(c *entity.Company) error {
+// // CreateCompany inserts a new company record into the "companies" table.
+// func (s *PostgresDB) CreateCompany(c *entity.Company) error {
+// 	fmt.Println("inCreateCompany")
+// 	query := `INSERT INTO company
+// 		(companyName, linkedinUrl, kununuUrl, email, phone, logoUrl, country, city,postalCode,street, numberAddress, createdAt)
+// 		values ($1, $2, $3, $4, $5, $6, $7, $8,$9, $10, $11, $12)`
+
+// 	resp, err := s.db.Query(
+// 		query,
+// 		c.CompanyName,
+// 		c.Linkedin,
+// 		c.Kununu,
+// 		c.Email,
+// 		c.Phone,
+// 		c.Logo,
+// 		c.Country,
+// 		c.City,
+// 		c.PostalCode,
+// 		c.Street,
+// 		c.NumberAddress,
+// 		c.CreatedAt)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	fmt.Printf("%+v\n", resp)
+
+// 	return nil
+// }
+
+func (db *PostgresDB) CreateCompany(c *entity.Company) error {
 	fmt.Println("inCreateCompany")
 	query := `INSERT INTO company
-		(companyName, linkedinUrl, kununuUrl, email, phone, logoUrl, country, city,postalCode,street, numberAddress, createdAt)
-		values ($1, $2, $3, $4, $5, $6, $7, $8,$9, $10, $11, $12)`
+		(companyName, linkedinUrl, kununuUrl, email, phone, logoUrl, country, city,postalCode,street, numberAddress,mission, values, jobTypes, createdAt)
+		values ($1, $2, $3, $4, $5, $6, $7, $8,$9, $10, $11, $12, $13, $14, $15)`
 
-	resp, err := s.db.Query(
+	tx := db.db.MustBegin()
+	tx.MustExec(
 		query,
 		c.CompanyName,
 		c.Linkedin,
@@ -220,13 +253,11 @@ func (s *PostgresDB) CreateCompany(c *entity.Company) error {
 		c.PostalCode,
 		c.Street,
 		c.NumberAddress,
+		c.Mission,
+		c.Values,
+		c.JobTypes,
 		c.CreatedAt)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("%+v\n", resp)
-
+	tx.Commit()
 	return nil
 }
 
@@ -248,6 +279,9 @@ func createCompany(rows *sql.Rows) (*entity.Company, error) {
 		&company.PostalCode,
 		&company.Street,
 		&company.NumberAddress,
+		&company.Mission,
+		&company.Values,
+		&company.JobTypes,
 		&company.CreatedAt)
 
 	return company, err
@@ -296,4 +330,26 @@ func (s *PostgresDB) DeleteCompany(id int) error {
 	fmt.Println(id)
 	_, err := s.db.Query("delete from company where id = $1", id)
 	return err
+}
+
+//Job Listing
+
+func (db *PostgresDB) createJobListingTable() {
+	fmt.Println("in create job table ")
+	query := `
+	CREATE TABLE IF NOT EXISTS joblisting (
+	id serial primary key,
+	company      integer REFERENCES company (id), 
+	title          varchar(200),
+	description    varchar(500),
+	skillsRequired varchar(200),
+	languagesSpoken varchar(55),
+	locationCity   varchar(55),
+	salaryRange     varchar(55),
+	benefits      varchar(200),
+	startDate      timestamp,
+	createdAt timestamp
+	)`
+	db.db.MustExec(query)
+
 }
