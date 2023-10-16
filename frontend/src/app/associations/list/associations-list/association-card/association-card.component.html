@@ -1,0 +1,11 @@
+<a class="card w-full h-full bg-base-200 shadow-xl" [routerLink]="['.', association.id]">
+    <figure class="relative h-40">
+        <img [src]="association.logo" alt="{{ association.name }}" class="object-center object-cover" loading="lazy" />
+    </figure>
+    <div class="card-body relative">
+        <h2 class="card-title">{{ association.name }}</h2>
+        <p class="break-all">
+            <a target="_blank" href="{{ association.url }}">{{ association.url }}</a>
+        </p>
+    </div>
+</a>
