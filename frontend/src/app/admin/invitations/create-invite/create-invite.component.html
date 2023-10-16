@@ -33,13 +33,53 @@
                             formControlName="role"
                             class="radio relative float-left"
                         />
-                        <label [for]="'role-' + userRole" class="inline-block pl-[0.5rem] hover:cursor-pointer">{{
-                            userRole | userCompanyRoleLabel
-                        }}</label>
+                        <label [for]="'role-' + userRole" class="inline-block pl-[0.5rem] hover:cursor-pointer">
+                            {{ userRole | userCompanyRoleLabel }}
+                        </label>
                     </li>
                 </ul>
             </fieldset>
-            <hr />
+            <ng-container *ngIf="form.controls.kind.value === userKindEnum.ASSOCIATION">
+                <fieldset
+                    id="associations-field"
+                    class="form-control w-full my-4"
+                    *appLet="form.controls.associationId as control"
+                >
+                    <label for="associations" class="my-4"> Select the association: </label>
+                    <app-select-single
+                        id="associations"
+                        [control]="control"
+                        [options]="vm.associations | createNewOption: form.controls.role.value === userRoleEnum.ADMIN"
+                        [searchKeys]="['name']"
+                        bindValue="id"
+                        bindLabel="name"
+                    ></app-select-single>
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+            </ng-container>
+            <ng-container *ngIf="form.controls.kind.value === userKindEnum.COMPANY">
+                <fieldset
+                    id="companies-field"
+                    class="form-control w-full my-4"
+                    *appLet="form.controls.companyId as control"
+                >
+                    <label for="companies" class="my-4"> Select the company: </label>
+                    <app-select-single
+                        id="companies"
+                        [control]="control"
+                        [options]="vm.companies | createNewOption: form.controls.role.value === userRoleEnum.ADMIN"
+                        [searchKeys]="['name']"
+                        bindValue="id"
+                        bindLabel="name"
+                    ></app-select-single>
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                        {{ control.errors | formErrorMessage }}
+                    </span>
+                </fieldset>
+            </ng-container>
+            <div class="divider"></div>
             <fieldset id="edit-email" class="form-control w-full my-4" *appLet="form.controls.email as control">
                 <label for="email" class="mb-1">Email:</label>
                 <input

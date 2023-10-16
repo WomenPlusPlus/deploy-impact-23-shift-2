@@ -1,6 +1,8 @@
+import { Subscription } from 'rxjs';
+
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { LetDirective } from '@app/common/directives/let/let.directive';
@@ -30,7 +32,7 @@ type Control<T, K> = K extends keyof T ? T[K] : T;
     templateUrl: './select-single.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SelectSingleComponent<T> implements OnInit {
+export class SelectSingleComponent<T> implements OnInit, OnDestroy {
     @Input() id!: string;
     @Input() options!: T[] | null;
     @Input() control!: FormControl<Control<T, typeof this.bindValue> | null>;
@@ -42,10 +44,17 @@ export class SelectSingleComponent<T> implements OnInit {
 
     searchControl!: FormControl<string | null>;
 
+    private readonly subscriptions: Subscription[] = [];
+
     constructor(private readonly fb: FormBuilder) {}
 
     ngOnInit(): void {
         this.initForm();
+        this.initSubscriptions();
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.forEach((s) => s.unsubscribe());
     }
 
     onSelect(value: T): void {
@@ -64,5 +73,9 @@ export class SelectSingleComponent<T> implements OnInit {
 
     private initForm(): void {
         this.searchControl = this.fb.control<string | null>(null, [Validators.minLength(this.minSearchLen)]);
+    }
+
+    private initSubscriptions(): void {
+        this.subscriptions.push(this.control.valueChanges.subscribe(() => this.searchControl.reset()));
     }
 }
