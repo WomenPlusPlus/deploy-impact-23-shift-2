@@ -1,14 +1,19 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"shift/internal/entity"
 	"strconv"
+	"time"
 
+	"github.com/alexliesenfeld/health"
 	"github.com/gorilla/mux"
+	"github.com/heptiolabs/healthcheck"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -61,6 +66,17 @@ func (s *APIServer) Run() {
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
 
+	http.Handle("/live", health.NewHandler(
+		health.NewChecker(
+			health.WithCheck(health.Check{
+				Name: "database",
+				Check: func(ctx context.Context) error {
+					deadline, _ := ctx.Deadline()
+					timeout := time.Since(deadline)
+					return healthcheck.DatabasePingCheck(nil, timeout)()
+				},
+			}),
+		)))
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
 }
