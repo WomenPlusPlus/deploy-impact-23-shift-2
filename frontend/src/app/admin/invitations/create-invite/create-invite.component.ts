@@ -1,17 +1,27 @@
-import { Observable, startWith, Subscription } from 'rxjs';
+import { merge, Observable, startWith, Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+    AbstractControl,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    ValidatorFn,
+    Validators
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { CreateInviteFormGroup } from '@app/admin/invitations/create-invite/common/models/create-invite.model';
+import { CreateNewOptionPipe } from '@app/admin/invitations/create-invite/common/pipes/create-new-option/create-new-option.pipe';
 import { CreateInviteState, CreateInviteStore } from '@app/admin/invitations/create-invite/create-invite.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum, UserRoleEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { SelectSingleComponent } from '@app/ui/select-single/select-single.component';
 
 @Component({
     selector: 'app-create-invite',
@@ -24,7 +34,9 @@ import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-l
         FormErrorMessagePipe,
         UserKindLabelPipe,
         UserCompanyRoleLabelPipe,
-        LetDirective
+        LetDirective,
+        SelectSingleComponent,
+        CreateNewOptionPipe
     ],
     providers: [CreateInviteStore],
     templateUrl: './create-invite.component.html'
@@ -34,15 +46,17 @@ export class CreateInviteComponent implements OnInit, OnDestroy {
 
     vm$: Observable<CreateInviteState> = this.createInviteStore.vm$;
 
-    readonly userKinds: UserKindEnum[] = [
+    protected readonly userKinds: UserKindEnum[] = [
         UserKindEnum.ADMIN,
         UserKindEnum.CANDIDATE,
         UserKindEnum.COMPANY,
         UserKindEnum.ASSOCIATION
     ];
-    readonly userRoles: UserRoleEnum[] = [UserRoleEnum.ADMIN, UserRoleEnum.USER];
+    protected userKindEnum = UserKindEnum;
+    protected readonly userRoles: UserRoleEnum[] = [UserRoleEnum.ADMIN, UserRoleEnum.USER];
+    protected userRoleEnum = UserRoleEnum;
 
-    protected readonly subscriptions: Subscription[] = [];
+    private readonly subscriptions: Subscription[] = [];
 
     constructor(
         private readonly fb: FormBuilder,
@@ -50,6 +64,7 @@ export class CreateInviteComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+        this.loadData();
         this.initForm();
         this.initSubscriptions();
     }
@@ -62,10 +77,20 @@ export class CreateInviteComponent implements OnInit, OnDestroy {
         this.createInviteStore.submitForm(this.form.getRawValue());
     }
 
+    private loadData(): void {
+        this.createInviteStore.loadData();
+    }
+
     private initForm(): void {
         this.form = this.fb.group({
             kind: this.fb.control(UserKindEnum.CANDIDATE, [Validators.required]),
             role: this.fb.control(UserRoleEnum.ADMIN, [Validators.required]),
+            companyId: this.fb.control<number | null>(null, [
+                this.requiredIf(() => this.form?.controls.kind.value === UserKindEnum.COMPANY)
+            ]),
+            associationId: this.fb.control<number | null>(null, [
+                this.requiredIf(() => this.form?.controls.kind.value === UserKindEnum.ASSOCIATION)
+            ]),
             email: this.fb.control('', [Validators.required, Validators.minLength(5), Validators.maxLength(512)]),
             subject: this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(256)]),
             message: this.fb.control('', [Validators.required, Validators.minLength(25), Validators.maxLength(1024)])
@@ -82,5 +107,15 @@ export class CreateInviteComponent implements OnInit, OnDestroy {
                         : this.form.controls.role.enable()
                 )
         );
+        this.subscriptions.push(
+            merge(this.form.controls.kind.valueChanges, this.form.controls.role.valueChanges).subscribe(() => {
+                this.form.controls.associationId.reset();
+                this.form.controls.companyId.reset();
+            })
+        );
+    }
+
+    private requiredIf(conditionFn: (control: AbstractControl) => boolean): ValidatorFn {
+        return (control: AbstractControl) => (conditionFn(control) ? Validators.required(control) : null);
     }
 }
