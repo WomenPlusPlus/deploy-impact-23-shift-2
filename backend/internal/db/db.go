@@ -11,12 +11,27 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type UserDB interface {
+	DeleteUser(int) error
+	UpdateUser(*entity.User) error
+	GetUsers() ([]*entity.User, error)
+	GetUserByID(int) (*entity.User, error)
+
+	CreateAssociation(*entity.Association) error
+	DeleteAssociation(int) error
+	UpdateAssociation(*entity.Association) error
+	GetAssociations() ([]*entity.Association, error)
+	GetAssociationByID(int) (*entity.Association, error)
+}
+
+// docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
+
 type PostgresDB struct {
 	db *sqlx.DB
 }
 
 func NewPostgresDB() *PostgresDB {
-	connStr := "user=postgres dbname=postgres password=shift2023 sslmode=disable"
+	connStr := "postgres://postgres:shift2023@localhost:5432/postgres?sslmode=disable"
 	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
@@ -42,28 +57,11 @@ func (db *PostgresDB) createUserTable() {
 		email varchar(100) not null,
 		phoneNumber varchar(20),
 		birthDate timestamp,
-		photo varchar(255),
-		yearsOfExperience integer,
-		jobStatus varchar(20),
-		seekJobType varchar(20),
-		seekCompanySize varchar(20),
-		seekLocations varchar(20),
-		seekLocationType varchar(20),
-		seekSalary varchar(20),
-		seekValues varchar(100),
-		workPermit varchar(20),
-		noticePeriod varchar(20),
-		spokenLanguages varchar(255), -- Array of languages
-		skills varchar(255), -- Array of skills
-		cv varchar(255),
-		attachments varchar(255), -- Array of attachment URLs
-		videoUrl varchar(255),
-		educationHistory varchar(255), -- Array of JSON objects for education history
-		employmentHistory varchar(255), -- Array of JSON objects for employment history
+		imageUrl varchar(255),
 		linkedinUrl varchar(250),
 		githubUrl varchar(250),
 		portfolioUrl varchar(250),
-		kind varchar(20),
+		state varchar(250),
 		createdAt timestamp
 	)`
 	db.db.MustExec(query)
@@ -595,28 +593,11 @@ func createUser(rows *sql.Rows) (*entity.User, error) {
 		&user.Email,
 		&user.PhoneNumber,
 		&user.BirthDate,
-		&user.Photo,
-		&user.YearsOfExperience,
-		&user.JobStatus,
-		&user.SeekJobType,
-		&user.SeekCompanySize,
-		&user.SeekLocations,
-		&user.SeekLocationType,
-		&user.SeekSalary,
-		&user.SeekValues,
-		&user.WorkPermit,
-		&user.NoticePeriod,
-		&user.SpokenLanguages,
-		&user.Skills,
-		&user.Cv,
-		&user.Attachments,
-		&user.Video,
-		&user.EducationHistory,
-		&user.EmploymentHistory,
+		&user.ImageUrl,
 		&user.LinkedinUrl,
 		&user.GithubUrl,
 		&user.PortfolioUrl,
-		&user.Kind,
+		&user.State,
 		&createdAt,
 	)
 

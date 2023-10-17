@@ -7,36 +7,19 @@ import (
 // USER
 
 type User struct {
-	ID                int       `json:"id"`
-	FirstName         string    `json:"firstName"`
-	LastName          string    `json:"lastName"`
-	PreferredName     string    `json:"preferredName"`
-	Email             string    `json:"email"`
-	PhoneNumber       string    `json:"phoneNumber"`
-	BirthDate         time.Time `json:"birthDate"`
-	Photo             string    `json:"photo"`
-	YearsOfExperience int       `json:"yearsOfExperience"`
-	JobStatus         string    `json:"jobStatus"`
-	SeekJobType       string    `json:"seekJobType"`
-	SeekCompanySize   string    `json:"seekCompanySize"`
-	SeekLocations     string    `json:"seekLocations"`
-	SeekLocationType  string    `json:"seekLocationType"`
-	SeekSalary        string    `json:"seekSalary"`
-	SeekValues        string    `json:"seekValues"`
-	WorkPermit        string    `json:"workPermit"`
-	NoticePeriod      string    `json:"noticePeriod"`
-	SpokenLanguages   string    `json:"spokenLanguages"`
-	Skills            string    `json:"skills"`
-	Cv                string    `json:"cv"`
-	Attachments       string    `json:"attachments"`
-	Video             string    `json:"video"`
-	EducationHistory  string    `json:"educationHistory"`
-	EmploymentHistory string    `json:"employmentHistory"`
-	LinkedinUrl       string    `json:"linkedinUrl"`
-	GithubUrl         string    `json:"githubUrl"`
-	PortfolioUrl      string    `json:"portfolioUrl"`
-	Kind              string    `json:"kind"`
-	CreatedAt         time.Time `json:"createdAt"`
+	ID            int       `json:"id"`
+	FirstName     string    `json:"firstName"`
+	LastName      string    `json:"lastName"`
+	PreferredName string    `json:"preferredName"`
+	Email         string    `json:"email"`
+	PhoneNumber   string    `json:"phoneNumber"`
+	BirthDate     time.Time `json:"birthDate"`
+	ImageUrl      string    `json:"imageUrl"`
+	LinkedinUrl   string    `json:"linkedinUrl"`
+	GithubUrl     string    `json:"githubUrl"`
+	PortfolioUrl  string    `json:"portfolioUrl"`
+	State         string    `json:"state"`
+	CreatedAt     time.Time `json:"createdAt"`
 }
 
 type UserEntity struct {

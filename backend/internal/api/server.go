@@ -15,9 +15,10 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address     string
-	userDB      entity.UserDB
-	userService *service.UserService
+	address       string
+	userDB        entity.UserDB
+	associationDB entity.AssociationDB
+	userService   *service.UserService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
@@ -78,9 +79,10 @@ func (s *APIServer) Run() {
 
 	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
 	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
-
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
+
+	router.HandleFunc("/admin/associations", makeHTTPHandleFunc(s.handleCreateAssociation))
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
@@ -190,6 +192,26 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, res)
+}
+
+func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
+	associationRequest := new(entity.CreateAssociationRequest)
+	if err := json.NewDecoder(r.Body).Decode(associationRequest); err != nil {
+		return err
+	}
+
+	ass := entity.NewAssociation(
+		associationRequest.Name,
+		associationRequest.Logo,
+		associationRequest.WebsiteUrl,
+		associationRequest.Focus,
+	)
+
+	if err := s.associationDB.CreateAssociation(ass); err != nil {
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, ass)
 }
 
 // handleDeleteUser handles DELETE requests to delete a user account.
