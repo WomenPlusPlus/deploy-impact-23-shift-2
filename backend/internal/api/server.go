@@ -184,7 +184,7 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 		return BadRequestError{Message: err.Error()}
 	}
 
-	res, err := s.userService.CreateCandidate(req)
+	res, err := s.userService.CreateUser(req)
 	if err != nil {
 		return InternalServerError{Message: err.Error()}
 	}

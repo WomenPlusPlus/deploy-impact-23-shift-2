@@ -27,7 +27,8 @@ type CreateUserRequest struct {
 }
 
 type CreateUserAssociationRequest struct {
-	Id int `json:"associationId"`
+	AssociationId   int    `json:"associationId"`
+	AssociationRole string `json:"role"`
 }
 
 type CreateUserCandidateRequest struct {
@@ -91,7 +92,8 @@ type CreateUserEmploymentHistory struct {
 }
 
 type CreateUserCompanyRequest struct {
-	Id int `json:"companyId"`
+	CompanyId   int    `json:"companyId"`
+	CompanyRole string `json:"role"`
 }
 
 func (u *CreateUserRequest) FromFormData(r *http.Request) error {
@@ -156,6 +158,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 
 func (u *CreateUserRequest) fromFormDataAssociation(fd *formdata.FormData) error {
 	fd.Validate("associationId").Required().HasN(1)
+	fd.Validate("role").Required().HasN(1)
 
 	if fd.HasErrors() {
 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
@@ -165,7 +168,8 @@ func (u *CreateUserRequest) fromFormDataAssociation(fd *formdata.FormData) error
 	if err != nil {
 		return fmt.Errorf("invalid association id format: %v", err)
 	}
-	u.CreateUserAssociationRequest.Id = id
+	u.AssociationId = id
+	u.AssociationRole = fd.Get("role").First()
 	return nil
 }
 
@@ -250,6 +254,7 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 
 func (u *CreateUserRequest) fromFormDataCompany(fd *formdata.FormData) error {
 	fd.Validate("companyId").Required().HasN(1)
+	fd.Validate("role").Required().HasN(1)
 
 	if fd.HasErrors() {
 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
@@ -259,7 +264,8 @@ func (u *CreateUserRequest) fromFormDataCompany(fd *formdata.FormData) error {
 	if err != nil {
 		return fmt.Errorf("invalid company id format: %v", err)
 	}
-	u.CreateUserAssociationRequest.Id = id
+	u.CompanyId = id
+	u.CompanyRole = fd.Get("role").First()
 	return nil
 }
 

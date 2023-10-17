@@ -121,46 +121,67 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	return users, nil
 }
 
+func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.createUser(tx, user)
+	if err != nil {
+		return nil, err
+	}
+	user, err = pdb.getUserById(tx, userId)
+	if err != nil {
+		logrus.Errorf("getting added user from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit user creation in db: %v", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.createUser(tx, associationUser.UserEntity)
+	if err != nil {
+		return nil, err
+	}
+	associationUser.UserID = userId
+
+	query := `insert into association_users (user_id, association_id, role)
+				values (:user_id, :association_id, :role)
+				returning id`
+	associationUserId, err := InsertQuery(tx, query, associationUser)
+	if err != nil {
+		logrus.Debugf("failed to insert association user in db: %v", err)
+		return nil, err
+	}
+	res, err := pdb.getAssociationUserById(tx, associationUserId)
+	if err != nil {
+		logrus.Errorf("getting added association user from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit association user creation in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
 func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*entity.CandidateEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
-	query := `insert into users
-				(
-				 	kind,
-					first_name,
-					last_name,
-					preferred_name,
-					email,
-					phone_number,
-					birth_date,
-					image_url,
-					linkedin_url,
-					github_url,
-					portfolio_url
-				)
-				values (
-					:kind,
-					:first_name,
-					:last_name,
-					:preferred_name,
-					:email,
-					:phone_number,
-					:birth_date,
-					:image_url,
-					:linkedin_url,
-					:github_url,
-					:portfolio_url
-				)
-				returning id`
-	userId, err := InsertQuery(tx, query, candidate.UserEntity)
+	userId, err := pdb.createUser(tx, candidate.UserEntity)
 	if err != nil {
-		logrus.Debugf("failed to insert user in db: %v", err)
 		return nil, err
 	}
 	candidate.UserID = userId
 
-	query = `insert into candidates
+	query := `insert into candidates
 				(
 				 	user_id,
 					cv_url,
@@ -202,6 +223,36 @@ func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*enti
 	}
 	if err := tx.Commit(); err != nil {
 		logrus.Errorf("failed to commit candidate creation in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (pdb *PostgresDB) CreateCompanyUser(companyUser *entity.CompanyUserEntity) (*entity.CompanyUserEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.createUser(tx, companyUser.UserEntity)
+	if err != nil {
+		return nil, err
+	}
+	companyUser.UserID = userId
+
+	query := `insert into company_users (user_id, company_id, role)
+				values (:user_id, :company_id, :role)
+				returning id`
+	companyUserId, err := InsertQuery(tx, query, companyUser)
+	if err != nil {
+		logrus.Debugf("failed to insert company user in db: %v", err)
+		return nil, err
+	}
+	res, err := pdb.getCompanyUserById(tx, companyUserId)
+	if err != nil {
+		logrus.Errorf("getting added company user from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit company user creation in db: %v", err)
 		return nil, err
 	}
 	return res, nil
@@ -413,6 +464,46 @@ func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, cand
 	return nil
 }
 
+func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity, error) {
+	query := `select * from users`
+	rows, err := tx.Queryx(query)
+	if err != nil {
+		logrus.Debugf("failed to get user with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		user := new(entity.UserEntity)
+		if err := rows.StructScan(user); err != nil {
+			logrus.Debugf("failed to scan user from db record: %v", err)
+			return nil, err
+		}
+		return user, nil
+	}
+	return nil, fmt.Errorf("could not find user with id=%d", id)
+}
+
+func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.AssociationUserEntity, error) {
+	query := `select users.*, association_users.*
+				from users
+				inner join association_users on users.id = association_users.user_id`
+	rows, err := tx.Queryx(query)
+	if err != nil {
+		logrus.Debugf("failed to get association user with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		associationUser := new(entity.AssociationUserEntity)
+		if err := rows.StructScan(associationUser); err != nil {
+			logrus.Debugf("failed to scan association user from db record: %v", err)
+			return nil, err
+		}
+		return associationUser, nil
+	}
+	return nil, fmt.Errorf("could not find association user with id=%d", id)
+}
+
 func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.CandidateEntity, error) {
 	query := `select users.*, candidates.*
 				from users
@@ -432,6 +523,64 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 		return candidate, nil
 	}
 	return nil, fmt.Errorf("could not find candidate with id=%d", id)
+}
+
+func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.CompanyUserEntity, error) {
+	query := `select users.*, company_users.*
+				from users
+				inner join company_users on users.id = company_users.user_id`
+	rows, err := tx.Queryx(query)
+	if err != nil {
+		logrus.Debugf("failed to get company user with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		companyUser := new(entity.CompanyUserEntity)
+		if err := rows.StructScan(companyUser); err != nil {
+			logrus.Debugf("failed to scan company user from db record: %v", err)
+			return nil, err
+		}
+		return companyUser, nil
+	}
+	return nil, fmt.Errorf("could not find company user with id=%d", id)
+}
+
+func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int, error) {
+	query := `insert into users
+				(
+				 	kind,
+					first_name,
+					last_name,
+					preferred_name,
+					email,
+					phone_number,
+					birth_date,
+					image_url,
+					linkedin_url,
+					github_url,
+					portfolio_url
+				)
+				values (
+					:kind,
+					:first_name,
+					:last_name,
+					:preferred_name,
+					:email,
+					:phone_number,
+					:birth_date,
+					:image_url,
+					:linkedin_url,
+					:github_url,
+					:portfolio_url
+				)
+				returning id`
+	userId, err := InsertQuery(tx, query, user)
+	if err != nil {
+		logrus.Debugf("failed to insert user in db: %v", err)
+		return 0, err
+	}
+	return userId, nil
 }
 
 func createUser(rows *sql.Rows) (*entity.User, error) {

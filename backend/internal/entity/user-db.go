@@ -7,7 +7,10 @@ type UserDB interface {
 	GetUsers() ([]*User, error)
 	GetUserByID(int) (*User, error)
 
+	CreateUser(*UserEntity) (*UserEntity, error)
+	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
+	CreateCompanyUser(*CompanyUserEntity) (*CompanyUserEntity, error)
 	AssignCandidateSkills(candidateId int, records CandidateSkillsEntity) error
 	DeleteCandidateSkills(candidateId int) error
 	AssignCandidateSpokenLanguages(candidateId int, records CandidateSpokenLanguagesEntity) error

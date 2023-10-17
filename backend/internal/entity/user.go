@@ -107,6 +107,42 @@ func (c *CandidateEntity) FromCreationRequest(request *CreateUserRequest) error 
 	return nil
 }
 
+type AssociationUserEntity struct {
+	ID            int    `db:"id"`
+	UserID        int    `db:"user_id"`
+	AssociationId int    `db:"association_id"`
+	Role          string `db:"role"`
+	*UserEntity
+}
+
+func (c *AssociationUserEntity) FromCreationRequest(request *CreateUserRequest) error {
+	c.UserEntity = new(UserEntity)
+	if err := c.UserEntity.FromCreationRequest(request); err != nil {
+		return err
+	}
+	c.AssociationId = request.AssociationId
+	c.Role = request.AssociationRole
+	return nil
+}
+
+type CompanyUserEntity struct {
+	ID        int    `db:"id"`
+	UserID    int    `db:"user_id"`
+	CompanyId int    `db:"company_id"`
+	Role      string `db:"role"`
+	*UserEntity
+}
+
+func (c *CompanyUserEntity) FromCreationRequest(request *CreateUserRequest) error {
+	c.UserEntity = new(UserEntity)
+	if err := c.UserEntity.FromCreationRequest(request); err != nil {
+		return err
+	}
+	c.CompanyId = request.CompanyId
+	c.Role = request.CompanyRole
+	return nil
+}
+
 type CandidateSkillEntity struct {
 	ID          int    `db:"id"`
 	CandidateID int    `db:"candidate_id"`

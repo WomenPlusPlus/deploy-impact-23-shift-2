@@ -16,7 +16,57 @@ func NewUserService(userDB entity.UserDB) *UserService {
 	}
 }
 
-func (s *UserService) CreateCandidate(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+func (s *UserService) CreateUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	switch req.Kind {
+	case entity.UserKindAdmin:
+		return s.createAdmin(req)
+	case entity.UserKindAssociation:
+		return s.createAssociationUser(req)
+	case entity.UserKindCandidate:
+		return s.createCandidate(req)
+	case entity.UserKindCompany:
+		return s.createCompanyUser(req)
+	default:
+		return nil, fmt.Errorf("unknown user kind: %s", req.Kind)
+	}
+}
+func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	admin := new(entity.UserEntity)
+	if err := admin.FromCreationRequest(req); err != nil {
+		return nil, fmt.Errorf("parsing request into admin entity: %w", err)
+	}
+	logrus.Tracef("Parsed admin entity: %+v", admin)
+
+	admin, err := s.userDB.CreateUser(admin)
+	if err != nil {
+		return nil, fmt.Errorf("creating new admin: %w", err)
+	}
+	logrus.Tracef("Added admin to db: id=%d", admin.ID)
+
+	return &entity.CreateUserResponse{
+		ID:     admin.ID,
+		UserID: admin.ID,
+	}, nil
+}
+func (s *UserService) createAssociationUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	associationUser := new(entity.AssociationUserEntity)
+	if err := associationUser.FromCreationRequest(req); err != nil {
+		return nil, fmt.Errorf("parsing request into association user entity: %w", err)
+	}
+	logrus.Tracef("Parsed association user entity: %+v", associationUser)
+
+	associationUser, err := s.userDB.CreateAssociationUser(associationUser)
+	if err != nil {
+		return nil, fmt.Errorf("creating new association user: %w", err)
+	}
+	logrus.Tracef("Added association user to db: id=%d", associationUser.ID)
+
+	return &entity.CreateUserResponse{
+		ID:     associationUser.ID,
+		UserID: associationUser.UserID,
+	}, nil
+}
+func (s *UserService) createCandidate(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
 	candidate := new(entity.CandidateEntity)
 	if err := candidate.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into candidate entity: %w", err)
@@ -129,5 +179,24 @@ func (s *UserService) CreateCandidate(req *entity.CreateUserRequest) (*entity.Cr
 	return &entity.CreateUserResponse{
 		ID:     candidate.ID,
 		UserID: candidate.UserID,
+	}, nil
+}
+
+func (s *UserService) createCompanyUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	companyUser := new(entity.CompanyUserEntity)
+	if err := companyUser.FromCreationRequest(req); err != nil {
+		return nil, fmt.Errorf("parsing request into company user entity: %w", err)
+	}
+	logrus.Tracef("Parsed company user entity: %+v", companyUser)
+
+	companyUser, err := s.userDB.CreateCompanyUser(companyUser)
+	if err != nil {
+		return nil, fmt.Errorf("creating new company user: %w", err)
+	}
+	logrus.Tracef("Added company user to db: id=%d", companyUser.ID)
+
+	return &entity.CreateUserResponse{
+		ID:     companyUser.ID,
+		UserID: companyUser.UserID,
 	}, nil
 }
