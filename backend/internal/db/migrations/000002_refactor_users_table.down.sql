@@ -1,0 +1,22 @@
+drop table if exists candidate_employment_history;
+drop table if exists candidate_education_history;
+drop table if exists candidate_attachments;
+drop table if exists candidate_seek_locations;
+drop table if exists candidate_skills;
+drop table if exists candidate_spoken_languages;
+drop table if exists skills;
+drop table if exists association_users;
+drop table if exists associations;
+drop table if exists company_users;
+drop table if exists companies;
+drop table if exists candidates;
+drop table if exists users;
+
+drop type if exists work_permit;
+drop type if exists location_type;
+drop type if exists company_size;
+drop type if exists job_type;
+drop type if exists job_status;
+drop type if exists user_state;
+drop type if exists user_role;
+drop type if exists user_kind;
