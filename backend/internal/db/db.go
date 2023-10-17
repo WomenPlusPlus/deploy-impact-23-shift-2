@@ -3,22 +3,13 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"log"
 	"shift/internal/entity"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
-type UserDB interface {
-	CreateUser(*entity.User) error
-	DeleteUser(int) error
-	UpdateUser(*entity.User) error
-	GetUsers() ([]*entity.User, error)
-	GetUserByID(int) (*entity.User, error)
-}
-
-// docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
 
 type PostgresDB struct {
 	db *sqlx.DB
@@ -78,82 +69,6 @@ func (db *PostgresDB) createUserTable() {
 	db.db.MustExec(query)
 }
 
-func (db *PostgresDB) CreateUser(u *entity.User) error {
-	query := `
-	INSERT INTO users
-		(
-			firstName,
-			lastName,
-			preferredName,
-			email,
-			phoneNumber,
-			birthDate,
-			photoUrl,
-			yearsOfExperience,
-			jobStatus,
-			seekJobType,
-			seekCompanySize,
-			seekLocations,
-			seekLocationType,
-			seekSalary,
-			seekValues,
-			workPermit,
-			noticePeriod,
-			spokenLanguages,
-			skills,
-			cv,
-			attachments,
-			videoUrl,
-			educationHistory,
-			employmentHistory,
-			linkedinUrl,
-			githubUrl,
-			portfolioUrl,
-			kind,
-			createdAt
-	)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
-			$21, $22, $23, $24, $25, $26, $27, $28, $29)`
-
-	tx := db.db.MustBegin()
-	tx.MustExec(
-		query,
-		u.FirstName,
-		u.LastName,
-		u.PreferredName,
-		u.Email,
-		u.PhoneNumber,
-		u.BirthDate,
-		u.Photo,
-		u.YearsOfExperience,
-		u.JobStatus,
-		u.SeekJobType,
-		u.SeekCompanySize,
-		u.SeekLocations,
-		u.SeekLocationType,
-		u.SeekSalary,
-		u.SeekValues,
-		u.WorkPermit,
-		u.NoticePeriod,
-		u.SpokenLanguages,
-		u.Skills,
-		u.Cv,
-		u.Attachements,
-		u.Video,
-		u.EducationHistory,
-		u.EmploymentHistory,
-		u.LinkedinUrl,
-		u.GithubUrl,
-		u.PortfolioUrl,
-		u.Kind,
-		u.CreatedAt,
-	)
-	tx.Commit()
-	return nil
-}
-
-// UpdateUser updates a user's information in the "users" table.
 func (s *PostgresDB) UpdateUser(*entity.User) error {
 	return nil
 }
@@ -173,7 +88,6 @@ func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
 	return nil, fmt.Errorf("user with id: %d not found", id)
 }
 
-// DeleteUser deletes a user from the "users" table based on their ID.
 func (s *PostgresDB) DeleteUser(id int) error {
 	query := "DELETE FROM users WHERE id = $1"
 	res, err := s.db.Exec(query, id)
@@ -188,7 +102,6 @@ func (s *PostgresDB) DeleteUser(id int) error {
 	return nil
 }
 
-// GetUsers retrieves a list of all users from the "users" table.
 func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	users := []*entity.User{}
 	rows, err := s.db.Query("select * from users")
@@ -208,7 +121,319 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	return users, nil
 }
 
-// createUser scans a row from the database into a entity.User struct.
+func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*entity.CandidateEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	query := `insert into users
+				(
+				 	kind,
+					first_name,
+					last_name,
+					preferred_name,
+					email,
+					phone_number,
+					birth_date,
+					image_url,
+					linkedin_url,
+					github_url,
+					portfolio_url
+				)
+				values (
+					:kind,
+					:first_name,
+					:last_name,
+					:preferred_name,
+					:email,
+					:phone_number,
+					:birth_date,
+					:image_url,
+					:linkedin_url,
+					:github_url,
+					:portfolio_url
+				)
+				returning id`
+	userId, err := InsertQuery(tx, query, candidate.UserEntity)
+	if err != nil {
+		logrus.Debugf("failed to insert user in db: %v", err)
+		return nil, err
+	}
+	candidate.UserID = userId
+
+	query = `insert into candidates
+				(
+				 	user_id,
+					cv_url,
+					video_url,
+					years_of_experience,
+					job_status,
+					seek_job_type,
+					seek_company_size,
+					seek_location_type,
+					seek_salary,
+					seek_values,
+					work_permit,
+					notice_period
+				)
+				values (
+					:user_id,
+					:cv_url,
+					:video_url,
+					:years_of_experience,
+					:job_status,
+					:seek_job_type,
+					:seek_company_size,
+					:seek_location_type,
+					:seek_salary,
+					:seek_values,
+					:work_permit,
+					:notice_period
+				)
+				returning id`
+	candidateId, err := InsertQuery(tx, query, candidate)
+	if err != nil {
+		logrus.Debugf("failed to insert candidate in db: %v", err)
+		return nil, err
+	}
+	res, err := pdb.getCandidateById(tx, candidateId)
+	if err != nil {
+		logrus.Errorf("getting added candidate from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit candidate creation in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.CandidateSkillsEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateSkills(tx, candidateId); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateSkills(tx, records); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateSkills(candidateId int) error {
+	return pdb.deleteCandidateSkills(pdb.db, candidateId)
+}
+func (pdb *PostgresDB) AssignCandidateSpokenLanguages(candidateId int, records entity.CandidateSpokenLanguagesEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateSpokenLanguages(tx, candidateId); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateSpokenLanguages(tx, records); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateSpokenLanguages(candidateId int) error {
+	return pdb.deleteCandidateSpokenLanguages(pdb.db, candidateId)
+}
+func (pdb *PostgresDB) AssignCandidateSeekLocations(candidateId int, records entity.CandidateSeekLocationsEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateSeekLocations(tx, candidateId); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateSeekLocations(tx, records); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateSeekLocations(candidateId int) error {
+	return pdb.deleteCandidateSeekLocations(pdb.db, candidateId)
+}
+func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records entity.CandidateAttachmentsEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateAttachments(tx, candidateId); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateAttachments(tx, records); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateAttachments(candidateId int) error {
+	return pdb.deleteCandidateAttachments(pdb.db, candidateId)
+}
+func (pdb *PostgresDB) AssignCandidateEducationHistoryList(candidateId int, records entity.CandidateEducationHistoryListEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateEducationHistoryList(tx, candidateId); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateEducationHistoryList(tx, records); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateEducationHistoryList(candidateId int) error {
+	return pdb.deleteCandidateEducationHistoryList(pdb.db, candidateId)
+}
+func (pdb *PostgresDB) AssignCandidateEmploymentHistoryList(candidateId int, records entity.CandidateEmploymentHistoryListEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateEmploymentHistoryList(tx, candidateId); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateEmploymentHistoryList(tx, records); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateEmploymentHistoryList(candidateId int) error {
+	return pdb.deleteCandidateEmploymentHistoryList(pdb.db, candidateId)
+}
+
+func (pdb *PostgresDB) insertCandidateSkills(tx NamedQuerier, records entity.CandidateSkillsEntity) error {
+	query := `insert into candidate_skills (candidate_id, name, years) values (:candidate_id, :name, :years)`
+	for _, record := range records {
+		if _, err := tx.NamedExec(query, record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateSkills(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_skills where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) insertCandidateSpokenLanguages(tx NamedQuerier, records entity.CandidateSpokenLanguagesEntity) error {
+	query := `insert into candidate_spoken_languages (candidate_id, language_id, language_name, language_short_name, level) values (:candidate_id, :language_id, :language_name, :language_short_name, :level)`
+	for _, record := range records {
+		if _, err := tx.NamedExec(query, record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateSpokenLanguages(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_spoken_languages where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) insertCandidateSeekLocations(tx NamedQuerier, records entity.CandidateSeekLocationsEntity) error {
+	query := `insert into candidate_seek_locations (candidate_id, city_id, city_name) values (:candidate_id, :city_id, :city_name)`
+	for _, record := range records {
+		if _, err := tx.NamedExec(query, record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateSeekLocations(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_seek_locations where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) insertCandidateAttachments(tx NamedQuerier, records entity.CandidateAttachmentsEntity) error {
+	query := `insert into candidate_attachments (candidate_id, attachment_url) values (:candidate_id, :attachment_url)`
+	for _, record := range records {
+		if _, err := tx.NamedExec(query, record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateAttachments(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_attachments where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) insertCandidateEducationHistoryList(tx NamedQuerier, records entity.CandidateEducationHistoryListEntity) error {
+	query := `insert into candidate_education_history (candidate_id, title, description, entity, from_date, to_date) values (:candidate_id, :title, :description, :entity, :from_date, :to_date)`
+	for _, record := range records {
+		if _, err := tx.NamedExec(query, record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateEducationHistoryList(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_education_history where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) insertCandidateEmploymentHistoryList(tx NamedQuerier, records entity.CandidateEmploymentHistoryListEntity) error {
+	query := `insert into candidate_employment_history (candidate_id, title, description, company, from_date, to_date) values (:candidate_id, :title, :description, :company, :from_date, :to_date)`
+	for _, record := range records {
+		if _, err := tx.NamedExec(query, record); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_employment_history where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.CandidateEntity, error) {
+	query := `select users.*, candidates.*
+				from users
+				inner join candidates on users.id = candidates.user_id`
+	rows, err := tx.Queryx(query)
+	if err != nil {
+		logrus.Debugf("failed to get candidate with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		candidate := new(entity.CandidateEntity)
+		if err := rows.StructScan(candidate); err != nil {
+			logrus.Debugf("failed to scan candidate from db record: %v", err)
+			return nil, err
+		}
+		return candidate, nil
+	}
+	return nil, fmt.Errorf("could not find candidate with id=%d", id)
+}
+
 func createUser(rows *sql.Rows) (*entity.User, error) {
 	var createdAt sql.NullTime
 	user := new(entity.User)
@@ -235,7 +460,7 @@ func createUser(rows *sql.Rows) (*entity.User, error) {
 		&user.SpokenLanguages,
 		&user.Skills,
 		&user.Cv,
-		&user.Attachements,
+		&user.Attachments,
 		&user.Video,
 		&user.EducationHistory,
 		&user.EmploymentHistory,

@@ -26,6 +26,7 @@ drop table if exists users;
 create table users
 (
     id             serial primary key,
+    kind           user_kind    not null,
     first_name     varchar(128) not null,
     last_name      varchar(128) not null,
     preferred_name varchar(256),
@@ -47,7 +48,7 @@ create table if not exists candidates
     cv_url              varchar(512),
     video_url           varchar(512),
     years_of_experience int           not null,
-    seek_job_status     job_status    not null,
+    job_status          job_status    not null,
     seek_job_type       job_type     default 'ANY',
     seek_company_size   company_size default 'ANY',
     seek_location_type  location_type not null,
@@ -93,10 +94,13 @@ create table if not exists association_users
     constraint fk_association foreign key (association_id) references associations (id)
 );
 
-create table if not exists skills
+create table if not exists candidate_skills
 (
-    id   serial primary key,
-    name varchar(128) not null
+    id           serial primary key,
+    candidate_id int         not null,
+    name         varchar(64) not null,
+    years        int         not null,
+    constraint fk_candidate foreign key (candidate_id) references candidates (id)
 );
 
 create table if not exists candidate_spoken_languages
@@ -108,16 +112,6 @@ create table if not exists candidate_spoken_languages
     language_short_name varchar(128) not null,
     level               int          not null,
     constraint fk_candidate foreign key (candidate_id) references candidates (id)
-);
-
-create table if not exists candidate_skills
-(
-    id           serial primary key,
-    candidate_id int not null,
-    skill_id     int not null,
-    level        int not null,
-    constraint fk_candidate foreign key (candidate_id) references candidates (id),
-    constraint fk_skill foreign key (skill_id) references skills (id)
 );
 
 create table if not exists candidate_seek_locations

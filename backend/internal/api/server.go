@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"shift/internal/entity"
+	"shift/internal/service"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -14,15 +15,17 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address string
-	userDB  entity.UserDB
+	address     string
+	userDB      entity.UserDB
+	userService *service.UserService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
 func NewAPIServer(address string, userDB entity.UserDB) *APIServer {
 	return &APIServer{
-		address: address,
-		userDB:  userDB,
+		address:     address,
+		userDB:      userDB,
+		userService: service.NewUserService(userDB),
 	}
 }
 
@@ -50,8 +53,26 @@ func (e PermissionError) Error() string {
 	return e.Message
 }
 
+type BadRequestError struct {
+	Message string
+}
+
+func (e BadRequestError) Error() string {
+	return e.Message
+}
+
+type InternalServerError struct {
+	Message string
+}
+
+func (e InternalServerError) Error() string {
+	return e.Message
+}
+
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
+	logrus.SetLevel(logrus.TraceLevel)
+
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
@@ -77,6 +98,16 @@ func IsPermissionError(err error) bool {
 	return isPermissionDenied
 }
 
+func IsBadRequestError(err error) bool {
+	_, isBadRequestError := err.(BadRequestError)
+	return isBadRequestError
+}
+
+func IsInternalServerError(err error) bool {
+	_, isInternalServerError := err.(InternalServerError)
+	return isInternalServerError
+}
+
 // makeHTTPHandleFunc creates an HTTP request handler function for the provided apiFunc.
 func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -89,6 +120,10 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 				WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 			case IsPermissionError(err):
 				WriteJSONResponse(w, http.StatusForbidden, apiError{Error: err.Error()})
+			case IsBadRequestError(err):
+				WriteJSONResponse(w, http.StatusBadRequest, apiError{Error: err.Error()})
+			case IsInternalServerError(err):
+				WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: err.Error()})
 			default:
 				// Log the internal error without exposing details to the client
 				logger.Error(err)
@@ -142,47 +177,19 @@ func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) er
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	userRequest := new(entity.CreateUserRequest)
-	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
-		return err
+	logrus.Debugln("Create user handler running")
+
+	req := new(entity.CreateUserRequest)
+	if err := req.FromFormData(r); err != nil {
+		return BadRequestError{Message: err.Error()}
 	}
 
-	user := entity.NewUser(
-		userRequest.FirstName,
-		userRequest.LastName,
-		userRequest.PreferredName,
-		userRequest.Email,
-		userRequest.PhoneNumber,
-		userRequest.BirthDate,
-		userRequest.Photo,
-		userRequest.YearsOfExperience,
-		userRequest.JobStatus,
-		userRequest.SeekJobType,
-		userRequest.SeekCompanySize,
-		userRequest.SeekLocations,
-		userRequest.SeekLocationType,
-		userRequest.SeekSalary,
-		userRequest.SeekValues,
-		userRequest.WorkPermit,
-		userRequest.NoticePeriod,
-		userRequest.SpokenLanguages,
-		userRequest.Skills,
-		userRequest.Cv,
-		userRequest.Attachements,
-		userRequest.Video,
-		userRequest.EducationHistory,
-		userRequest.EmploymentHistory,
-		userRequest.LinkedinUrl,
-		userRequest.GithubUrl,
-		userRequest.PortfolioUrl,
-		userRequest.Kind,
-	)
-
-	if err := s.userDB.CreateUser(user); err != nil {
-		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	res, err := s.userService.CreateCandidate(req)
+	if err != nil {
+		return InternalServerError{Message: err.Error()}
 	}
 
-	return WriteJSONResponse(w, http.StatusOK, user)
+	return WriteJSONResponse(w, http.StatusOK, res)
 }
 
 // handleDeleteUser handles DELETE requests to delete a user account.
