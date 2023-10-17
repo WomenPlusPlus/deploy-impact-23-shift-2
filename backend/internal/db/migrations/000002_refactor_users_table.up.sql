@@ -33,7 +33,6 @@ create table users
     email          varchar(512) not null unique,
     phone_number   varchar(20)  not null,
     birth_date     timestamp,
-    image_url      varchar(512),
     linkedin_url   varchar(512),
     github_url     varchar(512),
     portfolio_url  varchar(512),
@@ -92,6 +91,14 @@ create table if not exists association_users
     role           user_role not null,
     constraint fk_user foreign key (user_id) references users (id),
     constraint fk_association foreign key (association_id) references associations (id)
+);
+
+create table if not exists user_photos
+(
+    id        serial primary key,
+    user_id   int          not null,
+    image_url varchar(512) not null,
+    constraint fk_user foreign key (user_id) references users (id)
 );
 
 create table if not exists candidate_skills

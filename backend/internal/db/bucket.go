@@ -60,7 +60,7 @@ func createStorageClient(ctx context.Context) (*storage.Client, error) {
 	return client, nil
 }
 
-func (b *GoogleBucketDB) UploadObject(ctx context.Context, objectName string, file *os.File) error {
+func (b *GoogleBucketDB) UploadObject(ctx context.Context, objectName string, file io.Reader) error {
 	bucket := b.client.Bucket(b.bucketName)
 	obj := bucket.Object(objectName)
 
@@ -117,7 +117,7 @@ func (b *GoogleBucketDB) SignUrl(_ context.Context, objectName string) (string, 
 
 type DummyBucketDB struct{}
 
-func (b *DummyBucketDB) UploadObject(_ context.Context, _ string, _ *os.File) error {
+func (b *DummyBucketDB) UploadObject(_ context.Context, _ string, _ io.Reader) error {
 	logrus.Trace("called UploadObject on dummy bucket")
 	return nil
 }

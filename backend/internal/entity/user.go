@@ -31,7 +31,6 @@ type UserEntity struct {
 	Email         string    `db:"email"`
 	PhoneNumber   string    `db:"phone_number"`
 	BirthDate     time.Time `db:"birth_date"`
-	Photo         string    `db:"image_url"`
 	LinkedInUrl   string    `db:"linkedin_url"`
 	GithubUrl     string    `db:"github_url"`
 	PortfolioUrl  string    `db:"portfolio_url"`
@@ -47,7 +46,6 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.Email = request.Email
 	u.PhoneNumber = request.PhoneNumber
 	u.BirthDate = request.BirthDate
-	u.Photo = request.Photo
 	u.LinkedInUrl = request.LinkedInUrl
 	u.GithubUrl = request.GithubUrl
 	u.PortfolioUrl = request.PortfolioUrl
@@ -124,6 +122,20 @@ func (c *CompanyUserEntity) FromCreationRequest(request *CreateUserRequest) erro
 	c.CompanyId = request.CompanyId
 	c.Role = request.CompanyRole
 	return nil
+}
+
+type UserPhotoEntity struct {
+	ID       int    `db:"id"`
+	UserID   int    `db:"user_id"`
+	ImageUrl string `db:"image_url"`
+	*UserEntity
+}
+
+func NewUserPhotoEntity(userId int, imageUrl string) *UserPhotoEntity {
+	return &UserPhotoEntity{
+		UserID:   userId,
+		ImageUrl: imageUrl,
+	}
 }
 
 type CandidateSkillEntity struct {

@@ -256,6 +256,25 @@ func (pdb *PostgresDB) CreateCompanyUser(companyUser *entity.CompanyUserEntity) 
 	return res, nil
 }
 
+func (pdb *PostgresDB) AssignUserPhoto(record *entity.UserPhotoEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteUserPhoto(tx, record.UserID); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertUserPhoto(tx, record); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
+	return pdb.deleteUserPhoto(pdb.db, userId)
+}
+
 func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.CandidateSkillsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -359,6 +378,22 @@ func (pdb *PostgresDB) DeleteCandidateEmploymentHistoryList(candidateId int) err
 	return pdb.deleteCandidateEmploymentHistoryList(pdb.db, candidateId)
 }
 
+func (pdb *PostgresDB) insertUserPhoto(tx NamedQuerier, record *entity.UserPhotoEntity) error {
+	query := `insert into user_photos (user_id, image_url) values (:user_id, :image_url)`
+	if _, err := tx.NamedExec(query, record); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteUserPhoto(tx sqlx.Execer, userId int) error {
+	query := `delete from user_photos where user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateSkills(tx NamedQuerier, records entity.CandidateSkillsEntity) error {
 	query := `insert into candidate_skills (candidate_id, name, years) values (:candidate_id, :name, :years)`
 	for _, record := range records {
@@ -376,6 +411,7 @@ func (pdb *PostgresDB) deleteCandidateSkills(tx sqlx.Execer, candidateId int) er
 	}
 	return nil
 }
+
 func (pdb *PostgresDB) insertCandidateSpokenLanguages(tx NamedQuerier, records entity.CandidateSpokenLanguagesEntity) error {
 	query := `insert into candidate_spoken_languages (candidate_id, language_id, language_name, language_short_name, level) values (:candidate_id, :language_id, :language_name, :language_short_name, :level)`
 	for _, record := range records {
@@ -463,8 +499,8 @@ func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, cand
 }
 
 func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity, error) {
-	query := `select * from users`
-	rows, err := tx.Queryx(query)
+	query := `select * from users where id = $1`
+	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get user with id=%d in db: %v", id, err)
 		return nil, err
@@ -484,8 +520,9 @@ func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity,
 func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.AssociationUserEntity, error) {
 	query := `select users.*, association_users.*
 				from users
-				inner join association_users on users.id = association_users.user_id`
-	rows, err := tx.Queryx(query)
+				inner join association_users on users.id = association_users.user_id
+				where association_users.id = $1`
+	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get association user with id=%d in db: %v", id, err)
 		return nil, err
@@ -505,8 +542,9 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.CandidateEntity, error) {
 	query := `select users.*, candidates.*
 				from users
-				inner join candidates on users.id = candidates.user_id`
-	rows, err := tx.Queryx(query)
+				inner join candidates on users.id = candidates.user_id
+				where candidates.id = $1`
+	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get candidate with id=%d in db: %v", id, err)
 		return nil, err
@@ -526,8 +564,9 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.CompanyUserEntity, error) {
 	query := `select users.*, company_users.*
 				from users
-				inner join company_users on users.id = company_users.user_id`
-	rows, err := tx.Queryx(query)
+				inner join company_users on users.id = company_users.user_id
+				where company_users.id = $1`
+	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get company user with id=%d in db: %v", id, err)
 		return nil, err
@@ -554,7 +593,6 @@ func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int
 					email,
 					phone_number,
 					birth_date,
-					image_url,
 					linkedin_url,
 					github_url,
 					portfolio_url
@@ -567,7 +605,6 @@ func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int
 					:email,
 					:phone_number,
 					:birth_date,
-					:image_url,
 					:linkedin_url,
 					:github_url,
 					:portfolio_url

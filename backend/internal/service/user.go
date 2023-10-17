@@ -1,8 +1,10 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"mime/multipart"
 	"shift/internal/entity"
 )
 
@@ -45,6 +47,15 @@ func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.Create
 	}
 	logrus.Tracef("Added admin to db: id=%d", admin.ID)
 
+	if req.Photo != nil {
+		if err := s.savePhoto(admin.ID, req.Photo); err != nil {
+			logrus.Errorf("uploading admin image: %v", err)
+		}
+		logrus.Tracef("Added admin image: id=%d", admin.ID)
+	} else {
+		logrus.Tracef("No admin image added: id=%d", admin.ID)
+	}
+
 	return &entity.CreateUserResponse{
 		ID:     admin.ID,
 		UserID: admin.ID,
@@ -62,6 +73,15 @@ func (s *UserService) createAssociationUser(req *entity.CreateUserRequest) (*ent
 		return nil, fmt.Errorf("creating new association user: %w", err)
 	}
 	logrus.Tracef("Added association user to db: id=%d", associationUser.ID)
+
+	if req.Photo != nil {
+		if err := s.savePhoto(associationUser.UserID, req.Photo); err != nil {
+			logrus.Errorf("uploading association user image: %v", err)
+		}
+		logrus.Tracef("Added association user image: id=%d", associationUser.ID)
+	} else {
+		logrus.Tracef("No association user image added: id=%d", associationUser.ID)
+	}
 
 	return &entity.CreateUserResponse{
 		ID:     associationUser.ID,
@@ -178,6 +198,15 @@ func (s *UserService) createCandidate(req *entity.CreateUserRequest) (*entity.Cr
 		logrus.Tracef("No employment history list added to db: id=%d", candidate.ID)
 	}
 
+	if req.Photo != nil {
+		if err := s.savePhoto(candidate.UserID, req.Photo); err != nil {
+			logrus.Errorf("uploading candidate image: %v", err)
+		}
+		logrus.Tracef("Added candidate image: id=%d", candidate.UserID)
+	} else {
+		logrus.Tracef("No candidate image added: id=%d", candidate.UserID)
+	}
+
 	return &entity.CreateUserResponse{
 		ID:     candidate.ID,
 		UserID: candidate.UserID,
@@ -197,8 +226,47 @@ func (s *UserService) createCompanyUser(req *entity.CreateUserRequest) (*entity.
 	}
 	logrus.Tracef("Added company user to db: id=%d", companyUser.ID)
 
+	if req.Photo != nil {
+		if err := s.savePhoto(companyUser.UserID, req.Photo); err != nil {
+			logrus.Errorf("uploading company user image: %v", err)
+		}
+		logrus.Tracef("Added company user image: id=%d", companyUser.ID)
+	} else {
+		logrus.Tracef("No company user image added: id=%d", companyUser.ID)
+	}
+
 	return &entity.CreateUserResponse{
 		ID:     companyUser.ID,
 		UserID: companyUser.UserID,
 	}, nil
+}
+
+func (s *UserService) savePhoto(userId int, photoHeader *multipart.FileHeader) error {
+	path, err := s.uploadPhoto(userId, photoHeader)
+	if err != nil {
+		return fmt.Errorf("uploading admin image: %w", err)
+	}
+	logrus.Tracef("Added image to bucket: id=%d", userId)
+	if err := s.userDB.AssignUserPhoto(entity.NewUserPhotoEntity(userId, path)); err != nil {
+		return fmt.Errorf("storing admin image to db: %v", err)
+	}
+	logrus.Tracef("Added image to db: id=%d", userId)
+	return nil
+}
+
+func (s *UserService) uploadPhoto(userId int, photoHeader *multipart.FileHeader) (string, error) {
+	photo, err := photoHeader.Open()
+	if err != nil {
+		return "", fmt.Errorf("could not open the uploaded image: %w", err)
+	}
+	defer photo.Close()
+	logrus.Tracef("Parsed photo: %s", photoHeader.Filename)
+
+	path := fmt.Sprintf("photos/%d.jpg", userId)
+	if err := s.bucketDB.UploadObject(context.Background(), path, photo); err != nil {
+		return "", fmt.Errorf("could not save the admin image: %w", err)
+	}
+	logrus.Tracef("Parsed file: %s", photoHeader.Filename)
+
+	return path, nil
 }

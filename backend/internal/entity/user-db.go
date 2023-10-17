@@ -11,6 +11,8 @@ type UserDB interface {
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
 	CreateCompanyUser(*CompanyUserEntity) (*CompanyUserEntity, error)
+	AssignUserPhoto(record *UserPhotoEntity) error
+	DeleteUserPhoto(userId int) error
 	AssignCandidateSkills(candidateId int, records CandidateSkillsEntity) error
 	DeleteCandidateSkills(candidateId int) error
 	AssignCandidateSpokenLanguages(candidateId int, records CandidateSpokenLanguagesEntity) error

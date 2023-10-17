@@ -4,7 +4,7 @@ drop table if exists candidate_attachments;
 drop table if exists candidate_seek_locations;
 drop table if exists candidate_skills;
 drop table if exists candidate_spoken_languages;
-drop table if exists skills;
+drop table if exists user_photos;
 drop table if exists association_users;
 drop table if exists associations;
 drop table if exists company_users;
