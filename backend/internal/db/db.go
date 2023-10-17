@@ -16,6 +16,12 @@ type UserDB interface {
 	UpdateUser(*entity.User) error
 	GetUsers() ([]*entity.User, error)
 	GetUserByID(int) (*entity.User, error)
+
+	CreateAssociation(*entity.Association) error
+	DeleteAssociation(int) error
+	UpdateAssociation(*entity.Association) error
+	GetAssociations() ([]*entity.Association, error)
+	GetAssociationByID(int) (*entity.Association, error)
 }
 
 // docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
@@ -96,6 +102,28 @@ func (db *PostgresDB) CreateUser(u *entity.User) error {
 		u.PortfolioUrl,
 		u.State,
 		u.CreatedAt,
+	)
+	tx.Commit()
+	return nil
+}
+
+func (db *PostgresDB) CreateAssociation(a *entity.Association) error {
+	query := `
+		INSERT INTO associations
+		(
+			name,
+			logo,
+			website_url,
+			focus
+		)
+	`
+	tx := db.db.MustBegin()
+	tx.MustExec(
+		query,
+		a.Name,
+		a.Logo,
+		a.WebsiteUrl,
+		a.Focus,
 	)
 	tx.Commit()
 	return nil
