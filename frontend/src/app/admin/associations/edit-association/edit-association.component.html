@@ -1,0 +1,91 @@
+<div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="!vm.submitted; else submittedContainer">
+        <h1 class="text-3xl mb-3">Edit Association</h1>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <fieldset id="edit-name" class="form-control w-full my-4" *appLet="form.controls.name as control">
+                <label for="name" class="mb-1">Association Name:</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    formControlName="name"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.name.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <div class="flex">
+                <div *ngIf="imageURL" class="avatar shrink-0 mr-4">
+                    <div class="w-24">
+                        <img [src]="imageURL" alt="Selected Image" />
+                    </div>
+                </div>
+                <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
+                    <label for="logo" class="mb-1">Logo:</label>
+                    <input
+                        type="file"
+                        id="logo"
+                        name="logo"
+                        class="file-input file-input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                        (change)="onFileSelected($event)"
+                    />
+                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        form.controls.logo.errors | formErrorMessage
+                    }}</span>
+                </fieldset>
+            </div>
+            <fieldset id="edit-url" class="form-control w-full my-4" *appLet="form.controls.url as control">
+                <label for="url" class="mb-1">Website URL:</label>
+                <input
+                    type="text"
+                    id="url"
+                    name="url"
+                    formControlName="url"
+                    class="input input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.url.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <fieldset id="edit-focus" class="form-control w-full my-4" *appLet="form.controls.focus as control">
+                <label for="focus" class="mb-1">Main Focus:</label>
+                <textarea
+                    id="focus"
+                    name="focus"
+                    formControlName="focus"
+                    rows="5"
+                    class="textarea textarea-bordered resize-y"
+                    [class.textarea-error]="control.invalid && control.touched"
+                ></textarea>
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.focus.errors | formErrorMessage
+                }}</span>
+            </fieldset>
+            <button
+                class="btn btn-primary btn-wide float-right"
+                type="submit"
+                [disabled]="form.invalid || form.pristine || vm.submitting"
+            >
+                Save
+            </button>
+        </form>
+    </ng-container>
+    <ng-template #submittedContainer>
+        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+            <div class="mx-auto max-w-screen-sm text-center">
+                <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
+                    Association {{ form.controls.name.value }} was updated!
+                </p>
+                <a
+                    [routerLink]="['/']"
+                    class="inline-flex text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                    >Back to Homepage</a
+                >
+            </div>
+        </div>
+    </ng-template>
+</div>
