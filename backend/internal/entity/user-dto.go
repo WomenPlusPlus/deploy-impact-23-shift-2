@@ -45,9 +45,9 @@ type CreateUserCandidateRequest struct {
 	NoticePeriod      int                           `json:"noticePeriod"`
 	SpokenLanguages   []CreateUserSpokenLanguage    `json:"spokenLanguages"`
 	Skills            []CreateUserSkill             `json:"skills"`
-	CV                string                        `json:"cv"`
-	Attachments       []string                      `json:"attachments"`
-	Video             string                        `json:"video"`
+	CV                *multipart.FileHeader         `json:"cv"`
+	Attachments       []*multipart.FileHeader       `json:"attachments"`
+	Video             *multipart.FileHeader         `json:"video"`
 	EducationHistory  []CreateUserEducationHistory  `json:"educationHistory"`
 	EmploymentHistory []CreateUserEmploymentHistory `json:"employmentHistory"`
 	LinkedInUrl       string                        `json:"linkedInUrl"`
@@ -206,9 +206,9 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 	u.SeekLocationType = fd.Get("seekLocationType").First()
 	u.SeekValues = fd.Get("seekValues").First()
 	u.WorkPermit = fd.Get("workPermit").First()
-	// TODO: u.CV = fd.Get("cv").First()
-	// TODO: u.Attachments = fd.Get("attachments").First()
-	// TODO: u.Video = fd.Get("video").First()
+	u.CV = fd.GetFile("cv").First()
+	u.Attachments = fd.GetFile("attachments")
+	u.Video = fd.GetFile("video").First()
 	u.LinkedInUrl = fd.Get("linkedInUrl").First()
 	u.GithubUrl = fd.Get("githubUrl").First()
 	u.PortfolioUrl = fd.Get("portfolioUrl").First()

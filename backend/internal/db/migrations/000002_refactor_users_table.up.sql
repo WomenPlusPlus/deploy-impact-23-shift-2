@@ -44,8 +44,6 @@ create table if not exists candidates
 (
     id                  serial primary key,
     user_id             int           not null,
-    cv_url              varchar(512),
-    video_url           varchar(512),
     years_of_experience int           not null,
     job_status          job_status    not null,
     seek_job_type       job_type     default 'ANY',
@@ -130,11 +128,27 @@ create table if not exists candidate_seek_locations
     constraint fk_candidate foreign key (candidate_id) references candidates (id)
 );
 
+create table if not exists candidate_cvs
+(
+    id           serial primary key,
+    candidate_id int          not null,
+    cv_url       varchar(512) not null,
+    constraint fk_candidate foreign key (candidate_id) references candidates (id)
+);
+
 create table if not exists candidate_attachments
 (
     id             serial primary key,
     candidate_id   int          not null,
     attachment_url varchar(512) not null,
+    constraint fk_candidate foreign key (candidate_id) references candidates (id)
+);
+
+create table if not exists candidate_videos
+(
+    id        serial primary key,
+    candidate_id int          not null,
+    video_url varchar(512) not null,
     constraint fk_candidate foreign key (candidate_id) references candidates (id)
 );
 

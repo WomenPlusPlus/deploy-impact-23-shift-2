@@ -1,6 +1,8 @@
 drop table if exists candidate_employment_history;
 drop table if exists candidate_education_history;
+drop table if exists candidate_videos;
 drop table if exists candidate_attachments;
+drop table if exists candidate_cvs;
 drop table if exists candidate_seek_locations;
 drop table if exists candidate_skills;
 drop table if exists candidate_spoken_languages;

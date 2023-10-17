@@ -182,8 +182,6 @@ func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*enti
 	query := `insert into candidates
 				(
 				 	user_id,
-					cv_url,
-					video_url,
 					years_of_experience,
 					job_status,
 					seek_job_type,
@@ -196,8 +194,6 @@ func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*enti
 				)
 				values (
 					:user_id,
-					:cv_url,
-					:video_url,
 					:years_of_experience,
 					:job_status,
 					:seek_job_type,
@@ -326,6 +322,23 @@ func (pdb *PostgresDB) AssignCandidateSeekLocations(candidateId int, records ent
 func (pdb *PostgresDB) DeleteCandidateSeekLocations(candidateId int) error {
 	return pdb.deleteCandidateSeekLocations(pdb.db, candidateId)
 }
+func (pdb *PostgresDB) AssignCandidateCV(record *entity.CandidateCVEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateCV(tx, record.CandidateID); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateCV(tx, record); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateCV(candidateId int) error {
+	return pdb.deleteCandidateCV(pdb.db, candidateId)
+}
 func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records entity.CandidateAttachmentsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -342,6 +355,23 @@ func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records entit
 }
 func (pdb *PostgresDB) DeleteCandidateAttachments(candidateId int) error {
 	return pdb.deleteCandidateAttachments(pdb.db, candidateId)
+}
+func (pdb *PostgresDB) AssignCandidateVideo(record *entity.CandidateVideoEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteCandidateVideo(tx, record.CandidateID); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertCandidateVideo(tx, record); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+func (pdb *PostgresDB) DeleteCandidateVideo(candidateId int) error {
+	return pdb.deleteCandidateVideo(pdb.db, candidateId)
 }
 func (pdb *PostgresDB) AssignCandidateEducationHistoryList(candidateId int, records entity.CandidateEducationHistoryListEntity) error {
 	tx := pdb.db.MustBegin()
@@ -429,6 +459,7 @@ func (pdb *PostgresDB) deleteCandidateSpokenLanguages(tx sqlx.Execer, candidateI
 	}
 	return nil
 }
+
 func (pdb *PostgresDB) insertCandidateSeekLocations(tx NamedQuerier, records entity.CandidateSeekLocationsEntity) error {
 	query := `insert into candidate_seek_locations (candidate_id, city_id, city_name) values (:candidate_id, :city_id, :city_name)`
 	for _, record := range records {
@@ -446,6 +477,23 @@ func (pdb *PostgresDB) deleteCandidateSeekLocations(tx sqlx.Execer, candidateId 
 	}
 	return nil
 }
+
+func (pdb *PostgresDB) insertCandidateCV(tx NamedQuerier, record *entity.CandidateCVEntity) error {
+	query := `insert into candidate_cvs (candidate_id, cv_url) values (:candidate_id, :cv_url)`
+	if _, err := tx.NamedExec(query, record); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateCV(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_cvs where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateAttachments(tx NamedQuerier, records entity.CandidateAttachmentsEntity) error {
 	query := `insert into candidate_attachments (candidate_id, attachment_url) values (:candidate_id, :attachment_url)`
 	for _, record := range records {
@@ -463,6 +511,23 @@ func (pdb *PostgresDB) deleteCandidateAttachments(tx sqlx.Execer, candidateId in
 	}
 	return nil
 }
+
+func (pdb *PostgresDB) insertCandidateVideo(tx NamedQuerier, record *entity.CandidateVideoEntity) error {
+	query := `insert into candidate_videos (candidate_id, video_url) values (:candidate_id, :video_url)`
+	if _, err := tx.NamedExec(query, record); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateVideo(tx sqlx.Execer, candidateId int) error {
+	query := `delete from candidate_videos where candidate_id = $1`
+	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateEducationHistoryList(tx NamedQuerier, records entity.CandidateEducationHistoryListEntity) error {
 	query := `insert into candidate_education_history (candidate_id, title, description, entity, from_date, to_date) values (:candidate_id, :title, :description, :entity, :from_date, :to_date)`
 	for _, record := range records {
@@ -480,6 +545,7 @@ func (pdb *PostgresDB) deleteCandidateEducationHistoryList(tx sqlx.Execer, candi
 	}
 	return nil
 }
+
 func (pdb *PostgresDB) insertCandidateEmploymentHistoryList(tx NamedQuerier, records entity.CandidateEmploymentHistoryListEntity) error {
 	query := `insert into candidate_employment_history (candidate_id, title, description, company, from_date, to_date) values (:candidate_id, :title, :description, :company, :from_date, :to_date)`
 	for _, record := range records {

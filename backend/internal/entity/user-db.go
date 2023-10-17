@@ -19,8 +19,12 @@ type UserDB interface {
 	DeleteCandidateSpokenLanguages(candidateId int) error
 	AssignCandidateSeekLocations(candidateId int, records CandidateSeekLocationsEntity) error
 	DeleteCandidateSeekLocations(candidateId int) error
+	AssignCandidateCV(record *CandidateCVEntity) error
+	DeleteCandidateCV(candidateId int) error
 	AssignCandidateAttachments(candidateId int, records CandidateAttachmentsEntity) error
 	DeleteCandidateAttachments(candidateId int) error
+	AssignCandidateVideo(record *CandidateVideoEntity) error
+	DeleteCandidateVideo(candidateId int) error
 	AssignCandidateEducationHistoryList(candidateId int, records CandidateEducationHistoryListEntity) error
 	DeleteCandidateEducationHistoryList(candidateId int) error
 	AssignCandidateEmploymentHistoryList(candidateId int, records CandidateEmploymentHistoryListEntity) error

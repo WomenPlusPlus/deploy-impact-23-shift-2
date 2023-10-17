@@ -120,12 +120,6 @@ func (s *UserService) createCandidate(req *entity.CreateUserRequest) (*entity.Cr
 	}
 	logrus.Tracef("Parsed seek locations entity: %+v", seekLocations)
 
-	attachments := make(entity.CandidateAttachmentsEntity, 0)
-	if err := attachments.FromCreationRequest(req, candidate.ID); err != nil {
-		return nil, fmt.Errorf("parsing request into attachments entity: %w", err)
-	}
-	logrus.Tracef("Parsed attachments entity: %+v", attachments)
-
 	educationHistoryList := make(entity.CandidateEducationHistoryListEntity, 0)
 	if err := educationHistoryList.FromCreationRequest(req, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into education history list entity: %w", err)
@@ -168,16 +162,6 @@ func (s *UserService) createCandidate(req *entity.CreateUserRequest) (*entity.Cr
 		logrus.Tracef("No seek locations added to db: id=%d", candidate.ID)
 	}
 
-	if len(attachments) > 0 {
-		if err := s.userDB.AssignCandidateAttachments(candidate.ID, attachments); err != nil {
-			logrus.Errorf("creating new attachments: %v", err)
-		} else {
-			logrus.Tracef("Added attachments to db: id=%d, total=%d", candidate.ID, len(attachments))
-		}
-	} else {
-		logrus.Tracef("No attachments added to db: id=%d", candidate.ID)
-	}
-
 	if len(educationHistoryList) > 0 {
 		if err := s.userDB.AssignCandidateEducationHistoryList(candidate.ID, educationHistoryList); err != nil {
 			logrus.Errorf("creating new education history list: %v", err)
@@ -205,6 +189,33 @@ func (s *UserService) createCandidate(req *entity.CreateUserRequest) (*entity.Cr
 		logrus.Tracef("Added candidate image: id=%d", candidate.UserID)
 	} else {
 		logrus.Tracef("No candidate image added: id=%d", candidate.UserID)
+	}
+
+	if req.CV != nil {
+		if err := s.saveCV(candidate.UserID, candidate.ID, req.CV); err != nil {
+			logrus.Errorf("uploading candidate cv: %v", err)
+		}
+		logrus.Tracef("Added candidate cv: id=%d", candidate.ID)
+	} else {
+		logrus.Tracef("No candidate cv added: id=%d", candidate.ID)
+	}
+
+	if len(req.Attachments) > 0 {
+		if err := s.saveAttachments(candidate.UserID, candidate.ID, req.Attachments); err != nil {
+			logrus.Errorf("uploading candidate attachments: %v", err)
+		}
+		logrus.Tracef("Added candidate attachments: id=%d", candidate.ID)
+	} else {
+		logrus.Tracef("No candidate attachments added: id=%d", candidate.ID)
+	}
+
+	if req.Video != nil {
+		if err := s.saveVideo(candidate.UserID, candidate.ID, req.Video); err != nil {
+			logrus.Errorf("uploading candidate video: %v", err)
+		}
+		logrus.Tracef("Added candidate video: id=%d", candidate.ID)
+	} else {
+		logrus.Tracef("No candidate video added: id=%d", candidate.ID)
 	}
 
 	return &entity.CreateUserResponse{
@@ -242,31 +253,73 @@ func (s *UserService) createCompanyUser(req *entity.CreateUserRequest) (*entity.
 }
 
 func (s *UserService) savePhoto(userId int, photoHeader *multipart.FileHeader) error {
-	path, err := s.uploadPhoto(userId, photoHeader)
-	if err != nil {
-		return fmt.Errorf("uploading admin image: %w", err)
+	path := fmt.Sprintf("%d/photo/%s", userId, photoHeader.Filename)
+	if err := s.uploadFile(path, photoHeader); err != nil {
+		return fmt.Errorf("uploading photo: %w", err)
 	}
-	logrus.Tracef("Added image to bucket: id=%d", userId)
+	logrus.Tracef("Added photo to bucket: id=%d", userId)
 	if err := s.userDB.AssignUserPhoto(entity.NewUserPhotoEntity(userId, path)); err != nil {
-		return fmt.Errorf("storing admin image to db: %v", err)
+		return fmt.Errorf("storing photo to db: %v", err)
 	}
-	logrus.Tracef("Added image to db: id=%d", userId)
+	logrus.Tracef("Added photo to db: id=%d", userId)
 	return nil
 }
 
-func (s *UserService) uploadPhoto(userId int, photoHeader *multipart.FileHeader) (string, error) {
-	photo, err := photoHeader.Open()
+func (s *UserService) saveCV(userId, candidateId int, cvHeader *multipart.FileHeader) error {
+	path := fmt.Sprintf("%d/cv/%s", userId, cvHeader.Filename)
+	if err := s.uploadFile(path, cvHeader); err != nil {
+		return fmt.Errorf("uploading cv: %w", err)
+	}
+	logrus.Tracef("Added cv to bucket: id=%d", userId)
+	if err := s.userDB.AssignCandidateCV(entity.NewCandidateCVEntity(candidateId, path)); err != nil {
+		return fmt.Errorf("storing cv to db: %v", err)
+	}
+	logrus.Tracef("Added cv to db: id=%d", userId)
+	return nil
+}
+
+func (s *UserService) saveAttachments(userId, candidateId int, attachmentsHeader []*multipart.FileHeader) error {
+	attachments := make(entity.CandidateAttachmentsEntity, len(attachmentsHeader))
+	for i, attachmentHeader := range attachmentsHeader {
+		path := fmt.Sprintf("%d/attachments/%s", userId, attachmentHeader.Filename)
+		if err := s.uploadFile(path, attachmentHeader); err != nil {
+			return fmt.Errorf("uploading attachments: %w", err)
+		}
+		logrus.Tracef("Added attachments to bucket: id=%d", userId)
+		attachments[i] = entity.NewCandidateAttachmentEntity(candidateId, path)
+		logrus.Tracef("Added attachments to db: id=%d", userId)
+	}
+	if err := s.userDB.AssignCandidateAttachments(candidateId, attachments); err != nil {
+		return fmt.Errorf("storing attachments to db: %v", err)
+	}
+	return nil
+}
+
+func (s *UserService) saveVideo(userId, candidateId int, videoHeader *multipart.FileHeader) error {
+	path := fmt.Sprintf("%d/video/%s", userId, videoHeader.Filename)
+	if err := s.uploadFile(path, videoHeader); err != nil {
+		return fmt.Errorf("uploading video: %w", err)
+	}
+	logrus.Tracef("Added video to bucket: id=%d", userId)
+	if err := s.userDB.AssignCandidateVideo(entity.NewCandidateVideoEntity(candidateId, path)); err != nil {
+		return fmt.Errorf("storing video to db: %v", err)
+	}
+	logrus.Tracef("Added video to db: id=%d", userId)
+	return nil
+}
+
+func (s *UserService) uploadFile(path string, fileHeader *multipart.FileHeader) error {
+	photo, err := fileHeader.Open()
 	if err != nil {
-		return "", fmt.Errorf("could not open the uploaded image: %w", err)
+		return fmt.Errorf("could not open the uploaded file: %w", err)
 	}
 	defer photo.Close()
-	logrus.Tracef("Parsed photo: %s", photoHeader.Filename)
+	logrus.Tracef("Parsed photo: %s", fileHeader.Filename)
 
-	path := fmt.Sprintf("photos/%d.jpg", userId)
 	if err := s.bucketDB.UploadObject(context.Background(), path, photo); err != nil {
-		return "", fmt.Errorf("could not save the admin image: %w", err)
+		return fmt.Errorf("could not store the file: %w", err)
 	}
-	logrus.Tracef("Parsed file: %s", photoHeader.Filename)
+	logrus.Tracef("Parsed file: %s", fileHeader.Filename)
 
-	return path, nil
+	return nil
 }
