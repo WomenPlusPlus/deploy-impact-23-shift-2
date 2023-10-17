@@ -7,12 +7,14 @@ import (
 )
 
 type UserService struct {
-	userDB entity.UserDB
+	bucketDB entity.BucketDB
+	userDB   entity.UserDB
 }
 
-func NewUserService(userDB entity.UserDB) *UserService {
+func NewUserService(bucketDB entity.BucketDB, userDB entity.UserDB) *UserService {
 	return &UserService{
-		userDB: userDB,
+		bucketDB: bucketDB,
+		userDB:   userDB,
 	}
 }
 
