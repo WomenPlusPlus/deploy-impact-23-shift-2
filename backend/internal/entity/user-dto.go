@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/neox5/go-formdata"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"regexp"
 	"shift/internal/utils"
@@ -13,14 +14,14 @@ import (
 )
 
 type CreateUserRequest struct {
-	Kind                          string    `json:"kind"`
-	FirstName                     string    `json:"firstName"`
-	LastName                      string    `json:"lastName"`
-	PreferredName                 string    `json:"preferredName"`
-	Email                         string    `json:"email"`
-	PhoneNumber                   string    `json:"phoneNumber"`
-	BirthDate                     time.Time `json:"birthDate"`
-	Photo                         string    `json:"photo"`
+	Kind                          string                `json:"kind"`
+	FirstName                     string                `json:"firstName"`
+	LastName                      string                `json:"lastName"`
+	PreferredName                 string                `json:"preferredName"`
+	Email                         string                `json:"email"`
+	PhoneNumber                   string                `json:"phoneNumber"`
+	BirthDate                     time.Time             `json:"birthDate"`
+	Photo                         *multipart.FileHeader `json:"photo"`
 	*CreateUserAssociationRequest `json:"association"`
 	*CreateUserCandidateRequest   `json:"candidate"`
 	*CreateUserCompanyRequest     `json:"company"`
@@ -44,9 +45,9 @@ type CreateUserCandidateRequest struct {
 	NoticePeriod      int                           `json:"noticePeriod"`
 	SpokenLanguages   []CreateUserSpokenLanguage    `json:"spokenLanguages"`
 	Skills            []CreateUserSkill             `json:"skills"`
-	CV                string                        `json:"cv"`
-	Attachments       []string                      `json:"attachments"`
-	Video             string                        `json:"video"`
+	CV                *multipart.FileHeader         `json:"cv"`
+	Attachments       []*multipart.FileHeader       `json:"attachments"`
+	Video             *multipart.FileHeader         `json:"video"`
 	EducationHistory  []CreateUserEducationHistory  `json:"educationHistory"`
 	EmploymentHistory []CreateUserEmploymentHistory `json:"employmentHistory"`
 	LinkedInUrl       string                        `json:"linkedInUrl"`
@@ -113,7 +114,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -128,7 +129,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	u.PreferredName = fd.Get("preferredName").First()
 	u.Email = fd.Get("email").First()
 	u.PhoneNumber = fd.Get("phoneNumber").First()
-	// TODO: u.Photo = fd.Get("photo").First()
+	u.Photo = fd.GetFile("photo").First()
 
 	birthDateStr := fd.Get("birthDate").First()
 	if birthDateStr != "" {
@@ -205,9 +206,9 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 	u.SeekLocationType = fd.Get("seekLocationType").First()
 	u.SeekValues = fd.Get("seekValues").First()
 	u.WorkPermit = fd.Get("workPermit").First()
-	// TODO: u.CV = fd.Get("cv").First()
-	// TODO: u.Attachments = fd.Get("attachments").First()
-	// TODO: u.Video = fd.Get("video").First()
+	u.CV = fd.GetFile("cv").First()
+	u.Attachments = fd.GetFile("attachments")
+	u.Video = fd.GetFile("video").First()
 	u.LinkedInUrl = fd.Get("linkedInUrl").First()
 	u.GithubUrl = fd.Get("githubUrl").First()
 	u.PortfolioUrl = fd.Get("portfolioUrl").First()

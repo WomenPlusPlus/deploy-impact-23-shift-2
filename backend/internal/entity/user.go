@@ -31,7 +31,6 @@ type UserEntity struct {
 	Email         string    `db:"email"`
 	PhoneNumber   string    `db:"phone_number"`
 	BirthDate     time.Time `db:"birth_date"`
-	Photo         string    `db:"image_url"`
 	LinkedInUrl   string    `db:"linkedin_url"`
 	GithubUrl     string    `db:"github_url"`
 	PortfolioUrl  string    `db:"portfolio_url"`
@@ -47,7 +46,6 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.Email = request.Email
 	u.PhoneNumber = request.PhoneNumber
 	u.BirthDate = request.BirthDate
-	u.Photo = request.Photo
 	u.LinkedInUrl = request.LinkedInUrl
 	u.GithubUrl = request.GithubUrl
 	u.PortfolioUrl = request.PortfolioUrl
@@ -58,8 +56,6 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 type CandidateEntity struct {
 	ID                int    `db:"id"`
 	UserID            int    `db:"user_id"`
-	CV                string `db:"cv_url"`
-	Video             string `db:"video_url"`
 	YearsOfExperience int    `db:"years_of_experience"`
 	JobStatus         string `db:"job_status"`
 	SeekJobType       string `db:"seek_job_type"`
@@ -77,7 +73,6 @@ func (c *CandidateEntity) FromCreationRequest(request *CreateUserRequest) error 
 	if err := c.UserEntity.FromCreationRequest(request); err != nil {
 		return err
 	}
-	c.Video = request.Video
 	c.YearsOfExperience = request.YearsOfExperience
 	c.JobStatus = request.JobStatus
 	c.SeekJobType = request.SeekJobType
@@ -124,6 +119,20 @@ func (c *CompanyUserEntity) FromCreationRequest(request *CreateUserRequest) erro
 	c.CompanyId = request.CompanyId
 	c.Role = request.CompanyRole
 	return nil
+}
+
+type UserPhotoEntity struct {
+	ID       int    `db:"id"`
+	UserID   int    `db:"user_id"`
+	ImageUrl string `db:"image_url"`
+	*UserEntity
+}
+
+func NewUserPhotoEntity(userId int, imageUrl string) *UserPhotoEntity {
+	return &UserPhotoEntity{
+		UserID:   userId,
+		ImageUrl: imageUrl,
+	}
 }
 
 type CandidateSkillEntity struct {
@@ -201,6 +210,20 @@ func (c *CandidateSeekLocationsEntity) FromCreationRequest(request *CreateUserRe
 	return nil
 }
 
+type CandidateCVEntity struct {
+	ID          int    `db:"id"`
+	CandidateID int    `db:"candidate_id"`
+	CVUrl       string `db:"cv_url"`
+	*CandidateEntity
+}
+
+func NewCandidateCVEntity(candidateId int, cvUrl string) *CandidateCVEntity {
+	return &CandidateCVEntity{
+		CandidateID: candidateId,
+		CVUrl:       cvUrl,
+	}
+}
+
 type CandidateAttachmentEntity struct {
 	ID            int    `db:"id"`
 	CandidateID   int    `db:"candidate_id"`
@@ -208,20 +231,14 @@ type CandidateAttachmentEntity struct {
 	*CandidateEntity
 }
 
-type CandidateAttachmentsEntity []*CandidateAttachmentEntity
-
-func (c *CandidateAttachmentsEntity) FromCreationRequest(request *CreateUserRequest, candidateId int) error {
-	*c = make([]*CandidateAttachmentEntity, len(request.Attachments))
-	for i, attachment := range request.Attachments {
-		attachment := &CandidateAttachmentEntity{
-			ID:            0,
-			CandidateID:   candidateId,
-			AttachmentUrl: attachment,
-		}
-		(*c)[i] = attachment
+func NewCandidateAttachmentEntity(candidateId int, attachmentUrl string) *CandidateAttachmentEntity {
+	return &CandidateAttachmentEntity{
+		CandidateID:   candidateId,
+		AttachmentUrl: attachmentUrl,
 	}
-	return nil
 }
+
+type CandidateAttachmentsEntity []*CandidateAttachmentEntity
 
 type CandidateEducationHistoryEntity struct {
 	ID          int        `db:"id"`
@@ -232,6 +249,20 @@ type CandidateEducationHistoryEntity struct {
 	FromDate    time.Time  `db:"from_date"`
 	ToDate      *time.Time `db:"to_date"`
 	*CandidateEntity
+}
+
+type CandidateVideoEntity struct {
+	ID          int    `db:"id"`
+	CandidateID int    `db:"candidate_id"`
+	VideoUrl    string `db:"video_url"`
+	*CandidateEntity
+}
+
+func NewCandidateVideoEntity(candidateId int, videoUrl string) *CandidateVideoEntity {
+	return &CandidateVideoEntity{
+		CandidateID: candidateId,
+		VideoUrl:    videoUrl,
+	}
 }
 
 type CandidateEducationHistoryListEntity []*CandidateEducationHistoryEntity

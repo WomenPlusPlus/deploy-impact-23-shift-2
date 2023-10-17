@@ -33,7 +33,6 @@ create table users
     email          varchar(512) not null unique,
     phone_number   varchar(20)  not null,
     birth_date     timestamp,
-    image_url      varchar(512),
     linkedin_url   varchar(512),
     github_url     varchar(512),
     portfolio_url  varchar(512),
@@ -45,8 +44,6 @@ create table if not exists candidates
 (
     id                  serial primary key,
     user_id             int           not null,
-    cv_url              varchar(512),
-    video_url           varchar(512),
     years_of_experience int           not null,
     job_status          job_status    not null,
     seek_job_type       job_type     default 'ANY',
@@ -94,6 +91,14 @@ create table if not exists association_users
     constraint fk_association foreign key (association_id) references associations (id)
 );
 
+create table if not exists user_photos
+(
+    id        serial primary key,
+    user_id   int          not null,
+    image_url varchar(512) not null,
+    constraint fk_user foreign key (user_id) references users (id)
+);
+
 create table if not exists candidate_skills
 (
     id           serial primary key,
@@ -123,11 +128,27 @@ create table if not exists candidate_seek_locations
     constraint fk_candidate foreign key (candidate_id) references candidates (id)
 );
 
+create table if not exists candidate_cvs
+(
+    id           serial primary key,
+    candidate_id int          not null,
+    cv_url       varchar(512) not null,
+    constraint fk_candidate foreign key (candidate_id) references candidates (id)
+);
+
 create table if not exists candidate_attachments
 (
     id             serial primary key,
     candidate_id   int          not null,
     attachment_url varchar(512) not null,
+    constraint fk_candidate foreign key (candidate_id) references candidates (id)
+);
+
+create table if not exists candidate_videos
+(
+    id        serial primary key,
+    candidate_id int          not null,
+    video_url varchar(512) not null,
     constraint fk_candidate foreign key (candidate_id) references candidates (id)
 );
 

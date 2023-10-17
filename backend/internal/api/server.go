@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"shift/internal/entity"
 	"shift/internal/service"
@@ -18,15 +17,21 @@ type APIServer struct {
 	address       string
 	userDB        entity.UserDB
 	associationDB entity.AssociationDB
+	bucketDb      entity.BucketDB
 	userService   *service.UserService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
-func NewAPIServer(address string, userDB entity.UserDB) *APIServer {
+func NewAPIServer(
+	address string,
+	bucketDb entity.BucketDB,
+	userDB entity.UserDB,
+) *APIServer {
 	return &APIServer{
 		address:     address,
 		userDB:      userDB,
-		userService: service.NewUserService(userDB),
+		bucketDb:    bucketDb,
+		userService: service.NewUserService(bucketDb, userDB),
 	}
 }
 
@@ -72,8 +77,6 @@ func (e InternalServerError) Error() string {
 
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
-	logrus.SetLevel(logrus.TraceLevel)
-
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
@@ -84,8 +87,8 @@ func (s *APIServer) Run() {
 
 	router.HandleFunc("/admin/associations", makeHTTPHandleFunc(s.handleCreateAssociation))
 
-	log.Println("JSON API Server is running on port", s.address)
-	http.ListenAndServe(s.address, router)
+	logrus.Println("JSON API Server is running on port", s.address)
+	logrus.Fatal(http.ListenAndServe(s.address, router))
 }
 
 // IsNotFoundError checks if an error is a not found error.
