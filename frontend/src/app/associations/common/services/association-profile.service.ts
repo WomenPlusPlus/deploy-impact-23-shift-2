@@ -3,6 +3,8 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import environment from '@envs/environment';
+
 import { AssociationProfileModel, AssociationsListModel } from '../models/association-profile.model';
 
 @Injectable({
@@ -23,7 +25,7 @@ export class AssociationProfileService {
     }
 
     getAssociationsList(): Observable<AssociationsListModel> {
-        //return this.httpClient.get<CompanyProfileModel>(`${environment.API_BASE_URL}/api/v1/associations/`);
+        //return this.httpClient.get<AssociationProfileModel>(`${environment.API_BASE_URL}/api/v1/associations/`);
         return of({
             items: [
                 {
@@ -56,5 +58,10 @@ export class AssociationProfileService {
                 }
             ]
         });
+    }
+
+    deleteAssociation(id: number): Observable<void> {
+        // delete association from back end
+        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/admin/associations/${id}`);
     }
 }
