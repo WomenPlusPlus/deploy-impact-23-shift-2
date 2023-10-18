@@ -45,3 +45,10 @@ func AtoiOpt(input string, target *int) error {
 	*target = value
 	return nil
 }
+
+func SafeUnwrap[T any](v *T) T {
+	if v == nil {
+		v = new(T)
+	}
+	return *v
+}

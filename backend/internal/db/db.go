@@ -151,11 +151,17 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
     				candidates.notice_period,
     				company_users.id as company_user_id,
     				company_users.company_id,
-    				company_users.role as company_role
+    				company_users.role as company_role,
+    				user_photos.image_url,
+					candidate_cvs.cv_url,
+					candidate_videos.video_url
 				from users
 				left outer join candidates on users.id = candidates.user_id
 				left outer join association_users on users.id = association_users.user_id
 				left outer join company_users on users.id = company_users.user_id
+				left outer join user_photos on users.id = user_photos.user_id
+				left outer join candidate_cvs on candidates.id = candidate_cvs.candidate_id
+				left outer join candidate_videos on candidates.id = candidate_videos.candidate_id
     `
 	rows, err := pdb.db.Queryx(query)
 	if err != nil {
