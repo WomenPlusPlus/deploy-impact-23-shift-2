@@ -38,6 +38,7 @@ func NewAPIServer(
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
+	router.Use(CORSMiddleware)
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	apiRouter := router.PathPrefix("/api/v1").Subrouter()

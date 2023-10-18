@@ -315,6 +315,9 @@ func (c *CandidateEmploymentHistoryListEntity) FromCreationRequest(request *Crea
 }
 
 type UserItemView struct {
+	ImageUrl *string `db:"image_url"`
+	CVUrl    *string `db:"cv_url"`
+	VideoUrl *string `db:"video_url"`
 	*UserEntity
 	*AssociationUserItemView
 	*CandidateItemView

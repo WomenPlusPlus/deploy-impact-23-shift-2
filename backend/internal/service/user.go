@@ -42,6 +42,20 @@ func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	}
 	logrus.Tracef("Get all users from db: total=%d", len(users))
 
+	ctx := context.Background()
+	for _, user := range users {
+		if user.ImageUrl == nil {
+			continue
+		}
+		imageUrl, err := s.bucketDB.SignUrl(ctx, *user.ImageUrl)
+		if err != nil {
+			logrus.Errorf("could not sign url for user image: %v", err)
+		} else {
+			logrus.Tracef("Signed url for user image: id=%d, url=%v", user.UserEntity.ID, imageUrl)
+			user.ImageUrl = &imageUrl
+		}
+	}
+
 	res := new(entity.ListUsersResponse)
 	res.FromUsersView(users)
 	return res, nil

@@ -48,7 +48,7 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 			FirstName:     user.FirstName,
 			LastName:      user.LastName,
 			PreferredName: user.PreferredName,
-			ImageUrl:      "", // TODO
+			ImageUrl:      utils.SafeUnwrap(user.ImageUrl),
 			Email:         user.Email,
 			State:         user.State,
 		}
@@ -66,8 +66,8 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 				PhoneNumber: user.PhoneNumber,
 				RatingSkill: 0, // TODO
 				JobStatus:   *user.JobStatus,
-				HasCV:       false, // TODO
-				HasVideo:    false, // TODO
+				HasCV:       utils.SafeUnwrap(user.CVUrl) != "",
+				HasVideo:    utils.SafeUnwrap(user.VideoUrl) != "",
 			}
 		case UserKindCompany:
 			item.Role = *user.CompanyUserItemView.Role
@@ -87,7 +87,7 @@ type ListUserResponse struct {
 	FirstName     string `json:"firstName"`
 	LastName      string `json:"lastName"`
 	PreferredName string `json:"preferredName,omitempty"`
-	ImageUrl      string `json:"imageUrl"`
+	ImageUrl      string `json:"imageUrl,omitempty"`
 	Email         string `json:"email"`
 	State         string `json:"state"`
 
