@@ -5,22 +5,11 @@
 # Wireframes - current and future
 
 # Tech Stack
-* Backend:
-  - Golang
-  - Gin
-  - SQLX
-* Frontend:
-  - Angular
-  - DaisyUI
-  - NgRX
-* Database:
-  - PostgreSQL
-  - Auth0
-* Cloud Storage:
-  - GCP  
-* Deployments:
-  - GCP
-  - Vercel
+| Backend | Frontend | Database | Cloud Storage | Deployments |
+|---------|----------|----------|---------------|-------------|
+|Golang   |Angular   |PostgreSQL|GCP            |GCP          |
+|Gin      |DaisyUI   |Auth0     |               |Vercel       |
+|SQLX     |NgRX      |          |               |             |
 
 # Architecture
 TODO
