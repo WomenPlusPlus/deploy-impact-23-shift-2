@@ -34,6 +34,19 @@ func (s *UserService) CreateUser(req *entity.CreateUserRequest) (*entity.CreateU
 		return nil, fmt.Errorf("unknown user kind: %s", req.Kind)
 	}
 }
+
+func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
+	users, err := s.userDB.GetAllUsers()
+	if err != nil {
+		return nil, fmt.Errorf("getting all users: %w", err)
+	}
+	logrus.Tracef("Get all users from db: total=%d", len(users))
+
+	res := new(entity.ListUsersResponse)
+	res.FromUsersView(users)
+	return res, nil
+}
+
 func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
 	admin := new(entity.UserEntity)
 	if err := admin.FromCreationRequest(req); err != nil {

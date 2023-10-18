@@ -22,9 +22,99 @@ type CreateUserRequest struct {
 	PhoneNumber                   string                `json:"phoneNumber"`
 	BirthDate                     time.Time             `json:"birthDate"`
 	Photo                         *multipart.FileHeader `json:"photo"`
+	LinkedInUrl                   string                `json:"linkedInUrl"`
+	GithubUrl                     string                `json:"githubUrl"`
+	PortfolioUrl                  string                `json:"portfolioUrl"`
 	*CreateUserAssociationRequest `json:"association"`
 	*CreateUserCandidateRequest   `json:"candidate"`
 	*CreateUserCompanyRequest     `json:"company"`
+}
+
+type CreateUserResponse struct {
+	ID     int `json:"id"`
+	UserID int `json:"userId"`
+}
+
+type ListUsersResponse struct {
+	Items []ListUserResponse `json:"items"`
+}
+
+func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
+	r.Items = make([]ListUserResponse, len(v))
+	for i, user := range v {
+		item := ListUserResponse{
+			ID:            user.UserEntity.ID,
+			Kind:          user.Kind,
+			FirstName:     user.FirstName,
+			LastName:      user.LastName,
+			PreferredName: user.PreferredName,
+			ImageUrl:      "", // TODO
+			Email:         user.Email,
+			State:         user.State,
+		}
+
+		switch user.Kind {
+		case UserKindAssociation:
+			item.Role = *user.AssociationUserItemView.Role
+			item.ListAssociationUserResponse = &ListAssociationUserResponse{
+				AssociationUserId: *user.AssociationUserItemView.ID,
+				AssociationId:     *user.AssociationId,
+			}
+		case UserKindCandidate:
+			item.ListCandidateResponse = &ListCandidateResponse{
+				CandidateId: *user.CandidateItemView.ID,
+				PhoneNumber: user.PhoneNumber,
+				RatingSkill: 0, // TODO
+				JobStatus:   *user.JobStatus,
+				HasCV:       false, // TODO
+				HasVideo:    false, // TODO
+			}
+		case UserKindCompany:
+			item.Role = *user.CompanyUserItemView.Role
+			item.ListCompanyUserResponse = &ListCompanyUserResponse{
+				CompanyUserId: *user.CompanyUserItemView.ID,
+				CompanyId:     *user.CompanyId,
+			}
+		}
+
+		r.Items[i] = item
+	}
+}
+
+type ListUserResponse struct {
+	ID            int    `json:"id"`
+	Kind          string `json:"kind"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	PreferredName string `json:"preferredName,omitempty"`
+	ImageUrl      string `json:"imageUrl"`
+	Email         string `json:"email"`
+	State         string `json:"state"`
+
+	Role string `json:"role,omitempty"`
+
+	*ListAssociationUserResponse
+	*ListCandidateResponse
+	*ListCompanyUserResponse
+}
+
+type ListAssociationUserResponse struct {
+	AssociationUserId int `json:"associationUserId"`
+	AssociationId     int `json:"associationId"`
+}
+
+type ListCandidateResponse struct {
+	CandidateId int    `json:"candidateId"`
+	PhoneNumber string `json:"phoneNumber"`
+	RatingSkill int    `json:"ratingSkill"`
+	JobStatus   string `json:"jobStatus"`
+	HasCV       bool   `json:"hasCV"`
+	HasVideo    bool   `json:"hasVideo"`
+}
+
+type ListCompanyUserResponse struct {
+	CompanyUserId int `json:"companyUserId"`
+	CompanyId     int `json:"companyId"`
 }
 
 type CreateUserAssociationRequest struct {
@@ -50,9 +140,6 @@ type CreateUserCandidateRequest struct {
 	Video             *multipart.FileHeader         `json:"video"`
 	EducationHistory  []CreateUserEducationHistory  `json:"educationHistory"`
 	EmploymentHistory []CreateUserEmploymentHistory `json:"employmentHistory"`
-	LinkedInUrl       string                        `json:"linkedInUrl"`
-	GithubUrl         string                        `json:"githubUrl"`
-	PortfolioUrl      string                        `json:"portfolioUrl"`
 }
 
 type CreateUserLocation struct {
@@ -118,6 +205,9 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
+	fd.Validate("linkedInUrl")
+	fd.Validate("githubUrl")
+	fd.Validate("portfolioUrl")
 
 	if fd.HasErrors() {
 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
@@ -130,6 +220,9 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	u.Email = fd.Get("email").First()
 	u.PhoneNumber = fd.Get("phoneNumber").First()
 	u.Photo = fd.GetFile("photo").First()
+	u.LinkedInUrl = fd.Get("linkedInUrl").First()
+	u.GithubUrl = fd.Get("githubUrl").First()
+	u.PortfolioUrl = fd.Get("portfolioUrl").First()
 
 	birthDateStr := fd.Get("birthDate").First()
 	if birthDateStr != "" {
@@ -192,9 +285,6 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 	fd.Validate("video")
 	fd.Validate("educationHistory")
 	fd.Validate("employmentHistory")
-	fd.Validate("linkedInUrl")
-	fd.Validate("githubUrl")
-	fd.Validate("portfolioUrl")
 
 	if fd.HasErrors() {
 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
@@ -209,9 +299,6 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 	u.CV = fd.GetFile("cv").First()
 	u.Attachments = fd.GetFile("attachments")
 	u.Video = fd.GetFile("video").First()
-	u.LinkedInUrl = fd.Get("linkedInUrl").First()
-	u.GithubUrl = fd.Get("githubUrl").First()
-	u.PortfolioUrl = fd.Get("portfolioUrl").First()
 
 	if err := utils.Atoi(fd.Get("yearsOfExperience").First(), &u.YearsOfExperience); err != nil {
 		return fmt.Errorf("invalid years of experience value: %w", err)
@@ -268,9 +355,4 @@ func (u *CreateUserRequest) fromFormDataCompany(fd *formdata.FormData) error {
 	u.CompanyId = id
 	u.CompanyRole = fd.Get("role").First()
 	return nil
-}
-
-type CreateUserResponse struct {
-	ID     int `json:"id"`
-	UserID int `json:"userId"`
 }

@@ -14,6 +14,10 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleCreateUser)).
 		Methods(http.MethodPost)
 
+	router.Path("").
+		Handler(makeHTTPHandleFunc(s.handleListUsers)).
+		Methods(http.MethodGet)
+
 	router.Use(AuthenticationMiddleware)
 	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
 }
@@ -27,6 +31,17 @@ func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) err
 	}
 
 	res, err := s.userService.CreateUser(req)
+	if err != nil {
+		return InternalServerError{Message: err.Error()}
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, res)
+}
+
+func (s *APIServer) handleListUsers(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("List users handler running")
+
+	res, err := s.userService.ListUsers()
 	if err != nil {
 		return InternalServerError{Message: err.Error()}
 	}

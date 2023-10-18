@@ -313,3 +313,35 @@ func (c *CandidateEmploymentHistoryListEntity) FromCreationRequest(request *Crea
 	}
 	return nil
 }
+
+type UserItemView struct {
+	*UserEntity
+	*AssociationUserItemView
+	*CandidateItemView
+	*CompanyUserItemView
+}
+
+type AssociationUserItemView struct {
+	ID            *int    `db:"association_user_id"`
+	AssociationId *int    `db:"association_id"`
+	Role          *string `db:"association_role"`
+}
+
+type CandidateItemView struct {
+	ID                *int    `db:"candidate_id"`
+	YearsOfExperience *int    `db:"years_of_experience"`
+	JobStatus         *string `db:"job_status"`
+	SeekJobType       *string `db:"seek_job_type"`
+	SeekCompanySize   *string `db:"seek_company_size"`
+	SeekLocationType  *string `db:"seek_location_type"`
+	SeekSalary        *int    `db:"seek_salary"`
+	SeekValues        *string `db:"seek_values"`
+	WorkPermit        *string `db:"work_permit"`
+	NoticePeriod      *int    `db:"notice_period"`
+}
+
+type CompanyUserItemView struct {
+	ID        *int    `db:"company_user_id"`
+	CompanyId *int    `db:"company_id"`
+	Role      *string `db:"company_role"`
+}
