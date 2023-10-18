@@ -119,6 +119,61 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	return users, nil
 }
 
+func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
+	res := make([]*entity.UserItemView, 0)
+
+	query := `select
+    				users.id,
+					users.kind,
+					users.first_name,
+					users.last_name,
+					users.preferred_name,
+					users.email,
+					users.phone_number,
+					users.birth_date,
+					users.linkedin_url,
+					users.github_url,
+					users.portfolio_url,
+					users.state,
+					users.created_at,
+    				association_users.id as association_user_id,
+    				association_users.association_id,
+    				association_users.role as association_role,
+    				candidates.id as candidate_id,
+    				candidates.years_of_experience,
+    				candidates.job_status,
+    				candidates.seek_job_type,
+    				candidates.seek_company_size,
+    				candidates.seek_location_type,
+    				candidates.seek_salary,
+    				candidates.seek_values,
+    				candidates.work_permit,
+    				candidates.notice_period,
+    				company_users.id as company_user_id,
+    				company_users.company_id,
+    				company_users.role as company_role
+				from users
+				left outer join candidates on users.id = candidates.user_id
+				left outer join association_users on users.id = association_users.user_id
+				left outer join company_users on users.id = company_users.user_id
+    `
+	rows, err := pdb.db.Queryx(query)
+	if err != nil {
+		return nil, fmt.Errorf("fetching users in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Debugf("failed to scan user view from db record: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()

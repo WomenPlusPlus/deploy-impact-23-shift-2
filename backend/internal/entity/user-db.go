@@ -7,6 +7,7 @@ type UserDB interface {
 	GetUsers() ([]*User, error)
 	GetUserByID(int) (*User, error)
 
+	GetAllUsers() ([]*UserItemView, error)
 	CreateUser(*UserEntity) (*UserEntity, error)
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
