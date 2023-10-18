@@ -32,7 +32,12 @@
                 [ngClass]="{ 'tooltip tooltip-right after:hidden sm:justify-center active': !expanded }"
                 data-tip="Companies"
             >
-                <a class="flex gap-2" routerLinkActive="active" [routerLink]="['/admin', 'companies']" *ngIf="expanded">
+                <a
+                    class="flex gap-2 mr-auto"
+                    routerLinkActive="active"
+                    [routerLink]="['/admin', 'companies']"
+                    *ngIf="expanded"
+                >
                     <fa-icon [icon]="faBuilding" class="text-center w-6" />
                     <span class="ml-1 truncate">Companies</span>
                 </a>

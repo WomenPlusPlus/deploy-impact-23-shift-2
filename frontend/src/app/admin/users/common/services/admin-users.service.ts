@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import environment from '@envs/environment';
 
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
-import { CreateUserFormModel } from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserFormModel, CreateUserResponse } from '@app/admin/users/creation/common/models/create-user.model';
 import { JobStatusEnum } from '@app/common/models/jobs.model';
 import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 
@@ -95,7 +95,7 @@ export class AdminUsersService {
             .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);*/
     }
 
-    createUser(user: CreateUserFormModel): Observable<{ id: number }> {
+    createUser(user: CreateUserFormModel): Observable<CreateUserResponse> {
         const formData = new FormData();
         for (const key of Object.keys(user)) {
             const wrapper = user[key as keyof CreateUserFormModel];
@@ -104,9 +104,19 @@ export class AdminUsersService {
                 continue;
             }
             for (const key of Object.keys(wrapper)) {
-                const value = wrapper[key as keyof typeof wrapper];
-                if (typeof value !== 'object') {
+                const value: any = wrapper[key as keyof typeof wrapper];
+                if (value instanceof Date) {
+                    formData.append(key, value.toISOString());
+                    continue;
+                }
+                if (typeof value !== 'object' || value instanceof File) {
                     formData.append(key, value);
+                    continue;
+                }
+                if (Array.isArray(value) && value[0] instanceof File) {
+                    for (const v of value) {
+                        formData.append(key, v);
+                    }
                     continue;
                 }
                 try {
@@ -116,7 +126,7 @@ export class AdminUsersService {
                 }
             }
         }
-        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/users`, formData);
+        return this.httpClient.post<CreateUserResponse>(`${environment.API_BASE_URL}/api/v1/users`, formData);
     }
 
     deleteUser(id: number): Observable<void> {

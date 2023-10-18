@@ -50,7 +50,7 @@ export interface UserJobFormModel {
     seekSalary: number | null;
     seekValues: string | null;
     workPermit: WorkPermitEnum | null;
-    noticePeriod: string | null;
+    noticePeriod: number | null;
 }
 
 export interface UserTechnicalFormModel {
@@ -103,6 +103,11 @@ export interface CandidateEmploymentHistoryFormModel {
     fromDate: Date | null;
     toDate: Date | null;
     onGoing: boolean | null;
+}
+
+export interface CreateUserResponse {
+    id: number;
+    userId: number;
 }
 
 type FormModel<T> = {

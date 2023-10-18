@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { CreateUserCompanyFormGroup } from '@app/admin/users/creation/common/models/create-user.model';
+import {
+    CreateUserCompanyFormGroup,
+    CreateUserCompanyFormModel
+} from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
 import { CreateUserStore } from '@app/admin/users/creation/create-user.store';
 import { CreateUserGenericComponent } from '@app/admin/users/creation/generic/create-user-generic.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
@@ -31,7 +35,7 @@ import { SelectSingleComponent } from '@app/ui/select-single/select-single.compo
     templateUrl: './create-user-company.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserCompanyComponent implements OnInit {
+export class CreateUserCompanyComponent implements CreateUserFormComponent, OnInit {
     @ViewChild(CreateUserGenericComponent, { static: true })
     childFormComponent!: CreateUserGenericComponent;
 
@@ -44,6 +48,13 @@ export class CreateUserCompanyComponent implements OnInit {
             ...this.childFormComponent.form.controls,
             companyId: this.companyIdForm
         });
+    }
+
+    get formValue(): CreateUserCompanyFormModel {
+        return {
+            ...this.childFormComponent.formValue,
+            companyId: this.companyIdForm.value
+        };
     }
 
     constructor(

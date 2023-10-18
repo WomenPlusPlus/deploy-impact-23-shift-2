@@ -18,8 +18,10 @@ import {
     CandidateSkillsFormModel,
     CandidateSpokenLanguagesFormGroup,
     CandidateSpokenLanguagesFormModel,
-    CreateUserCandidateFormGroup
+    CreateUserCandidateFormGroup,
+    CreateUserCandidateFormModel
 } from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
@@ -62,7 +64,7 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
     templateUrl: './create-user-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserCandidateComponent implements OnInit {
+export class CreateUserCandidateComponent implements CreateUserFormComponent, OnInit {
     form!: FormGroup<CreateUserCandidateFormGroup>;
     spokenLanguagesForm!: FormGroup<CandidateSpokenLanguagesFormGroup>;
     skillsForm!: FormGroup<CandidateSkillsFormGroup>;
@@ -73,6 +75,32 @@ export class CreateUserCandidateComponent implements OnInit {
     imagePreviewUrl$!: Observable<string>;
     cities$!: Observable<LocationCity[]>;
     languages$!: Observable<Language[]>;
+
+    get formValue(): CreateUserCandidateFormModel {
+        const value = this.form.getRawValue();
+        return {
+            ...value,
+            details: {
+                ...value.details,
+                birthDate: value.details.birthDate && new Date(value.details.birthDate)
+            },
+            technical: {
+                ...value.technical,
+                educationHistory:
+                    value.technical.educationHistory?.map((hist) => ({
+                        ...hist,
+                        fromDate: hist.fromDate && new Date(hist.fromDate),
+                        toDate: hist.toDate && new Date(hist.toDate)
+                    })) || [],
+                employmentHistory:
+                    value.technical.employmentHistory?.map((hist) => ({
+                        ...hist,
+                        fromDate: hist.fromDate && new Date(hist.fromDate),
+                        toDate: hist.toDate && new Date(hist.toDate)
+                    })) || []
+            }
+        };
+    }
 
     get detailsForm(): CreateUserCandidateFormGroup['details'] {
         return this.form.controls.details;
@@ -328,7 +356,7 @@ export class CreateUserCandidateComponent implements OnInit {
                 seekSalary: this.fb.control<number | null>(null),
                 seekValues: this.fb.control<string | null>(null),
                 workPermit: this.fb.control<WorkPermitEnum | null>(null, [Validators.required]),
-                noticePeriod: this.fb.control<string | null>(null)
+                noticePeriod: this.fb.control<number | null>(null)
             }),
             technical: this.fb.group({
                 spokenLanguages: this.fb.control<CandidateSpokenLanguagesFormModel[] | null>([]),
