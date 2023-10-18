@@ -35,53 +35,19 @@ func NewAPIServer(
 	}
 }
 
-// apiFunc represents a function that handles API requests.
-type apiFunc func(http.ResponseWriter, *http.Request) error
-
-// apiError represents an API error response.
-type apiError struct {
-	Error string `json:"error"`
-}
-
-type NotFoundError struct {
-	Message string
-}
-
-func (e NotFoundError) Error() string {
-	return e.Message
-}
-
-type PermissionError struct {
-	Message string
-}
-
-func (e PermissionError) Error() string {
-	return e.Message
-}
-
-type BadRequestError struct {
-	Message string
-}
-
-func (e BadRequestError) Error() string {
-	return e.Message
-}
-
-type InternalServerError struct {
-	Message string
-}
-
-func (e InternalServerError) Error() string {
-	return e.Message
-}
-
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
+	apiRouter := router.PathPrefix("/api/v1").Subrouter()
+
+	s.initUserRoutes(apiRouter)
+
+	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
+	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
+
 	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
-	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
 
@@ -91,67 +57,10 @@ func (s *APIServer) Run() {
 	logrus.Fatal(http.ListenAndServe(s.address, router))
 }
 
-// IsNotFoundError checks if an error is a not found error.
-func IsNotFoundError(err error) bool {
-	_, isNotFound := err.(NotFoundError)
-	return isNotFound
-}
-
-// IsPermissionError checks if an error is a permission error.
-func IsPermissionError(err error) bool {
-	_, isPermissionDenied := err.(PermissionError)
-	return isPermissionDenied
-}
-
-func IsBadRequestError(err error) bool {
-	_, isBadRequestError := err.(BadRequestError)
-	return isBadRequestError
-}
-
-func IsInternalServerError(err error) bool {
-	_, isInternalServerError := err.(InternalServerError)
-	return isInternalServerError
-}
-
-// makeHTTPHandleFunc creates an HTTP request handler function for the provided apiFunc.
-func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		logger := logrus.New()
-		logger.SetFormatter(&logrus.JSONFormatter{}) // Use JSON format for structured logs
-		err := f(w, r)
-		if err != nil {
-			switch {
-			case IsNotFoundError(err):
-				WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
-			case IsPermissionError(err):
-				WriteJSONResponse(w, http.StatusForbidden, apiError{Error: err.Error()})
-			case IsBadRequestError(err):
-				WriteJSONResponse(w, http.StatusBadRequest, apiError{Error: err.Error()})
-			case IsInternalServerError(err):
-				WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: err.Error()})
-			default:
-				// Log the internal error without exposing details to the client
-				logger.Error(err)
-				WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: "Internal server error"})
-			}
-		}
-	}
-}
-
-// WriteJSONResponse writes a JSON response with the given status code and value.
-func WriteJSONResponse(w http.ResponseWriter, status int, value interface{}) error {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(value)
-}
-
 // handleUsers handles requests related to user accounts.
 func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
-	}
-	if r.Method == "POST" {
-		return s.handleCreateUser(w, r)
 	}
 	if r.Method == "DELETE" {
 		return s.handleDeleteUser(w, r)
@@ -179,22 +88,6 @@ func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) er
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
-}
-
-func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	logrus.Debugln("Create user handler running")
-
-	req := new(entity.CreateUserRequest)
-	if err := req.FromFormData(r); err != nil {
-		return BadRequestError{Message: err.Error()}
-	}
-
-	res, err := s.userService.CreateUser(req)
-	if err != nil {
-		return InternalServerError{Message: err.Error()}
-	}
-
-	return WriteJSONResponse(w, http.StatusOK, res)
 }
 
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
