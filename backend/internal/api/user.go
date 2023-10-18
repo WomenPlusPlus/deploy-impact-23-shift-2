@@ -7,10 +7,14 @@ import (
 	"shift/internal/entity"
 )
 
-func (s *APIServer) initUserRoutes(routes *mux.Route) {
-	routes.HandlerFunc(makeHTTPHandleFunc(s.handleCreateUser)).
-		PathPrefix("/users").
+func (s *APIServer) initUserRoutes(router *mux.Router) {
+	router = router.PathPrefix("/users").Subrouter()
+
+	router.PathPrefix("").
+		HandlerFunc(makeHTTPHandleFunc(s.handleCreateUser)).
 		Methods(http.MethodPost)
+
+	router.Use(AuthenticationMiddleware)
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
