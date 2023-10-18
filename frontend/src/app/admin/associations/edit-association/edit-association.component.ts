@@ -1,9 +1,9 @@
-import { Observable } from 'rxjs';
+import { Observable, map, startWith, take } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
@@ -24,18 +24,19 @@ export class EditAssociationComponent implements OnInit {
     form!: FormGroup<CreateAssociationFormGroup>;
     profile$ = this.editAssociationStore.profile$;
     vm$: Observable<CreateAssociationState> = this.editAssociationStore.vm$;
-
-    selectedFile: File | null = null;
-    imageURL: string | null = null;
+    previousPhotoURL = 'assets/profile-picture-default-creation.png';
+    imageURL$!: Observable<string>;
 
     constructor(
         private readonly fb: FormBuilder,
         private readonly editAssociationStore: EditAssociationStore,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
         this.initForm();
+        this.initSubscriptions();
     }
 
     onSubmit(): void {
@@ -61,15 +62,37 @@ export class EditAssociationComponent implements OnInit {
         });
         this.id = Number(this.route.snapshot.paramMap.get('id'));
         if (this.id) {
-            this.editAssociationStore.getValues(this.id).subscribe((data) => {
-                this.form = this.fb.group({
-                    name: this.fb.control(data.name, [Validators.required, Validators.maxLength(256)]),
-                    logo: this.fb.control(new File([], ''), Validators.required),
-                    url: this.fb.control(data.url, [Validators.required, Validators.maxLength(512)]),
-                    focus: this.fb.control(data.focus, [Validators.required, Validators.maxLength(1024)])
+            this.editAssociationStore
+                .getValues(this.id)
+                .pipe(take(1))
+                .subscribe((data) => {
+                    this.form.patchValue({
+                        name: data.name,
+                        logo: null,
+                        url: data.url,
+                        focus: data.focus
+                    });
+                    this.previousPhotoURL = data.logo;
                 });
-                this.imageURL = data.logo;
-            });
+        } else {
+            this.router.navigate(['/admin/associations']);
         }
+    }
+
+    private initSubscriptions(): void {
+        this.imageURL$ = this.form.controls.logo.valueChanges.pipe(
+            startWith(this.form.controls.logo.value),
+            map((file: File | null) => {
+                if (!file) {
+                    return this.previousPhotoURL;
+                }
+                try {
+                    return URL.createObjectURL(file);
+                } catch (error) {
+                    console.error(error);
+                    return this.previousPhotoURL;
+                }
+            })
+        );
     }
 }

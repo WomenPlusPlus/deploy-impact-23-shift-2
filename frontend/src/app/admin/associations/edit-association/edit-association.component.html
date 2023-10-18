@@ -16,27 +16,28 @@
                     form.controls.name.errors | formErrorMessage
                 }}</span>
             </fieldset>
-            <div class="flex">
-                <div *ngIf="imageURL" class="avatar shrink-0 mr-4">
-                    <div class="w-24">
-                        <img [src]="imageURL" alt="Selected Image" />
-                    </div>
-                </div>
-                <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
-                    <label for="logo" class="mb-1">Logo:</label>
-                    <input
-                        type="file"
-                        id="logo"
-                        name="logo"
-                        class="file-input file-input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                        (change)="onFileSelected($event)"
+            <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
+                <label for="logo" class="mb-1">Logo:</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    id="logo"
+                    name="logo"
+                    class="file-input file-input-ghost file-input-bordered"
+                    [class.input-error]="control.invalid && control.touched"
+                    (change)="onFileSelected($event)"
+                />
+                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                    form.controls.logo.errors | formErrorMessage
+                }}</span>
+                <div class="h-72 mt-8 mb-4">
+                    <img
+                        [src]="imageURL$ | async"
+                        class="h-full aspect-video object-center object-cover rounded"
+                        alt="profile-picture"
                     />
-                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.logo.errors | formErrorMessage
-                    }}</span>
-                </fieldset>
-            </div>
+                </div>
+            </fieldset>
             <fieldset id="edit-url" class="form-control w-full my-4" *appLet="form.controls.url as control">
                 <label for="url" class="mb-1">Website URL:</label>
                 <input

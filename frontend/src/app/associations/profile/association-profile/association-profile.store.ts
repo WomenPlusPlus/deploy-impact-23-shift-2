@@ -38,7 +38,7 @@ export class AssociationProfileStore extends ComponentStore<AssociationProfileSt
                         (profile) => this.profileLoadSuccess(profile),
                         () => {
                             this.profileLoadError();
-                            this.router.navigate(['/companies']);
+                            this.router.navigate(['/associations']);
                             this.toast.error('Association with id ' + id + ' not found.');
                         }
                     )
