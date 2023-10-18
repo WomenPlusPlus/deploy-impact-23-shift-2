@@ -4,6 +4,24 @@
 
 # Wireframes - current and future
 
+# Tech Stack
+* Backend:
+  - Golang
+  - Gin
+  - SQLX
+* Frontend:
+  - Angular
+  - DaisyUI
+  - NgRX
+* Database:
+  - PostgreSQL
+  - Auth0
+* Cloud Storage:
+  - GCP  
+* Deployments:
+  - GCP
+  - Vercel
+
 # Architecture
 TODO
 [Architecture](https://miro.com/app/board/uXjVNf9ugWA=/?share_link_id=474651830078)
