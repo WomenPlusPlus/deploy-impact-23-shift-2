@@ -1,3 +1,4 @@
+import { HotToastService } from '@ngneat/hot-toast';
 import Fuse from 'fuse.js';
 import { pick } from 'lodash';
 import { Observable, exhaustMap, tap } from 'rxjs';
@@ -13,6 +14,7 @@ export interface AssociationsListState {
     list: AssociationsListModel | null;
     loading: boolean;
     error: boolean;
+    deleting: boolean;
     searchString: string;
 }
 
@@ -20,6 +22,7 @@ const initialState: AssociationsListState = {
     list: null,
     loading: false,
     error: false,
+    deleting: false,
     searchString: ''
 };
 
@@ -29,6 +32,7 @@ const SEARCH_TERM_MIN_LEN = 3;
 export class AssociationsListStore extends ComponentStore<AssociationsListState> {
     private list$ = this.select((state) => state.list);
     searchString$ = this.select((state) => state.searchString);
+    deleting$ = this.select((state) => state.deleting);
 
     vm$ = this.select({
         list: this.select(this.list$, this.searchString$, (list, searchString) =>
@@ -36,6 +40,7 @@ export class AssociationsListStore extends ComponentStore<AssociationsListState>
         ),
         loading: this.select((state) => state.loading),
         error: this.select((state) => state.error),
+        deleting: this.deleting$,
         searchString: this.select((state) => state.searchString)
     });
 
@@ -47,6 +52,31 @@ export class AssociationsListStore extends ComponentStore<AssociationsListState>
                     tapResponse(
                         (list) => this.getListLoadedSuccess(list),
                         () => this.getListLoadedError()
+                    )
+                )
+            )
+        )
+    );
+
+    deleteItem = this.effect((trigger$: Observable<number>) =>
+        trigger$.pipe(
+            tap(() => this.patchState({ deleting: true })),
+            exhaustMap((id: number) =>
+                this.associationsService.deleteAssociation(id).pipe(
+                    tapResponse(
+                        () => {
+                            const items = this.state().list?.items || [];
+                            this.patchState({
+                                deleting: false,
+                                list: { items }
+                            });
+                        },
+                        () => {
+                            this.patchState({ deleting: false });
+                            this.toast.error(
+                                'Could not delete association! Please try again later or contact the support.'
+                            );
+                        }
                     )
                 )
             )
@@ -85,7 +115,10 @@ export class AssociationsListStore extends ComponentStore<AssociationsListState>
         })
     );
 
-    constructor(private readonly associationsService: AssociationProfileService) {
+    constructor(
+        private readonly associationsService: AssociationProfileService,
+        private readonly toast: HotToastService
+    ) {
         super(initialState);
     }
 
