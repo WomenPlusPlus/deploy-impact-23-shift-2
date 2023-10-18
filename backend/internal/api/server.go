@@ -80,6 +80,10 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(mux.CORSMethodMiddleware(router))
 
+	routes := router.PathPrefix("/api/v1")
+
+	s.initUserRoutes(routes)
+
 	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
 	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
@@ -150,9 +154,6 @@ func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
 	}
-	if r.Method == "POST" {
-		return s.handleCreateUser(w, r)
-	}
 	if r.Method == "DELETE" {
 		return s.handleDeleteUser(w, r)
 	}
@@ -179,22 +180,6 @@ func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) er
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
-}
-
-func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	logrus.Debugln("Create user handler running")
-
-	req := new(entity.CreateUserRequest)
-	if err := req.FromFormData(r); err != nil {
-		return BadRequestError{Message: err.Error()}
-	}
-
-	res, err := s.userService.CreateUser(req)
-	if err != nil {
-		return InternalServerError{Message: err.Error()}
-	}
-
-	return WriteJSONResponse(w, http.StatusOK, res)
 }
 
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
