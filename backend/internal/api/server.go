@@ -44,8 +44,10 @@ func (s *APIServer) Run() {
 
 	s.initUserRoutes(apiRouter)
 
+	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
+	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
+
 	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
-	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
 

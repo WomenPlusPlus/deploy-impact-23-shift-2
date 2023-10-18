@@ -10,11 +10,12 @@ import (
 func (s *APIServer) initUserRoutes(router *mux.Router) {
 	router = router.PathPrefix("/users").Subrouter()
 
-	router.PathPrefix("").
-		HandlerFunc(makeHTTPHandleFunc(s.handleCreateUser)).
+	router.Path("").
+		Handler(makeHTTPHandleFunc(s.handleCreateUser)).
 		Methods(http.MethodPost)
 
 	router.Use(AuthenticationMiddleware)
+	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {

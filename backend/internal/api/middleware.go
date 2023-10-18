@@ -1,22 +1,81 @@
 package api
 
 import (
+	"context"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/exp/slices"
 	"net/http"
+)
+
+type ContextKey string
+
+var (
+	ContextKeyKind  ContextKey = "X-Kind"
+	ContextKeyRole  ContextKey = "X-Role"
+	ContextKeyToken ContextKey = "X-Token"
 )
 
 func AuthenticationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 
+		ctx := context.WithValue(r.Context(), ContextKeyKind, r.Header.Get(string(ContextKeyKind)))
+		ctx = context.WithValue(ctx, ContextKeyRole, r.Header.Get(string(ContextKeyRole)))
+		ctx = context.WithValue(ctx, ContextKeyToken, token)
+
 		logrus.Tracef("Running authentication middleware: token=%s", token)
 		if token != "" {
 			logrus.Tracef("Authenticated user: token=%s", token)
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			WriteErrorResponse(w, http.StatusForbidden, "Authentication failed!")
 		}
 	})
+}
+
+func AuthorizationMiddleware(key ContextKey, values ...string) mux.MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return AuthorizationHandler(next, key, values...)
+	}
+}
+
+func AuthorizationHandler(next http.Handler, key ContextKey, values ...string) http.Handler {
+	handler := AuthorizationCase(next, key, values...)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !handler(w, r) {
+			WriteErrorResponse(w, http.StatusForbidden, "Authorization failed: not enough permissions!")
+		}
+	})
+}
+
+func AuthorizationSwitch(handlers ...func(http.ResponseWriter, *http.Request) bool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for _, handler := range handlers {
+			if handler(w, r) {
+				return
+			}
+		}
+		WriteErrorResponse(w, http.StatusForbidden, "Authorization failed: not enough permissions!")
+	})
+}
+
+func AuthorizationCase(next http.Handler, key ContextKey, values ...string) func(http.ResponseWriter, *http.Request) bool {
+	return func(w http.ResponseWriter, r *http.Request) bool {
+		value, ok := r.Context().Value(key).(string)
+		if !ok {
+			logrus.Tracef("Invalid authorization key: key=%s, value=%v", key, value)
+			return false
+		}
+		logrus.Tracef("Running authorization middleware: key=%s, value=%s", key, value)
+		if slices.Contains(values, value) {
+			logrus.Tracef("Authorized user: key=%s, value=%s", key, value)
+			next.ServeHTTP(w, r)
+			return true
+		}
+		logrus.Tracef("Not authorized user: key=%s, value=%s", key, value)
+		return false
+	}
 }
 
 type apiFunc func(http.ResponseWriter, *http.Request) error
