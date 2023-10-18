@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { CreateUserAssociationFormGroup } from '@app/admin/users/creation/common/models/create-user.model';
+import {
+    CreateUserAssociationFormGroup,
+    CreateUserAssociationFormModel
+} from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
 import { CreateUserStore } from '@app/admin/users/creation/create-user.store';
 import { CreateUserGenericComponent } from '@app/admin/users/creation/generic/create-user-generic.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
@@ -31,7 +35,7 @@ import { SelectSingleComponent } from '@app/ui/select-single/select-single.compo
     templateUrl: './create-user-association.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserAssociationComponent implements OnInit {
+export class CreateUserAssociationComponent implements CreateUserFormComponent, OnInit {
     @ViewChild(CreateUserGenericComponent, { static: true })
     childFormComponent!: CreateUserGenericComponent;
 
@@ -44,6 +48,13 @@ export class CreateUserAssociationComponent implements OnInit {
             ...this.childFormComponent.form.controls,
             associationId: this.associationIdForm
         });
+    }
+
+    get formValue(): CreateUserAssociationFormModel {
+        return {
+            ...this.childFormComponent.formValue,
+            associationId: this.associationIdForm.value
+        };
     }
 
     constructor(

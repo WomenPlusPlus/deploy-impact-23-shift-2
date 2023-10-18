@@ -11,7 +11,7 @@ export enum UserRoleEnum {
 }
 
 export enum UserStateEnum {
-    ACTIVE,
-    ANONYMOUS,
-    DELETED
+    ACTIVE = 'ACTIVE',
+    ANONYMOUS = 'ANONYMOUS',
+    DELETED = 'DELETED'
 }

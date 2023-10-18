@@ -1,5 +1,5 @@
 import { HotToastService } from '@ngneat/hot-toast';
-import { exhaustMap, Observable, tap } from 'rxjs';
+import { exhaustMap, Observable, switchMap, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 
@@ -11,10 +11,10 @@ import { AdminUsersService } from '@app/admin/users/common/services/admin-users.
 import { Association } from '@app/common/models/associations.model';
 import { Company } from '@app/common/models/companies.model';
 
-import { CreateUserSubmissionModel } from './common/models/create-user.model';
+import { CreateUserResponse, CreateUserSubmissionModel } from './common/models/create-user.model';
 
 export interface CreateUserState {
-    response: { id: number } | null;
+    response: CreateUserResponse | null;
     submitting: boolean;
     submitted: boolean;
     loadingCompanies: boolean;
@@ -54,7 +54,7 @@ export class CreateUserStore extends ComponentStore<CreateUserState> {
     submitForm = this.effect((trigger$: Observable<CreateUserSubmissionModel>) =>
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false, response: null })),
-            exhaustMap((payload) =>
+            switchMap((payload) =>
                 this.adminUsersService.createUser(payload).pipe(
                     tapResponse(
                         (response) => this.patchState({ submitting: false, submitted: true, response }),
