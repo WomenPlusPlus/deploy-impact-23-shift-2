@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"mime/multipart"
 	"shift/internal/entity"
+	"shift/internal/utils"
 )
 
 type UserService struct {
@@ -67,45 +68,61 @@ func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 		return nil, fmt.Errorf("getting associationUser record: %w", err)
 	}
 
-	res := new(entity.ViewUserResponse)
-
 	switch user.Kind {
 	case entity.UserKindAdmin:
-		user, err := s.userDB.GetUserById(id)
-		if err != nil {
-			return nil, fmt.Errorf("getting admin by association user id: %w", err)
-		}
-		res.FromUserItemView(user)
+		return s.getAdminByUserId(user.ID)
 	case entity.UserKindAssociation:
-		associationUser, err := s.userDB.GetAssociationUserByUserId(id)
-		if err != nil {
-			return nil, fmt.Errorf("getting admin by association user id: %w", err)
-		}
-		res.FromUserItemView(associationUser)
+		return s.getAssociationUserByUserId(user.ID)
 	case entity.UserKindCandidate:
-		candidate, err := s.userDB.GetCandidateByUserId(id)
-		if err != nil {
-			return nil, fmt.Errorf("getting admin by candidate id: %w", err)
-		}
-		res.FromUserItemView(candidate)
+		return s.getCandidateByUserId(user.ID)
 	case entity.UserKindCompany:
-		companyUser, err := s.userDB.GetCompanyUserByUserId(id)
-		if err != nil {
-			return nil, fmt.Errorf("getting admin by company user id: %w", err)
-		}
-		res.FromUserItemView(companyUser)
+		return s.getCompanyUserByUserId(user.ID)
 	}
 
-	if res.PhotoUrl != "" {
-		imageUrl, err := s.bucketDB.SignUrl(context.Background(), res.PhotoUrl)
-		if err != nil {
-			logrus.Errorf("could not sign url for user image: %v", err)
-		} else {
-			logrus.Tracef("Signed url for user image: id=%d, url=%v", res.ID, imageUrl)
-			res.PhotoUrl = imageUrl
-		}
-	}
+	return nil, fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
+}
 
+func (s *UserService) getAdminByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
+	admin, err := s.userDB.GetUserById(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting association user by user id: %w", err)
+	}
+	res.FromUserItemView(admin)
+	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	return res, nil
+}
+
+func (s *UserService) getAssociationUserByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
+	associationUser, err := s.userDB.GetAssociationUserByUserId(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting association by user id: %w", err)
+	}
+	res.FromUserItemView(associationUser)
+	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	return res, nil
+}
+
+func (s *UserService) getCandidateByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
+	candidate, err := s.userDB.GetCandidateByUserId(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate by user id: %w", err)
+	}
+	res.FromUserItemView(candidate)
+	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	return res, nil
+}
+
+func (s *UserService) getCompanyUserByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
+	companyUser, err := s.userDB.GetCompanyUserByUserId(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting company user by user id: %w", err)
+	}
+	res.FromUserItemView(companyUser)
+	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
 	return res, nil
 }
 
