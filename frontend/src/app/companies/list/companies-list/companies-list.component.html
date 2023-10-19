@@ -21,7 +21,7 @@
             class="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-rows-auto-[20rem] gap-x-4 gap-y-8 justify-items-center p-4"
         >
             <ng-container *ngIf="vm.list?.items?.length">
-                <app-company-card *ngFor="let item of $any(vm.list!.items!)" [company]="item" class="max-w-xs">
+                <app-company-card *ngFor="let item of $any(vm.list!.items!)" [company]="item" class="max-w-xs relative">
                 </app-company-card>
             </ng-container>
         </div>

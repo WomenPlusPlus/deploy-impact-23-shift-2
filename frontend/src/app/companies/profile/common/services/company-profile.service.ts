@@ -3,9 +3,9 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { CompaniesListModel, CompanyProfileModel } from '../models/company-profile.model';
+import environment from '@envs/environment';
 
-//import environment from '@envs/environment';
+import { CompaniesListModel, CompanyProfileModel } from '../models/company-profile.model';
 
 @Injectable({
     providedIn: 'root'
@@ -100,5 +100,10 @@ export class CompanyProfileService {
                 }
             ]
         });
+    }
+
+    deleteCompany(id: number): Observable<void> {
+        // delete association from back end
+        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/admin/companies/${id}`);
     }
 }
