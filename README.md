@@ -16,9 +16,9 @@
 * [Further development](#further-development)
 <!-- TOC -->
 
-# Our Solution
+# :bulb: Our Solution
 
-# Tech Stack
+# :toolbox: Tech Stack
 | Backend | Frontend | Database | Cloud Storage | Deployments |
 |---------|----------|----------|---------------|-------------|
 |Golang   |Angular   |PostgreSQL|GCP            |GCP          |
@@ -40,16 +40,16 @@
 # Development
 * TODO
 
-# Third-party libraries
+# :books: Third-party libraries
 * TODO - List them
 
-# License file
+# :memo: License file
 * TODO
 
-# Getting started
+# :computer: Getting started
 * TODO - How to run and install the project
 
-# Team members
+# :woman_technologist: :man_technologist: Team members
 | Name                                                                         | Role            | GitHub                                            |
 |------------------------------------------------------------------------------|-----------------|---------------------------------------------------|
 | [Adamantia Milia](https://www.linkedin.com/in/adamantia-milia/)              | Frontend        | [mandyjker](https://github.com/mandyjker)         |
@@ -59,5 +59,5 @@
 | [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)              | Backend         |                                                   |
 | [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
 
-# Further development
+# :pushpin: Further development
 * Please contact [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/)
