@@ -531,8 +531,25 @@ func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
 	return pdb.deleteUserPhoto(pdb.db, userId)
 }
 
-func (pdb *PostgresDB) DeleteAssociationLogo(associationId int) error {
-	return pdb.deleteAssociationLogo(pdb.db, associationId)
+func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkillsEntity, error) {
+	res := make(entity.CandidateSkillsEntity, 0)
+	query := `select * from candidate_skills where candidate_id = $1`
+
+	rows, err := pdb.db.Queryx(query, candidateId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching skills for candidate in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.CandidateSkillEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan candidate skills from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
 }
 
 func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.CandidateSkillsEntity) error {
@@ -552,6 +569,28 @@ func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.Can
 func (pdb *PostgresDB) DeleteCandidateSkills(candidateId int) error {
 	return pdb.deleteCandidateSkills(pdb.db, candidateId)
 }
+
+func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (entity.CandidateSpokenLanguagesEntity, error) {
+	res := make(entity.CandidateSpokenLanguagesEntity, 0)
+	query := `select * from candidate_spoken_languages where candidate_id = $1`
+
+	rows, err := pdb.db.Queryx(query, candidateId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching spoken languages for candidate in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.CandidateSpokenLanguageEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan candidate spoken languages from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) AssignCandidateSpokenLanguages(candidateId int, records entity.CandidateSpokenLanguagesEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -569,6 +608,28 @@ func (pdb *PostgresDB) AssignCandidateSpokenLanguages(candidateId int, records e
 func (pdb *PostgresDB) DeleteCandidateSpokenLanguages(candidateId int) error {
 	return pdb.deleteCandidateSpokenLanguages(pdb.db, candidateId)
 }
+
+func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (entity.CandidateSeekLocationsEntity, error) {
+	res := make(entity.CandidateSeekLocationsEntity, 0)
+	query := `select * from candidate_seek_locations where candidate_id = $1`
+
+	rows, err := pdb.db.Queryx(query, candidateId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching seek locations for candidate in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.CandidateSeekLocationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan candidate seek locations from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) AssignCandidateSeekLocations(candidateId int, records entity.CandidateSeekLocationsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -603,6 +664,28 @@ func (pdb *PostgresDB) AssignCandidateCV(record *entity.CandidateCVEntity) error
 func (pdb *PostgresDB) DeleteCandidateCV(candidateId int) error {
 	return pdb.deleteCandidateCV(pdb.db, candidateId)
 }
+
+func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (entity.CandidateAttachmentsEntity, error) {
+	res := make(entity.CandidateAttachmentsEntity, 0)
+	query := `select * from candidate_attachments where candidate_id = $1`
+
+	rows, err := pdb.db.Queryx(query, candidateId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching attachments for candidate in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.CandidateAttachmentEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan candidate attachments from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records entity.CandidateAttachmentsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -637,6 +720,28 @@ func (pdb *PostgresDB) AssignCandidateVideo(record *entity.CandidateVideoEntity)
 func (pdb *PostgresDB) DeleteCandidateVideo(candidateId int) error {
 	return pdb.deleteCandidateVideo(pdb.db, candidateId)
 }
+
+func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (entity.CandidateEducationHistoryListEntity, error) {
+	res := make(entity.CandidateEducationHistoryListEntity, 0)
+	query := `select * from candidate_education_history where candidate_id = $1`
+
+	rows, err := pdb.db.Queryx(query, candidateId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching education history for candidate in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.CandidateEducationHistoryEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan candidate education history from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) AssignCandidateEducationHistoryList(candidateId int, records entity.CandidateEducationHistoryListEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -654,6 +759,28 @@ func (pdb *PostgresDB) AssignCandidateEducationHistoryList(candidateId int, reco
 func (pdb *PostgresDB) DeleteCandidateEducationHistoryList(candidateId int) error {
 	return pdb.deleteCandidateEducationHistoryList(pdb.db, candidateId)
 }
+
+func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (entity.CandidateEmploymentHistoryListEntity, error) {
+	res := make(entity.CandidateEmploymentHistoryListEntity, 0)
+	query := `select * from candidate_employment_history where candidate_id = $1`
+
+	rows, err := pdb.db.Queryx(query, candidateId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching employment history for candidate in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.CandidateEmploymentHistoryEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan candidate employment history from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) AssignCandidateEmploymentHistoryList(candidateId int, records entity.CandidateEmploymentHistoryListEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
