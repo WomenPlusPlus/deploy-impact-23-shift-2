@@ -1,5 +1,21 @@
 # SHIFT Project - Team 2
 
+# :bookmark_tabs: Table of Contents
+<!-- TOC -->
+* [Our Solution](#our-solution)
+* [Tech Stack](#tech-stack)
+* [Site Map](#site-map)
+* [Wireframes - current and future](#wireframes---current-and-future)
+* [Architecture](#architecture)
+* [Database](#database)
+* [Development](#development)
+* [Third-party libraries](#third-party-libraries)
+* [License file](#license-file)
+* [Getting started](#getting-started)
+* [Team members](#team-members)
+* [Further development](#further-development)
+<!-- TOC -->
+
 # Our Solution
 
 # Tech Stack
