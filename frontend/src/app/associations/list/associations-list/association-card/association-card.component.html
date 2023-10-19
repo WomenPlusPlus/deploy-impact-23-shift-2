@@ -9,7 +9,7 @@
         </p>
     </div>
 </a>
-<ng-container *ngIf="isUserAdmin">
+<ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
     <div class="flex gap-2 absolute top-2 right-2 text-gray-800 dark:text-white">
         <div class="dropdown dropdown-end">
             <label tabindex="0" class="text-lg drop-shadow-md cursor-pointer px-2">
