@@ -1,8 +1,6 @@
-# SHIFT Project
+# SHIFT Project - Team 2
 
-# Site Map
-
-# Wireframes - current and future
+# Our Solution
 
 # Tech Stack
 | Backend | Frontend | Database | Cloud Storage | Deployments |
@@ -11,29 +9,39 @@
 |Gin      |DaisyUI   |Auth0     |               |Vercel       |
 |SQLX     |NgRX      |          |               |             |
 
+# Site Map
+* TODO
+
+# Wireframes - current and future
+* TODO
+ 
 # Architecture
-TODO
-[Architecture](https://miro.com/app/board/uXjVNf9ugWA=/?share_link_id=474651830078)
+* TODO
 
 # Database
-TODO
-[Database](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
+* TODO
 
 # Development
+* TODO
 
 # Third-party libraries
-TODO - List them
+* TODO - List them
+
+# License file
+* TODO
 
 # Getting started
-TODO - How to run and install the project
+* TODO - How to run and install the project
 
 # Team members
-* Adrianna Zielińska - [adriannaziel](https://github.com/adriannaziel)
-* Adamantia Milia - [mandyjker](https://github.com/mandyjker)
-* Bianca Alves - [biancamnalves](https://github.com/biancamnalves)
-* Hannah Rüfenacht - [hrrenee15](https://github.com/hrrenee15) 
-* Istvan Zsigmond - 
-* João Rodrigues - [jotar910](https://github.com/jotar910)
+| Name                                                                         | Role            | GitHub                                            |
+|------------------------------------------------------------------------------|-----------------|---------------------------------------------------|
+| [Adamantia Milia](https://www.linkedin.com/in/adamantia-milia/)              | Frontend        | [mandyjker](https://github.com/mandyjker)         |
+| [Adrianna Zielińska](https://www.linkedin.com/in/adriannazielinska/)         | Data Science    | [adriannaziel](https://github.com/adriannaziel)   |
+| [Bianca Alves](https://www.linkedin.com/in/biancaalves/)                     | Project Manager | [biancamnalves](https://github.com/biancamnalves) |
+| [Hannah Rüfenacht](https://www.linkedin.com/in/hannahrufenacht/)             | UX/UI           | [hrrenee15](https://github.com/hrrenee15)         |
+| [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)              | Backend         |                                                   |
+| [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
 
 # Further development
-* Contact João Rodrigues - [jotar910](https://github.com/jotar910)
+* Please contact [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/)
