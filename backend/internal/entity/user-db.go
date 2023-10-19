@@ -5,9 +5,13 @@ type UserDB interface {
 	DeleteUser(int) error
 	UpdateUser(*User) error
 	GetUsers() ([]*User, error)
-	GetUserByID(int) (*User, error)
 
+	GetUserRecord(int) (*UserRecordView, error)
 	GetAllUsers() ([]*UserItemView, error)
+	GetUserById(int) (*UserItemView, error)
+	GetAssociationUserByUserId(int) (*UserItemView, error)
+	GetCandidateByUserId(int) (*UserItemView, error)
+	GetCompanyUserByUserId(int) (*UserItemView, error)
 	CreateUser(*UserEntity) (*UserEntity, error)
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
