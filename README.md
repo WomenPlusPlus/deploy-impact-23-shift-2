@@ -20,11 +20,11 @@
 * TODO - Describe
 
 # :toolbox: Tech Stack
-| Backend | Frontend | Database | Cloud Storage | Deployments |
-|---------|----------|----------|---------------|-------------|
-|Golang   |Angular   |PostgreSQL|GCP            |GCP          |
-|Gin      |DaisyUI   |Auth0     |               |Vercel       |
-|SQLX     |NgRX      |          |               |             |
+| Backend     | Frontend | Database | Cloud Storage | Deployments |
+|-------------|----------|----------|---------------|-------------|
+| Golang      |Angular   |PostgreSQL| GCP           | GCP         |
+| Gorilla mux |DaisyUI   |Auth0     |               | Vercel      |
+| SQLX        |NgRX      |          |               |             |
 
 * TODO - Explain why
 
