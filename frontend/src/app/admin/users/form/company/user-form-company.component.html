@@ -1,13 +1,13 @@
 <fieldset
-    id="associations-field"
+    id="companies-field"
     class="flex flex-col sm:flex-row sm:items-center gap-y-1 gap-x-4 w-full my-4"
-    *appLet="associationIdForm as control"
+    *appLet="companyIdForm as control"
 >
-    <label for="associations" class="text-lg"> Select the user association<span class="text-red-400">*</span>: </label>
+    <label for="companies" class="text-lg"> Select the user company<span class="text-red-400">*</span>: </label>
     <app-select-single
-        id="associations"
+        id="companies"
         [control]="control"
-        [options]="associations$ | async"
+        [options]="companies$ | async"
         [searchKeys]="['name']"
         bindValue="id"
         bindLabel="name"
@@ -16,4 +16,4 @@
         {{ control.errors | formErrorMessage }}
     </span>
 </fieldset>
-<app-create-user-generic></app-create-user-generic>
+<app-user-form-generic></app-user-form-generic>

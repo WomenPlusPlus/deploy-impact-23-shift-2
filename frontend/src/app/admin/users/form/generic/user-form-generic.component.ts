@@ -5,33 +5,32 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { CreateUserFormGroup, CreateUserFormModel } from '@app/admin/users/creation/common/models/create-user.model';
-import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
+import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 
-const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
+const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
 @Component({
-    selector: 'app-create-user-generic',
+    selector: 'app-user-form-generic',
     standalone: true,
     imports: [CommonModule, FontAwesomeModule, FormErrorMessagePipe, LetDirective, ReactiveFormsModule],
-    templateUrl: './create-user-generic.component.html',
+    templateUrl: './user-form-generic.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserGenericComponent implements CreateUserFormComponent, OnInit {
-    form!: FormGroup<CreateUserFormGroup>;
+export class UserFormGenericComponent implements UserFormComponent, OnInit {
+    form!: FormGroup<UserFormGroup>;
     imagePreviewUrl$!: Observable<string>;
 
-    get detailsForm(): CreateUserFormGroup['details'] {
+    get detailsForm(): UserFormGroup['details'] {
         return this.form.controls.details;
     }
 
-    get socialForm(): CreateUserFormGroup['social'] {
+    get socialForm(): UserFormGroup['social'] {
         return this.form.controls.social;
     }
 
-    get formValue(): CreateUserFormModel {
+    get formValue(): UserFormModel {
         const value = this.form.getRawValue();
         return {
             ...value,
@@ -42,7 +41,8 @@ export class CreateUserGenericComponent implements CreateUserFormComponent, OnIn
         };
     }
 
-    constructor(private readonly fb: FormBuilder) {}
+    constructor(private readonly fb: FormBuilder) {
+    }
 
     ngOnInit(): void {
         this.initForm();

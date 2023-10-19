@@ -6,9 +6,10 @@ import { Injectable } from '@angular/core';
 import environment from '@envs/environment';
 
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
-import { CreateUserFormModel, CreateUserResponse } from '@app/admin/users/creation/common/models/create-user.model';
+import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
 import { JobStatusEnum } from '@app/common/models/jobs.model';
 import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
+import { UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 
 @Injectable({
     providedIn: 'root'
@@ -95,10 +96,10 @@ export class AdminUsersService {
             .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);*/
     }
 
-    createUser(user: CreateUserFormModel): Observable<CreateUserResponse> {
+    createUser(user: UserFormModel): Observable<CreateUserResponse> {
         const formData = new FormData();
         for (const key of Object.keys(user)) {
-            const wrapper = user[key as keyof CreateUserFormModel];
+            const wrapper = user[key as keyof UserFormModel];
             if (typeof wrapper !== 'object') {
                 formData.append(key, wrapper);
                 continue;

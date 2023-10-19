@@ -18,10 +18,10 @@ import {
     CandidateSkillsFormModel,
     CandidateSpokenLanguagesFormGroup,
     CandidateSpokenLanguagesFormModel,
-    CreateUserCandidateFormGroup,
-    CreateUserCandidateFormModel
-} from '@app/admin/users/creation/common/models/create-user.model';
-import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
+    UserFormComponent,
+    UserFormCandidateFormGroup,
+    UserFormCandidateFormModel
+} from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
@@ -38,10 +38,10 @@ import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-l
 import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
 
-const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
+const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
 @Component({
-    selector: 'app-create-user-candidate',
+    selector: 'app-user-form-candidate',
     standalone: true,
     imports: [
         CommonModule,
@@ -61,11 +61,11 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
         WorkPermitPipe,
         FilterLanguagePipe
     ],
-    templateUrl: './create-user-candidate.component.html',
+    templateUrl: './user-form-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserCandidateComponent implements CreateUserFormComponent, OnInit {
-    form!: FormGroup<CreateUserCandidateFormGroup>;
+export class UserFormCandidateComponent implements UserFormComponent, OnInit {
+    form!: FormGroup<UserFormCandidateFormGroup>;
     spokenLanguagesForm!: FormGroup<CandidateSpokenLanguagesFormGroup>;
     skillsForm!: FormGroup<CandidateSkillsFormGroup>;
     educationHistoryForm!: FormGroup<CandidateEducationHistoryFormGroup>;
@@ -76,7 +76,7 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
     cities$!: Observable<LocationCity[]>;
     languages$!: Observable<Language[]>;
 
-    get formValue(): CreateUserCandidateFormModel {
+    get formValue(): UserFormCandidateFormModel {
         const value = this.form.getRawValue();
         return {
             ...value,
@@ -102,19 +102,19 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
         };
     }
 
-    get detailsForm(): CreateUserCandidateFormGroup['details'] {
+    get detailsForm(): UserFormCandidateFormGroup['details'] {
         return this.form.controls.details;
     }
 
-    get jobForm(): CreateUserCandidateFormGroup['job'] {
+    get jobForm(): UserFormCandidateFormGroup['job'] {
         return this.form.controls.job;
     }
 
-    get technicalForm(): CreateUserCandidateFormGroup['technical'] {
+    get technicalForm(): UserFormCandidateFormGroup['technical'] {
         return this.form.controls.technical;
     }
 
-    get socialForm(): CreateUserCandidateFormGroup['social'] {
+    get socialForm(): UserFormCandidateFormGroup['social'] {
         return this.form.controls.social;
     }
 

@@ -4,20 +4,19 @@ import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import {
-    CreateUserAssociationFormGroup,
-    CreateUserAssociationFormModel
-} from '@app/admin/users/creation/common/models/create-user.model';
-import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
-import { CreateUserStore } from '@app/admin/users/creation/create-user.store';
-import { CreateUserGenericComponent } from '@app/admin/users/creation/generic/create-user-generic.component';
+    UserFormAssociationFormGroup,
+    UserFormAssociationFormModel,
+    UserFormComponent
+} from '@app/admin/users/form/common/models/user-form.model';
+import { UserFormStore } from '@app/admin/users/form/user-form.store';
+import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
-import { Association } from '@app/common/models/associations.model';
 import { FilterFusePipe } from '@app/common/pipes/filter-fuse/filter-fuse.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { SelectSingleComponent } from '@app/ui/select-single/select-single.component';
 
 @Component({
-    selector: 'app-create-user-association',
+    selector: 'app-user-form-association',
     standalone: true,
     imports: [
         CommonModule,
@@ -27,30 +26,30 @@ import { SelectSingleComponent } from '@app/ui/select-single/select-single.compo
         CdkVirtualForOf,
         CdkVirtualScrollViewport,
         LetDirective,
-        CreateUserGenericComponent,
+        UserFormGenericComponent,
         FilterFusePipe,
         FormErrorMessagePipe,
         SelectSingleComponent
     ],
-    templateUrl: './create-user-association.component.html',
+    templateUrl: './user-form-association.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserAssociationComponent implements CreateUserFormComponent, OnInit {
-    @ViewChild(CreateUserGenericComponent, { static: true })
-    childFormComponent!: CreateUserGenericComponent;
+export class UserFormAssociationComponent implements UserFormComponent, OnInit {
+    @ViewChild(UserFormGenericComponent, { static: true })
+    childFormComponent!: UserFormGenericComponent;
 
     associationIdForm!: FormControl<number | null>;
     searchAssociationForm!: FormControl<string | null>;
-    associations$ = this.createUserStore.associations$;
+    associations$ = this.userFormStore.associations$;
 
-    get form(): FormGroup<CreateUserAssociationFormGroup> {
+    get form(): FormGroup<UserFormAssociationFormGroup> {
         return this.fb.group({
             ...this.childFormComponent.form.controls,
             associationId: this.associationIdForm
         });
     }
 
-    get formValue(): CreateUserAssociationFormModel {
+    get formValue(): UserFormAssociationFormModel {
         return {
             ...this.childFormComponent.formValue,
             associationId: this.associationIdForm.value
@@ -59,7 +58,7 @@ export class CreateUserAssociationComponent implements CreateUserFormComponent, 
 
     constructor(
         private readonly fb: FormBuilder,
-        private readonly createUserStore: CreateUserStore
+        private readonly userFormStore: UserFormStore
     ) {}
 
     ngOnInit(): void {
@@ -67,24 +66,8 @@ export class CreateUserAssociationComponent implements CreateUserFormComponent, 
         this.initForm();
     }
 
-    onSelectAssociation(association: Association): void {
-        const control = this.associationIdForm;
-        control.markAsTouched();
-        control.setValue(association.id);
-
-        this.searchAssociationForm.setValue(association.name);
-    }
-
-    onDeselectAssociation(): void {
-        const control = this.associationIdForm;
-        if (control.value) {
-            control.markAsTouched();
-            control.setValue(null);
-        }
-    }
-
     private loadData(): void {
-        this.createUserStore.loadAssociations();
+        this.userFormStore.loadAssociations();
     }
 
     private initForm(): void {
