@@ -2,7 +2,6 @@ package entity
 
 import (
 	"fmt"
-	"github.com/neox5/go-formdata"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/neox5/go-formdata"
 )
 
 type CreateUserRequest struct {

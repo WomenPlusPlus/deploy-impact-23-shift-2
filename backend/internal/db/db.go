@@ -340,6 +340,21 @@ func (pdb *PostgresDB) AssignUserPhoto(record *entity.UserPhotoEntity) error {
 	return nil
 }
 
+func (pdb *PostgresDB) AssignAssociationLogo(record *entity.AssociationLogoEntity) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+	if err := pdb.deleteAssociationLogo(tx, record.ID); err != nil {
+		return fmt.Errorf("deleting previous data: %v", err)
+	}
+	if err := pdb.insertAssociationLogo(tx, record); err != nil {
+		return fmt.Errorf("inserting new data: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
 	return pdb.deleteUserPhoto(pdb.db, userId)
 }
@@ -489,9 +504,25 @@ func (pdb *PostgresDB) insertUserPhoto(tx NamedQuerier, record *entity.UserPhoto
 	return nil
 }
 
+func (pdb *PostgresDB) insertAssociationLogo(tx NamedQuerier, record *entity.AssociationLogoEntity) error {
+	query := `insert into association_logos (user_id, image_url) values (:association_id, :image_url)`
+	if _, err := tx.NamedExec(query, record); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) deleteUserPhoto(tx sqlx.Execer, userId int) error {
 	query := `delete from user_photos where user_id = $1`
 	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteAssociationLogo(tx sqlx.Execer, associationId int) error {
+	query := `delete from association_logos where association_id = $1`
+	if _, err := tx.Exec(query, associationId); err != nil {
 		return err
 	}
 	return nil

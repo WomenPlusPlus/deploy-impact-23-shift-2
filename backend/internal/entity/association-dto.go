@@ -35,10 +35,10 @@ func (u *CreateAssociationRequest) FromFormData(r *http.Request) error {
 }
 
 func (u *CreateAssociationRequest) fromFormData(fd *formdata.FormData) error {
-	fd.Validate("name")
-	fd.Validate("logo")
-	fd.Validate("websiteUrl")
-	fd.Validate("focus")
+	fd.Validate("name").Required().HasN(1)
+	fd.Validate("logo").Required().HasN(1)
+	fd.Validate("websiteUrl").Required().HasN(1)
+	fd.Validate("focus").Required().HasN(1)
 
 	if fd.HasErrors() {
 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))

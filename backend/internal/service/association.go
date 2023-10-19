@@ -1,7 +1,9 @@
 package service
 
 import (
+	"context"
 	"fmt"
+	"mime/multipart"
 	"shift/internal/entity"
 
 	"github.com/sirupsen/logrus"
@@ -43,6 +45,12 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 	}
 	logrus.Tracef("Added association to db: id=%d", association.ID)
 
+	if req.Logo != nil {
+		if err := s.saveLogo(association.ID, req.Logo); err != nil {
+			logrus.Errorf("uploading association logo: %v", err)
+		}
+	}
+
 	return &entity.CreateAssociationResponse{
 		ID:            association.ID,
 		AssociationID: association.ID,
@@ -59,5 +67,31 @@ func (s *AssociationService) ListAssociations() (*entity.ListUsersResponse, erro
 	res := new(entity.ListUsersResponse)
 
 	return res, nil
+}
 
+func (s *AssociationService) saveLogo(associationId int, logoHeader *multipart.FileHeader) error {
+	path := fmt.Sprintf("%d/logo/%s", associationId, logoHeader.Filename)
+	if err := s.uploadFile(path, logoHeader); err != nil {
+		return fmt.Errorf("uploading photo: %w", err)
+	}
+	logrus.Tracef("Added photo to bucket: id=%d", associationId)
+
+	logrus.Tracef("Added photo to db: id=%d", associationId)
+	return nil
+}
+
+func (s *AssociationService) uploadFile(path string, fileHeader *multipart.FileHeader) error {
+	logo, err := fileHeader.Open()
+	if err != nil {
+		return fmt.Errorf("could not open the uploaded file: %w", err)
+	}
+	defer logo.Close()
+	logrus.Tracef("Parsed photo: %s", fileHeader.Filename)
+
+	if err := s.bucketDB.UploadObject(context.Background(), path, logo); err != nil {
+		return fmt.Errorf("could not store the file: %w", err)
+	}
+	logrus.Tracef("Parsed file: %s", fileHeader.Filename)
+
+	return nil
 }

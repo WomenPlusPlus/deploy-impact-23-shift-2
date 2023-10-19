@@ -14,6 +14,19 @@ type AssociationEntity struct {
 	CreatedAt  time.Time             `db:"created_at"`
 }
 
+type AssociationLogoEntity struct {
+	ID            int    `db:"id"`
+	AssociationID int    `db:"association_id"`
+	ImageUrl      string `db:"image_url"`
+}
+
+func NewAssociationLogoEntity(associationId int, imageUrl string) *AssociationLogoEntity {
+	return &AssociationLogoEntity{
+		AssociationID: associationId,
+		ImageUrl:      imageUrl,
+	}
+}
+
 func (a *AssociationEntity) FromCreationRequest(request *CreateAssociationRequest) error {
 	a.Name = request.Name
 	a.Logo = request.Logo
