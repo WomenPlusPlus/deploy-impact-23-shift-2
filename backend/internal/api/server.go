@@ -3,9 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+	"shift/internal/db"
 	"shift/internal/entity"
+	"shift/internal/service"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -14,106 +15,58 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address       string
-	userDB        entity.UserDB
-	associationDB entity.AssociationDB
+	address           string
+	userDB            entity.UserDB
+	associationDB     entity.AssociationDB
+	invitationDB      db.InvitationDB
+	bucketDb          entity.BucketDB
+	userService       *service.UserService
+	invitationService *service.InvitationService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
-func NewAPIServer(address string, userDB entity.UserDB) *APIServer {
+func NewAPIServer(
+	address string,
+	bucketDb entity.BucketDB,
+	userDB entity.UserDB,
+) *APIServer {
 	return &APIServer{
-		address: address,
-		userDB:  userDB,
+		address:     address,
+		userDB:      userDB,
+		bucketDb:    bucketDb,
+		userService: service.NewUserService(bucketDb, userDB),
 	}
-}
-
-// apiFunc represents a function that handles API requests.
-type apiFunc func(http.ResponseWriter, *http.Request) error
-
-// apiError represents an API error response.
-type apiError struct {
-	Error string `json:"error"`
-}
-
-type NotFoundError struct {
-	Message string
-}
-
-func (e NotFoundError) Error() string {
-	return e.Message
-}
-
-type PermissionError struct {
-	Message string
-}
-
-func (e PermissionError) Error() string {
-	return e.Message
 }
 
 // Run starts the HTTP server and listens for incoming requests.
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
+	router.Use(CORSMiddleware)
 	router.Use(mux.CORSMethodMiddleware(router))
 
+	apiRouter := router.PathPrefix("/api/v1").Subrouter()
+
+	s.initUserRoutes(apiRouter)
+
+	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
+	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
+
 	router.HandleFunc("/admin/users", makeHTTPHandleFunc(s.handleUsers))
-	router.HandleFunc("/admin/users/create", makeHTTPHandleFunc(s.handleCreateUser))
 	router.HandleFunc("/admin/users/{id}", makeHTTPHandleFunc(s.handleGetUserByID))
 	router.HandleFunc("/admin/users/delete/{id}", makeHTTPHandleFunc(s.handleDeleteUser))
 
 	router.HandleFunc("/admin/associations", makeHTTPHandleFunc(s.handleCreateAssociation))
 
-	log.Println("JSON API Server is running on port", s.address)
-	http.ListenAndServe(s.address, router)
-}
+	router.HandleFunc("/admin/invitation", makeHTTPHandleFunc(s.handleCreateInvitation))
 
-// IsNotFoundError checks if an error is a not found error.
-func IsNotFoundError(err error) bool {
-	_, isNotFound := err.(NotFoundError)
-	return isNotFound
-}
-
-// IsPermissionError checks if an error is a permission error.
-func IsPermissionError(err error) bool {
-	_, isPermissionDenied := err.(PermissionError)
-	return isPermissionDenied
-}
-
-// makeHTTPHandleFunc creates an HTTP request handler function for the provided apiFunc.
-func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		logger := logrus.New()
-		logger.SetFormatter(&logrus.JSONFormatter{}) // Use JSON format for structured logs
-		err := f(w, r)
-		if err != nil {
-			switch {
-			case IsNotFoundError(err):
-				WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
-			case IsPermissionError(err):
-				WriteJSONResponse(w, http.StatusForbidden, apiError{Error: err.Error()})
-			default:
-				// Log the internal error without exposing details to the client
-				logger.Error(err)
-				WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: "Internal server error"})
-			}
-		}
-	}
-}
-
-// WriteJSONResponse writes a JSON response with the given status code and value.
-func WriteJSONResponse(w http.ResponseWriter, status int, value interface{}) error {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(value)
+	logrus.Println("JSON API Server is running on port", s.address)
+	logrus.Fatal(http.ListenAndServe(s.address, router))
 }
 
 // handleUsers handles requests related to user accounts.
 func (s *APIServer) handleUsers(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "GET" {
 		return s.handleGetUsers(w, r)
-	}
-	if r.Method == "POST" {
-		return s.handleCreateUser(w, r)
 	}
 	if r.Method == "DELETE" {
 		return s.handleDeleteUser(w, r)
@@ -143,33 +96,6 @@ func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) er
 	return WriteJSONResponse(w, http.StatusOK, user)
 }
 
-func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	userRequest := new(entity.CreateUserRequest)
-	if err := json.NewDecoder(r.Body).Decode(userRequest); err != nil {
-		return err
-	}
-
-	user := entity.NewUser(
-		userRequest.FirstName,
-		userRequest.LastName,
-		userRequest.PreferredName,
-		userRequest.Email,
-		userRequest.PhoneNumber,
-		userRequest.BirthDate,
-		userRequest.ImageUrl,
-		userRequest.LinkedinUrl,
-		userRequest.GithubUrl,
-		userRequest.PortfolioUrl,
-		userRequest.State,
-	)
-
-	if err := s.userDB.CreateUser(user); err != nil {
-		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
-	}
-
-	return WriteJSONResponse(w, http.StatusOK, user)
-}
-
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
 	associationRequest := new(entity.CreateAssociationRequest)
 	if err := json.NewDecoder(r.Body).Decode(associationRequest); err != nil {
@@ -188,6 +114,27 @@ func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Reque
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, ass)
+}
+
+func (s *APIServer) handleCreateInvitation(w http.ResponseWriter, r *http.Request) error {
+	invRequest := new(db.CreateInvitationRequest)
+	if err := json.NewDecoder(r.Body).Decode(invRequest); err != nil {
+		return err
+	}
+
+	inv := entity.NewInvitation(
+		invRequest.Kind,
+		invRequest.Email,
+		invRequest.Subject,
+		invRequest.Message,
+	)
+
+	if _, err := s.invitationDB.CreateInvitation(inv); err != nil {
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, inv)
+
 }
 
 // handleDeleteUser handles DELETE requests to delete a user account.
