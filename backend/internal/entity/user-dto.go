@@ -117,53 +117,149 @@ type ListCompanyUserResponse struct {
 	CompanyId     int `json:"companyId"`
 }
 
+type ViewUserResponse struct {
+	ID            int       `json:"id"`
+	Kind          string    `json:"kind"`
+	FirstName     string    `json:"firstName"`
+	LastName      string    `json:"lastName"`
+	PreferredName string    `json:"preferredName"`
+	Email         string    `json:"email"`
+	PhoneNumber   string    `json:"phoneNumber"`
+	BirthDate     time.Time `json:"birthDate"`
+	PhotoUrl      string    `json:"photoUrl"`
+	LinkedInUrl   string    `json:"linkedInUrl"`
+	GithubUrl     string    `json:"githubUrl"`
+	PortfolioUrl  string    `json:"portfolioUrl"`
+
+	AssociationUserId int    `json:"associationUserId,omitempty"`
+	AssociationId     int    `json:"associationId,omitempty"`
+	CompanyUserId     int    `json:"companyUserId,omitempty"`
+	CompanyId         int    `json:"companyId,omitempty"`
+	Role              string `json:"role,omitempty"`
+
+	*ViewUserCandidateResponse
+}
+
+func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
+	r.ID = e.UserEntity.ID
+	r.Kind = e.Kind
+	r.FirstName = e.FirstName
+	r.LastName = e.LastName
+	r.PreferredName = e.PreferredName
+	r.Email = e.Email
+	r.PhoneNumber = e.PhoneNumber
+	r.BirthDate = e.BirthDate
+	r.PhotoUrl = utils.SafeUnwrap(e.ImageUrl)
+	r.LinkedInUrl = e.LinkedInUrl
+	r.GithubUrl = e.GithubUrl
+	r.PortfolioUrl = e.PortfolioUrl
+
+	switch e.Kind {
+	case UserKindAssociation:
+		r.FromAssociationUserItemView(e.AssociationUserItemView)
+	case UserKindCandidate:
+		r.FromCandidateItemView(e.CandidateItemView)
+	case UserKindCompany:
+		r.FromCompanyUserItemView(e.CompanyUserItemView)
+	}
+}
+
+func (r *ViewUserResponse) FromAssociationUserItemView(e *AssociationUserItemView) {
+	r.AssociationUserId = utils.SafeUnwrap(e.ID)
+	r.AssociationId = utils.SafeUnwrap(e.AssociationId)
+	r.Role = utils.SafeUnwrap(e.Role)
+}
+
+func (r *ViewUserResponse) FromCandidateItemView(e *CandidateItemView) {
+	r.ViewUserCandidateResponse = new(ViewUserCandidateResponse)
+	r.CandidateId = utils.SafeUnwrap(e.ID)
+	r.YearsOfExperience = utils.SafeUnwrap(e.YearsOfExperience)
+	r.JobStatus = utils.SafeUnwrap(e.JobStatus)
+	r.SeekJobType = utils.SafeUnwrap(e.SeekJobType)
+	r.SeekCompanySize = utils.SafeUnwrap(e.SeekCompanySize)
+	r.SeekLocationType = utils.SafeUnwrap(e.SeekLocationType)
+	r.SeekSalary = utils.SafeUnwrap(e.SeekSalary)
+	r.SeekValues = utils.SafeUnwrap(e.SeekValues)
+	r.WorkPermit = utils.SafeUnwrap(e.WorkPermit)
+	r.NoticePeriod = utils.SafeUnwrap(e.NoticePeriod)
+	r.CVUrl = utils.SafeUnwrap(e.CVUrl)
+	r.VideoUrl = utils.SafeUnwrap(e.VideoUrl)
+}
+
+func (r *ViewUserResponse) FromCompanyUserItemView(e *CompanyUserItemView) {
+	r.CompanyUserId = utils.SafeUnwrap(e.ID)
+	r.CompanyId = utils.SafeUnwrap(e.CompanyId)
+	r.Role = utils.SafeUnwrap(e.Role)
+}
+
+type ViewUserCandidateResponse struct {
+	CandidateId       int                     `json:"candidateId"`
+	YearsOfExperience int                     `json:"yearsOfExperience"`
+	JobStatus         string                  `json:"jobStatus"`
+	SeekJobType       string                  `json:"seekJobType"`
+	SeekCompanySize   string                  `json:"seekCompanySize"`
+	SeekLocations     []UserLocation          `json:"seekLocations"`
+	SeekLocationType  string                  `json:"seekLocationType"`
+	SeekSalary        int                     `json:"seekSalary"`
+	SeekValues        string                  `json:"seekValues"`
+	WorkPermit        string                  `json:"workPermit"`
+	NoticePeriod      int                     `json:"noticePeriod"`
+	SpokenLanguages   []UserSpokenLanguage    `json:"spokenLanguages"`
+	Skills            []UserSkill             `json:"skills"`
+	CVUrl             string                  `json:"cvUrl"`
+	AttachmentsUrl    []string                `json:"attachmentsUrl"`
+	VideoUrl          string                  `json:"videoUrl"`
+	EducationHistory  []UserEducationHistory  `json:"educationHistory"`
+	EmploymentHistory []UserEmploymentHistory `json:"employmentHistory"`
+}
+
 type CreateUserAssociationRequest struct {
 	AssociationId   int    `json:"associationId"`
 	AssociationRole string `json:"role"`
 }
 
 type CreateUserCandidateRequest struct {
-	YearsOfExperience int                           `json:"yearsOfExperience"`
-	JobStatus         string                        `json:"jobStatus"`
-	SeekJobType       string                        `json:"seekJobType"`
-	SeekCompanySize   string                        `json:"seekCompanySize"`
-	SeekLocations     []CreateUserLocation          `json:"seekLocations"`
-	SeekLocationType  string                        `json:"seekLocationType"`
-	SeekSalary        int                           `json:"seekSalary"`
-	SeekValues        string                        `json:"seekValues"`
-	WorkPermit        string                        `json:"workPermit"`
-	NoticePeriod      int                           `json:"noticePeriod"`
-	SpokenLanguages   []CreateUserSpokenLanguage    `json:"spokenLanguages"`
-	Skills            []CreateUserSkill             `json:"skills"`
-	CV                *multipart.FileHeader         `json:"cv"`
-	Attachments       []*multipart.FileHeader       `json:"attachments"`
-	Video             *multipart.FileHeader         `json:"video"`
-	EducationHistory  []CreateUserEducationHistory  `json:"educationHistory"`
-	EmploymentHistory []CreateUserEmploymentHistory `json:"employmentHistory"`
+	YearsOfExperience int                     `json:"yearsOfExperience"`
+	JobStatus         string                  `json:"jobStatus"`
+	SeekJobType       string                  `json:"seekJobType"`
+	SeekCompanySize   string                  `json:"seekCompanySize"`
+	SeekLocations     []UserLocation          `json:"seekLocations"`
+	SeekLocationType  string                  `json:"seekLocationType"`
+	SeekSalary        int                     `json:"seekSalary"`
+	SeekValues        string                  `json:"seekValues"`
+	WorkPermit        string                  `json:"workPermit"`
+	NoticePeriod      int                     `json:"noticePeriod"`
+	SpokenLanguages   []UserSpokenLanguage    `json:"spokenLanguages"`
+	Skills            []UserSkill             `json:"skills"`
+	CV                *multipart.FileHeader   `json:"cv"`
+	Attachments       []*multipart.FileHeader `json:"attachments"`
+	Video             *multipart.FileHeader   `json:"video"`
+	EducationHistory  []UserEducationHistory  `json:"educationHistory"`
+	EmploymentHistory []UserEmploymentHistory `json:"employmentHistory"`
 }
 
-type CreateUserLocation struct {
+type UserLocation struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-type CreateUserSpokenLanguage struct {
-	Language CreateUserLanguage `json:"language"`
-	Level    int                `json:"level"`
+type UserSpokenLanguage struct {
+	Language UserLanguage `json:"language"`
+	Level    int          `json:"level"`
 }
 
-type CreateUserLanguage struct {
+type UserLanguage struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	ShortName string `json:"shortName"`
 }
 
-type CreateUserSkill struct {
+type UserSkill struct {
 	Name  string `json:"name"`
 	Years int    `json:"years"`
 }
 
-type CreateUserEducationHistory struct {
+type UserEducationHistory struct {
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Entity      string     `json:"entity"`
@@ -171,7 +267,7 @@ type CreateUserEducationHistory struct {
 	ToDate      *time.Time `json:"toDate"`
 }
 
-type CreateUserEmploymentHistory struct {
+type UserEmploymentHistory struct {
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Company     string     `json:"company"`
@@ -312,27 +408,27 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 		return fmt.Errorf("invalid notice period value: %w", err)
 	}
 
-	u.SeekLocations = make([]CreateUserLocation, 0)
+	u.SeekLocations = make([]UserLocation, 0)
 	if err := utils.JSONFromString(fd.Get("seekLocations").First(), &u.SeekLocations); err != nil {
 		return fmt.Errorf("invalid seekLocations value: %w", err)
 	}
 
-	u.SpokenLanguages = make([]CreateUserSpokenLanguage, 0)
+	u.SpokenLanguages = make([]UserSpokenLanguage, 0)
 	if err := utils.JSONFromStringOpt(fd.Get("spokenLanguages").First(), &u.SpokenLanguages); err != nil {
 		return fmt.Errorf("invalid spokenLanguages value: %w", err)
 	}
 
-	u.Skills = make([]CreateUserSkill, 0)
+	u.Skills = make([]UserSkill, 0)
 	if err := utils.JSONFromStringOpt(fd.Get("skills").First(), &u.Skills); err != nil {
 		return fmt.Errorf("invalid skills value: %w", err)
 	}
 
-	u.EducationHistory = make([]CreateUserEducationHistory, 0)
+	u.EducationHistory = make([]UserEducationHistory, 0)
 	if err := utils.JSONFromStringOpt(fd.Get("educationHistory").First(), &u.EducationHistory); err != nil {
 		return fmt.Errorf("invalid educationHistory value: %w", err)
 	}
 
-	u.EmploymentHistory = make([]CreateUserEmploymentHistory, 0)
+	u.EmploymentHistory = make([]UserEmploymentHistory, 0)
 	if err := utils.JSONFromStringOpt(fd.Get("employmentHistory").First(), &u.EmploymentHistory); err != nil {
 		return fmt.Errorf("invalid employmentHistory value: %w", err)
 	}

@@ -316,8 +316,6 @@ func (c *CandidateEmploymentHistoryListEntity) FromCreationRequest(request *Crea
 
 type UserItemView struct {
 	ImageUrl *string `db:"image_url"`
-	CVUrl    *string `db:"cv_url"`
-	VideoUrl *string `db:"video_url"`
 	*UserEntity
 	*AssociationUserItemView
 	*CandidateItemView
@@ -341,10 +339,20 @@ type CandidateItemView struct {
 	SeekValues        *string `db:"seek_values"`
 	WorkPermit        *string `db:"work_permit"`
 	NoticePeriod      *int    `db:"notice_period"`
+	CVUrl             *string `db:"cv_url"`
+	VideoUrl          *string `db:"video_url"`
 }
 
 type CompanyUserItemView struct {
 	ID        *int    `db:"company_user_id"`
 	CompanyId *int    `db:"company_id"`
 	Role      *string `db:"company_role"`
+}
+
+type UserRecordView struct {
+	ID        int       `db:"id"`
+	Kind      string    `db:"kind"`
+	Email     string    `db:"email"`
+	State     string    `db:"state"`
+	CreatedAt time.Time `db:"created_at"`
 }

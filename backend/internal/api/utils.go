@@ -14,6 +14,7 @@ func WriteJSONResponse(w http.ResponseWriter, status int, value interface{}) err
 
 func WriteErrorResponse(w http.ResponseWriter, status int, value string) {
 	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(apiError{value}); err != nil {
 		logrus.Errorf("could not send response: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
