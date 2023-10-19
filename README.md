@@ -2,18 +2,18 @@
 
 # :bookmark_tabs: Table of Contents
 <!-- TOC -->
-* [Our Solution](#our-solution)
-* [Tech Stack](#tech-stack)
+* [:bulb: Our Solution](#bulb-our-solution)
+* [:toolbox: Tech Stack](#toolbox-tech-stack)
 * [Site Map](#site-map)
 * [Wireframes - current and future](#wireframes---current-and-future)
 * [Architecture](#architecture)
 * [Database](#database)
 * [Development](#development)
-* [Third-party libraries](#third-party-libraries)
-* [License file](#license-file)
-* [Getting started](#getting-started)
-* [Team members](#team-members)
-* [Further development](#further-development)
+* [:books: Third-party libraries](#books-third-party-libraries)
+* [:memo: License file](#memo-license-file)
+* [:computer: Getting started](#computer-getting-started)
+* [:woman_technologist: Team members :man_technologist:](#womantechnologist-team-members-mantechnologist)
+* [:pushpin: Further development](#pushpin-further-development)
 <!-- TOC -->
 
 # :bulb: Our Solution
