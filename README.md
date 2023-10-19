@@ -15,7 +15,7 @@
 TODO
 [Architecture](https://miro.com/app/board/uXjVNf9ugWA=/?share_link_id=474651830078)
 
-# Database
+# Database.
 TODO
 [Database](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
 
