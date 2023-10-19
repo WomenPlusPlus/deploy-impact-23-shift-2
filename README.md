@@ -17,6 +17,7 @@
 <!-- TOC -->
 
 # :bulb: Our Solution
+* TODO - Describe
 
 # :toolbox: Tech Stack
 | Backend | Frontend | Database | Cloud Storage | Deployments |
@@ -25,17 +26,23 @@
 |Gin      |DaisyUI   |Auth0     |               |Vercel       |
 |SQLX     |NgRX      |          |               |             |
 
+* TODO - Explain why
+
 # Site Map
 * TODO
+* Link to the Miro board
 
 # Wireframes - current and future
 * TODO
+* Link to the Figma file
  
 # Architecture
 * TODO
+* Link to the Miro board
 
 # Database
 * TODO
+* Link to the Miro board
 
 # Development
 * TODO
@@ -56,7 +63,7 @@
 | [Adrianna Zielińska](https://www.linkedin.com/in/adriannazielinska/)         | Data Science    | [adriannaziel](https://github.com/adriannaziel)   |
 | [Bianca Alves](https://www.linkedin.com/in/biancaalves/)                     | Project Manager | [biancamnalves](https://github.com/biancamnalves) |
 | [Hannah Rüfenacht](https://www.linkedin.com/in/hannahrufenacht/)             | UX/UI           | [hrrenee15](https://github.com/hrrenee15)         |
-| [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)              | Backend         |                                                   |
+| [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)              | Backend         | [istvzsig](https://github.com/istvzsig)           |
 | [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
 
 # :pushpin: Further development
