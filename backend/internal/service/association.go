@@ -48,3 +48,16 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 		AssociationID: association.ID,
 	}, nil
 }
+
+func (s *AssociationService) ListAssociations() (*entity.ListUsersResponse, error) {
+	associations, err := s.associationDB.GetAllAssociations()
+	if err != nil {
+		return nil, fmt.Errorf("getting all associations: %w", err)
+	}
+	logrus.Tracef("Get all associations from db: total=%d", len(associations))
+
+	res := new(entity.ListUsersResponse)
+
+	return res, nil
+
+}

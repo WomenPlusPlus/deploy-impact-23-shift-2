@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
 	"os"
 	"shift/internal/api"
 	"shift/internal/db"
+
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {

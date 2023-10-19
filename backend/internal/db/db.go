@@ -3,26 +3,14 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"log"
 	"shift/internal/entity"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
-type UserDB interface {
-	DeleteUser(int) error
-	UpdateUser(*entity.User) error
-	GetUsers() ([]*entity.User, error)
-	GetUserByID(int) (*entity.User, error)
-
-	CreateAssociation(*entity.Association) error
-	DeleteAssociation(int) error
-	UpdateAssociation(*entity.Association) error
-	GetAssociations() ([]*entity.Association, error)
-	GetAssociationByID(int) (*entity.Association, error)
-}
 
 // docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
 
@@ -178,6 +166,30 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	}
 
 	return res, nil
+}
+
+func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error) {
+	res := make([]*entity.AssociationEntity, 0)
+
+	query := `select * from associations`
+
+	rows, err := pdb.db.Queryx(query)
+
+	if err != nil {
+		return nil, fmt.Errorf("fetching associations in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.AssociationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Debugf("failed to scan association view from db record: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+
 }
 
 func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {

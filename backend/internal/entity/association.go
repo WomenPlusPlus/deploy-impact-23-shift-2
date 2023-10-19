@@ -1,14 +1,17 @@
 package entity
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 type AssociationEntity struct {
-	ID         int       `db:"id"`
-	Name       string    `db:"name"`
-	Logo       byte      `db:"logo"`
-	WebsiteUrl string    `db:"website_url"`
-	Focus      string    `db:"focus"`
-	CreatedAt  time.Time `db:"created_at"`
+	ID         int                   `db:"id"`
+	Name       string                `db:"name"`
+	Logo       *multipart.FileHeader `db:"logo"`
+	WebsiteUrl string                `db:"website_url"`
+	Focus      string                `db:"focus"`
+	CreatedAt  time.Time             `db:"created_at"`
 }
 
 func (a *AssociationEntity) FromCreationRequest(request *CreateAssociationRequest) error {

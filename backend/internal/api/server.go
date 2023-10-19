@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"shift/internal/entity"
@@ -14,11 +13,12 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address       string
-	userDB        entity.UserDB
-	associationDB entity.AssociationDB
-	bucketDb      entity.BucketDB
-	userService   *service.UserService
+	address            string
+	userDB             entity.UserDB
+	associationDB      entity.AssociationDB
+	bucketDb           entity.BucketDB
+	userService        *service.UserService
+	associationService *service.AssociationService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
@@ -89,26 +89,6 @@ func (s *APIServer) handleGetUserByID(w http.ResponseWriter, r *http.Request) er
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
-}
-
-func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
-	associationRequest := new(entity.CreateAssociationRequest)
-	if err := json.NewDecoder(r.Body).Decode(associationRequest); err != nil {
-		return err
-	}
-
-	ass := entity.NewAssociation(
-		associationRequest.Name,
-		associationRequest.Logo,
-		associationRequest.WebsiteUrl,
-		associationRequest.Focus,
-	)
-
-	if err := s.associationDB.CreateAssociation(ass); err != nil {
-		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
-	}
-
-	return WriteJSONResponse(w, http.StatusOK, ass)
 }
 
 // handleDeleteUser handles DELETE requests to delete a user account.
