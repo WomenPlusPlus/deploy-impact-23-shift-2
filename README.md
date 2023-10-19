@@ -49,7 +49,7 @@
 # :computer: Getting started
 * TODO - How to run and install the project
 
-# :woman_technologist: :man_technologist: Team members
+# :woman_technologist: Team members :man_technologist:
 | Name                                                                         | Role            | GitHub                                            |
 |------------------------------------------------------------------------------|-----------------|---------------------------------------------------|
 | [Adamantia Milia](https://www.linkedin.com/in/adamantia-milia/)              | Frontend        | [mandyjker](https://github.com/mandyjker)         |
