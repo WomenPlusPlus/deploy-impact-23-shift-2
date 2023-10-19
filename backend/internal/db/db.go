@@ -359,6 +359,10 @@ func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
 	return pdb.deleteUserPhoto(pdb.db, userId)
 }
 
+func (pdb *PostgresDB) DeleteAssociationLogo(associationId int) error {
+	return pdb.deleteAssociationLogo(pdb.db, associationId)
+}
+
 func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.CandidateSkillsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
