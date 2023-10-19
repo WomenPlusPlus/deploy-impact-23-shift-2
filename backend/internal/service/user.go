@@ -89,7 +89,7 @@ func (s *UserService) getAdminByUserId(id int) (*entity.ViewUserResponse, error)
 		return nil, fmt.Errorf("getting association user by user id: %w", err)
 	}
 	res.FromUserItemView(admin)
-	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
 	return res, nil
 }
 
@@ -100,18 +100,99 @@ func (s *UserService) getAssociationUserByUserId(id int) (*entity.ViewUserRespon
 		return nil, fmt.Errorf("getting association by user id: %w", err)
 	}
 	res.FromUserItemView(associationUser)
-	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
 	return res, nil
 }
 
 func (s *UserService) getCandidateByUserId(id int) (*entity.ViewUserResponse, error) {
 	res := new(entity.ViewUserResponse)
+
 	candidate, err := s.userDB.GetCandidateByUserId(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate by user id: %w", err)
 	}
 	res.FromUserItemView(candidate)
-	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+
+	skills, err := s.userDB.GetCandidateSkills(res.CandidateId)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate skills by user id: %w", err)
+	}
+	res.Skills = make([]entity.UserSkill, len(skills))
+	for i, skill := range skills {
+		res.Skills[i] = entity.UserSkill{Name: skill.Name, Years: skill.Years}
+	}
+
+	spokenLanguages, err := s.userDB.GetCandidateSpokenLanguages(res.CandidateId)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate spoken languages by user id: %w", err)
+	}
+	res.SpokenLanguages = make([]entity.UserSpokenLanguage, len(spokenLanguages))
+	for i, spokenLanguage := range spokenLanguages {
+		res.SpokenLanguages[i] = entity.UserSpokenLanguage{
+			Language: entity.UserLanguage{
+				Id:        spokenLanguage.LanguageID,
+				Name:      spokenLanguage.LanguageName,
+				ShortName: spokenLanguage.LanguageShortName,
+			},
+			Level: spokenLanguage.Level,
+		}
+	}
+
+	seekLocations, err := s.userDB.GetCandidateSeekLocations(res.CandidateId)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate seek locations by user id: %w", err)
+	}
+	res.SeekLocations = make([]entity.UserLocation, len(seekLocations))
+	for i, seekLocation := range seekLocations {
+		res.SeekLocations[i] = entity.UserLocation{
+			Id:   seekLocation.CityID,
+			Name: seekLocation.CityName,
+		}
+	}
+
+	attachments, err := s.userDB.GetCandidateAttachments(res.CandidateId)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate attachments by user id: %w", err)
+	}
+	res.AttachmentsUrl = make([]string, len(attachments))
+	attachmentsCtx := context.Background()
+	for i, attachments := range attachments {
+		utils.SetSignedUrl(attachmentsCtx, s.bucketDB, &res.AttachmentsUrl[i], attachments.AttachmentUrl)
+	}
+
+	educationHistoryList, err := s.userDB.GetCandidateEducationHistoryList(res.CandidateId)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate education history list by user id: %w", err)
+	}
+	res.EducationHistory = make([]entity.UserEducationHistory, len(educationHistoryList))
+	for i, history := range educationHistoryList {
+		res.EducationHistory[i] = entity.UserEducationHistory{
+			Title:       history.Title,
+			Description: history.Description,
+			Entity:      history.Entity,
+			FromDate:    history.FromDate,
+			ToDate:      history.ToDate,
+		}
+	}
+
+	employmentHistoryList, err := s.userDB.GetCandidateEmploymentHistoryList(res.CandidateId)
+	if err != nil {
+		return nil, fmt.Errorf("getting candidate employment history list by user id: %w", err)
+	}
+	res.EmploymentHistory = make([]entity.UserEmploymentHistory, len(employmentHistoryList))
+	for i, history := range employmentHistoryList {
+		res.EmploymentHistory[i] = entity.UserEmploymentHistory{
+			Title:       history.Title,
+			Description: history.Description,
+			Company:     history.Company,
+			FromDate:    history.FromDate,
+			ToDate:      history.ToDate,
+		}
+	}
+
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.CVUrl)
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.VideoUrl)
 	return res, nil
 }
 
@@ -122,7 +203,7 @@ func (s *UserService) getCompanyUserByUserId(id int) (*entity.ViewUserResponse, 
 		return nil, fmt.Errorf("getting company user by user id: %w", err)
 	}
 	res.FromUserItemView(companyUser)
-	utils.ReplaceWithImageUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
 	return res, nil
 }
 

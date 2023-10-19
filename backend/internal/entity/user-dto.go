@@ -131,9 +131,11 @@ type ViewUserResponse struct {
 	GithubUrl     string    `json:"githubUrl"`
 	PortfolioUrl  string    `json:"portfolioUrl"`
 
-	AssociationId int    `json:"associationId,omitempty"`
-	CompanyId     int    `json:"companyId,omitempty"`
-	Role          string `json:"role,omitempty"`
+	AssociationUserId int    `json:"associationUserId,omitempty"`
+	AssociationId     int    `json:"associationId,omitempty"`
+	CompanyUserId     int    `json:"companyUserId,omitempty"`
+	CompanyId         int    `json:"companyId,omitempty"`
+	Role              string `json:"role,omitempty"`
 
 	*ViewUserCandidateResponse
 }
@@ -163,12 +165,14 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 }
 
 func (r *ViewUserResponse) FromAssociationUserItemView(e *AssociationUserItemView) {
-	r.AssociationId = *e.AssociationId
-	r.Role = *e.Role
+	r.AssociationUserId = utils.SafeUnwrap(e.ID)
+	r.AssociationId = utils.SafeUnwrap(e.AssociationId)
+	r.Role = utils.SafeUnwrap(e.Role)
 }
 
 func (r *ViewUserResponse) FromCandidateItemView(e *CandidateItemView) {
 	r.ViewUserCandidateResponse = new(ViewUserCandidateResponse)
+	r.CandidateId = utils.SafeUnwrap(e.ID)
 	r.YearsOfExperience = utils.SafeUnwrap(e.YearsOfExperience)
 	r.JobStatus = utils.SafeUnwrap(e.JobStatus)
 	r.SeekJobType = utils.SafeUnwrap(e.SeekJobType)
@@ -180,21 +184,16 @@ func (r *ViewUserResponse) FromCandidateItemView(e *CandidateItemView) {
 	r.NoticePeriod = utils.SafeUnwrap(e.NoticePeriod)
 	r.CVUrl = utils.SafeUnwrap(e.CVUrl)
 	r.VideoUrl = utils.SafeUnwrap(e.VideoUrl)
-	// TODO:
-	//r.SeekLocations = utils.SafeUnwrap(e.SeekLocations)
-	//r.SpokenLanguages = utils.SafeUnwrap(e.SpokenLanguages)
-	//r.Skills = utils.SafeUnwrap(e.Skills)
-	//r.AttachmentsUrl = utils.SafeUnwrap(e.AttachmentsUrl)
-	//r.EducationHistory = utils.SafeUnwrap(e.EducationHistory)
-	//r.EmploymentHistory = utils.SafeUnwrap(e.EmploymentHistory)
 }
 
 func (r *ViewUserResponse) FromCompanyUserItemView(e *CompanyUserItemView) {
-	r.CompanyId = *e.CompanyId
-	r.Role = *e.Role
+	r.CompanyUserId = utils.SafeUnwrap(e.ID)
+	r.CompanyId = utils.SafeUnwrap(e.CompanyId)
+	r.Role = utils.SafeUnwrap(e.Role)
 }
 
 type ViewUserCandidateResponse struct {
+	CandidateId       int                     `json:"candidateId"`
 	YearsOfExperience int                     `json:"yearsOfExperience"`
 	JobStatus         string                  `json:"jobStatus"`
 	SeekJobType       string                  `json:"seekJobType"`
