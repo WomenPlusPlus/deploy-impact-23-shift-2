@@ -61,6 +61,54 @@ func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	return res, nil
 }
 
+func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
+	user, err := s.userDB.GetUserRecord(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting associationUser record: %w", err)
+	}
+
+	res := new(entity.ViewUserResponse)
+
+	switch user.Kind {
+	case entity.UserKindAdmin:
+		user, err := s.userDB.GetUserById(id)
+		if err != nil {
+			return nil, fmt.Errorf("getting admin by association user id: %w", err)
+		}
+		res.FromUserItemView(user)
+	case entity.UserKindAssociation:
+		associationUser, err := s.userDB.GetAssociationUserByUserId(id)
+		if err != nil {
+			return nil, fmt.Errorf("getting admin by association user id: %w", err)
+		}
+		res.FromUserItemView(associationUser)
+	case entity.UserKindCandidate:
+		candidate, err := s.userDB.GetCandidateByUserId(id)
+		if err != nil {
+			return nil, fmt.Errorf("getting admin by candidate id: %w", err)
+		}
+		res.FromUserItemView(candidate)
+	case entity.UserKindCompany:
+		companyUser, err := s.userDB.GetCompanyUserByUserId(id)
+		if err != nil {
+			return nil, fmt.Errorf("getting admin by company user id: %w", err)
+		}
+		res.FromUserItemView(companyUser)
+	}
+
+	if res.PhotoUrl != "" {
+		imageUrl, err := s.bucketDB.SignUrl(context.Background(), res.PhotoUrl)
+		if err != nil {
+			logrus.Errorf("could not sign url for user image: %v", err)
+		} else {
+			logrus.Tracef("Signed url for user image: id=%d, url=%v", res.ID, imageUrl)
+			res.PhotoUrl = imageUrl
+		}
+	}
+
+	return res, nil
+}
+
 func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
 	admin := new(entity.UserEntity)
 	if err := admin.FromCreationRequest(req); err != nil {

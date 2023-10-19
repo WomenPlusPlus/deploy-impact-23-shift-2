@@ -13,8 +13,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
-
 type PostgresDB struct {
 	db *sqlx.DB
 }
@@ -34,21 +32,6 @@ func NewPostgresDB() *PostgresDB {
 
 func (s *PostgresDB) UpdateUser(*entity.User) error {
 	return nil
-}
-
-func (s *PostgresDB) GetUserByID(id int) (*entity.User, error) {
-	query := "SELECT * FROM users where id = $1"
-	rows, err := s.db.Query(query, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	for rows.Next() {
-		return createUser(rows)
-	}
-
-	return nil, fmt.Errorf("user with id: %d not found", id)
 }
 
 func (s *PostgresDB) DeleteUser(id int) error {
@@ -82,6 +65,28 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	}
 
 	return users, nil
+}
+
+func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
+	query := `select id, kind, email, state, created_at
+				from users
+				where id = $1`
+	rows, err := s.db.Queryx(query, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		view := new(entity.UserRecordView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user record view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user record view: id=%d", id)
 }
 
 func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
@@ -136,7 +141,7 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	for rows.Next() {
 		view := new(entity.UserItemView)
 		if err := rows.StructScan(view); err != nil {
-			logrus.Debugf("failed to scan user view from db record: %v", err)
+			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
 		}
 		res = append(res, view)
@@ -166,6 +171,177 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, erro
 	}
 	fmt.Println(res)
 	return res, nil
+}
+
+func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
+	query := `select
+    				users.id,
+					users.kind,
+					users.first_name,
+					users.last_name,
+					users.preferred_name,
+					users.email,
+					users.phone_number,
+					users.birth_date,
+					users.linkedin_url,
+					users.github_url,
+					users.portfolio_url,
+					users.state,
+					users.created_at,
+    				user_photos.image_url
+				from users
+				left outer join user_photos on users.id = user_photos.user_id
+				where users.id = $1
+    `
+	rows, err := pdb.db.Queryx(query, id)
+	if err != nil {
+		return nil, fmt.Errorf("fetching user id=%d in db: %w", id, err)
+	}
+
+	for rows.Next() {
+		view := new(entity.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user: id=%d", id)
+}
+
+func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*entity.UserItemView, error) {
+	query := `select
+    				users.id,
+					users.kind,
+					users.first_name,
+					users.last_name,
+					users.preferred_name,
+					users.email,
+					users.phone_number,
+					users.birth_date,
+					users.linkedin_url,
+					users.github_url,
+					users.portfolio_url,
+					users.state,
+					users.created_at,
+    				association_users.id as association_user_id,
+    				association_users.association_id,
+    				association_users.role as association_role,
+    				user_photos.image_url
+				from users
+				inner join association_users on users.id = association_users.user_id
+				left outer join user_photos on users.id = user_photos.user_id
+				where users.id = $1
+    `
+	rows, err := pdb.db.Queryx(query, id)
+	if err != nil {
+		return nil, fmt.Errorf("fetching association user id=%d in db: %w", id, err)
+	}
+
+	for rows.Next() {
+		view := new(entity.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find association user: id=%d", id)
+}
+
+func (pdb *PostgresDB) GetCandidateByUserId(id int) (*entity.UserItemView, error) {
+	query := `select
+    				users.id,
+					users.kind,
+					users.first_name,
+					users.last_name,
+					users.preferred_name,
+					users.email,
+					users.phone_number,
+					users.birth_date,
+					users.linkedin_url,
+					users.github_url,
+					users.portfolio_url,
+					users.state,
+					users.created_at,
+    				candidates.id as candidate_id,
+    				candidates.years_of_experience,
+    				candidates.job_status,
+    				candidates.seek_job_type,
+    				candidates.seek_company_size,
+    				candidates.seek_location_type,
+    				candidates.seek_salary,
+    				candidates.seek_values,
+    				candidates.work_permit,
+    				candidates.notice_period,
+    				user_photos.image_url,
+					candidate_cvs.cv_url,
+					candidate_videos.video_url
+				from users
+				left outer join candidates on users.id = candidates.user_id
+				left outer join user_photos on users.id = user_photos.user_id
+				left outer join candidate_cvs on candidates.id = candidate_cvs.candidate_id
+				left outer join candidate_videos on candidates.id = candidate_videos.candidate_id
+				where users.id = $1
+    `
+	rows, err := pdb.db.Queryx(query, id)
+	if err != nil {
+		return nil, fmt.Errorf("fetching candidate id=%d in db: %w", id, err)
+	}
+
+	for rows.Next() {
+		view := new(entity.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find candidate: id=%d", id)
+}
+
+func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, error) {
+	query := `select
+    				users.id,
+					users.kind,
+					users.first_name,
+					users.last_name,
+					users.preferred_name,
+					users.email,
+					users.phone_number,
+					users.birth_date,
+					users.linkedin_url,
+					users.github_url,
+					users.portfolio_url,
+					users.state,
+					users.created_at,
+    				company_users.id as company_user_id,
+    				company_users.company_id,
+    				company_users.role as company_role,
+    				user_photos.image_url
+				from users
+				left outer join company_users on users.id = company_users.user_id
+				left outer join user_photos on users.id = user_photos.user_id
+				where users.id = $1
+    `
+	rows, err := pdb.db.Queryx(query, id)
+	if err != nil {
+		return nil, fmt.Errorf("fetching company user id=%d in db: %w", id, err)
+	}
+
+	for rows.Next() {
+		view := new(entity.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find company user: id=%d", id)
 }
 
 func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {
@@ -679,7 +855,7 @@ func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity,
 	for rows.Next() {
 		user := new(entity.UserEntity)
 		if err := rows.StructScan(user); err != nil {
-			logrus.Debugf("failed to scan user from db record: %v", err)
+			logrus.Errorf("failed to scan user from db row: %v", err)
 			return nil, err
 		}
 		return user, nil
@@ -701,7 +877,7 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 	for rows.Next() {
 		associationUser := new(entity.AssociationUserEntity)
 		if err := rows.StructScan(associationUser); err != nil {
-			logrus.Debugf("failed to scan association user from db record: %v", err)
+			logrus.Errorf("failed to scan association user from db row: %v", err)
 			return nil, err
 		}
 		return associationUser, nil
@@ -742,7 +918,7 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 	for rows.Next() {
 		candidate := new(entity.CandidateEntity)
 		if err := rows.StructScan(candidate); err != nil {
-			logrus.Debugf("failed to scan candidate from db record: %v", err)
+			logrus.Errorf("failed to scan candidate from db row: %v", err)
 			return nil, err
 		}
 		return candidate, nil
@@ -764,7 +940,7 @@ func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.Comp
 	for rows.Next() {
 		companyUser := new(entity.CompanyUserEntity)
 		if err := rows.StructScan(companyUser); err != nil {
-			logrus.Debugf("failed to scan company user from db record: %v", err)
+			logrus.Errorf("failed to scan company user from db row: %v", err)
 			return nil, err
 		}
 		return companyUser, nil
