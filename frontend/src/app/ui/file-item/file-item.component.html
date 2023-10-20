@@ -1,0 +1,15 @@
+<div class="inline-flex items-center gap-3 border rounded px-4 py-2">
+    <a
+        *ngIf="url as link; else span"
+        class="link max-w-sm truncate"
+        [href]="link"
+        target="_blank"
+        rel="noreferrer noopener"
+    >
+        {{ name }}
+    </a>
+    <ng-template #span>
+        <span class="max-w-sm truncate">{{ name }}</span>
+    </ng-template>
+    <fa-icon [icon]="faRemove" class="text-sm" (click)="remove.emit()"></fa-icon>
+</div>

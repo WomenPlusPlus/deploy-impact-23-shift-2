@@ -4,31 +4,37 @@ import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { Language, LocationCity } from '@app/common/models/location.model';
 import { UserKindEnum } from '@app/common/models/users.model';
+import { LocalFile } from '@app/common/models/files.model';
 
-export type CreateUserFormGroup = FormModel<CreateUserFormModel>;
-export type CreateUserCandidateFormGroup = FormModel<CreateUserCandidateFormModel>;
-export type CreateUserCompanyFormGroup = FormModel<CreateUserCompanyFormModel>;
-export type CreateUserAssociationFormGroup = FormModel<CreateUserAssociationFormModel>;
+export interface UserFormComponent<T extends UserFormGroup = any, S extends UserFormModel = any> {
+    form: FormGroup<T>;
+    formValue: S;
+}
 
-export interface CreateUserFormModel {
+export type UserFormGroup = FormModel<UserFormModel>;
+export type UserFormCandidateFormGroup = FormModel<UserFormCandidateFormModel>;
+export type UserFormCompanyFormGroup = FormModel<UserFormCompanyFormModel>;
+export type UserFormAssociationFormGroup = FormModel<UserFormAssociationFormModel>;
+
+export interface UserFormModel {
     details: UserDetailsFormModel;
     social: UserSocialFormModel;
 }
 
-export interface CreateUserCandidateFormModel extends CreateUserFormModel {
+export interface UserFormCandidateFormModel extends UserFormModel {
     job: UserJobFormModel;
     technical: UserTechnicalFormModel;
 }
 
-export interface CreateUserCompanyFormModel extends CreateUserFormModel {
+export interface UserFormCompanyFormModel extends UserFormModel {
     companyId: number | null;
 }
 
-export interface CreateUserAssociationFormModel extends CreateUserFormModel {
+export interface UserFormAssociationFormModel extends UserFormModel {
     associationId: number | null;
 }
 
-export type CreateUserSubmissionModel = CreateUserFormModel & { kind: UserKindEnum };
+export type UserFormSubmissionModel = UserFormModel & { kind: UserKindEnum };
 
 export interface UserDetailsFormModel {
     firstName: string | null;
@@ -36,8 +42,8 @@ export interface UserDetailsFormModel {
     preferredName: string | null;
     email: string | null;
     phoneNumber: string | null;
-    birthDate: Date | null;
-    photo: File | null;
+    birthDate: string | null;
+    photo: LocalFile | File | null;
 }
 
 export interface UserJobFormModel {
@@ -56,9 +62,9 @@ export interface UserJobFormModel {
 export interface UserTechnicalFormModel {
     spokenLanguages: CandidateSpokenLanguagesFormModel[] | null;
     skills: CandidateSkillsFormModel[] | null;
-    cv: File | null;
-    attachments: File[] | null;
-    video: File | null;
+    cv: LocalFile | File | null;
+    attachments: LocalFile[] | File[] | null;
+    video: LocalFile | File | null;
     educationHistory: CandidateEducationHistoryFormModel[] | null;
     employmentHistory: CandidateEmploymentHistoryFormModel[] | null;
 }
@@ -103,11 +109,6 @@ export interface CandidateEmploymentHistoryFormModel {
     fromDate: Date | null;
     toDate: Date | null;
     onGoing: boolean | null;
-}
-
-export interface CreateUserResponse {
-    id: number;
-    userId: number;
 }
 
 type FormModel<T> = {

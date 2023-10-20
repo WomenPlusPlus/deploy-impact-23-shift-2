@@ -18,10 +18,10 @@ import {
     CandidateSkillsFormModel,
     CandidateSpokenLanguagesFormGroup,
     CandidateSpokenLanguagesFormModel,
-    CreateUserCandidateFormGroup,
-    CreateUserCandidateFormModel
-} from '@app/admin/users/creation/common/models/create-user.model';
-import { CreateUserFormComponent } from '@app/admin/users/creation/create-user.component';
+    UserFormCandidateFormGroup,
+    UserFormCandidateFormModel,
+    UserFormComponent
+} from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
@@ -37,11 +37,14 @@ import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-la
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
+import { LocalFile } from '@app/common/models/files.model';
+import { fileUrl } from '@app/common/utils/file.util';
+import { FileItemComponent } from '@app/ui/file-item/file-item.component';
 
-const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
+const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
 @Component({
-    selector: 'app-create-user-candidate',
+    selector: 'app-user-form-candidate',
     standalone: true,
     imports: [
         CommonModule,
@@ -59,30 +62,31 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-creation.png';
         CompanySizePipe,
         JobLocationTypePipe,
         WorkPermitPipe,
-        FilterLanguagePipe
+        FilterLanguagePipe,
+        FileItemComponent
     ],
-    templateUrl: './create-user-candidate.component.html',
+    templateUrl: './user-form-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserCandidateComponent implements CreateUserFormComponent, OnInit {
-    form!: FormGroup<CreateUserCandidateFormGroup>;
+export class UserFormCandidateComponent implements UserFormComponent, OnInit {
+    form!: FormGroup<UserFormCandidateFormGroup>;
     spokenLanguagesForm!: FormGroup<CandidateSpokenLanguagesFormGroup>;
     skillsForm!: FormGroup<CandidateSkillsFormGroup>;
     educationHistoryForm!: FormGroup<CandidateEducationHistoryFormGroup>;
     employmentHistoryForm!: FormGroup<CandidateEmploymentHistoryFormGroup>;
     filterLocationsForm!: FormControl<string | null>;
     filterLanguageForm!: FormControl<string | null>;
-    imagePreviewUrl$!: Observable<string>;
+    imagePreview$!: Observable<LocalFile>;
     cities$!: Observable<LocationCity[]>;
     languages$!: Observable<Language[]>;
 
-    get formValue(): CreateUserCandidateFormModel {
+    get formValue(): UserFormCandidateFormModel {
         const value = this.form.getRawValue();
         return {
             ...value,
             details: {
                 ...value.details,
-                birthDate: value.details.birthDate && new Date(value.details.birthDate)
+                birthDate: value.details.birthDate && new Date(value.details.birthDate).toISOString()
             },
             technical: {
                 ...value.technical,
@@ -102,19 +106,19 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
         };
     }
 
-    get detailsForm(): CreateUserCandidateFormGroup['details'] {
+    get detailsForm(): UserFormCandidateFormGroup['details'] {
         return this.form.controls.details;
     }
 
-    get jobForm(): CreateUserCandidateFormGroup['job'] {
+    get jobForm(): UserFormCandidateFormGroup['job'] {
         return this.form.controls.job;
     }
 
-    get technicalForm(): CreateUserCandidateFormGroup['technical'] {
+    get technicalForm(): UserFormCandidateFormGroup['technical'] {
         return this.form.controls.technical;
     }
 
-    get socialForm(): CreateUserCandidateFormGroup['social'] {
+    get socialForm(): UserFormCandidateFormGroup['social'] {
         return this.form.controls.social;
     }
 
@@ -171,7 +175,8 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
     constructor(
         private readonly fb: FormBuilder,
         private readonly store: Store
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.initForm();
@@ -179,23 +184,49 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
     }
 
     onPhotoUpload(event: Event): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
         this.detailsForm.controls.photo.setValue(file || null);
+        input.value = '';
     }
 
     onCVUpload(event: Event): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
         this.technicalForm.controls.cv.setValue(file || null);
+        input.value = '';
+    }
+
+    onCVRemove(): void {
+        this.technicalForm.controls.cv.setValue(null);
     }
 
     onAttachmentsUpload(event: Event): void {
-        const files = (event.target as HTMLInputElement).files;
+        const input = event.target as HTMLInputElement;
+        const files = input.files;
         this.technicalForm.controls.attachments.setValue(Array.from(files || []));
+        input.value = '';
+    }
+
+    onAttachmentRemove(index: number): void {
+        const attachments = this.technicalForm.controls.attachments.value;
+        if (!attachments) {
+            return;
+        }
+        const firstPart = attachments.slice(0, index) as File[];
+        const secondPart = attachments.slice(index + 1) as File[];
+        this.technicalForm.controls.attachments.setValue([...firstPart, ...secondPart]);
     }
 
     onVideoUpload(event: Event): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
         this.technicalForm.controls.video.setValue(file || null);
+        input.value = '';
+    }
+
+    onVideoRemove(): void {
+        this.technicalForm.controls.video.setValue(null);
     }
 
     onAddSpokenLanguage(): void {
@@ -340,8 +371,8 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
                     Validators.minLength(3),
                     Validators.maxLength(20)
                 ]),
-                birthDate: this.fb.control<Date | null>(null, [Validators.required]),
-                photo: this.fb.control<File | null>(null)
+                birthDate: this.fb.control<string | null>(null, [Validators.required]),
+                photo: this.fb.control<LocalFile | File | null>(null)
             }),
             job: this.fb.group({
                 yearsOfExperience: this.fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
@@ -361,9 +392,9 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
             technical: this.fb.group({
                 spokenLanguages: this.fb.control<CandidateSpokenLanguagesFormModel[] | null>([]),
                 skills: this.fb.control<CandidateSkillsFormModel[] | null>([]),
-                cv: this.fb.control<File | null>(null),
-                attachments: this.fb.control<File[] | null>([]),
-                video: this.fb.control<File | null>(null),
+                cv: this.fb.control<LocalFile | File | null>(null),
+                attachments: this.fb.control<LocalFile[] | File[] | null>([]),
+                video: this.fb.control<LocalFile | File | null>(null),
                 educationHistory: this.fb.control<CandidateEducationHistoryFormModel[] | null>([]),
                 employmentHistory: this.fb.control<CandidateEmploymentHistoryFormModel[] | null>([])
             }),
@@ -426,19 +457,12 @@ export class CreateUserCandidateComponent implements CreateUserFormComponent, On
     }
 
     private initSubscriptions(): void {
-        this.imagePreviewUrl$ = this.detailsForm.controls.photo.valueChanges.pipe(
+        this.imagePreview$ = this.detailsForm.controls.photo.valueChanges.pipe(
             startWith(this.detailsForm.controls.photo.value),
-            map((file: File | null) => {
-                if (!file) {
-                    return DEFAULT_PHOTO_URL;
-                }
-                try {
-                    return URL.createObjectURL(file);
-                } catch (error) {
-                    console.error(error);
-                    return DEFAULT_PHOTO_URL;
-                }
-            })
+            map((file: LocalFile | File | null) => ({
+                name: file?.name || '',
+                url: fileUrl(file, DEFAULT_PHOTO_URL) as string
+            })),
         );
 
         this.cities$ = this.store.select(selectLocationCities);

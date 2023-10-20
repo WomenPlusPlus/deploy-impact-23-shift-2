@@ -15,12 +15,21 @@
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
-            <div class="h-72 mt-8 mb-4">
+            <div class="h-72 mt-8 mb-4 flex" *ngIf="imagePreview$ | async as imagePreview">
                 <img
-                    [src]="imagePreviewUrl$ | async"
+                    [src]="imagePreview.url"
+                    [title]="imagePreview.name"
                     class="h-full aspect-video object-center object-cover rounded"
                     alt="profile-picture"
                 />
+                <div>
+                    <fa-icon
+                        *ngIf="control.value"
+                        [icon]="faRemove"
+                        class="relative text-sm p-4 top-2 right-10 z-10 cursor-pointer"
+                        (click)="control.setValue(null)"
+                    ></fa-icon>
+                </div>
             </div>
         </fieldset>
         <fieldset
@@ -159,7 +168,7 @@
             *appLet="jobForm.controls.yearsOfExperience as control"
         >
             <label for="years-of-experience" class="mb-1"
-                >Years of experience<span class="text-red-400">*</span>:</label
+            >Years of experience<span class="text-red-400">*</span>:</label
             >
             <input
                 type="number"
@@ -224,7 +233,7 @@
             *appLet="jobForm.controls.seekLocations as control"
         >
             <label for="seek-locations" class="mb-1"
-                >Preferred locations (cities)<span class="text-red-400">*</span>:</label
+            >Preferred locations (cities)<span class="text-red-400">*</span>:</label
             >
             <div class="dropdown">
                 <input
@@ -379,6 +388,7 @@
                 (input)="onCVUpload($event)"
                 [class.input-error]="control.invalid && control.touched"
             />
+            <app-file-item *ngIf="control.value" [file]="control.value" class="my-2" (remove)="onCVRemove()"></app-file-item>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
@@ -399,6 +409,11 @@
                 (input)="onAttachmentsUpload($event)"
                 [class.input-error]="control.invalid && control.touched"
             />
+            <ul *ngIf="control.value.length" class="flex flex-wrap items-center gap-4 my-2">
+                <li *ngFor="let file of control.value; let i = index">
+                    <app-file-item [file]="file" (remove)="onAttachmentRemove(i)"></app-file-item>
+                </li>
+            </ul>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
@@ -414,6 +429,7 @@
                 (input)="onVideoUpload($event)"
                 [class.input-error]="control.invalid && control.touched"
             />
+            <app-file-item *ngIf="control.value" [file]="control.value" class="my-2" (remove)="onVideoRemove()"></app-file-item>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
