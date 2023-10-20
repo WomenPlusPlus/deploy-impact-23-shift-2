@@ -7,12 +7,12 @@
 * [Site Map](#dart-site-map)
 * [Wireframes - current and future](#art-wireframes---current-and-future)
 * [Architecture](#sparkles-architecture)
-* [Database](#gamedie-database)
+* [Database](#game_die-database)
 * [Development](#packagedevelopment)
 * [Third-party libraries](#books-third-party-libraries)
 * [License file](#memo-license-file)
 * [Getting started](#computer-getting-started)
-* [Team members](#womantechnologist-team-members-mantechnologist)
+* [Team members](#woman_technologist-team-members-man_technologist)
 * [Further development](#pushpin-further-development)
 <!-- TOC -->
 
