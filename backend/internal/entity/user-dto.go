@@ -2,7 +2,6 @@ package entity
 
 import (
 	"fmt"
-	"github.com/neox5/go-formdata"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/neox5/go-formdata"
 )
 
 type CreateUserRequest struct {
@@ -297,7 +298,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")

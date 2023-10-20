@@ -1,11 +1,12 @@
 package api
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"shift/internal/entity"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
 func (s *APIServer) initUserRoutes(router *mux.Router) {
@@ -75,14 +76,14 @@ func (s *APIServer) handleViewUser(w http.ResponseWriter, r *http.Request) error
 	return WriteJSONResponse(w, http.StatusOK, user)
 }
 
-func (s *APIServer) handleDeleteUser(w http.ResponseWriter, _ *http.Request) error {
+func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
 	// TODO:
-	//idStr := mux.Vars(r)["id"]
-	//id, _ := strconv.Atoi(idStr)
-	//
-	//if _, err := s.userDB.GetUserByID(id); err != nil {
-	//	return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
-	//}
+	idStr := mux.Vars(r)["id"]
+	id, _ := strconv.Atoi(idStr)
+
+	if _, err := s.userDB.GetUserById(id); err != nil {
+		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	}
 
 	return WriteJSONResponse(w, http.StatusOK, "User deleted successfully")
 }
