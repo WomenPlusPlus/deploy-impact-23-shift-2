@@ -12,7 +12,7 @@
 * [Third-party libraries](#books-third-party-libraries)
 * [License file](#memo-license-file)
 * [Getting started](#computer-getting-started)
-* [Team members :man_technologist:](#womantechnologist-team-members-mantechnologist)
+* [Team members](#womantechnologist-team-members-mantechnologist)
 * [Further development](#pushpin-further-development)
 <!-- TOC -->
 
