@@ -385,6 +385,26 @@ func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, 
 	return user, nil
 }
 
+func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.editUser(tx, id, user)
+	if err != nil {
+		return nil, err
+	}
+	res, err := pdb.getUserById(tx, userId)
+	if err != nil {
+		logrus.Errorf("getting edited user from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit user update in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
 func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -398,7 +418,7 @@ func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.Association
 	query := `insert into association_users (user_id, association_id, role)
 				values (:user_id, :association_id, :role)
 				returning id`
-	associationUserId, err := InsertQuery(tx, query, associationUser)
+	associationUserId, err := PreparedQuery(tx, query, associationUser)
 	if err != nil {
 		logrus.Debugf("failed to insert association user in db: %v", err)
 		return nil, err
@@ -410,6 +430,37 @@ func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.Association
 	}
 	if err := tx.Commit(); err != nil {
 		logrus.Errorf("failed to commit association user creation in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (pdb *PostgresDB) EditAssociationUser(id int, associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.editUser(tx, id, associationUser.UserEntity)
+	if err != nil {
+		return nil, err
+	}
+	associationUser.UserID = userId
+
+	query := `update association_users
+				set association_id=:association_id, role=:role
+				where user_id=:user_id
+				returning id`
+	associationUserId, err := PreparedQuery(tx, query, associationUser)
+	if err != nil {
+		logrus.Debugf("failed to edit association user in db: %v", err)
+		return nil, err
+	}
+	res, err := pdb.getAssociationUserById(tx, associationUserId)
+	if err != nil {
+		logrus.Errorf("getting edited association user from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit association user update in db: %v", err)
 		return nil, err
 	}
 	return res, nil
@@ -451,7 +502,7 @@ func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*enti
 					:notice_period
 				)
 				returning id`
-	candidateId, err := InsertQuery(tx, query, candidate)
+	candidateId, err := PreparedQuery(tx, query, candidate)
 	if err != nil {
 		logrus.Debugf("failed to insert candidate in db: %v", err)
 		return nil, err
@@ -463,6 +514,46 @@ func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*enti
 	}
 	if err := tx.Commit(); err != nil {
 		logrus.Errorf("failed to commit candidate creation in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (pdb *PostgresDB) EditCandidate(id int, candidate *entity.CandidateEntity) (*entity.CandidateEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.editUser(tx, id, candidate.UserEntity)
+	if err != nil {
+		return nil, err
+	}
+	candidate.UserID = userId
+
+	query := `update candidates
+				set user_id=:user_id,
+					years_of_experience=:years_of_experience,
+					job_status=:job_status,
+					seek_job_type=:seek_job_type,
+					seek_company_size=:seek_company_size,
+					seek_location_type=:seek_location_type,
+					seek_salary=:seek_salary,
+					seek_values=:seek_values,
+					work_permit=:work_permit,
+					notice_period=:notice_period
+				where user_id=:user_id
+				returning id`
+	candidateId, err := PreparedQuery(tx, query, candidate)
+	if err != nil {
+		logrus.Debugf("failed to edit candidate in db: %v", err)
+		return nil, err
+	}
+	res, err := pdb.getCandidateById(tx, candidateId)
+	if err != nil {
+		logrus.Errorf("getting edited candidate from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit candidate update in db: %v", err)
 		return nil, err
 	}
 	return res, nil
@@ -481,7 +572,7 @@ func (pdb *PostgresDB) CreateCompanyUser(companyUser *entity.CompanyUserEntity) 
 	query := `insert into company_users (user_id, company_id, role)
 				values (:user_id, :company_id, :role)
 				returning id`
-	companyUserId, err := InsertQuery(tx, query, companyUser)
+	companyUserId, err := PreparedQuery(tx, query, companyUser)
 	if err != nil {
 		logrus.Debugf("failed to insert company user in db: %v", err)
 		return nil, err
@@ -489,6 +580,37 @@ func (pdb *PostgresDB) CreateCompanyUser(companyUser *entity.CompanyUserEntity) 
 	res, err := pdb.getCompanyUserById(tx, companyUserId)
 	if err != nil {
 		logrus.Errorf("getting added company user from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit company user creation in db: %v", err)
+		return nil, err
+	}
+	return res, nil
+}
+
+func (pdb *PostgresDB) EditCompanyUser(id int, companyUser *entity.CompanyUserEntity) (*entity.CompanyUserEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	userId, err := pdb.editUser(tx, id, companyUser.UserEntity)
+	if err != nil {
+		return nil, err
+	}
+	companyUser.UserID = userId
+
+	query := `update company_users
+				set company_id=:company_id, role=:role
+				where user_id=:user_id
+				returning id`
+	companyUserId, err := PreparedQuery(tx, query, companyUser)
+	if err != nil {
+		logrus.Debugf("failed to edit company user in db: %v", err)
+		return nil, err
+	}
+	res, err := pdb.getCompanyUserById(tx, companyUserId)
+	if err != nil {
+		logrus.Errorf("getting edited company user from db: %v", err)
 		return nil, err
 	}
 	if err := tx.Commit(); err != nil {
@@ -1063,9 +1185,31 @@ func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int
 					:portfolio_url
 				)
 				returning id`
-	userId, err := InsertQuery(tx, query, user)
+	userId, err := PreparedQuery(tx, query, user)
 	if err != nil {
 		logrus.Debugf("failed to insert user in db: %v", err)
+		return 0, err
+	}
+	return userId, nil
+}
+
+func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity) (int, error) {
+	user.ID = id
+	query := `update users
+				set first_name=:first_name,
+					last_name=:last_name,
+					preferred_name=:preferred_name,
+					email=:email,
+					phone_number=:phone_number,
+					birth_date=:birth_date,
+					linkedin_url=:linkedin_url,
+					github_url=:github_url,
+					portfolio_url=:portfolio_url
+				where id=:id
+				returning id`
+	userId, err := PreparedQuery(tx, query, user)
+	if err != nil {
+		logrus.Debugf("failed to update user in db: %v", err)
 		return 0, err
 	}
 	return userId, nil

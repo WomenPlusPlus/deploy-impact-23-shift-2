@@ -13,9 +13,13 @@ type UserDB interface {
 	GetCandidateByUserId(int) (*UserItemView, error)
 	GetCompanyUserByUserId(int) (*UserItemView, error)
 	CreateUser(*UserEntity) (*UserEntity, error)
+	EditUser(int, *UserEntity) (*UserEntity, error)
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
+	EditAssociationUser(int, *AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
+	EditCandidate(int, *CandidateEntity) (*CandidateEntity, error)
 	CreateCompanyUser(*CompanyUserEntity) (*CompanyUserEntity, error)
+	EditCompanyUser(int, *CompanyUserEntity) (*CompanyUserEntity, error)
 	AssignUserPhoto(record *UserPhotoEntity) error
 	DeleteUserPhoto(userId int) error
 	GetCandidateSkills(candidateId int) (CandidateSkillsEntity, error)

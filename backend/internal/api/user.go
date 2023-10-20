@@ -25,6 +25,10 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Path("/{id}").
+		Handler(makeHTTPHandleFunc(s.handleEditUser)).
+		Methods(http.MethodPut)
+
+	router.Path("/{id}").
 		Handler(makeHTTPHandleFunc(s.handleDeleteUser)).
 		Methods(http.MethodDelete)
 
@@ -60,6 +64,8 @@ func (s *APIServer) handleListUsers(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (s *APIServer) handleViewUser(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("View user handler running")
+
 	idStr := mux.Vars(r)["id"]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -74,6 +80,29 @@ func (s *APIServer) handleViewUser(w http.ResponseWriter, r *http.Request) error
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, user)
+}
+
+func (s *APIServer) handleEditUser(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("Edit user handler running")
+
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		WriteErrorResponse(w, http.StatusBadRequest, "invalid value for parameter id")
+		return nil
+	}
+
+	req := new(entity.EditUserRequest)
+	if err := req.FromFormData(id, r); err != nil {
+		return BadRequestError{Message: err.Error()}
+	}
+
+	res, err := s.userService.EditUser(id, req)
+	if err != nil {
+		return InternalServerError{Message: err.Error()}
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, res)
 }
 
 func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
