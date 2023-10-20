@@ -8,6 +8,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { LocalFile } from '@app/common/models/files.model';
+import { fileUrl } from '@app/common/utils/file.util';
+import { faRemove } from '@fortawesome/free-solid-svg-icons';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
@@ -20,7 +23,7 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 })
 export class UserFormGenericComponent implements UserFormComponent, OnInit {
     form!: FormGroup<UserFormGroup>;
-    imagePreviewUrl$!: Observable<string>;
+    imagePreview$!: Observable<LocalFile>;
 
     get detailsForm(): UserFormGroup['details'] {
         return this.form.controls.details;
@@ -36,7 +39,7 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
             ...value,
             details: {
                 ...value.details,
-                birthDate: value.details.birthDate && new Date(value.details.birthDate)
+                birthDate: value.details.birthDate && new Date(value.details.birthDate).toISOString()
             }
         };
     }
@@ -50,8 +53,10 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
     }
 
     onPhotoUpload(event: Event): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
         this.detailsForm.controls.photo.setValue(file || null);
+        input.value = '';
     }
 
     private initForm(): void {
@@ -81,8 +86,8 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
                     Validators.minLength(3),
                     Validators.maxLength(20)
                 ]),
-                birthDate: this.fb.control<Date | null>(null, [Validators.required]),
-                photo: this.fb.control<File | null>(null)
+                birthDate: this.fb.control<string | null>(null, [Validators.required]),
+                photo: this.fb.control<LocalFile | File | null>(null)
             }),
             social: this.fb.group({
                 linkedInUrl: this.fb.control<string | null>(null),
@@ -93,19 +98,14 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
     }
 
     private initSubscriptions(): void {
-        this.imagePreviewUrl$ = this.detailsForm.controls.photo.valueChanges.pipe(
+        this.imagePreview$ = this.detailsForm.controls.photo.valueChanges.pipe(
             startWith(this.detailsForm.controls.photo.value),
-            map((file: File | null) => {
-                if (!file) {
-                    return DEFAULT_PHOTO_URL;
-                }
-                try {
-                    return URL.createObjectURL(file);
-                } catch (error) {
-                    console.error(error);
-                    return DEFAULT_PHOTO_URL;
-                }
-            })
+            map((file: LocalFile | File | null) => ({
+                name: file?.name || '',
+                url: fileUrl(file, DEFAULT_PHOTO_URL) as string
+            })),
         );
     }
+
+    protected readonly faRemove = faRemove;
 }

@@ -8,6 +8,10 @@ const routes: Routes = [
     {
         path: 'create',
         loadComponent: () => import('./form/create-user.component').then((m) => m.CreateUserComponent)
+    },
+    {
+        path: ':id/edit',
+        loadComponent: () => import('./form/edit-user.component').then((m) => m.EditUserComponent)
     }
 ];
 
