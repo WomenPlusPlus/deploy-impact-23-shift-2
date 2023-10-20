@@ -2,18 +2,18 @@
 
 # :bookmark_tabs: Table of Contents
 <!-- TOC -->
-* [:bulb: Our Solution](#bulb-our-solution)
-* [:toolbox: Tech Stack](#toolbox-tech-stack)
-* [:dart: Site Map](#dart-site-map)
-* [:art: Wireframes - current and future](#art-wireframes---current-and-future)
-* [:sparkles: Architecture](#sparkles-architecture)
-* [:game_die: Database](#gamedie-database)
-* [:package:Development](#packagedevelopment)
-* [:books: Third-party libraries](#books-third-party-libraries)
-* [:memo: License file](#memo-license-file)
-* [:computer: Getting started](#computer-getting-started)
-* [:woman_technologist: Team members :man_technologist:](#womantechnologist-team-members-mantechnologist)
-* [:pushpin: Further development](#pushpin-further-development)
+* [Our Solution](#bulb-our-solution)
+* [Tech Stack](#toolbox-tech-stack)
+* [Site Map](#dart-site-map)
+* [Wireframes - current and future](#art-wireframes---current-and-future)
+* [Architecture](#sparkles-architecture)
+* [Database](#gamedie-database)
+* [Development](#packagedevelopment)
+* [Third-party libraries](#books-third-party-libraries)
+* [License file](#memo-license-file)
+* [Getting started](#computer-getting-started)
+* [Team members :man_technologist:](#womantechnologist-team-members-mantechnologist)
+* [Further development](#pushpin-further-development)
 <!-- TOC -->
 
 # :bulb: Our Solution
