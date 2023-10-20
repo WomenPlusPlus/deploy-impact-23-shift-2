@@ -36,6 +36,29 @@ func (s *UserService) CreateUser(req *entity.CreateUserRequest) (*entity.CreateU
 	}
 }
 
+func (s *UserService) EditUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	user, err := s.userDB.GetUserRecord(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting user record: %w", err)
+	}
+	if err := req.FillKindSpecificDetail(user.Kind); err != nil {
+		return nil, fmt.Errorf("filling kind specific data: %w", err)
+	}
+
+	switch user.Kind {
+	case entity.UserKindAdmin:
+		return s.editAdmin(id, req)
+	case entity.UserKindAssociation:
+		return s.editAssociationUser(id, req)
+	case entity.UserKindCandidate:
+		return s.editCandidate(id, req)
+	case entity.UserKindCompany:
+		return s.editCompanyUser(id, req)
+	default:
+		return nil, fmt.Errorf("unknown user kind: %s", req.Kind)
+	}
+}
+
 func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	users, err := s.userDB.GetAllUsers()
 	if err != nil {
@@ -300,6 +323,153 @@ func (s *UserService) createCompanyUser(req *entity.CreateUserRequest) (*entity.
 	}, nil
 }
 
+func (s *UserService) editAdmin(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	admin := new(entity.UserEntity)
+	if err := admin.FromCreationRequest(req.CreateUserRequest); err != nil {
+		return nil, fmt.Errorf("parsing request into admin entity: %w", err)
+	}
+	logrus.Tracef("Parsed admin entity: %+v", admin)
+
+	admin, err := s.userDB.EditUser(id, admin)
+	if err != nil {
+		return nil, fmt.Errorf("editing admin: %w", err)
+	}
+	logrus.Tracef("Edited admin on db: id=%d", admin.ID)
+
+	s.editUserPhoto(id, req)
+
+	return &entity.CreateUserResponse{
+		ID:     admin.ID,
+		UserID: admin.ID,
+	}, nil
+}
+
+func (s *UserService) editAssociationUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	associationUser := new(entity.AssociationUserEntity)
+	if err := associationUser.FromCreationRequest(req.CreateUserRequest); err != nil {
+		return nil, fmt.Errorf("parsing request into association user entity: %w", err)
+	}
+	logrus.Tracef("Parsed association user entity: %+v", associationUser)
+
+	associationUser, err := s.userDB.EditAssociationUser(id, associationUser)
+	if err != nil {
+		return nil, fmt.Errorf("editing new association user: %w", err)
+	}
+	logrus.Tracef("Edited association user to db: id=%d", associationUser.ID)
+
+	s.editUserPhoto(id, req)
+
+	return &entity.CreateUserResponse{
+		ID:     associationUser.ID,
+		UserID: associationUser.UserID,
+	}, nil
+}
+func (s *UserService) editCandidate(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	candidate := new(entity.CandidateEntity)
+	if err := candidate.FromCreationRequest(req.CreateUserRequest); err != nil {
+		return nil, fmt.Errorf("parsing request into candidate entity: %w", err)
+	}
+	logrus.Tracef("Parsed user entity: %+v", candidate.UserEntity)
+	logrus.Tracef("Parsed candidate entity: %+v", candidate)
+
+	candidate, err := s.userDB.EditCandidate(id, candidate)
+	if err != nil {
+		return nil, fmt.Errorf("editing new candidate: %w", err)
+	}
+	logrus.Tracef("Added candidate to db: id=%d", candidate.ID)
+
+	skills := make(entity.CandidateSkillsEntity, 0)
+	if err := skills.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
+		return nil, fmt.Errorf("parsing request into skills entity: %w", err)
+	}
+	logrus.Tracef("Parsed skills entity: %+v", skills)
+
+	spokenLanguages := make(entity.CandidateSpokenLanguagesEntity, 0)
+	if err := spokenLanguages.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
+		return nil, fmt.Errorf("parsing request into spoken languages entity: %w", err)
+	}
+	logrus.Tracef("Parsed spoken languages entity: %+v", spokenLanguages)
+
+	seekLocations := make(entity.CandidateSeekLocationsEntity, 0)
+	if err := seekLocations.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
+		return nil, fmt.Errorf("parsing request into seek locations entity: %w", err)
+	}
+	logrus.Tracef("Parsed seek locations entity: %+v", seekLocations)
+
+	educationHistoryList := make(entity.CandidateEducationHistoryListEntity, 0)
+	if err := educationHistoryList.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
+		return nil, fmt.Errorf("parsing request into education history list entity: %w", err)
+	}
+	logrus.Tracef("Parsed education history list entity: %+v", educationHistoryList)
+
+	employmentHistoryList := make(entity.CandidateEmploymentHistoryListEntity, 0)
+	if err := employmentHistoryList.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
+		return nil, fmt.Errorf("parsing request into employment history list entity: %w", err)
+	}
+	logrus.Tracef("Parsed employment history list entity: %+v", employmentHistoryList)
+
+	if err := s.userDB.AssignCandidateSkills(candidate.ID, skills); err != nil {
+		logrus.Errorf("editing new skills: %v", err)
+	} else {
+		logrus.Tracef("Edited skills to db: id=%d, total=%d", candidate.ID, len(skills))
+	}
+
+	if err := s.userDB.AssignCandidateSpokenLanguages(candidate.ID, spokenLanguages); err != nil {
+		logrus.Errorf("editing new spoken languages: %v", err)
+	} else {
+		logrus.Tracef("Edited spoken languages to db: id=%d, total=%d", candidate.ID, len(spokenLanguages))
+	}
+
+	if err := s.userDB.AssignCandidateSeekLocations(candidate.ID, seekLocations); err != nil {
+		logrus.Errorf("editing new seek locations: %v", err)
+	} else {
+		logrus.Tracef("Edited seek locations to db: id=%d, total=%d", candidate.ID, len(seekLocations))
+	}
+
+	if err := s.userDB.AssignCandidateEducationHistoryList(candidate.ID, educationHistoryList); err != nil {
+		logrus.Errorf("editing new education history list: %v", err)
+	} else {
+		logrus.Tracef("Edited education history list to db: id=%d, total=%d", candidate.ID, len(educationHistoryList))
+	}
+
+	if err := s.userDB.AssignCandidateEmploymentHistoryList(candidate.ID, employmentHistoryList); err != nil {
+		logrus.Errorf("editing new employment history list: %v", err)
+	} else {
+		logrus.Tracef("Edited employment history list to db: id=%d, total=%d", candidate.ID, len(employmentHistoryList))
+	}
+
+	s.editUserPhoto(id, req)
+	s.editCandidateCV(id, candidate.ID, req)
+	s.editCandidateAttachments(id, candidate.ID, req)
+	s.editCandidateVideo(id, candidate.ID, req)
+
+	return &entity.CreateUserResponse{
+		ID:     candidate.ID,
+		UserID: candidate.UserID,
+	}, nil
+}
+
+func (s *UserService) editCompanyUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	companyUser := new(entity.CompanyUserEntity)
+	if err := companyUser.FromCreationRequest(req.CreateUserRequest); err != nil {
+		return nil, fmt.Errorf("parsing request into company user entity: %w", err)
+	}
+	logrus.Tracef("Parsed company user entity: %+v", companyUser)
+
+	companyUser, err := s.userDB.EditCompanyUser(id, companyUser)
+	if err != nil {
+		return nil, fmt.Errorf("edited new company user: %w", err)
+	}
+	logrus.Tracef("Created company user to db: id=%d", companyUser.ID)
+
+	s.editUserPhoto(id, req)
+
+	return &entity.CreateUserResponse{
+		ID:     companyUser.ID,
+		UserID: companyUser.UserID,
+	}, nil
+}
+
 func (s *UserService) getAdminByUserId(id int) (*entity.ViewUserResponse, error) {
 	res := new(entity.ViewUserResponse)
 	admin, err := s.userDB.GetUserById(id)
@@ -438,6 +608,71 @@ func (s *UserService) getCompanyUserByUserId(id int) (*entity.ViewUserResponse, 
 	return res, nil
 }
 
+func (s *UserService) editUserPhoto(id int, req *entity.EditUserRequest) {
+	println(req.UpdatePhoto)
+	if !req.UpdatePhoto {
+		return
+	}
+	if err := s.deletePhoto(id); err != nil {
+		logrus.Errorf("deleting user image: %v", err)
+	}
+	logrus.Tracef("Deleted user image: id=%d", id)
+	if req.Photo != nil {
+		if err := s.savePhoto(id, req.Photo); err != nil {
+			logrus.Errorf("uploading user image: %v", err)
+		}
+		logrus.Tracef("Added user image: id=%d", id)
+	}
+}
+
+func (s *UserService) editCandidateCV(id, candidateId int, req *entity.EditUserRequest) {
+	if !req.UpdateCV {
+		return
+	}
+	if err := s.deleteCV(candidateId); err != nil {
+		logrus.Errorf("deleting candidate cv: %v", err)
+	}
+	logrus.Tracef("Deleted candidate cv: id=%d", id)
+	if req.CV != nil {
+		if err := s.saveCV(id, candidateId, req.CV); err != nil {
+			logrus.Errorf("uploading candidate cv: %v", err)
+		}
+		logrus.Tracef("Added candidate cv: id=%d", candidateId)
+	}
+}
+
+func (s *UserService) editCandidateAttachments(id, candidateId int, req *entity.EditUserRequest) {
+	if !req.UpdateAttachments {
+		return
+	}
+	if err := s.deleteAttachments(candidateId); err != nil {
+		logrus.Errorf("deleting candidate attachments: %v", err)
+	}
+	logrus.Tracef("Deleted candidate attachments: id=%d", id)
+	if req.Attachments != nil {
+		if err := s.saveAttachments(id, candidateId, req.Attachments); err != nil {
+			logrus.Errorf("uploading candidate attachments: %v", err)
+		}
+		logrus.Tracef("Added candidate attachments: id=%d", candidateId)
+	}
+}
+
+func (s *UserService) editCandidateVideo(id, candidateId int, req *entity.EditUserRequest) {
+	if !req.UpdateVideo {
+		return
+	}
+	if err := s.deleteVideo(candidateId); err != nil {
+		logrus.Errorf("deleting candidate video: %v", err)
+	}
+	logrus.Tracef("Deleted candidate video: id=%d", id)
+	if req.Video != nil {
+		if err := s.saveVideo(id, candidateId, req.Video); err != nil {
+			logrus.Errorf("uploading candidate video: %v", err)
+		}
+		logrus.Tracef("Added candidate video: id=%d", candidateId)
+	}
+}
+
 func (s *UserService) savePhoto(userId int, photoHeader *multipart.FileHeader) error {
 	path := fmt.Sprintf("%d/photo/%s", userId, photoHeader.Filename)
 	if err := s.uploadFile(path, photoHeader); err != nil {
@@ -448,6 +683,58 @@ func (s *UserService) savePhoto(userId int, photoHeader *multipart.FileHeader) e
 		return fmt.Errorf("storing photo to db: %v", err)
 	}
 	logrus.Tracef("Added photo to db: id=%d", userId)
+	return nil
+}
+
+func (s *UserService) deletePhoto(userId int) error {
+	if err := s.userDB.DeleteUserPhoto(userId); err != nil {
+		return fmt.Errorf("deleting photo from db: %v", err)
+	}
+	logrus.Tracef("Deleted photo from db: id=%d", userId)
+	path := fmt.Sprintf("%d/photo", userId)
+	if err := s.bucketDB.DeleteObjects(context.Background(), path); err != nil {
+		return fmt.Errorf("deleting photo: %w", err)
+	}
+	logrus.Tracef("Deleted photo from bucket: id=%d", userId)
+	return nil
+}
+
+func (s *UserService) deleteCV(candidateId int) error {
+	if err := s.userDB.DeleteCandidateCV(candidateId); err != nil {
+		return fmt.Errorf("deleting candidate cv from db: %v", err)
+	}
+	logrus.Tracef("Deleted candidate cv from db: id=%d", candidateId)
+	path := fmt.Sprintf("%d/cv", candidateId)
+	if err := s.bucketDB.DeleteObjects(context.Background(), path); err != nil {
+		return fmt.Errorf("deleting cv: %w", err)
+	}
+	logrus.Tracef("Deleted cv from bucket: id=%d", candidateId)
+	return nil
+}
+
+func (s *UserService) deleteAttachments(candidateId int) error {
+	if err := s.userDB.DeleteCandidateAttachments(candidateId); err != nil {
+		return fmt.Errorf("deleting candidate attachments from db: %v", err)
+	}
+	logrus.Tracef("Deleted candidate attachments from db: id=%d", candidateId)
+	path := fmt.Sprintf("%d/attachments", candidateId)
+	if err := s.bucketDB.DeleteObjects(context.Background(), path); err != nil {
+		return fmt.Errorf("deleting attachments: %w", err)
+	}
+	logrus.Tracef("Deleted attachments from bucket: id=%d", candidateId)
+	return nil
+}
+
+func (s *UserService) deleteVideo(candidateId int) error {
+	if err := s.userDB.DeleteCandidateVideo(candidateId); err != nil {
+		return fmt.Errorf("deleting candidate video from db: %v", err)
+	}
+	logrus.Tracef("Deleted candidate video from db: id=%d", candidateId)
+	path := fmt.Sprintf("%d/video", candidateId)
+	if err := s.bucketDB.DeleteObjects(context.Background(), path); err != nil {
+		return fmt.Errorf("deleting video: %w", err)
+	}
+	logrus.Tracef("Deleted video from bucket: id=%d", candidateId)
 	return nil
 }
 

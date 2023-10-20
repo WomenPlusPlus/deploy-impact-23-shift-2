@@ -11,7 +11,7 @@ type NamedQuerier interface {
 	PrepareNamed(query string) (*sqlx.NamedStmt, error)
 }
 
-func InsertQuery(tx NamedQuerier, query string, arg any) (int, error) {
+func PreparedQuery(tx NamedQuerier, query string, arg any) (int, error) {
 	stmt, err := tx.PrepareNamed(query)
 
 	var id int

@@ -14,6 +14,95 @@ import (
 	"github.com/neox5/go-formdata"
 )
 
+type EditUserRequest struct {
+	Id                int
+	UpdatePhoto       bool
+	UpdateCV          bool
+	UpdateAttachments bool
+	UpdateVideo       bool
+	fd                *formdata.FormData
+	*CreateUserRequest
+}
+
+func (u *EditUserRequest) FromFormData(id int, r *http.Request) error {
+	fd, err := formdata.Parse(r)
+	if err == formdata.ErrNotMultipartFormData {
+		return fmt.Errorf("unsupported media type: %w", err)
+	}
+	if err != nil {
+		log.Printf("unable to parse form data: %v", err)
+		return fmt.Errorf("unable to parse form data")
+	}
+
+	u.fd = fd
+	u.CreateUserRequest = new(CreateUserRequest)
+	if err := u.fromFormData(id, fd); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *EditUserRequest) FillKindSpecificDetail(kind string) error {
+	switch kind {
+	case UserKindAdmin:
+		return nil
+	case UserKindAssociation:
+		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
+		return u.fromFormDataAssociation(u.fd)
+	case UserKindCandidate:
+		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
+		return u.fromFormDataCandidate(u.fd)
+	case UserKindCompany:
+		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
+		return u.fromFormDataCompany(u.fd)
+	default:
+		return fmt.Errorf("unknown user kind: %s", u.Kind)
+	}
+}
+
+func (u *EditUserRequest) fromFormData(id int, fd *formdata.FormData) error {
+	fd.Validate("firstName").Required().HasN(1)
+	fd.Validate("lastName").Required().HasN(1)
+	fd.Validate("preferredName")
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("phoneNumber").Required().HasNMin(1)
+	fd.Validate("birthDate").Required().HasNMin(1)
+	fd.Validate("photo")
+	fd.Validate("linkedInUrl")
+	fd.Validate("githubUrl")
+	fd.Validate("portfolioUrl")
+
+	if fd.HasErrors() {
+		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
+	}
+
+	u.FirstName = fd.Get("firstName").First()
+	u.LastName = fd.Get("lastName").First()
+	u.PreferredName = fd.Get("preferredName").First()
+	u.Email = fd.Get("email").First()
+	u.PhoneNumber = fd.Get("phoneNumber").First()
+	u.Photo = fd.GetFile("photo").First()
+	u.LinkedInUrl = fd.Get("linkedInUrl").First()
+	u.GithubUrl = fd.Get("githubUrl").First()
+	u.PortfolioUrl = fd.Get("portfolioUrl").First()
+
+	birthDateStr := fd.Get("birthDate").First()
+	if birthDateStr != "" {
+		birthDate, err := time.Parse("2006-01-02T15:04:05Z07:00", birthDateStr)
+		if err != nil {
+			return fmt.Errorf("invalid birth date format: %v", err)
+		}
+		u.BirthDate = birthDate
+	}
+
+	u.Id = id
+	u.UpdatePhoto = fd.Exists("photo") || fd.FileExists("photo")
+	u.UpdateCV = fd.Exists("cv") || fd.FileExists("cv")
+	u.UpdateAttachments = fd.Exists("attachments") || fd.FileExists("attachments")
+	u.UpdateVideo = fd.Exists("video") || fd.FileExists("video")
+	return nil
+}
+
 type CreateUserRequest struct {
 	Kind                          string                `json:"kind"`
 	FirstName                     string                `json:"firstName"`
@@ -298,7 +387,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
