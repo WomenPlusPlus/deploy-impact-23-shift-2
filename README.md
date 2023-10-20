@@ -7,7 +7,7 @@
 * [:dart: Site Map](#dart-site-map)
 * [:art: Wireframes - current and future](#art-wireframes---current-and-future)
 * [:sparkles: Architecture](#sparkles-architecture)
-* [:game_die Database](#gamedie-database)
+* [:game_die: Database](#gamedie-database)
 * [:package:Development](#packagedevelopment)
 * [:books: Third-party libraries](#books-third-party-libraries)
 * [:memo: License file](#memo-license-file)
@@ -40,7 +40,7 @@
 * TODO
 * Link to the Miro board
 
-# :game_die Database
+# :game_die: Database
 * TODO
 * Link to the Miro board
 
