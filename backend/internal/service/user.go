@@ -65,7 +65,7 @@ func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	user, err := s.userDB.GetUserRecord(id)
 	if err != nil {
-		return nil, fmt.Errorf("getting associationUser record: %w", err)
+		return nil, fmt.Errorf("getting user record: %w", err)
 	}
 
 	switch user.Kind {
@@ -307,7 +307,9 @@ func (s *UserService) getAdminByUserId(id int) (*entity.ViewUserResponse, error)
 		return nil, fmt.Errorf("getting association user by user id: %w", err)
 	}
 	res.FromUserItemView(admin)
-	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	if res.Photo != nil {
+		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.Photo.Url)
+	}
 	return res, nil
 }
 
@@ -318,7 +320,9 @@ func (s *UserService) getAssociationUserByUserId(id int) (*entity.ViewUserRespon
 		return nil, fmt.Errorf("getting association by user id: %w", err)
 	}
 	res.FromUserItemView(associationUser)
-	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	if res.Photo != nil {
+		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.Photo.Url)
+	}
 	return res, nil
 }
 
@@ -372,10 +376,11 @@ func (s *UserService) getCandidateByUserId(id int) (*entity.ViewUserResponse, er
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate attachments by user id: %w", err)
 	}
-	res.AttachmentsUrl = make([]string, len(attachments))
+	res.Attachments = make([]*entity.LocalFile, len(attachments))
 	attachmentsCtx := context.Background()
 	for i, attachments := range attachments {
-		utils.SetSignedUrl(attachmentsCtx, s.bucketDB, &res.AttachmentsUrl[i], attachments.AttachmentUrl)
+		res.Attachments[i] = entity.NewLocalFile(&attachments.AttachmentUrl)
+		utils.ReplaceWithSignedUrl(attachmentsCtx, s.bucketDB, &res.Attachments[i].Url)
 	}
 
 	educationHistoryList, err := s.userDB.GetCandidateEducationHistoryList(res.CandidateId)
@@ -408,9 +413,15 @@ func (s *UserService) getCandidateByUserId(id int) (*entity.ViewUserResponse, er
 		}
 	}
 
-	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
-	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.CVUrl)
-	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.VideoUrl)
+	if res.Photo != nil {
+		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.Photo.Url)
+	}
+	if res.CV != nil {
+		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.CV.Url)
+	}
+	if res.Video != nil {
+		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.Video.Url)
+	}
 	return res, nil
 }
 
@@ -421,7 +432,9 @@ func (s *UserService) getCompanyUserByUserId(id int) (*entity.ViewUserResponse, 
 		return nil, fmt.Errorf("getting company user by user id: %w", err)
 	}
 	res.FromUserItemView(companyUser)
-	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.PhotoUrl)
+	if res.Photo != nil {
+		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.Photo.Url)
+	}
 	return res, nil
 }
 

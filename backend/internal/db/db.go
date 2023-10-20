@@ -88,6 +88,7 @@ func (s *PostgresDB) DeleteUser(id int) error {
 func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	users := []*entity.User{}
 	rows, err := s.db.Query("select * from users")
+	defer rows.Close()
 
 	if err != nil {
 		return nil, err
@@ -109,6 +110,7 @@ func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 				from users
 				where id = $1`
 	rows, err := s.db.Queryx(query, id)
+	defer rows.Close()
 
 	if err != nil {
 		return nil, err
@@ -171,6 +173,7 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 				left outer join candidate_videos on candidates.id = candidate_videos.candidate_id
     `
 	rows, err := pdb.db.Queryx(query)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching users in db: %w", err)
 	}
@@ -208,6 +211,7 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching user id=%d in db: %w", id, err)
 	}
@@ -249,6 +253,7 @@ func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*entity.UserItemView,
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching association user id=%d in db: %w", id, err)
 	}
@@ -301,6 +306,7 @@ func (pdb *PostgresDB) GetCandidateByUserId(id int) (*entity.UserItemView, error
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching candidate id=%d in db: %w", id, err)
 	}
@@ -342,6 +348,7 @@ func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, err
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching company user id=%d in db: %w", id, err)
 	}
@@ -515,6 +522,7 @@ func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkil
 	query := `select * from candidate_skills where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching skills for candidate in db: %w", err)
 	}
@@ -554,6 +562,7 @@ func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (entity.Cand
 	query := `select * from candidate_spoken_languages where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching spoken languages for candidate in db: %w", err)
 	}
@@ -593,6 +602,7 @@ func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (entity.Candid
 	query := `select * from candidate_seek_locations where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching seek locations for candidate in db: %w", err)
 	}
@@ -649,6 +659,7 @@ func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (entity.Candidat
 	query := `select * from candidate_attachments where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching attachments for candidate in db: %w", err)
 	}
@@ -705,6 +716,7 @@ func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (entity
 	query := `select * from candidate_education_history where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching education history for candidate in db: %w", err)
 	}
@@ -744,6 +756,7 @@ func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (entit
 	query := `select * from candidate_employment_history where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching employment history for candidate in db: %w", err)
 	}
@@ -937,6 +950,7 @@ func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, cand
 func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity, error) {
 	query := `select * from users where id = $1`
 	rows, err := tx.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get user with id=%d in db: %v", id, err)
 		return nil, err
@@ -959,6 +973,7 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 				inner join association_users on users.id = association_users.user_id
 				where association_users.id = $1`
 	rows, err := tx.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get association user with id=%d in db: %v", id, err)
 		return nil, err
@@ -981,6 +996,7 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 				inner join candidates on users.id = candidates.user_id
 				where candidates.id = $1`
 	rows, err := tx.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get candidate with id=%d in db: %v", id, err)
 		return nil, err
@@ -1003,6 +1019,7 @@ func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.Comp
 				inner join company_users on users.id = company_users.user_id
 				where company_users.id = $1`
 	rows, err := tx.Queryx(query, id)
+	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get company user with id=%d in db: %v", id, err)
 		return nil, err

@@ -119,18 +119,18 @@ type ListCompanyUserResponse struct {
 }
 
 type ViewUserResponse struct {
-	ID            int       `json:"id"`
-	Kind          string    `json:"kind"`
-	FirstName     string    `json:"firstName"`
-	LastName      string    `json:"lastName"`
-	PreferredName string    `json:"preferredName"`
-	Email         string    `json:"email"`
-	PhoneNumber   string    `json:"phoneNumber"`
-	BirthDate     time.Time `json:"birthDate"`
-	PhotoUrl      string    `json:"photoUrl"`
-	LinkedInUrl   string    `json:"linkedInUrl"`
-	GithubUrl     string    `json:"githubUrl"`
-	PortfolioUrl  string    `json:"portfolioUrl"`
+	ID            int        `json:"id"`
+	Kind          string     `json:"kind"`
+	FirstName     string     `json:"firstName"`
+	LastName      string     `json:"lastName"`
+	PreferredName string     `json:"preferredName"`
+	Email         string     `json:"email"`
+	PhoneNumber   string     `json:"phoneNumber"`
+	BirthDate     time.Time  `json:"birthDate"`
+	Photo         *LocalFile `json:"photo"`
+	LinkedInUrl   string     `json:"linkedInUrl"`
+	GithubUrl     string     `json:"githubUrl"`
+	PortfolioUrl  string     `json:"portfolioUrl"`
 
 	AssociationUserId int    `json:"associationUserId,omitempty"`
 	AssociationId     int    `json:"associationId,omitempty"`
@@ -150,7 +150,7 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.Email = e.Email
 	r.PhoneNumber = e.PhoneNumber
 	r.BirthDate = e.BirthDate
-	r.PhotoUrl = utils.SafeUnwrap(e.ImageUrl)
+	r.Photo = NewLocalFile(e.ImageUrl)
 	r.LinkedInUrl = e.LinkedInUrl
 	r.GithubUrl = e.GithubUrl
 	r.PortfolioUrl = e.PortfolioUrl
@@ -183,8 +183,8 @@ func (r *ViewUserResponse) FromCandidateItemView(e *CandidateItemView) {
 	r.SeekValues = utils.SafeUnwrap(e.SeekValues)
 	r.WorkPermit = utils.SafeUnwrap(e.WorkPermit)
 	r.NoticePeriod = utils.SafeUnwrap(e.NoticePeriod)
-	r.CVUrl = utils.SafeUnwrap(e.CVUrl)
-	r.VideoUrl = utils.SafeUnwrap(e.VideoUrl)
+	r.CV = NewLocalFile(e.CVUrl)
+	r.Video = NewLocalFile(e.VideoUrl)
 }
 
 func (r *ViewUserResponse) FromCompanyUserItemView(e *CompanyUserItemView) {
@@ -207,9 +207,9 @@ type ViewUserCandidateResponse struct {
 	NoticePeriod      int                     `json:"noticePeriod"`
 	SpokenLanguages   []UserSpokenLanguage    `json:"spokenLanguages"`
 	Skills            []UserSkill             `json:"skills"`
-	CVUrl             string                  `json:"cvUrl"`
-	AttachmentsUrl    []string                `json:"attachmentsUrl"`
-	VideoUrl          string                  `json:"videoUrl"`
+	CV                *LocalFile              `json:"cv"`
+	Attachments       []*LocalFile            `json:"attachments"`
+	Video             *LocalFile              `json:"video"`
 	EducationHistory  []UserEducationHistory  `json:"educationHistory"`
 	EmploymentHistory []UserEmploymentHistory `json:"employmentHistory"`
 }

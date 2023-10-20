@@ -13,6 +13,6 @@ docker-build:
 docker-run:
 	docker run -p $(PORT):$(PORT) $(BINARY_NAME)
 docker-run-db:
-	mkdir -p $(DATA_PATH) && docker run -d --rm --name shift2-db -v $(DATA_PATH):/var/lib/postgresql -p 5432:5432 -e POSTGRES_PASSWORD=shift2023 postgres
+	mkdir -p $(DATA_PATH) && docker run -d --rm --name shift2-db -v $(DATA_PATH):/var/lib/postgresql/data -p 5432:5432 -e POSTGRES_PASSWORD=shift2023 postgres
 clean:
 	rm -f bin/$(BINARY_NAME)
