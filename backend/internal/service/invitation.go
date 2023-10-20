@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"shift/internal/db"
 	"shift/internal/entity"
 
 	"github.com/sirupsen/logrus"
@@ -10,17 +9,17 @@ import (
 
 type InvitationService struct {
 	bucketDB     entity.BucketDB
-	invitationDB db.InvitationDB
+	invitationDB entity.InvitationDB
 }
 
-func NewInvitationService(bucketDB entity.BucketDB, invitationDB db.InvitationDB) *InvitationService {
+func NewInvitationService(bucketDB entity.BucketDB, invitationDB entity.InvitationDB) *InvitationService {
 	return &InvitationService{
 		bucketDB:     bucketDB,
 		invitationDB: invitationDB,
 	}
 }
 
-func (s *InvitationService) CreateInvitation(req *db.CreateInvitationRequest) (*db.CreateInvitationResponse, error) {
+func (s *InvitationService) CreateInvitation(req *entity.CreateInvitationRequest) (*entity.CreateInvitationResponse, error) {
 	switch req.Kind {
 	case entity.InvitationKindAdmin:
 		return s.createInvitation(req)
@@ -30,14 +29,14 @@ func (s *InvitationService) CreateInvitation(req *db.CreateInvitationRequest) (*
 
 }
 
-func (s *InvitationService) createInvitation(req *db.CreateInvitationRequest) (*db.CreateInvitationResponse, error) {
+func (s *InvitationService) createInvitation(req *entity.CreateInvitationRequest) (*entity.CreateInvitationResponse, error) {
 	invitation := new(entity.InvitationEntity)
 	if err := invitation.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into invitation entity: %w", err)
 	}
 	logrus.Tracef("Parsed invitation entity: %+v", invitation)
 
-	return &db.CreateInvitationResponse{
+	return &entity.CreateInvitationResponse{
 		ID:           invitation.ID,
 		InvitationID: invitation.ID,
 	}, nil

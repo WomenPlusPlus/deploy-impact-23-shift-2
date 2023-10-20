@@ -54,3 +54,7 @@ var (
 	WorkPermitNoWorkPermit      = "NO_WORK_PERMIT"
 	WorkPermitOther             = "OTHER"
 )
+
+var (
+	InvitationKindAdmin = "ADMIN"
+)

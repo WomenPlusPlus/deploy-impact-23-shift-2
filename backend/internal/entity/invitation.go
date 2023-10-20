@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"shift/internal/db"
 	"time"
 )
 
@@ -25,11 +24,7 @@ func NewInvitation(kind, email, subject, message string) *InvitationEntity {
 	}
 }
 
-func (i *InvitationEntity) FromCreationRequest(request *db.CreateInvitationRequest) error {
-	invitation := new(InvitationEntity)
-	if err := invitation.FromCreationRequest(request); err != nil {
-		return err
-	}
+func (i *InvitationEntity) FromCreationRequest(request *CreateInvitationRequest) error {
 	i.Kind = request.Kind
 	i.Role = request.Role
 	i.Email = request.Email

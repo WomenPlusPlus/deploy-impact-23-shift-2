@@ -1,4 +1,4 @@
-package db
+package entity
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ type CreateInvitationResponse struct {
 
 func (i *CreateInvitationRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("kind").Required().HasN(1)
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
 	fd.Validate("subject").Required().HasN(1)
 	fd.Validate("message").Required().HasN(1)
 
