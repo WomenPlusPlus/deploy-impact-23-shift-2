@@ -4,11 +4,11 @@
 <!-- TOC -->
 * [:bulb: Our Solution](#bulb-our-solution)
 * [:toolbox: Tech Stack](#toolbox-tech-stack)
-* [Site Map](#site-map)
-* [Wireframes - current and future](#wireframes---current-and-future)
-* [Architecture](#architecture)
-* [Database](#database)
-* [Development](#development)
+* [:dart: Site Map](#dart-site-map)
+* [:art: Wireframes - current and future](#art-wireframes---current-and-future)
+* [:sparkles: Architecture](#sparkles-architecture)
+* [:game_die Database](#gamedie-database)
+* [:package:Development](#packagedevelopment)
 * [:books: Third-party libraries](#books-third-party-libraries)
 * [:memo: License file](#memo-license-file)
 * [:computer: Getting started](#computer-getting-started)
@@ -28,23 +28,23 @@
 
 * TODO - Explain why
 
-# Site Map
+# :dart: Site Map
 * TODO
 * Link to the Miro board
 
-# Wireframes - current and future
+# :art: Wireframes - current and future
 * TODO
 * Link to the Figma file
  
-# Architecture
+# :sparkles: Architecture
 * TODO
 * Link to the Miro board
 
-# Database
+# :game_die Database
 * TODO
 * Link to the Miro board
 
-# Development
+# :package:Development
 * TODO
 
 # :books: Third-party libraries
