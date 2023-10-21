@@ -8,12 +8,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s *APIServer) initAssociationrRoutes(router *mux.Router) {
+func (s *APIServer) initAssociationRoutes(router *mux.Router) {
 	router = router.PathPrefix("/associations").Subrouter()
 
 	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleCreateAssociation)).
 		Methods(http.MethodGet)
+	router.Path("/all").
+		Handler(makeHTTPHandleFunc(s.handleListAssociations)).
+		Methods(http.MethodGet)
+	// router.Path("/all/delete/{id}").
+	// 	Handler(makeHTTPHandleFunc(s.handleDeleteAssociations)).
+	// 	Methods(http.MethodGet)
 }
 
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
@@ -42,3 +48,14 @@ func (s *APIServer) handleListAssociations(w http.ResponseWriter, r *http.Reques
 
 	return WriteJSONResponse(w, http.StatusOK, res)
 }
+
+// func (s *APIServer) handleDeleteAssociations(w http.ResponseWriter, r *http.Request) error {
+// 	logrus.Debugln("Delete associations handler is running")
+
+// 	res, err := s.associationService.DeleteAssociation()
+// 	if err != nil {
+// 		return InternalServerError{Message: err.Error()}
+// 	}
+
+// 	return WriteJSONResponse(w, http.StatusOK, res)
+// }
