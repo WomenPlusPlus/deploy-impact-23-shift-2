@@ -23,6 +23,12 @@ import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-la
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { SelectSingleComponent } from '@app/ui/select-single/select-single.component';
 
+const DEFAULT_INVITATION_SUBJECT = 'You have been invited to Shift2';
+const DEFAULT_INVITATION_MESSAGE = `We are very excited for you to join our platform Shift2 - a gateway to discover new professional opportunities.\n
+Click the link below to register your account and you can start exploring, connecting and expanding your network.\n
+Thanks,
+Shift2 Team`;
+
 @Component({
     selector: 'app-create-invite',
     standalone: true,
@@ -92,8 +98,16 @@ export class CreateInviteComponent implements OnInit, OnDestroy {
                 this.requiredIf(() => this.form?.controls.kind.value === UserKindEnum.ASSOCIATION)
             ]),
             email: this.fb.control('', [Validators.required, Validators.minLength(5), Validators.maxLength(512)]),
-            subject: this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(256)]),
-            message: this.fb.control('', [Validators.required, Validators.minLength(25), Validators.maxLength(1024)])
+            subject: this.fb.control(DEFAULT_INVITATION_SUBJECT, [
+                Validators.required,
+                Validators.minLength(3),
+                Validators.maxLength(256)
+            ]),
+            message: this.fb.control(DEFAULT_INVITATION_MESSAGE, [
+                Validators.required,
+                Validators.minLength(25),
+                Validators.maxLength(1024)
+            ])
         });
     }
 

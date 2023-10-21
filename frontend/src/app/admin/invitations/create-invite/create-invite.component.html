@@ -1,10 +1,10 @@
 <div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
     <ng-container *ngIf="!vm.submitted; else submittedContainer">
-        <h1 class="text-3xl mb-3">Send an invitation</h1>
+        <h1 class="text-3xl mb-5">Send an invitation</h1>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <fieldset id="kind" class="my-4 pr-5">
-                <span class="label">Select the kind of user:</span>
-                <ul class="flex flex-wrap gap-y-1 gap-x-8">
+            <fieldset id="kind" class="md:flex md:items-start w-full my-4 pr-5">
+                <span class="md:w-1/4 label">Select the kind of user:</span>
+                <ul class="md:w-3/4 flex flex-wrap gap-y-3 gap-x-8 py-2">
                     <li class="inline-block" *ngFor="let userKind of userKinds">
                         <input
                             [id]="'kind-' + userKind"
@@ -20,9 +20,9 @@
                     </li>
                 </ul>
             </fieldset>
-            <fieldset id="role" class="my-4 pr-5">
-                <span class="label">Select the role:</span>
-                <ul class="flex flex-wrap gap-y-1 gap-x-8">
+            <fieldset id="role" class="md:flex md:items-start w-full my-4 pr-5">
+                <span class="md:w-1/4 label">Select the role:</span>
+                <ul class="md:w-3/4 flex flex-wrap gap-y-3 gap-x-8 py-2">
                     <li class="inline-block" *ngFor="let userRole of userRoles">
                         <input
                             *appLet="form.controls.kind.value as kind"
@@ -42,86 +42,146 @@
             <ng-container *ngIf="form.controls.kind.value === userKindEnum.ASSOCIATION">
                 <fieldset
                     id="associations-field"
-                    class="form-control w-full my-4"
+                    class="md:flex md:items-start w-full my-4"
                     *appLet="form.controls.associationId as control"
                 >
-                    <label for="associations" class="my-4"> Select the association: </label>
-                    <app-select-single
-                        id="associations"
-                        [control]="control"
-                        [options]="vm.associations | createNewOption: form.controls.role.value === userRoleEnum.ADMIN"
-                        [searchKeys]="['name']"
-                        bindValue="id"
-                        bindLabel="name"
-                    ></app-select-single>
-                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
-                        {{ control.errors | formErrorMessage }}
-                    </span>
+                    <label for="associations" class="label md:w-1/4"> Select the association: </label>
+                    <div class="md:w-3/4 flex flex-col">
+                        <app-select-single
+                            id="associations"
+                            [control]="control"
+                            [options]="
+                                vm.associations | createNewOption: form.controls.role.value === userRoleEnum.ADMIN
+                            "
+                            [searchKeys]="['name']"
+                            bindValue="id"
+                            bindLabel="name"
+                        ></app-select-single>
+                        <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                            {{ control.errors | formErrorMessage }}
+                        </span>
+                    </div>
                 </fieldset>
             </ng-container>
             <ng-container *ngIf="form.controls.kind.value === userKindEnum.COMPANY">
                 <fieldset
                     id="companies-field"
-                    class="form-control w-full my-4"
+                    class="md:flex md:items-start w-full my-4"
                     *appLet="form.controls.companyId as control"
                 >
-                    <label for="companies" class="my-4"> Select the company: </label>
-                    <app-select-single
-                        id="companies"
-                        [control]="control"
-                        [options]="vm.companies | createNewOption: form.controls.role.value === userRoleEnum.ADMIN"
-                        [searchKeys]="['name']"
-                        bindValue="id"
-                        bindLabel="name"
-                    ></app-select-single>
-                    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
-                        {{ control.errors | formErrorMessage }}
-                    </span>
+                    <label for="companies" class="label md:w-1/4"> Select the company: </label>
+                    <div class="md:w-3/4 flex flex-col">
+                        <app-select-single
+                            id="companies"
+                            [control]="control"
+                            [options]="vm.companies | createNewOption: form.controls.role.value === userRoleEnum.ADMIN"
+                            [searchKeys]="['name']"
+                            bindValue="id"
+                            bindLabel="name"
+                        ></app-select-single>
+                        <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">
+                            {{ control.errors | formErrorMessage }}
+                        </span>
+                    </div>
                 </fieldset>
             </ng-container>
             <div class="divider"></div>
-            <fieldset id="edit-email" class="form-control w-full my-4" *appLet="form.controls.email as control">
-                <label for="email" class="mb-1">Email:</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    formControlName="email"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.email.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-email"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.email as control"
+            >
+                <label for="email" class="label md:w-1/4">Email:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        formControlName="email"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        form.controls.email.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-subject" class="form-control w-full my-4" *appLet="form.controls.subject as control">
-                <label for="subject" class="mb-1">Subject:</label>
-                <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    formControlName="subject"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.subject.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-subject"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.subject as control"
+            >
+                <label for="subject" class="label md:w-1/4">Subject:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        formControlName="subject"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        form.controls.subject.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-message" class="form-control w-full my-4" *appLet="form.controls.message as control">
-                <label for="message" class="mb-1">Message:</label>
-                <textarea
-                    id="message"
-                    name="message"
-                    formControlName="message"
-                    rows="5"
-                    class="textarea textarea-bordered resize-y"
-                    [class.textarea-error]="control.invalid && control.touched"
-                ></textarea>
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    form.controls.message.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-message"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.message as control"
+            >
+                <label for="message" class="label md:w-1/4">Message:</label>
+                <div class="md:w-3/4">
+                    <textarea
+                        id="message"
+                        name="message"
+                        formControlName="message"
+                        rows="8"
+                        class="w-full textarea textarea-bordered resize-y"
+                        [class.textarea-error]="control.invalid && control.touched"
+                    ></textarea>
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        form.controls.message.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
+            <details class="collapse collapse-arrow bg-base-200 mb-4 rounded-md">
+                <summary class="collapse-title text-xl font-medium">Preview of message</summary>
+                <div class="collapse-content">
+                    <div class="text-center bg-slate-800 p-8">
+                        <a
+                            class="tracking-wider btn btn-ghost normal-case text-xl mb-8 mx-auto"
+                            href="https://shift2-deployimpact.vercel.app/"
+                            >SHIFT 2</a
+                        >
+                        <div class="p-5 bg-white rounded-lg">
+                            <h3 class="text-2xl my-5 mx-auto">You have been invited to join Shift2 platform!</h3>
+                            <p class="mx-auto my-4 whitespace-pre-wrap max-w-sm md:max-w-lg">
+                                {{ form.controls.message.value }}
+                            </p>
+                            <a href="https://shift2-deployimpact.vercel.app/" class="btn btn-primary btn-wide my-8"
+                                >Accept Invitation</a
+                            >
+                            <p class="mb-4 text-sm">
+                                Not sure why you are receiving this? Visit
+                                <a href="https://shift2-deployimpact.vercel.app/">Shift2</a> for more information.
+                            </p>
+                            <p *ngIf="form.controls.email.value" class="mb-4 text-sm">
+                                This email was sent to {{ form.controls.email.value }}
+                            </p>
+                            <a
+                                class="tracking-wider btn btn-ghost normal-case text-xl"
+                                href="https://shift2-deployimpact.vercel.app/"
+                                >SHIFT 2</a
+                            >
+                            <p class="mt-8 mb-4 text-sm">
+                                <a href="https://shift2-deployimpact.vercel.app/">Privacy Policy</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </details>
             <button
                 class="btn btn-primary btn-wide float-right"
                 type="submit"
