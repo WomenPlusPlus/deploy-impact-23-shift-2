@@ -24,6 +24,7 @@ export class EditCompanyComponent implements OnInit {
     form!: FormGroup<CreateCompanyFormGroup>;
     profile$ = this.editCompanyStore.profile$;
     vm$: Observable<CreateCompanyState> = this.editCompanyStore.vm$;
+    previousName = '';
     previousPhotoURL = 'assets/profile-picture-default-creation.png';
     imageURL$!: Observable<string>;
 
@@ -86,6 +87,7 @@ export class EditCompanyComponent implements OnInit {
                         jobtypes: data.jobtypes,
                         expectation: data.expectation
                     });
+                    this.previousName = data.name;
                     this.previousPhotoURL = data.logo;
                 });
         } else {

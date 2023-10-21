@@ -24,6 +24,7 @@ export class EditAssociationComponent implements OnInit {
     form!: FormGroup<CreateAssociationFormGroup>;
     profile$ = this.editAssociationStore.profile$;
     vm$: Observable<CreateAssociationState> = this.editAssociationStore.vm$;
+    previousName = '';
     previousPhotoURL = 'assets/profile-picture-default-creation.png';
     imageURL$!: Observable<string>;
 
@@ -72,6 +73,7 @@ export class EditAssociationComponent implements OnInit {
                         url: data.url,
                         focus: data.focus
                     });
+                    this.previousName = data.name;
                     this.previousPhotoURL = data.logo;
                 });
         } else {
