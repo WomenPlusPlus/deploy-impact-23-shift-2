@@ -33,6 +33,12 @@ type Storage interface {
 	//UpdateCompany(*entity.Company) error
 	GetCompanies() ([]*entity.Company, error)
 	GetCompanyByID(int) (*entity.Company, error)
+
+	CreateJobListing(*entity.JobListing) error
+	DeleteJoblisting(int) error
+	//UpdateCompany(*entity.JobListing) error
+	GetJobListings() ([]*entity.JobListing, error)
+	GetJobListingByID(int) (*entity.JobListing, error)
 }
 
 // docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
@@ -62,6 +68,7 @@ func NewPostgresDB() *PostgresDB {
 func (db *PostgresDB) Init() {
 	db.createUserTable()
 	db.createCompanyTable()
+	db.createJobListingTable()
 }
 
 // CreateUserTable creates the "users" table if it does not exist.
@@ -335,11 +342,11 @@ func (s *PostgresDB) DeleteCompany(id int) error {
 //Job Listing
 
 func (db *PostgresDB) createJobListingTable() {
-	fmt.Println("in create job table ")
+	fmt.Println("in create joblisting table ")
 	query := `
 	CREATE TABLE IF NOT EXISTS joblisting (
 	id serial primary key,
-	company      integer REFERENCES company (id), 
+	company       integer,
 	title          varchar(200),
 	description    varchar(500),
 	skillsRequired varchar(200),
@@ -348,8 +355,105 @@ func (db *PostgresDB) createJobListingTable() {
 	salaryRange     varchar(55),
 	benefits      varchar(200),
 	startDate      timestamp,
+	createdByUser integer, 
+	active  boolean,
 	createdAt timestamp
-	)`
+	)` //company      integer REFERENCES company (id),
 	db.db.MustExec(query)
 
 }
+
+func (db *PostgresDB) CreateJobListing(jl *entity.JobListing) error {
+	fmt.Println("inCreateJobListing")
+	query := `INSERT INTO joblisting
+		(company,title,description,skillsRequired,languagesSpoken ,locationCity,salaryRange,benefits, startDate,createdByUser, active, createdAt)
+		values ($1, $2, $3, $4, $5, $6, $7, $8,$9, $10,$11,$12)`
+
+	tx := db.db.MustBegin()
+	tx.MustExec(
+		query,
+		jl.Company,
+		jl.Title,
+		jl.Description,
+		jl.SkillsRequired,
+		jl.LanguagesSpoken,
+		jl.LocationCity,
+		jl.SalaryRange,
+		jl.Benefits,
+		jl.StartDate,
+		jl.CreatedByUser,
+		jl.Active,
+		jl.CreatedAt)
+	tx.Commit()
+	return nil
+}
+
+func createJobListing(rows *sql.Rows) (*entity.JobListing, error) {
+	jobListing := new(entity.JobListing)
+
+	err := rows.Scan(
+		&jobListing.ID,
+		&jobListing.Company,
+		&jobListing.Title,
+		&jobListing.Description,
+		&jobListing.SkillsRequired,
+		&jobListing.LanguagesSpoken,
+		&jobListing.LocationCity,
+		&jobListing.SalaryRange,
+		&jobListing.Benefits,
+		&jobListing.StartDate,
+		&jobListing.CreatedByUser,
+		&jobListing.Active,
+		&jobListing.CreatedAt,
+	)
+
+	return jobListing, err
+}
+
+func (s *PostgresDB) GetJobListings() ([]*entity.JobListing, error) {
+	fmt.Println("In get job listings")
+	jobListings := []*entity.JobListing{}
+	rows, err := s.db.Query("select * from joblisting")
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		jobListing, err := createJobListing(rows)
+		if err != nil {
+			return nil, err
+		}
+		jobListings = append(jobListings, jobListing)
+	}
+
+	return jobListings, nil
+}
+
+func (s *PostgresDB) GetJobListingByID(id int) (*entity.JobListing, error) {
+	fmt.Println("GetJobListingByID ")
+	fmt.Println(id)
+	rows, err := s.db.Query("select * from joblisting where id = $1", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		return createJobListing(rows)
+	}
+
+	return nil, fmt.Errorf("joblisting with id: %d not found", id)
+}
+
+func (s *PostgresDB) DeleteJoblisting(id int) error {
+	fmt.Println("In DeleteJoblisting")
+	fmt.Println(id)
+	_, err := s.db.Query("delete from joblisting where id = $1", id)
+	return err
+}
+
+// func
+// UPDATE public.company
+// 	// SET id=?, companyname=?, linkedinurl=?, kununuurl=?, email=?, phone=?, logourl=?, country=?, city=?, postalcode=?, street=?, numberaddress=?, mission=?, "values"=?, jobtypes=?, createdat=?
+// 	// WHERE <condition>;

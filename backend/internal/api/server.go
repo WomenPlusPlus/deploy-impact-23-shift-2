@@ -44,8 +44,12 @@ func (s *APIServer) Run() {
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	router.HandleFunc("/users", makeHTTPHandleFunc(s.handleUsers))
+
 	router.HandleFunc("/companies", makeHTTPHandleFunc(s.handleCompanies))
-	router.HandleFunc("/company/{id}", makeHTTPHandleFunc(s.handleGetCompanyByID))
+	router.HandleFunc("/companies/{id}", makeHTTPHandleFunc(s.handleGetCompanyByID))
+
+	router.HandleFunc("/joblistings", makeHTTPHandleFunc(s.handleJobListings))
+	router.HandleFunc("/joblistings/{id}", makeHTTPHandleFunc(s.handleGetJobListingByID))
 
 	log.Println("JSON API Server is running on port", s.address)
 	http.ListenAndServe(s.address, router)
@@ -325,6 +329,104 @@ func (s *APIServer) handleDeleteCompany(w http.ResponseWriter, r *http.Request) 
 	}
 
 	if err := s.storage.DeleteCompany(id); err != nil {
+		return err
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, map[string]int{"deleted": id})
+}
+
+//JobListings
+
+func (s *APIServer) handleJobListings(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("In handleJobListings")
+
+	if r.Method == "GET" {
+		fmt.Println("In handleJobListings GET")
+
+		return s.handleGetJobListings(w, r)
+	}
+	if r.Method == "POST" {
+		fmt.Println("In handleJobListings POST")
+
+		return s.handleCreateJobListing(w, r)
+	}
+	return fmt.Errorf("method not allowed %s", r.Method)
+}
+
+func (s *APIServer) handleGetJobListings(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("In handleGetJobListings")
+	users, err := s.storage.GetJobListings()
+
+	if err != nil {
+		return err
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, users)
+}
+
+func (s *APIServer) handleCreateJobListing(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("in handleCreateJobListing ")
+
+	// companyRequest := new(entity.CreateCompanyRequest)
+	// fmt.Println("in handleCreateCompany 2")
+
+	// if err := json.NewDecoder(r.Body).Decode(companyRequest); err != nil {
+	// 	fmt.Println("in handleCreateCompany 3")
+
+	// 	return err
+	// }
+	// fmt.Println("in handleCreateCompany 4")
+
+	// company := entity.NewCompany(
+	// 	companyRequest.CompanyName,
+	// 	companyRequest.Email,
+	// )
+	jl := entity.NewJobListing(
+		"Job",
+		"description",
+	)
+
+	if err := s.storage.CreateJobListing(jl); err != nil {
+		return err
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, jl)
+}
+
+func (s *APIServer) handleGetJobListingByID(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("handleGetJobListingByID")
+	if r.Method == "GET" {
+		fmt.Println("In handleGetJobListingByID get")
+		id, err := getID(r)
+		fmt.Println(id)
+		if err != nil {
+			return err
+		}
+
+		jl, err := s.storage.GetJobListingByID(id)
+		if err != nil {
+			return err
+		}
+
+		return WriteJSONResponse(w, http.StatusOK, jl)
+	}
+
+	if r.Method == "DELETE" {
+		fmt.Println("In handleGetJobListingByID DELETE")
+		return s.handleDeleteJobListing(w, r)
+	}
+
+	return fmt.Errorf("method not allowed %s", r.Method)
+}
+
+func (s *APIServer) handleDeleteJobListing(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("In handleDeleteJobListing")
+	id, err := getID(r)
+	if err != nil {
+		return err
+	}
+
+	if err := s.storage.DeleteJoblisting(id); err != nil {
 		return err
 	}
 
