@@ -6,11 +6,11 @@ This guide will help you set up a Go development environment using Visual Studio
 
 ## Table of Contents
 
-- [Install and Configure Go in VSCode](#install-and-configure-go-in-vscode)
-- [Install Docker](#install-docker)
-- [Create a Makefile](#create-a-makefile)
-- [Install PostgreSQL with Docker](#install-postgresql-with-docker)
-- [Run a Go Program using Make](#run-a-go-program-using-make)
+-   [Install and Configure Go in VSCode](#install-and-configure-go-in-vscode)
+-   [Install Docker](#install-docker)
+-   [Create a Makefile](#create-a-makefile)
+-   [Install PostgreSQL with Docker](#install-postgresql-with-docker)
+-   [Run a Go Program using Make](#run-a-go-program-using-make)
 
 ## Install and Configure Go in VSCode
 
@@ -43,30 +43,20 @@ docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -d -p 5432:5432 
 
 ## Run a Go Program using Make
 
-1. To build your Go application, open a terminal and navigate to your project directory, then run:
+1. Docker image generation:
 
 ```
-make build
+make docker-run-db
 ```
 
-2. To run your Go application:
+2. Run Go app locally:
 
 ```
 make run
 ```
 
-3. To build a Docker image of your Go application:
-
-```
-make docker-build
-```
-
-4. To run your Go application in a Docker container:
+or
 
 ```
 make docker-run
 ```
-
-This will start your Go application in a container and expose it on the specified port (8080 in this example).
-
-That's it! You've successfully set up a Go development environment with Docker and Make.

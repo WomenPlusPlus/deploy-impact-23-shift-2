@@ -1,0 +1,25 @@
+<div class="dropdown flex-grow">
+    <input
+        #searchInput
+        type="text"
+        [id]="id"
+        class="input input-bordered w-full"
+        [formControl]="searchControl"
+        [class.input-error]="(control.invalid && control.touched) || (searchControl.invalid && searchControl.touched)"
+        (keyup.escape)="searchInput.blur()"
+        (focus)="searchControl.reset()"
+        (change)="onDeselect()"
+    />
+    <ul
+        tabindex="0"
+        class="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box max-h-[32rem] overflow-auto flex-nowrap w-full"
+    >
+        <cdk-virtual-scroll-viewport itemSize="20" class="h-72">
+            <li *cdkVirtualFor="let result of options | filterFuse: searchControl.valueChanges : searchKeys">
+                <button type="button" (click)="onSelect(result.item)">
+                    {{ bindLabel ? result.item[bindLabel] : result.item }}
+                </button>
+            </li>
+        </cdk-virtual-scroll-viewport>
+    </ul>
+</div>

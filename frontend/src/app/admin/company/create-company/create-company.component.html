@@ -1,164 +1,218 @@
 <div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
     <ng-container *ngIf="!vm.submitted; else submittedContainer">
-        <h1 class="text-3xl mb-3">Create Company</h1>
+        <h1 class="text-3xl mb-5">Add a new Company</h1>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <fieldset id="edit-name" class="form-control w-full my-4" *appLet="form.controls.name as control">
-                <label for="name" class="mb-1">Company Name:</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    formControlName="name"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset id="edit-name" class="md:flex md:items-start w-full my-4" *appLet="form.controls.name as control">
+                <label for="name" class="md:w-1/4">Company Name:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        formControlName="name"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-address" class="form-control w-full my-4" *appLet="form.controls.address as control">
-                <label for="address" class="mb-1">Address:</label>
-                <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    formControlName="address"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-address"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.address as control"
+            >
+                <label for="address" class="md:w-1/4">Address:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        formControlName="address"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-logo" class="form-control w-full my-4" *appLet="form.controls.logo as control">
-                <label for="logo" class="mb-1">Logo:</label>
-                <input
-                    type="file"
-                    id="logo"
-                    name="logo"
-                    class="file-input file-input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                    (change)="onFileSelected($event)"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset id="edit-logo" class="md:flex md:items-start w-full my-4" *appLet="form.controls.logo as control">
+                <label for="logo" class="md:w-1/4">Logo:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="file"
+                        id="logo"
+                        name="logo"
+                        class="w-full file-input file-input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                        (change)="onFileSelected($event)"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-linkedin" class="form-control w-full my-4" *appLet="form.controls.linkedin as control">
-                <label for="linkedin" class="mb-1">LinkedIn URL:</label>
-                <input
-                    type="text"
-                    id="linkedin"
-                    name="linkedin"
-                    formControlName="linkedin"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-linkedin"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.linkedin as control"
+            >
+                <label for="linkedin" class="md:w-1/4">LinkedIn URL:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="text"
+                        id="linkedin"
+                        name="linkedin"
+                        formControlName="linkedin"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-kununu" class="form-control w-full my-4" *appLet="form.controls.kununu as control">
-                <label for="kununu" class="mb-1">Kununu URL:</label>
-                <input
-                    type="text"
-                    id="kununu"
-                    name="kununu"
-                    formControlName="kununu"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-kununu"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.kununu as control"
+            >
+                <label for="kununu" class="md:w-1/4">Kununu URL:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="text"
+                        id="kununu"
+                        name="kununu"
+                        formControlName="kununu"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-phone" class="form-control w-full my-4" *appLet="form.controls.phone as control">
-                <label for="phone" class="mb-1">Phone Number:</label>
-                <input
-                    type="text"
-                    id="phone"
-                    name="phone"
-                    formControlName="phone"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-phone"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.phone as control"
+            >
+                <label for="phone" class="md:w-1/4">Phone Number:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        formControlName="phone"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-email" class="form-control w-full my-4" *appLet="form.controls.email as control">
-                <label for="email" class="mb-1">Email:</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    formControlName="email"
-                    class="input input-bordered"
-                    [class.input-error]="control.invalid && control.touched"
-                />
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-email"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.email as control"
+            >
+                <label for="email" class="md:w-1/4">Email:</label>
+                <div class="md:w-3/4">
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        formControlName="email"
+                        class="w-full input input-bordered"
+                        [class.input-error]="control.invalid && control.touched"
+                    />
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-mission" class="form-control w-full my-4" *appLet="form.controls.mission as control">
-                <label for="mission" class="mb-1">Company Mission:</label>
-                <textarea
-                    id="mission"
-                    name="mission"
-                    formControlName="mission"
-                    rows="5"
-                    class="textarea textarea-bordered resize-y"
-                    [class.textarea-error]="control.invalid && control.touched"
-                ></textarea>
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-mission"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.mission as control"
+            >
+                <label for="mission" class="md:w-1/4">Company Mission:</label>
+                <div class="md:w-3/4">
+                    <textarea
+                        id="mission"
+                        name="mission"
+                        formControlName="mission"
+                        rows="5"
+                        class="w-full textarea textarea-bordered resize-y"
+                        [class.textarea-error]="control.invalid && control.touched"
+                    ></textarea>
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-values" class="form-control w-full my-4" *appLet="form.controls.values as control">
-                <label for="values" class="mb-1">Company Values:</label>
-                <textarea
-                    id="values"
-                    name="values"
-                    formControlName="values"
-                    rows="5"
-                    class="textarea textarea-bordered resize-y"
-                    [class.textarea-error]="control.invalid && control.touched"
-                ></textarea>
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-values"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.values as control"
+            >
+                <label for="values" class="md:w-1/4">Company Values:</label>
+                <div class="md:w-3/4">
+                    <textarea
+                        id="values"
+                        name="values"
+                        formControlName="values"
+                        rows="5"
+                        class="w-full textarea textarea-bordered resize-y"
+                        [class.textarea-error]="control.invalid && control.touched"
+                    ></textarea>
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
-            <fieldset id="edit-jobtypes" class="form-control w-full my-4" *appLet="form.controls.jobtypes as control">
-                <label for="jobtypes" class="mb-1">Job Types:</label>
-                <textarea
-                    id="jobtypes"
-                    name="jobtypes"
-                    formControlName="jobtypes"
-                    rows="5"
-                    class="textarea textarea-bordered resize-y"
-                    [class.textarea-error]="control.invalid && control.touched"
-                ></textarea>
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+            <fieldset
+                id="edit-jobtypes"
+                class="md:flex md:items-start w-full my-4"
+                *appLet="form.controls.jobtypes as control"
+            >
+                <label for="jobtypes" class="md:w-1/4">Job Types:</label>
+                <div class="md:w-3/4">
+                    <textarea
+                        id="jobtypes"
+                        name="jobtypes"
+                        formControlName="jobtypes"
+                        rows="5"
+                        class="w-full textarea textarea-bordered resize-y"
+                        [class.textarea-error]="control.invalid && control.touched"
+                    ></textarea>
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
             <fieldset
                 id="edit-expectation"
-                class="form-control w-full my-4"
+                class="md:flex md:items-start w-full my-4"
                 *appLet="form.controls.expectation as control"
             >
-                <label for="expectation" class="mb-1">Expectations we offer:</label>
-                <textarea
-                    id="expectation"
-                    name="expectation"
-                    formControlName="expectation"
-                    rows="5"
-                    class="textarea textarea-bordered resize-y"
-                    [class.textarea-error]="control.invalid && control.touched"
-                ></textarea>
-                <span class="text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                    control.errors | formErrorMessage
-                }}</span>
+                <label for="expectation" class="md:w-1/4">Expectations we offer:</label>
+                <div class="md:w-3/4">
+                    <textarea
+                        id="expectation"
+                        name="expectation"
+                        formControlName="expectation"
+                        rows="5"
+                        class="w-full textarea textarea-bordered resize-y"
+                        [class.textarea-error]="control.invalid && control.touched"
+                    ></textarea>
+                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                        control.errors | formErrorMessage
+                    }}</span>
+                </div>
             </fieldset>
             <button
                 class="btn btn-primary btn-wide float-right"

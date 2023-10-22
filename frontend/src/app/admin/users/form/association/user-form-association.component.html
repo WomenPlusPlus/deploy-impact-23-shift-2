@@ -1,0 +1,19 @@
+<fieldset
+    id="associations-field"
+    class="flex flex-col sm:flex-row sm:items-center gap-y-1 gap-x-4 w-full my-4"
+    *appLet="associationIdForm as control"
+>
+    <label for="associations" class="text-lg"> Select the user association<span class="text-red-400">*</span>: </label>
+    <app-select-single
+        id="associations"
+        [control]="control"
+        [options]="associations$ | async"
+        [searchKeys]="['name']"
+        bindValue="id"
+        bindLabel="name"
+    ></app-select-single>
+    <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+        {{ control.errors | formErrorMessage }}
+    </span>
+</fieldset>
+<app-user-form-generic></app-user-form-generic>
