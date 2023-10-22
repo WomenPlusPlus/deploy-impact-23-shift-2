@@ -4,94 +4,135 @@ import (
 	"time"
 )
 
-//Company
-
 type Company struct {
-	ID            int    `json:"id"`
-	CompanyName   string `json:"companyName"`
-	Linkedin      string `json:"linkedinUrl"`
-	Kununu        string `json:"kununuUrl"`
-	Email         string `json:"email"`
-	Phone         string `json:"phone"`
-	Logo          string `json:"logoUrl"`
-	Country       string `json:"country"`
-	City          string `json:"city"`
-	PostalCode    string `json:"postalCode"`
-	Street        string `json:"street"`
-	NumberAddress string `json:"numberAddress"`
-	Mission       string `json:"mission"`
-	Values        string `json:"values"`
-	JobTypes      string `json:"jobTypes"`
-	//Admin TODO
-	CreatedAt time.Time `json:"createdAt"`
+	ID                  int               `json:"id"`
+	CompanyName         string            `json:"companyName"`
+	LinkedinUrl         string            `json:"linkedinUrl"`
+	KununuUrl           string            `json:"kununuUrl"`
+	WebsiteUrl          string            `json:"websiteUrl"`
+	ContactPersonName   string            `json:"contactPersonName"`
+	Email               string            `json:"email"`
+	Phone               string            `json:"phone"`
+	LogoUrl             string            `json:"logoUrl"`
+	CompanySize         string            `json:"companySize"` //from predef list?
+	Country             string            `json:"country"`
+	AddressLine1        string            `json:"addressLine1"`
+	City                string            `json:"city"`
+	PostalCode          string            `json:"postalCode"`
+	Street              string            `json:"street"`
+	NumberAddress       string            `json:"number_address"`
+	AdditionalLocations []CompanyLocation `json:"additionalLocations"`
+	Mission             string            `json:"mission"`
+	Values              string            `json:"values"` // ? Type of field? should be from predefined?
+	SpokenLanguages     []SpokenLanguage  `json:"spokenLanguages"`
+	JobTypes            string            `json:"jobTypes"`
+	CreatedAt           time.Time         `json:"created_at"`
 }
 
-// // ComapnyDB is an interface for managing company data.
-// type CompanyDB interface {
-// 	CreateCompany(*Company) error
-// 	DeleteCompany(int) error
-// 	UpdateCompany(*Company) error
-// 	GetCompanies() ([]*Company, error)
-// 	GetCompanyByID(int) (*Company, error)
+func (u *CompanyEntity) FromCreationRequest(request *CreateCompanyRequest) error {
+	//todo
+	return nil
+}
+
+// ?
+// type CreateCompanyRequest struct {
+// 	CompanyName string `json:"companyName"`
+// 	Email       string `json:"email"`
+
 // }
 
-type CreateCompanyRequest struct {
-	CompanyName string `json:"companyName"`
-	Email       string `json:"email"`
-	//by ? association
-}
-
-func NewCompany(companyName, email string) *Company {
+func NewCompany(companyName, linkedinUrl, kununuUrl, email string,
+	createdAt time.Time,
+) *Company {
 	return &Company{
-		CompanyName:   companyName,
-		Email:         email,
-		CreatedAt:     time.Now().UTC(),
-		Linkedin:      "-",
-		Kununu:        "-",
-		Phone:         "-",
-		Logo:          "-",
-		Country:       "Switzerland",
-		City:          "Zurich",
-		PostalCode:    "8004",
-		Street:        "Teststrasse",
-		NumberAddress: "3",
-		Mission:       "-",
-		Values:        "-",
-		JobTypes:      "-",
+		ID:                  0,
+		CompanyName:         companyName,
+		LinkedinUrl:         linkedinUrl,
+		KununuUrl:           kununuUrl,
+		WebsiteUrl:          "-",
+		ContactPersonName:   "-",
+		Email:               email,
+		Phone:               "-",
+		Logo:                "-",
+		CompanySize:         "-",
+		Country:             "Switzerland",
+		AddressLine1:        "-",
+		City:                "Zurich",
+		PostalCode:          "8004",
+		Street:              "Teststrasse",
+		NumberAddress:       "",
+		AdditionalLocations: []CompanyLocation{},
+		Mission:             "-",
+		Values:              "-",
+		SpokenLanguages:     []SpokenLanguage{},
+		JobTypes:            "-",
+		CreatedAt:           time.Now().UTC(),
 	}
 }
 
-//Job Listing
+// tmp
+// func NewCompany(companyName, email string) *Company {
+// 	return &Company{
+// 		CompanyName:         companyName,
+// 		LinkedinUrl:         "-",
+// 		KununuUrl:           "-",
+// 		WebsiteUrl:          "-",
+// 		ContactName:         "-",
+// 		Email:               email,
+// 		Phone:               "-",
+// 		Logo:                "-",
+// 		CompanySize:         "-",
+// 		Country:             "Switzerland",
+// 		AddressLine1:        "-",
+// 		City:                "Zurich",
+// 		PostalCode:          "8004",
+// 		Street:              "Teststrasse",
+// 		NumberAddress:       "3",
+// 		AdditionalLocations: "-",
+// 		Mission:             "-",
+// 		Values:              "-",
+// 		JobTypes:            "-",
+// 		CreatedAt:           time.Now().UTC(),
+// 	}
+// }
 
-type JobListing struct {
-	ID              int       `json:"id"`
-	Company         int       `json:"companyId"`
-	Title           string    `json:"title"`
-	Description     string    `json:"description"`
-	SkillsRequired  string    `json:"skillsRequired"`
-	LanguagesSpoken string    `json:"languagesSpoken"`
-	LocationCity    string    `json:"locationCity"`
-	SalaryRange     string    `json:"salaryRange"`
-	Benefits        string    `json:"benefits"`
-	StartDate       time.Time `json:"startDate"`       // type?
-	CreatedByUser   int       `json:"createdByUserId"` // user ref company user
-	Active          bool      `json:"active"`
-	CreatedAt       time.Time `json:"createdAt"`
+type CompanyLocation struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
-func NewJobListing(title, description string) *JobListing {
-	return &JobListing{
-		Company:         1,
-		Title:           title,
-		Description:     description,
-		SkillsRequired:  "x",
-		LanguagesSpoken: "x",
-		LocationCity:    "x",
-		SalaryRange:     "x",
-		Benefits:        "x",
-		StartDate:       time.Date(2023, 11, 12, 0, 0, 0, 0, time.Local),
-		CreatedByUser:   1,
-		Active:          bool(true),
-		CreatedAt:       time.Now().UTC(),
+type SpokenLanguage struct {
+	Language Language `json:"language"`
+	Level    int      `json:"level"`
+}
+
+type Language struct {
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	ShortName string `json:"shortName"`
+}
+
+type JobSkill struct {
+	Name            string          `json:"name"`
+	ExperienceLevel ExperienceLevel `json:"experienceLevel"` // ? predef
+}
+
+// type ExperienceLevel{
+// 	//todo
+// 	Id        int    `json:"id"`
+// 	Level      string `json:"level "`
+// }
+
+type CompanyLogoEntity struct {
+	ID        int    `db:"id"`
+	CompanyID int    `db:"company_id"`
+	ImageUrl  string `db:"image_url"`
+	*CompanyEntity
+}
+
+func NewCompanyLogoEntity(companyId int, imageUrl string) *CompanyLogoEntity {
+	return &CompanyLogoEntity{
+		CompanyID: companyId,
+		ImageUrl:  imageUrl,
 	}
 }
