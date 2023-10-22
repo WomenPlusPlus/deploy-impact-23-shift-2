@@ -15,9 +15,7 @@ type AssociationEntity struct {
 }
 
 type AssociationLogoEntity struct {
-	ID            int                   `db:"id"`
-	AssociationID int                   `db:"association_id"`
-	Image         *multipart.FileHeader `db:"image"`
+	Logo *multipart.FileHeader `db:"image"`
 }
 
 type AssociationItemView struct {

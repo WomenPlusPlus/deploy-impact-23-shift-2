@@ -62,19 +62,19 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 	}, nil
 }
 
-// func (s *AssociationService) ListAssociations() ([]*entity.ListAssociationsResponse, error) {
-// 	associations, err := s.associationDB.GetAllAssociations()
-// 	if err != nil {
-// 		return nil, fmt.Errorf("getting all associations: %w", err)
-// 	}
-// 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
+func (s *AssociationService) ListAssociations() ([]*entity.ListAssociationsResponse, error) {
+	associations, err := s.associationDB.GetAllAssociations()
+	if err != nil {
+		return nil, fmt.Errorf("getting all associations: %w", err)
+	}
+	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-// 	// ctx := context.Background()
+	// ctx := context.Background()
 
-// 	res := new(entity.ListAssociationsResponse)
-// 	// res.FromAssociationView(associations)
-// 	return res, nil
-// }
+	res := new(entity.ListAssociationsResponse)
+	// res.FromAssociationView(associations)
+	return res, nil
+}
 
 // func (s *AssociationService) DeleteAssociation(id int) (*entity.ListUsersResponse, error) {
 // 	associations, err := s.associationDB.GetAllAssociations()

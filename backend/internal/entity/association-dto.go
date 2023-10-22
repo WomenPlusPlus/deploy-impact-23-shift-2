@@ -38,22 +38,22 @@ type ListAssociationResponse struct {
 	CreatedAt  time.Time             `json:"createdAt"`
 }
 
-// func (r *ListAssociationsResponse) FromAssociationView(v []*AssociationItemView) {
-// 	r.Items = make([]ListAssociationResponse, len(v))
-// 	for i, assoc := range v {
-// 		fmt.Println(assoc)
-// 		item := ListAssociationResponse{
-// 			ID:         assoc.ID,
-// 			Name:       assoc.Name,
-// 			Logo:       assoc.Logo,
-// 			WebsiteUrl: assoc.WebsiteUrl,
-// 			Focus:      assoc.Focus,
-// 			CreatedAt:  assoc.CreatedAt,
-// 		}
+func (r *ListAssociationsResponse) FromAssociationView(v []*AssociationItemView) {
+	r.Items = make([]ListAssociationResponse, len(v))
+	for i, assoc := range v {
+		fmt.Println(assoc)
+		item := ListAssociationResponse{
+			ID:         assoc.ID,
+			Name:       assoc.Name,
+			Logo:       assoc.Logo,
+			WebsiteUrl: assoc.WebsiteUrl,
+			Focus:      assoc.Focus,
+			CreatedAt:  assoc.CreatedAt,
+		}
 
-// 		r.Items[i] = item
-// 	}
-// }
+		r.Items[i] = item
+	}
+}
 
 func (a *CreateAssociationRequest) FromFormData(r *http.Request) error {
 	fd, err := formdata.Parse(r)
