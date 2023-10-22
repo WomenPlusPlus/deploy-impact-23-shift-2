@@ -50,43 +50,36 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 		}
 	}
 
-	// Name       string                `json:"name"`
-	// Logo       *multipart.FileHeader `json:"logo"`
-	// WebsiteUrl string                `json:"websiteUrl"`
-	// Focus      string                `json:"focus"`
-	// CreatedAt  time.Time             `json:"createdAt"`
-
 	return &entity.CreateAssociationResponse{
 		ID:            association.ID,
 		AssociationID: association.ID,
 	}, nil
 }
 
-func (s *AssociationService) ListAssociations() ([]*entity.ListAssociationsResponse, error) {
+func (s *AssociationService) ListAssociations() (*entity.ListAssociationsResponse, error) {
 	associations, err := s.associationDB.GetAllAssociations()
 	if err != nil {
 		return nil, fmt.Errorf("getting all associations: %w", err)
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	// ctx := context.Background()
-
 	res := new(entity.ListAssociationsResponse)
-	// res.FromAssociationView(associations)
+	res.FromAssociationsView(associations)
+
 	return res, nil
 }
 
-// func (s *AssociationService) DeleteAssociation(id int) (*entity.ListUsersResponse, error) {
-// 	associations, err := s.associationDB.GetAllAssociations()
-// 	if err != nil {
-// 		return nil, fmt.Errorf("getting all associations: %w", err)
-// 	}
-// 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
+func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociationsResponse, error) {
+	associations, err := s.associationDB.GetAllAssociations()
+	if err != nil {
+		return nil, fmt.Errorf("getting all associations: %w", err)
+	}
+	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-// 	res := new(entity.ListUsersResponse)
+	res := new(entity.ListAssociationsResponse)
 
-// 	return res, nil
-// }
+	return res, nil
+}
 
 func (s *AssociationService) saveLogo(associationId int, logoHeader *multipart.FileHeader) error {
 	path := fmt.Sprintf("%d/logo/%s", associationId, logoHeader.Filename)

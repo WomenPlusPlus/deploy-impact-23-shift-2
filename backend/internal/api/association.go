@@ -9,17 +9,22 @@ import (
 )
 
 func (s *APIServer) initAssociationRoutes(router *mux.Router) {
-	router = router.PathPrefix("/admin/associations").Subrouter()
+	router = router.PathPrefix("/associations").Subrouter()
 
 	router.Path("/create").
 		Handler(makeHTTPHandleFunc(s.handleCreateAssociation)).
 		Methods(http.MethodPost)
+
 	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleListAssociations)).
 		Methods(http.MethodGet)
+
 	// router.Path("/all/delete/{id}").
 	// 	Handler(makeHTTPHandleFunc(s.handleDeleteAssociations)).
 	// 	Methods(http.MethodGet)
+
+	// router.Use(AuthenticationMiddleware)
+	// router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {

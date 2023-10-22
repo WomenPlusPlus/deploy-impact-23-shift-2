@@ -5,6 +5,7 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"shift/internal/utils"
 	"strings"
 	"time"
 
@@ -22,7 +23,6 @@ type CreateAssociationRequest struct {
 type CreateAssociationResponse struct {
 	ID            int `json:"id"`
 	AssociationID int `json:"associationID"`
-	*CreateAssociationRequest
 }
 
 type ListAssociationsResponse struct {
@@ -30,22 +30,21 @@ type ListAssociationsResponse struct {
 }
 
 type ListAssociationResponse struct {
-	ID         int                   `json:"id"`
-	Name       string                `json:"name"`
-	Logo       *multipart.FileHeader `json:"logo"`
-	WebsiteUrl string                `json:"websiteUrl"`
-	Focus      string                `json:"focus"`
-	CreatedAt  time.Time             `json:"createdAt"`
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	ImageUrl   string `json:"imageUrl,omitempty"`
+	WebsiteUrl string `json:"websiteUrl,omitempty"`
+	Focus      string `json:"focus"`
+	CreatedAt  string `json:"createdAt,omitempty"`
 }
 
-func (r *ListAssociationsResponse) FromAssociationView(v []*AssociationItemView) {
+func (r *ListAssociationsResponse) FromAssociationsView(v []*AssociationItemView) {
 	r.Items = make([]ListAssociationResponse, len(v))
 	for i, assoc := range v {
-		fmt.Println(assoc)
 		item := ListAssociationResponse{
-			ID:         assoc.ID,
+			ID:         assoc.AssociationEntity.ID,
 			Name:       assoc.Name,
-			Logo:       assoc.Logo,
+			ImageUrl:   utils.SafeUnwrap(assoc.ImageUrl),
 			WebsiteUrl: assoc.WebsiteUrl,
 			Focus:      assoc.Focus,
 			CreatedAt:  assoc.CreatedAt,
@@ -67,7 +66,7 @@ func (a *CreateAssociationRequest) FromFormData(r *http.Request) error {
 	return a.fromFormData(fd)
 }
 
-func (u *CreateAssociationRequest) fromFormData(fd *formdata.FormData) error {
+func (a *CreateAssociationRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("name").Required().HasN(1)
 	fd.Validate("logo")
 	fd.Validate("websiteUrl").Required().HasN(1)
@@ -77,10 +76,11 @@ func (u *CreateAssociationRequest) fromFormData(fd *formdata.FormData) error {
 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
 	}
 
-	u.Name = fd.Get("name").First()
-	u.Logo = fd.GetFile("logo").First()
-	u.WebsiteUrl = fd.Get("websiteUrl").First()
-	u.Focus = fd.Get("focus").First()
+	a.Name = fd.Get("name").First()
+	a.Logo = fd.GetFile("logo").First()
+	a.WebsiteUrl = fd.Get("websiteUrl").First()
+	a.Focus = fd.Get("focus").First()
 
-	return nil
+	// a.CreateAssociationRequest = new(CreateAssociationRequest)
+	return a.fromFormData(fd)
 }
