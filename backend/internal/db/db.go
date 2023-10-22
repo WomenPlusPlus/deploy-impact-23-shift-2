@@ -31,30 +31,6 @@ func NewPostgresDB() *PostgresDB {
 	}
 }
 
-func (db *PostgresDB) Init() {
-	db.createUserTable()
-}
-
-func (db *PostgresDB) createUserTable() {
-	query := `
-	CREATE TABLE IF NOT EXISTS users (
-		id serial primary key,
-		firstName varchar(50),
-		lastName varchar(50),
-		preferredName varchar(20),
-		email varchar(100) not null,
-		phoneNumber varchar(20),
-		birthDate timestamp,
-		imageUrl varchar(255),
-		linkedinUrl varchar(250),
-		githubUrl varchar(250),
-		portfolioUrl varchar(250),
-		state varchar(250),
-		createdAt timestamp
-	)`
-	db.db.MustExec(query)
-}
-
 func (s *PostgresDB) UpdateUser(*entity.User) error {
 	return nil
 }
@@ -187,9 +163,8 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error)
 		}
 		res = append(res, view)
 	}
-
+	fmt.Println(res)
 	return res, nil
-
 }
 
 func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {
@@ -340,20 +315,20 @@ func (pdb *PostgresDB) AssignUserPhoto(record *entity.UserPhotoEntity) error {
 	return nil
 }
 
-func (pdb *PostgresDB) AssignAssociationLogo(record *entity.AssociationLogoEntity) error {
-	tx := pdb.db.MustBegin()
-	defer tx.Rollback()
-	if err := pdb.deleteAssociationLogo(tx, record.ID); err != nil {
-		return fmt.Errorf("deleting previous data: %v", err)
-	}
-	if err := pdb.insertAssociationLogo(tx, record); err != nil {
-		return fmt.Errorf("inserting new data: %v", err)
-	}
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-	return nil
-}
+// func (pdb *PostgresDB) AssignAssociationLogo(record *entity.AssociationLogoEntity) error {
+// 	tx := pdb.db.MustBegin()
+// 	defer tx.Rollback()
+// 	if err := pdb.deleteAssociationLogo(tx, record.ID); err != nil {
+// 		return fmt.Errorf("deleting previous data: %v", err)
+// 	}
+// 	if err := pdb.insertAssociationLogo(tx, record); err != nil {
+// 		return fmt.Errorf("inserting new data: %v", err)
+// 	}
+// 	if err := tx.Commit(); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
 	return pdb.deleteUserPhoto(pdb.db, userId)
@@ -508,13 +483,13 @@ func (pdb *PostgresDB) insertUserPhoto(tx NamedQuerier, record *entity.UserPhoto
 	return nil
 }
 
-func (pdb *PostgresDB) insertAssociationLogo(tx NamedQuerier, record *entity.AssociationLogoEntity) error {
-	query := `insert into association_logos (user_id, image_url) values (:association_id, :image_url)`
-	if _, err := tx.NamedExec(query, record); err != nil {
-		return err
-	}
-	return nil
-}
+// func (pdb *PostgresDB) insertAssociationLogo(tx NamedQuerier, record *entity.AssociationLogoEntity) error {
+// 	query := `insert into association_logos (user_id, image_url) values (:association_id, :image_url)`
+// 	if _, err := tx.NamedExec(query, record); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 func (pdb *PostgresDB) deleteUserPhoto(tx sqlx.Execer, userId int) error {
 	query := `delete from user_photos where user_id = $1`
@@ -790,6 +765,29 @@ func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int
 		return 0, err
 	}
 	return userId, nil
+}
+
+func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.AssociationEntity) (int, error) {
+	query := `insert into associations
+		(
+			name,
+			logo,
+			website_url,
+			focus
+		)
+		values (
+			:name,
+			:logo,
+			:website_url,
+			:focus
+		)
+		returning id`
+	associationId, err := InsertQuery(tx, query, association)
+	if err != nil {
+		logrus.Debugf("failed to insert association in db: %v", err)
+		return 0, err
+	}
+	return associationId, nil
 }
 
 func createUser(rows *sql.Rows) (*entity.User, error) {

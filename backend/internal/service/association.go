@@ -23,7 +23,6 @@ func NewAssociationService(bucketDB entity.BucketDB, associationDB entity.Associ
 
 func (s *AssociationService) CreateAssociation(req *entity.CreateAssociationRequest) (*entity.CreateAssociationResponse, error) {
 	ass, err := s.createAssociation(req)
-
 	if err != nil {
 		return nil, fmt.Errorf("cannot create association: %s", err)
 	}
@@ -37,7 +36,7 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 	if err := association.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into association entity: %w", err)
 	}
-	logrus.Tracef("Parsed assoication entity: %+v", association)
+	logrus.Tracef("Parsed association entity: %+v", association)
 
 	association, err := s.associationDB.CreateAssociation(association)
 	if err != nil {
@@ -51,23 +50,43 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 		}
 	}
 
+	// Name       string                `json:"name"`
+	// Logo       *multipart.FileHeader `json:"logo"`
+	// WebsiteUrl string                `json:"websiteUrl"`
+	// Focus      string                `json:"focus"`
+	// CreatedAt  time.Time             `json:"createdAt"`
+
 	return &entity.CreateAssociationResponse{
 		ID:            association.ID,
 		AssociationID: association.ID,
 	}, nil
 }
 
-func (s *AssociationService) ListAssociations() (*entity.ListUsersResponse, error) {
-	associations, err := s.associationDB.GetAllAssociations()
-	if err != nil {
-		return nil, fmt.Errorf("getting all associations: %w", err)
-	}
-	logrus.Tracef("Get all associations from db: total=%d", len(associations))
+// func (s *AssociationService) ListAssociations() ([]*entity.ListAssociationsResponse, error) {
+// 	associations, err := s.associationDB.GetAllAssociations()
+// 	if err != nil {
+// 		return nil, fmt.Errorf("getting all associations: %w", err)
+// 	}
+// 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	res := new(entity.ListUsersResponse)
+// 	// ctx := context.Background()
 
-	return res, nil
-}
+// 	res := new(entity.ListAssociationsResponse)
+// 	// res.FromAssociationView(associations)
+// 	return res, nil
+// }
+
+// func (s *AssociationService) DeleteAssociation(id int) (*entity.ListUsersResponse, error) {
+// 	associations, err := s.associationDB.GetAllAssociations()
+// 	if err != nil {
+// 		return nil, fmt.Errorf("getting all associations: %w", err)
+// 	}
+// 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
+
+// 	res := new(entity.ListUsersResponse)
+
+// 	return res, nil
+// }
 
 func (s *AssociationService) saveLogo(associationId int, logoHeader *multipart.FileHeader) error {
 	path := fmt.Sprintf("%d/logo/%s", associationId, logoHeader.Filename)
