@@ -36,6 +36,7 @@ func (s *UserService) CreateUser(req *entity.CreateUserRequest) (*entity.CreateU
 	}
 }
 
+<<<<<<< .merge_file_jsjLdk
 func (s *UserService) EditUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
 	user, err := s.userDB.GetUserRecord(id)
 	if err != nil {
@@ -59,6 +60,8 @@ func (s *UserService) EditUser(id int, req *entity.EditUserRequest) (*entity.Cre
 	}
 }
 
+=======
+>>>>>>> .merge_file_eykgv4
 func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	users, err := s.userDB.GetAllUsers()
 	if err != nil {
@@ -85,6 +88,7 @@ func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	return res, nil
 }
 
+<<<<<<< .merge_file_jsjLdk
 func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	user, err := s.userDB.GetUserRecord(id)
 	if err != nil {
@@ -105,6 +109,8 @@ func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	return nil, fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
 }
 
+=======
+>>>>>>> .merge_file_eykgv4
 func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
 	admin := new(entity.UserEntity)
 	if err := admin.FromCreationRequest(req); err != nil {

@@ -3,26 +3,15 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"log"
+	"os"
 	"shift/internal/entity"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
-type UserDB interface {
-	DeleteUser(int) error
-	UpdateUser(*entity.User) error
-	GetUsers() ([]*entity.User, error)
-	GetUserByID(int) (*entity.User, error)
-
-	CreateAssociation(*entity.Association) error
-	DeleteAssociation(int) error
-	UpdateAssociation(*entity.Association) error
-	GetAssociations() ([]*entity.Association, error)
-	GetAssociationByID(int) (*entity.Association, error)
-}
 
 // docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
 
@@ -31,7 +20,7 @@ type PostgresDB struct {
 }
 
 func NewPostgresDB() *PostgresDB {
-	connStr := "postgres://postgres:shift2023@localhost:5432/postgres?sslmode=disable"
+	connStr := os.Getenv("POSTGRESQL_URL")
 	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
@@ -41,30 +30,6 @@ func NewPostgresDB() *PostgresDB {
 	return &PostgresDB{
 		db: db,
 	}
-}
-
-func (db *PostgresDB) Init() {
-	db.createUserTable()
-}
-
-func (db *PostgresDB) createUserTable() {
-	query := `
-	CREATE TABLE IF NOT EXISTS users (
-		id serial primary key,
-		firstName varchar(50),
-		lastName varchar(50),
-		preferredName varchar(20),
-		email varchar(100) not null,
-		phoneNumber varchar(20),
-		birthDate timestamp,
-		imageUrl varchar(255),
-		linkedinUrl varchar(250),
-		githubUrl varchar(250),
-		portfolioUrl varchar(250),
-		state varchar(250),
-		createdAt timestamp
-	)`
-	db.db.MustExec(query)
 }
 
 func (s *PostgresDB) UpdateUser(*entity.User) error {
@@ -105,6 +70,7 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	return users, nil
 }
 
+<<<<<<< .merge_file_VGeJCU
 func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users
@@ -128,6 +94,8 @@ func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	return nil, fmt.Errorf("could not find user record view: id=%d", id)
 }
 
+=======
+>>>>>>> .merge_file_ParIv2
 func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	res := make([]*entity.UserItemView, 0)
 
@@ -173,7 +141,10 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 				left outer join candidate_videos on candidates.id = candidate_videos.candidate_id
     `
 	rows, err := pdb.db.Queryx(query)
+<<<<<<< .merge_file_VGeJCU
 	defer rows.Close()
+=======
+>>>>>>> .merge_file_ParIv2
 	if err != nil {
 		return nil, fmt.Errorf("fetching users in db: %w", err)
 	}
@@ -181,7 +152,11 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	for rows.Next() {
 		view := new(entity.UserItemView)
 		if err := rows.StructScan(view); err != nil {
+<<<<<<< .merge_file_VGeJCU
 			logrus.Errorf("failed to scan user view from db row: %v", err)
+=======
+			logrus.Debugf("failed to scan user view from db record: %v", err)
+>>>>>>> .merge_file_ParIv2
 			return nil, err
 		}
 		res = append(res, view)
@@ -190,6 +165,7 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	return res, nil
 }
 
+<<<<<<< .merge_file_VGeJCU
 func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 	query := `select
     				users.id,
@@ -363,6 +339,29 @@ func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, err
 	}
 
 	return nil, fmt.Errorf("could not find company user: id=%d", id)
+=======
+func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, error) {
+	res := make([]*entity.AssociationItemView, 0)
+
+	query := `select * from associations`
+
+	rows, err := pdb.db.Queryx(query)
+
+	if err != nil {
+		return nil, fmt.Errorf("fetching associations in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.AssociationItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Debugf("failed to scan association view from db record: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+	fmt.Println(res)
+	return res, nil
+>>>>>>> .merge_file_ParIv2
 }
 
 func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {
@@ -385,6 +384,7 @@ func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, 
 	return user, nil
 }
 
+<<<<<<< .merge_file_VGeJCU
 func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -403,6 +403,26 @@ func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEn
 		return nil, err
 	}
 	return res, nil
+=======
+func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*entity.AssociationEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	assocId, err := pdb.createAssociation(tx, assoc)
+	if err != nil {
+		return nil, err
+	}
+	assoc, err = pdb.getAssociationById(tx, assocId)
+	if err != nil {
+		logrus.Errorf("getting added associations from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit associations creation in db: %v", err)
+		return nil, err
+	}
+	return assoc, nil
+>>>>>>> .merge_file_ParIv2
 }
 
 func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
@@ -635,10 +655,26 @@ func (pdb *PostgresDB) AssignUserPhoto(record *entity.UserPhotoEntity) error {
 	return nil
 }
 
+// func (pdb *PostgresDB) AssignAssociationLogo(record *entity.AssociationLogoEntity) error {
+// 	tx := pdb.db.MustBegin()
+// 	defer tx.Rollback()
+// 	if err := pdb.deleteAssociationLogo(tx, record.ID); err != nil {
+// 		return fmt.Errorf("deleting previous data: %v", err)
+// 	}
+// 	if err := pdb.insertAssociationLogo(tx, record); err != nil {
+// 		return fmt.Errorf("inserting new data: %v", err)
+// 	}
+// 	if err := tx.Commit(); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
 func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
 	return pdb.deleteUserPhoto(pdb.db, userId)
 }
 
+<<<<<<< .merge_file_VGeJCU
 func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkillsEntity, error) {
 	res := make(entity.CandidateSkillsEntity, 0)
 	query := `select * from candidate_skills where candidate_id = $1`
@@ -659,6 +695,10 @@ func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkil
 	}
 
 	return res, nil
+=======
+func (pdb *PostgresDB) DeleteAssociationLogo(associationId int) error {
+	return pdb.deleteAssociationLogo(pdb.db, associationId)
+>>>>>>> .merge_file_ParIv2
 }
 
 func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.CandidateSkillsEntity) error {
@@ -921,9 +961,25 @@ func (pdb *PostgresDB) insertUserPhoto(tx NamedQuerier, record *entity.UserPhoto
 	return nil
 }
 
+// func (pdb *PostgresDB) insertAssociationLogo(tx NamedQuerier, record *entity.AssociationLogoEntity) error {
+// 	query := `insert into association_logos (user_id, image_url) values (:association_id, :image_url)`
+// 	if _, err := tx.NamedExec(query, record); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
 func (pdb *PostgresDB) deleteUserPhoto(tx sqlx.Execer, userId int) error {
 	query := `delete from user_photos where user_id = $1`
 	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteAssociationLogo(tx sqlx.Execer, associationId int) error {
+	query := `delete from association_logos where association_id = $1`
+	if _, err := tx.Exec(query, associationId); err != nil {
 		return err
 	}
 	return nil
@@ -1112,6 +1168,25 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 	return nil, fmt.Errorf("could not find association user with id=%d", id)
 }
 
+func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
+	query := `select * from associations where id = :id`
+	rows, err := tx.Queryx(query, id)
+	if err != nil {
+		logrus.Debugf("failed to get association  with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		association := new(entity.AssociationEntity)
+		if err := rows.StructScan(association); err != nil {
+			logrus.Debugf("failed to scan association user from db record: %v", err)
+			return nil, err
+		}
+		return association, nil
+	}
+	return nil, fmt.Errorf("could not find association user with id=%d", id)
+}
+
 func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.CandidateEntity, error) {
 	query := `select users.*, candidates.*
 				from users
@@ -1193,6 +1268,7 @@ func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int
 	return userId, nil
 }
 
+<<<<<<< .merge_file_VGeJCU
 func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity) (int, error) {
 	user.ID = id
 	query := `update users
@@ -1213,6 +1289,29 @@ func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity
 		return 0, err
 	}
 	return userId, nil
+=======
+func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.AssociationEntity) (int, error) {
+	query := `insert into associations
+		(
+			name,
+			logo,
+			website_url,
+			focus
+		)
+		values (
+			:name,
+			:logo,
+			:website_url,
+			:focus
+		)
+		returning id`
+	associationId, err := InsertQuery(tx, query, association)
+	if err != nil {
+		logrus.Debugf("failed to insert association in db: %v", err)
+		return 0, err
+	}
+	return associationId, nil
+>>>>>>> .merge_file_ParIv2
 }
 
 func createUser(rows *sql.Rows) (*entity.User, error) {

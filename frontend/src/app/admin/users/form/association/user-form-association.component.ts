@@ -8,8 +8,8 @@ import {
     UserFormAssociationFormModel,
     UserFormComponent
 } from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FilterFusePipe } from '@app/common/pipes/filter-fuse/filter-fuse.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';

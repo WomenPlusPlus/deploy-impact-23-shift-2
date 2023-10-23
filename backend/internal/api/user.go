@@ -20,6 +20,7 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleListUsers)).
 		Methods(http.MethodGet)
 
+<<<<<<< .merge_file_dqLfvt
 	router.Path("/{id}").
 		Handler(makeHTTPHandleFunc(s.handleViewUser)).
 		Methods(http.MethodGet)
@@ -32,6 +33,8 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleDeleteUser)).
 		Methods(http.MethodDelete)
 
+=======
+>>>>>>> .merge_file_gchdzu
 	router.Use(AuthenticationMiddleware)
 	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
 }
@@ -62,6 +65,7 @@ func (s *APIServer) handleListUsers(w http.ResponseWriter, r *http.Request) erro
 
 	return WriteJSONResponse(w, http.StatusOK, res)
 }
+<<<<<<< .merge_file_dqLfvt
 
 func (s *APIServer) handleViewUser(w http.ResponseWriter, r *http.Request) error {
 	logrus.Debugln("View user handler running")
@@ -116,3 +120,5 @@ func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) err
 
 	return WriteJSONResponse(w, http.StatusOK, "User deleted successfully")
 }
+=======
+>>>>>>> .merge_file_gchdzu

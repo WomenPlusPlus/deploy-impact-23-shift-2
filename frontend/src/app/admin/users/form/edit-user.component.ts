@@ -1,3 +1,5 @@
+import { filter, take } from 'rxjs';
+
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,17 +16,22 @@ import {
     UserFormModel
 } from '@app/admin/users/form/common/models/user-form.model';
 import { UserFormCompanyComponent } from '@app/admin/users/form/company/user-form-company.component';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
+import { EditUserStore } from '@app/admin/users/form/edit-user.store';
 import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
-import { AssociationUserDetails, CandidateDetails, CompanyUserDetails, UserDetails, UserKindEnum } from '@app/common/models/users.model';
+import {
+    AssociationUserDetails,
+    CandidateDetails,
+    CompanyUserDetails,
+    UserDetails,
+    UserKindEnum
+} from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
-import { EditUserStore } from '@app/admin/users/form/edit-user.store';
-import { filter, take } from 'rxjs';
+import { toInputDateValue } from '@app/common/utils/date.util';
 import { ContentErrorComponent } from '@app/ui/content-error/content-error.component';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
-import { toInputDateValue } from '@app/common/utils/date.util';
 
 @Component({
     selector: 'app-edit-user',
@@ -68,8 +75,7 @@ export class EditUserComponent implements OnInit {
         private readonly router: Router,
         private readonly route: ActivatedRoute,
         private readonly editUserStore: EditUserStore
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.loadData();
@@ -92,12 +98,13 @@ export class EditUserComponent implements OnInit {
             this.router.navigate(['..']);
             return;
         }
-        this.editUserStore.getUser(+id).add(() =>
-            this.editUserStore.user$.pipe(filter(Boolean), take(1))
-                .subscribe((user) =>
-                    setTimeout(() => this.setUserValue(user))
-                )
-        );
+        this.editUserStore
+            .getUser(+id)
+            .add(() =>
+                this.editUserStore.user$
+                    .pipe(filter(Boolean), take(1))
+                    .subscribe((user) => setTimeout(() => this.setUserValue(user)))
+            );
     }
 
     private setUserValue(user: UserDetails): void {
@@ -126,12 +133,12 @@ export class EditUserComponent implements OnInit {
                 email: user.email,
                 phoneNumber: user.phoneNumber,
                 birthDate: user.birthDate ? toInputDateValue(user.birthDate) : null,
-                photo: user.photo || null,
+                photo: user.photo || null
             },
             social: {
                 linkedInUrl: user.linkedInUrl,
                 githubUrl: user.githubUrl,
-                portfolioUrl: user.portfolioUrl,
+                portfolioUrl: user.portfolioUrl
             }
         });
     }
@@ -150,12 +157,12 @@ export class EditUserComponent implements OnInit {
                 email: user.email,
                 phoneNumber: user.phoneNumber,
                 birthDate: user.birthDate ? toInputDateValue(user.birthDate) : null,
-                photo: user.photo || null,
+                photo: user.photo || null
             },
             social: {
                 linkedInUrl: user.linkedInUrl,
                 githubUrl: user.githubUrl,
-                portfolioUrl: user.portfolioUrl,
+                portfolioUrl: user.portfolioUrl
             }
         });
     }
@@ -173,12 +180,12 @@ export class EditUserComponent implements OnInit {
                 email: user.email,
                 phoneNumber: user.phoneNumber,
                 birthDate: user.birthDate ? toInputDateValue(user.birthDate) : null,
-                photo: user.photo || null,
+                photo: user.photo || null
             },
             social: {
                 linkedInUrl: user.linkedInUrl,
                 githubUrl: user.githubUrl,
-                portfolioUrl: user.portfolioUrl,
+                portfolioUrl: user.portfolioUrl
             },
             job: {
                 yearsOfExperience: user.yearsOfExperience,
@@ -190,7 +197,7 @@ export class EditUserComponent implements OnInit {
                 seekSalary: user.seekSalary,
                 seekValues: user.seekValues,
                 workPermit: user.workPermit,
-                noticePeriod: user.noticePeriod,
+                noticePeriod: user.noticePeriod
             },
             technical: {
                 spokenLanguages: user.spokenLanguages,
@@ -198,24 +205,22 @@ export class EditUserComponent implements OnInit {
                 cv: user.cv || null,
                 attachments: user.attachments,
                 video: user.video || null,
-                educationHistory: user.educationHistory
-                    .map((history) => ({
-                        title: history.title,
-                        description: history.description,
-                        entity: history.entity,
-                        fromDate: new Date(history.fromDate),
-                        toDate: history.toDate ? new Date(history.toDate) : null,
-                        onGoing: !history.toDate,
-                    })),
-                employmentHistory: user.employmentHistory
-                    .map((history) => ({
-                        title: history.title,
-                        description: history.description,
-                        company: history.company,
-                        fromDate: new Date(history.fromDate),
-                        toDate: history.toDate ? new Date(history.toDate) : null,
-                        onGoing: !history.toDate,
-                    })),
+                educationHistory: user.educationHistory.map((history) => ({
+                    title: history.title,
+                    description: history.description,
+                    entity: history.entity,
+                    fromDate: new Date(history.fromDate),
+                    toDate: history.toDate ? new Date(history.toDate) : null,
+                    onGoing: !history.toDate
+                })),
+                employmentHistory: user.employmentHistory.map((history) => ({
+                    title: history.title,
+                    description: history.description,
+                    company: history.company,
+                    fromDate: new Date(history.fromDate),
+                    toDate: history.toDate ? new Date(history.toDate) : null,
+                    onGoing: !history.toDate
+                }))
             }
         });
     }
@@ -234,14 +239,13 @@ export class EditUserComponent implements OnInit {
                 email: user.email,
                 phoneNumber: user.phoneNumber,
                 birthDate: user.birthDate ? toInputDateValue(user.birthDate) : null,
-                photo: user.photo || null,
+                photo: user.photo || null
             },
             social: {
                 linkedInUrl: user.linkedInUrl,
                 githubUrl: user.githubUrl,
-                portfolioUrl: user.portfolioUrl,
+                portfolioUrl: user.portfolioUrl
             }
         });
     }
-
 }

@@ -1,7 +1,7 @@
-import { Language } from '@app/common/models/location.model';
-import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { LocalFile } from '@app/common/models/files.model';
+import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
+import { Language } from '@app/common/models/location.model';
 
 export enum UserKindEnum {
     ADMIN = 'ADMIN',

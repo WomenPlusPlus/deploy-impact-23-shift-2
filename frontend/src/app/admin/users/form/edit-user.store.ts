@@ -2,14 +2,15 @@ import { HotToastService } from '@ngneat/hot-toast';
 import { Observable, switchMap, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+
 import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
+import { EditUserResponse } from '@app/admin/users/form/common/models/edit-user.model';
+import { UserDetails } from '@app/common/models/users.model';
 
 import { UserFormSubmissionModel } from './common/models/user-form.model';
-import { EditUserResponse } from '@app/admin/users/form/common/models/edit-user.model';
-import { Router } from '@angular/router';
-import { UserDetails } from '@app/common/models/users.model';
 
 export interface UserFormState {
     user: UserDetails | null;
@@ -61,9 +62,7 @@ export class EditUserStore extends ComponentStore<UserFormState> {
                     tapResponse(
                         (user) => this.patchState({ user }),
                         () => {
-                            this.toast.error(
-                                'Could not load the user! Please try again later or contact the support.'
-                            );
+                            this.toast.error('Could not load the user! Please try again later or contact the support.');
                             this.router.navigate(['..']);
                         }
                     )

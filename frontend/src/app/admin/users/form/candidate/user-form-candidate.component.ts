@@ -24,6 +24,7 @@ import {
 } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
+import { LocalFile } from '@app/common/models/files.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { Language, LocationCity } from '@app/common/models/location.model';
 import { CompanySizePipe } from '@app/common/pipes/company-size/company-size.pipe';
@@ -37,7 +38,6 @@ import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-la
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
-import { LocalFile } from '@app/common/models/files.model';
 import { fileUrl } from '@app/common/utils/file.util';
 import { FileItemComponent } from '@app/ui/file-item/file-item.component';
 
@@ -175,8 +175,7 @@ export class UserFormCandidateComponent implements UserFormComponent, OnInit {
     constructor(
         private readonly fb: FormBuilder,
         private readonly store: Store
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initForm();
@@ -462,7 +461,7 @@ export class UserFormCandidateComponent implements UserFormComponent, OnInit {
             map((file: LocalFile | File | null) => ({
                 name: file?.name || '',
                 url: fileUrl(file, DEFAULT_PHOTO_URL) as string
-            })),
+            }))
         );
 
         this.cities$ = this.store.select(selectLocationCities);

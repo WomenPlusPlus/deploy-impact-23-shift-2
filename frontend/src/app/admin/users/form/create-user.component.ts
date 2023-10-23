@@ -7,13 +7,13 @@ import { UserFormAssociationComponent } from '@app/admin/users/form/association/
 import { UserFormCandidateComponent } from '@app/admin/users/form/candidate/user-form-candidate.component';
 import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { UserFormCompanyComponent } from '@app/admin/users/form/company/user-form-company.component';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
+import { CreateUserStore } from '@app/admin/users/form/create-user.store';
 import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
-import { CreateUserStore } from '@app/admin/users/form/create-user.store';
 
 @Component({
     selector: 'app-create-user',

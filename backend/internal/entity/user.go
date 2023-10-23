@@ -316,6 +316,11 @@ func (c *CandidateEmploymentHistoryListEntity) FromCreationRequest(request *Crea
 
 type UserItemView struct {
 	ImageUrl *string `db:"image_url"`
+<<<<<<< .merge_file_xIooM9
+=======
+	CVUrl    *string `db:"cv_url"`
+	VideoUrl *string `db:"video_url"`
+>>>>>>> .merge_file_MyXQyk
 	*UserEntity
 	*AssociationUserItemView
 	*CandidateItemView
@@ -339,8 +344,11 @@ type CandidateItemView struct {
 	SeekValues        *string `db:"seek_values"`
 	WorkPermit        *string `db:"work_permit"`
 	NoticePeriod      *int    `db:"notice_period"`
+<<<<<<< .merge_file_xIooM9
 	CVUrl             *string `db:"cv_url"`
 	VideoUrl          *string `db:"video_url"`
+=======
+>>>>>>> .merge_file_MyXQyk
 }
 
 type CompanyUserItemView struct {
@@ -348,6 +356,7 @@ type CompanyUserItemView struct {
 	CompanyId *int    `db:"company_id"`
 	Role      *string `db:"company_role"`
 }
+<<<<<<< .merge_file_xIooM9
 
 type UserRecordView struct {
 	ID        int       `db:"id"`
@@ -356,3 +365,5 @@ type UserRecordView struct {
 	State     string    `db:"state"`
 	CreatedAt time.Time `db:"created_at"`
 }
+=======
+>>>>>>> .merge_file_MyXQyk

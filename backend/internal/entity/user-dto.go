@@ -207,6 +207,7 @@ type ListCompanyUserResponse struct {
 	CompanyId     int `json:"companyId"`
 }
 
+<<<<<<< .merge_file_RkwA7H
 type ViewUserResponse struct {
 	ID            int        `json:"id"`
 	Kind          string     `json:"kind"`
@@ -303,12 +304,15 @@ type ViewUserCandidateResponse struct {
 	EmploymentHistory []UserEmploymentHistory `json:"employmentHistory"`
 }
 
+=======
+>>>>>>> .merge_file_dVzGZt
 type CreateUserAssociationRequest struct {
 	AssociationId   int    `json:"associationId"`
 	AssociationRole string `json:"role"`
 }
 
 type CreateUserCandidateRequest struct {
+<<<<<<< .merge_file_RkwA7H
 	YearsOfExperience int                     `json:"yearsOfExperience"`
 	JobStatus         string                  `json:"jobStatus"`
 	SeekJobType       string                  `json:"seekJobType"`
@@ -329,6 +333,28 @@ type CreateUserCandidateRequest struct {
 }
 
 type UserLocation struct {
+=======
+	YearsOfExperience int                           `json:"yearsOfExperience"`
+	JobStatus         string                        `json:"jobStatus"`
+	SeekJobType       string                        `json:"seekJobType"`
+	SeekCompanySize   string                        `json:"seekCompanySize"`
+	SeekLocations     []CreateUserLocation          `json:"seekLocations"`
+	SeekLocationType  string                        `json:"seekLocationType"`
+	SeekSalary        int                           `json:"seekSalary"`
+	SeekValues        string                        `json:"seekValues"`
+	WorkPermit        string                        `json:"workPermit"`
+	NoticePeriod      int                           `json:"noticePeriod"`
+	SpokenLanguages   []CreateUserSpokenLanguage    `json:"spokenLanguages"`
+	Skills            []CreateUserSkill             `json:"skills"`
+	CV                *multipart.FileHeader         `json:"cv"`
+	Attachments       []*multipart.FileHeader       `json:"attachments"`
+	Video             *multipart.FileHeader         `json:"video"`
+	EducationHistory  []CreateUserEducationHistory  `json:"educationHistory"`
+	EmploymentHistory []CreateUserEmploymentHistory `json:"employmentHistory"`
+}
+
+type CreateUserLocation struct {
+>>>>>>> .merge_file_dVzGZt
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }

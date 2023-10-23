@@ -6,12 +6,16 @@ type UserDB interface {
 	UpdateUser(*User) error
 	GetUsers() ([]*User, error)
 
+<<<<<<< .merge_file_F7KVQJ
 	GetUserRecord(int) (*UserRecordView, error)
 	GetAllUsers() ([]*UserItemView, error)
 	GetUserById(int) (*UserItemView, error)
 	GetAssociationUserByUserId(int) (*UserItemView, error)
 	GetCandidateByUserId(int) (*UserItemView, error)
 	GetCompanyUserByUserId(int) (*UserItemView, error)
+=======
+	GetAllUsers() ([]*UserItemView, error)
+>>>>>>> .merge_file_pRpMbJ
 	CreateUser(*UserEntity) (*UserEntity, error)
 	EditUser(int, *UserEntity) (*UserEntity, error)
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)

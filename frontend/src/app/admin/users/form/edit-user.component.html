@@ -1,5 +1,8 @@
 <div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
-    <ng-container *ngIf="vm.submitted; else notSubmittedContainer" [ngTemplateOutlet]="submittedContainer"></ng-container>
+    <ng-container
+        *ngIf="vm.submitted; else notSubmittedContainer"
+        [ngTemplateOutlet]="submittedContainer"
+    ></ng-container>
     <ng-template #notSubmittedContainer>
         <ng-container *ngIf="!vm.user; else userFormContainer" [ngTemplateOutlet]="loadingContainer"></ng-container>
     </ng-template>

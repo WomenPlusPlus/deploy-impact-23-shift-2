@@ -1,33 +1,26 @@
 package entity
 
-type Association struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Logo       byte   `json:"logo"`
-	WebsiteUrl string `json:"websiteUrl"`
-	Focus      string `json:"focus"`
+import (
+	"mime/multipart"
+)
+
+type AssociationEntity struct {
+	ID         int                   `db:"id"`
+	Name       string                `db:"name"`
+	Logo       *multipart.FileHeader `db:"logo"`
+	WebsiteUrl string                `db:"website_url"`
+	Focus      string                `db:"focus"`
+	CreatedAt  string                `db:"created_at"`
 }
 
-type AssociationDB interface {
-	CreateAssociation(*Association) error
-	DeleteAssociation(int) error
-	UpdateAssociation(*User) error
-	GetAssociations() ([]*User, error)
-	GetAssociationByID(int) (*User, error)
+type AssociationItemView struct {
+	ImageUrl *string `db:"image_url"`
+	*AssociationEntity
 }
 
-type CreateAssociationRequest struct {
-	Name       string `json:"name"`
-	Logo       byte   `json:"logo"`
-	WebsiteUrl string `json:"websiteUrl"`
-	Focus      string `json:"focus"`
-}
-
-func NewAssociation(name string, logo byte, websiteUrl string, focus string) *Association {
-	return &Association{
-		Name:       name,
-		Logo:       logo,
-		WebsiteUrl: websiteUrl,
-		Focus:      focus,
-	}
+func (a *AssociationEntity) FromCreationRequest(request *CreateAssociationRequest) error {
+	a.Name = request.Name
+	a.WebsiteUrl = request.WebsiteUrl
+	a.Focus = request.Focus
+	return nil
 }

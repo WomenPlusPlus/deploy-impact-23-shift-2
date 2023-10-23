@@ -1,4 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faRemove } from '@fortawesome/free-solid-svg-icons';
 import { map, Observable, startWith } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
@@ -7,10 +8,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
-import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { LocalFile } from '@app/common/models/files.model';
+import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { fileUrl } from '@app/common/utils/file.util';
-import { faRemove } from '@fortawesome/free-solid-svg-icons';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
@@ -44,8 +44,7 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
         };
     }
 
-    constructor(private readonly fb: FormBuilder) {
-    }
+    constructor(private readonly fb: FormBuilder) {}
 
     ngOnInit(): void {
         this.initForm();
@@ -103,7 +102,7 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
             map((file: LocalFile | File | null) => ({
                 name: file?.name || '',
                 url: fileUrl(file, DEFAULT_PHOTO_URL) as string
-            })),
+            }))
         );
     }
 
