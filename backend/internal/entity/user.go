@@ -4,36 +4,18 @@ import (
 	"time"
 )
 
-// USER
-
-type User struct {
-	ID            int       `json:"id"`
-	FirstName     string    `json:"firstName"`
-	LastName      string    `json:"lastName"`
-	PreferredName string    `json:"preferredName"`
-	Email         string    `json:"email"`
-	PhoneNumber   string    `json:"phoneNumber"`
-	BirthDate     time.Time `json:"birthDate"`
-	ImageUrl      string    `json:"imageUrl"`
-	LinkedinUrl   string    `json:"linkedinUrl"`
-	GithubUrl     string    `json:"githubUrl"`
-	PortfolioUrl  string    `json:"portfolioUrl"`
-	State         string    `json:"state"`
-	CreatedAt     time.Time `json:"createdAt"`
-}
-
 type UserEntity struct {
 	ID            int       `db:"id"`
 	Kind          string    `db:"kind"`
 	FirstName     string    `db:"first_name"`
 	LastName      string    `db:"last_name"`
-	PreferredName string    `db:"preferred_name"`
+	PreferredName *string   `db:"preferred_name"`
 	Email         string    `db:"email"`
 	PhoneNumber   string    `db:"phone_number"`
 	BirthDate     time.Time `db:"birth_date"`
-	LinkedInUrl   string    `db:"linkedin_url"`
-	GithubUrl     string    `db:"github_url"`
-	PortfolioUrl  string    `db:"portfolio_url"`
+	LinkedInUrl   *string   `db:"linkedin_url"`
+	GithubUrl     *string   `db:"github_url"`
+	PortfolioUrl  *string   `db:"portfolio_url"`
 	State         string    `db:"state"`
 	CreatedAt     time.Time `db:"created_at"`
 }
@@ -42,13 +24,13 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.Kind = request.Kind
 	u.FirstName = request.FirstName
 	u.LastName = request.LastName
-	u.PreferredName = request.PreferredName
+	u.PreferredName = &request.PreferredName
 	u.Email = request.Email
 	u.PhoneNumber = request.PhoneNumber
 	u.BirthDate = request.BirthDate
-	u.LinkedInUrl = request.LinkedInUrl
-	u.GithubUrl = request.GithubUrl
-	u.PortfolioUrl = request.PortfolioUrl
+	u.LinkedInUrl = &request.LinkedInUrl
+	u.GithubUrl = &request.GithubUrl
+	u.PortfolioUrl = &request.PortfolioUrl
 	u.State = UserStateActive
 	return nil
 }
@@ -364,7 +346,7 @@ type UserProfileView struct {
 	Role          string    `db:"role"`
 	FirstName     string    `db:"first_name"`
 	LastName      string    `db:"last_name"`
-	PreferredName string    `db:"preferred_name"`
+	PreferredName *string   `db:"preferred_name"`
 	ImageUrl      *string   `db:"image_url"`
 	Email         string    `db:"email"`
 	State         string    `db:"state"`
