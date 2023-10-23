@@ -1,0 +1,131 @@
+<section class="p-4 mb-10">
+    <span class="block mb-6 text-xl font-bold">Professional Documents</span>
+    <dl>
+        <div class="mb-4">
+            <dt class="font-bold mb-2">Resume</dt>
+            <dd class="ml-2" *ngIf="!candidate.cv">-</dd>
+            <dd class="ml-2" *ngIf="candidate.cv">
+                <a [href]="candidate.cv.url" target="_blank" rel="noreferrer noopener"
+                   class="btn btn-sm btn-ghost">
+                    <fa-icon [icon]="faFileAlt" class="mr-2"></fa-icon>
+                    <span>{{ candidate.cv.name }}</span>
+                </a>
+            </dd>
+        </div>
+        <div class="mb-4">
+            <dt class="font-bold mb-2">Video</dt>
+            <dd class="ml-2" *ngIf="!candidate.video">-</dd>
+            <dd class="ml-2" *ngIf="candidate.video">
+                <a [href]="candidate.video.url" target="_blank" rel="noreferrer noopener"
+                   class="btn btn-sm btn-ghost">
+                    <fa-icon [icon]="faPlay" class="mr-2"></fa-icon>
+                    <span>{{ candidate.video.name }}</span>
+                </a>
+            </dd>
+        </div>
+        <div class="mb-4">
+            <dt class="font-bold mb-2">Other attachments</dt>
+            <dd class="ml-2" *ngIf="!candidate.attachments.length">-</dd>
+            <dd class="ml-2 flex flex-col items-start gap-1" *ngIf="candidate.attachments.length">
+                <a
+                    *ngFor="let attachment of candidate.attachments"
+                    [href]="attachment.url"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    class="btn btn-sm btn-ghost"
+                >
+                    <fa-icon [icon]="faFile" class="mr-2"></fa-icon>
+                    <span>{{ attachment.name }}</span>
+                </a>
+            </dd>
+        </div>
+    </dl>
+</section>
+<section class="p-4 mb-10 grid place-content-start place-items-start">
+    <span class="block mb-6 text-xl font-bold">Professional Information</span>
+    <dl class="grid grid-cols-[auto-1fr] gap-x-10 gap-y-4">
+        <dt class="font-bold">Years of experience</dt>
+        <dd class="break-words">{{ candidate.yearsOfExperience }} years</dd>
+        <dt class="font-bold">Job status</dt>
+        <dd class="break-words">{{ candidate.jobStatus | jobStatusLabel }}</dd>
+        <dt class="font-bold">Work permit</dt>
+        <dd class="break-words">{{ candidate.workPermit | workPermitLabel }}</dd>
+        <dt class="font-bold">Languages</dt>
+        <dd>
+            <ul *ngIf="candidate.spokenLanguages.length">
+                <li *ngFor="let spokenLanguage of candidate.spokenLanguages" class="break-words">
+                    {{ spokenLanguage.language.name }} ({{ spokenLanguage.language.shortName }}):
+                    level {{ spokenLanguage.level }}
+                </li>
+            </ul>
+            <span class="break-words" *ngIf="!candidate.spokenLanguages.length"></span>
+        </dd>
+        <dt class="font-bold">Skills</dt>
+        <dd>
+            <ul *ngIf="candidate.skills.length">
+                <li *ngFor="let skill of candidate.skills" class="break-words">
+                    {{ skill.name }} ({{ skill.years }} years)
+                </li>
+            </ul>
+            <span class="break-words" *ngIf="!candidate.skills.length"></span>
+        </dd>
+        <dt class="font-bold">Notice period</dt>
+        <dd class="break-words">{{ candidate.noticePeriod }} weeks from now</dd>
+    </dl>
+</section>
+<div class="divider"></div>
+<section class="p-4 mb-10 grid place-content-start place-items-start max-w-screen-lg">
+    <span class="block mb-6 text-xl font-bold">Job Expectations</span>
+    <dl class="grid grid-cols-[auto-1fr] gap-x-10 gap-y-4">
+        <dt class="font-bold">Job Type</dt>
+        <dd class="break-words">{{ candidate.seekJobType | jobTypeLabel }}</dd>
+        <dt class="font-bold">Preferred locations</dt>
+        <dd>
+            <ul *ngIf="candidate.seekLocations.length">
+                <li *ngFor="let seekLocation of candidate.seekLocations" class="break-words">{{ seekLocation.name }}</li>
+            </ul>
+            <span class="break-words" *ngIf="!candidate.seekLocations.length"></span>
+        </dd>
+        <dt class="font-bold">Environment</dt>
+        <dd class="break-words">{{ candidate.seekLocationType ? (candidate.seekLocationType | jobLocationTypeLabel) : '-' }}</dd>
+        <dt class="font-bold">Salary</dt>
+        <dd class="break-words">{{ candidate.seekSalary ? (candidate.seekSalary | currency) : '-' }}</dd>
+        <dt class="font-bold">Company size</dt>
+        <dd class="break-words">{{ candidate.seekCompanySize | companySizeLabel }}</dd>
+        <dt class="font-bold">Company values</dt>
+        <dd class="break-words">{{ candidate.seekValues || '-' }}</dd>
+    </dl>
+</section>
+<section class="p-4 mb-10 grid place-content-start place-items-start max-w-screen-lg">
+    <span class="block mb-6 text-xl font-bold">History</span>
+    <div class="flex flex-col gap-4 mb-8">
+        <span class="block mb-2 text-lg font-bold">Education History</span>
+        <span class="block ml-2" *ngIf="!candidate.educationHistory.length">-</span>
+        <dl class="grid grid-cols-[auto-1fr] gap-x-10 gap-y-2" *ngFor="let education of candidate.educationHistory">
+            <dt class="font-bold">Title</dt>
+            <dd class="break-words">{{ education.title }}</dd>
+            <dt class="font-bold">Entity</dt>
+            <dd class="break-words">{{ education.entity }}</dd>
+            <dt class="font-bold">Description</dt>
+            <dd class="break-words">{{ education.description }}</dd>
+            <dt class="font-bold">Date</dt>
+            <dd class="break-words">{{ education.fromDate | date }}
+                - {{ education.toDate ? (education.toDate | date) : 'on going' }}</dd>
+        </dl>
+    </div>
+    <div class="flex flex-col gap-4">
+        <span class="block mb-2 text-lg font-bold">Employment History</span>
+        <span class="block ml-2" *ngIf="!candidate.employmentHistory.length">-</span>
+        <dl class="grid grid-cols-[auto-1fr] gap-x-10 gap-y-2" *ngFor="let employment of candidate.employmentHistory">
+            <dt class="font-bold">Title</dt>
+            <dd class="break-words">{{ employment.title }}</dd>
+            <dt class="font-bold">Company</dt>
+            <dd class="break-words">{{ employment.company }}</dd>
+            <dt class="font-bold">Description</dt>
+            <dd class="break-words">{{ employment.description }}</dd>
+            <dt class="font-bold">Date</dt>
+            <dd class="break-words">{{ employment.fromDate | date }}
+                - {{ employment.toDate ? (employment.toDate | date) : 'on going' }}</dd>
+        </dl>
+    </div>
+</section>

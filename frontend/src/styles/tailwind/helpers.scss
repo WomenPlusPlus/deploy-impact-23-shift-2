@@ -20,6 +20,10 @@
     grid-column-end: -1;
 }
 
+.grid-cols-\[auto-1fr\] {
+    grid-template-columns: auto 1fr;
+}
+
 @media (min-width: 1024px) {
     .lg\:grid-cols-\[20rem-1fr\] {
         grid-template-columns: 20rem 1fr;

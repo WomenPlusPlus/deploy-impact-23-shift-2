@@ -34,6 +34,7 @@ export interface UserDetails {
     linkedInUrl: string;
     githubUrl: string;
     portfolioUrl: string;
+    state: UserStateEnum;
 }
 
 export interface AssociationUserDetails extends UserDetails {
@@ -89,7 +90,7 @@ export interface CandidateEducationHistory {
     description: string;
     entity: string;
     fromDate: string;
-    toDate: string;
+    toDate: string | null;
 }
 
 export interface CandidateEmploymentHistory {
@@ -97,5 +98,5 @@ export interface CandidateEmploymentHistory {
     description: string;
     company: string;
     fromDate: string;
-    toDate: string;
+    toDate: string | null;
 }
