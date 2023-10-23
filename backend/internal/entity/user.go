@@ -36,17 +36,17 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 }
 
 type CandidateEntity struct {
-	ID                int    `db:"id"`
-	UserID            int    `db:"user_id"`
-	YearsOfExperience int    `db:"years_of_experience"`
-	JobStatus         string `db:"job_status"`
-	SeekJobType       string `db:"seek_job_type"`
-	SeekCompanySize   string `db:"seek_company_size"`
-	SeekLocationType  string `db:"seek_location_type"`
-	SeekSalary        int    `db:"seek_salary"`
-	SeekValues        string `db:"seek_values"`
-	WorkPermit        string `db:"work_permit"`
-	NoticePeriod      int    `db:"notice_period"`
+	ID                int     `db:"id"`
+	UserID            int     `db:"user_id"`
+	YearsOfExperience int     `db:"years_of_experience"`
+	JobStatus         string  `db:"job_status"`
+	SeekJobType       string  `db:"seek_job_type"`
+	SeekCompanySize   string  `db:"seek_company_size"`
+	SeekLocationType  string  `db:"seek_location_type"`
+	SeekSalary        *int    `db:"seek_salary"`
+	SeekValues        *string `db:"seek_values"`
+	WorkPermit        string  `db:"work_permit"`
+	NoticePeriod      *int    `db:"notice_period"`
 	*UserEntity
 }
 
@@ -60,10 +60,10 @@ func (c *CandidateEntity) FromCreationRequest(request *CreateUserRequest) error 
 	c.SeekJobType = request.SeekJobType
 	c.SeekCompanySize = request.SeekCompanySize
 	c.SeekLocationType = request.SeekLocationType
-	c.SeekSalary = request.SeekSalary
-	c.SeekValues = request.SeekValues
+	c.SeekSalary = &request.SeekSalary
+	c.SeekValues = &request.SeekValues
 	c.WorkPermit = request.WorkPermit
-	c.NoticePeriod = request.NoticePeriod
+	c.NoticePeriod = &request.NoticePeriod
 	return nil
 }
 
