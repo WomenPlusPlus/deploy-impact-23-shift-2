@@ -42,10 +42,17 @@ func (s *APIServer) Run() {
 	apiRouter := router.PathPrefix("/api/v1").Subrouter()
 
 	s.initUserRoutes(apiRouter)
+	s.initProfileRoutes(apiRouter)
 	s.initInvitaionRoutes(apiRouter)
 
 	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
+
+	router.PathPrefix("").
+		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}).
+		Methods(http.MethodOptions)
 
 	logrus.Println("JSON API Server is running on port", s.address)
 	logrus.Fatal(http.ListenAndServe(s.address, router))

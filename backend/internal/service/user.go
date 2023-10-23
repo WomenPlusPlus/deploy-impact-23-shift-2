@@ -105,6 +105,59 @@ func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	return nil, fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
 }
 
+func (s *UserService) GetUserRecordByEmail(email string) (*entity.UserRecordResponse, error) {
+	user, err := s.userDB.GetUserRecordByEmail(email)
+	if err != nil {
+		return nil, fmt.Errorf("getting user record: %w", err)
+	}
+
+	switch user.Kind {
+	case entity.UserKindAssociation:
+		associationUser, err := s.userDB.GetAssociationUserByUserId(user.ID)
+		if err != nil {
+			return nil, fmt.Errorf("getting association by user id: %w", err)
+		}
+		user.Role = utils.SafeUnwrap(associationUser.AssociationUserItemView.Role)
+	case entity.UserKindCompany:
+		companyUser, err := s.userDB.GetCompanyUserByUserId(user.ID)
+		if err != nil {
+			return nil, fmt.Errorf("getting company user by user id: %w", err)
+		}
+		user.Role = utils.SafeUnwrap(companyUser.CompanyUserItemView.Role)
+	}
+
+	res := new(entity.UserRecordResponse)
+	res.FromUserRecordView(user)
+	return res, nil
+}
+
+func (s *UserService) GetProfileByEmail(email string) (*entity.ProfileResponse, error) {
+	user, err := s.userDB.GetProfileByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	switch user.Kind {
+	case entity.UserKindAssociation:
+		associationUser, err := s.userDB.GetAssociationUserByUserId(user.ID)
+		if err != nil {
+			return nil, fmt.Errorf("getting association by user id: %w", err)
+		}
+		user.Role = utils.SafeUnwrap(associationUser.AssociationUserItemView.Role)
+	case entity.UserKindCompany:
+		companyUser, err := s.userDB.GetCompanyUserByUserId(user.ID)
+		if err != nil {
+			return nil, fmt.Errorf("getting company user by user id: %w", err)
+		}
+		user.Role = utils.SafeUnwrap(companyUser.CompanyUserItemView.Role)
+	}
+
+	res := new(entity.ProfileResponse)
+	res.FromUserProfileView(user)
+	utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, res.Avatar)
+	return res, nil
+}
+
 func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
 	admin := new(entity.UserEntity)
 	if err := admin.FromCreationRequest(req); err != nil {

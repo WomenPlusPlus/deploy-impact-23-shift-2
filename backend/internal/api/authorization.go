@@ -29,7 +29,7 @@ func (s *APIServer) initAuthorizationRoutes(router *mux.Router) {
 		).
 		Methods(http.MethodPost)
 
-	router.Use(AuthenticationMiddleware)
+	router.Use(s.AuthenticationMiddleware)
 }
 
 // TODO: delete later

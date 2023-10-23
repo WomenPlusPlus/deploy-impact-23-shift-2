@@ -207,6 +207,24 @@ type ListCompanyUserResponse struct {
 	CompanyId     int `json:"companyId"`
 }
 
+type UserRecordResponse struct {
+	ID        int       `json:"id"`
+	Kind      string    `json:"kind"`
+	Role      string    `json:"role"`
+	Email     string    `json:"email"`
+	State     string    `json:"state"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+func (r *UserRecordResponse) FromUserRecordView(v *UserRecordView) {
+	r.ID = v.ID
+	r.Kind = v.Kind
+	r.Role = v.Role
+	r.Email = v.Email
+	r.State = v.State
+	r.CreatedAt = v.CreatedAt
+}
+
 type ViewUserResponse struct {
 	ID            int        `json:"id"`
 	Kind          string     `json:"kind"`

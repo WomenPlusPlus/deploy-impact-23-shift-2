@@ -7,6 +7,8 @@ type UserDB interface {
 	GetUsers() ([]*User, error)
 
 	GetUserRecord(int) (*UserRecordView, error)
+	GetUserRecordByEmail(string) (*UserRecordView, error)
+	GetProfileByEmail(string) (*UserProfileView, error)
 	GetAllUsers() ([]*UserItemView, error)
 	GetUserById(int) (*UserItemView, error)
 	GetAssociationUserByUserId(int) (*UserItemView, error)
