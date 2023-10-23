@@ -1,18 +1,19 @@
 package db
 
 import (
-	"cloud.google.com/go/storage"
 	"context"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"golang.org/x/oauth2/google"
-	"golang.org/x/oauth2/jwt"
-	"google.golang.org/api/iterator"
 	"io"
 	"os"
 	"shift/internal/entity"
 	"time"
+
+	"cloud.google.com/go/storage"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/oauth2/google"
+	"golang.org/x/oauth2/jwt"
+	"google.golang.org/api/iterator"
 )
 
 type GoogleBucketDB struct {
