@@ -1,7 +1,9 @@
 package api
 
 import (
+	"context"
 	"net/http"
+	"shift/internal/db"
 	"shift/internal/entity"
 	"shift/internal/service"
 
@@ -11,9 +13,10 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address            string
-	userDB             entity.UserDB
-	associationDB      entity.AssociationDB
+	address       string
+	userDB        entity.UserDB
+	associationDB entity.AssociationDB
+	// invitationDB       entity.InvitationDB
 	bucketDb           entity.BucketDB
 	userService        *service.UserService
 	associationService *service.AssociationService
@@ -22,14 +25,20 @@ type APIServer struct {
 // NewAPIServer creates a new instance of APIServer with the given address.
 func NewAPIServer(
 	address string,
-	bucketDb entity.BucketDB,
-	userDB entity.UserDB,
 ) *APIServer {
+	ctx := context.Background()
+
+	bucketDB := db.NewGoogleBucketDB(ctx)
+	logrus.Tracef("GCP Bucket initialized: %T", bucketDB)
+
+	postgresDB := db.NewPostgresDB()
+	logrus.Tracef("PostgreSQL DB initialized: %T", postgresDB)
+
 	return &APIServer{
-		address:     address,
-		userDB:      userDB,
-		bucketDb:    bucketDb,
-		userService: service.NewUserService(bucketDb, userDB),
+		address:            address,
+		bucketDb:           bucketDB,
+		userService:        service.NewUserService(bucketDB, postgresDB),
+		associationService: service.NewAssociationService(bucketDB, postgresDB),
 	}
 }
 
@@ -46,8 +55,6 @@ func (s *APIServer) Run() {
 
 	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
-
-	router.HandleFunc("/admin/associations", makeHTTPHandleFunc(s.handleCreateAssociation))
 
 	logrus.Println("JSON API Server is running on port", s.address)
 	logrus.Fatal(http.ListenAndServe(s.address, router))

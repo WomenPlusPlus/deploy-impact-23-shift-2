@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	"os"
 	"shift/internal/api"
-	"shift/internal/db"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -19,16 +17,7 @@ func main() {
 	}
 	logrus.Trace("Setup environment variables")
 
-	ctx := context.Background()
-
-	postgresDB := db.NewPostgresDB()
-	postgresDB.Init()
-	logrus.Tracef("PostgreSQL DB initialized: %T", postgresDB)
-
-	bucketDB := db.NewGoogleBucketDB(ctx)
-	logrus.Tracef("GCP Bucket initialized: %T", bucketDB)
-
-	server := api.NewAPIServer(":"+os.Getenv("API_PORT"), bucketDB, postgresDB)
+	server := api.NewAPIServer(":" + os.Getenv("API_PORT"))
 	logrus.Tracef("Server initialized: %T", server)
 	server.Run()
 }
