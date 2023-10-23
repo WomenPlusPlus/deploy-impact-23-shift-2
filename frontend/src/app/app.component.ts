@@ -23,7 +23,8 @@ export class AppComponent implements OnInit {
     constructor(
         private readonly store: Store,
         private readonly appStore: AppStore
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.store.dispatch(LocationActions.loadInitialData());

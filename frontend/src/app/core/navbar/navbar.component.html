@@ -1,4 +1,15 @@
 <div class="w-full navbar">
     <ng-content></ng-content>
     <a class="btn btn-ghost normal-case text-xl">SHIFT 2</a>
+    <div class="ml-auto dropdown dropdown-end" *ngIf="profile$ | async as profile">
+        <label tabindex="0" class="btn btn-ghost rounded-full avatar flex-row pr-0">
+            <span>{{ profile.name }}</span>
+            <div class="w-10 rounded-full">
+                <img [src]="profile.avatar || 'assets/profile-picture-default-form.png'" alt="avatar" />
+            </div>
+        </label>
+        <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+            <li><button (click)="auth.logout()">Logout</button></li>
+        </ul>
+    </div>
 </div>

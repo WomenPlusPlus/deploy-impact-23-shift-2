@@ -1,0 +1,14 @@
+<main class="flex w-screen h-screen-s overflow-hidden">
+    <section class="flex-grow grid place-content-stretch place-items-center m-10 sm:m-0 relative z-10 bg-base-100">
+        <div class="p-4">
+            <span class="block text-xl sm:text-3xl lg:text-5xl mb-2 sm:mb-6">Welcome to Shift 2!</span>
+            <button
+                class="btn btn-primary w-full sm:w-auto btn-sm text-sm sm:btn-md sm:text-[1rem] lg:btn-md lg:text-xl"
+                (click)="auth.loginWithRedirect()"
+            >
+                Authenticate!
+            </button>
+        </div>
+    </section>
+    <section class="absolute inset-0 sm:static w-full sm:w-44 md:w-80 lg:w-96 xl:w-full sm:max-w-lg bg-pattern"></section>
+</main>
