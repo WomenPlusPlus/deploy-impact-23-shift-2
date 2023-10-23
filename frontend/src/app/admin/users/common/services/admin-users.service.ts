@@ -167,7 +167,7 @@ export class AdminUsersService {
             }
         ];
         const item = list.find((item) => item.id === id);
-        return item ? of(item) : throwError(() => ({ status: 404 }));
+        return item ? of(item as any) : throwError(() => ({ status: 404 }));
         // return this.httpClient.get<UserDetails>(`http://localhost:8080/api/v1/users/${id}`);
     }
 
