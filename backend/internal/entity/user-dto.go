@@ -234,10 +234,11 @@ type ViewUserResponse struct {
 	Email         string     `json:"email"`
 	PhoneNumber   string     `json:"phoneNumber"`
 	BirthDate     time.Time  `json:"birthDate"`
-	Photo         *LocalFile `json:"photo"`
+	Photo         *LocalFile `json:"photo,omitempty"`
 	LinkedInUrl   string     `json:"linkedInUrl"`
 	GithubUrl     string     `json:"githubUrl"`
 	PortfolioUrl  string     `json:"portfolioUrl"`
+	State         string     `json:"state"`
 
 	AssociationUserId int    `json:"associationUserId,omitempty"`
 	AssociationId     int    `json:"associationId,omitempty"`
@@ -257,6 +258,7 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.Email = e.Email
 	r.PhoneNumber = e.PhoneNumber
 	r.BirthDate = e.BirthDate
+	r.State = e.State
 	r.Photo = NewLocalFile(e.ImageUrl)
 	r.LinkedInUrl = utils.SafeUnwrap(e.LinkedInUrl)
 	r.GithubUrl = utils.SafeUnwrap(e.GithubUrl)

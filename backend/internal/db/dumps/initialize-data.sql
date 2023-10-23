@@ -7,6 +7,8 @@ insert into users (kind, first_name, last_name, preferred_name, email, phone_num
 values ('ADMIN', 'Shift 2', 'Team', 'SHIFT-ADMIN', 'shift2.deployimpact+admin@gmail.com', '999 000 333', '2023-10-15 00:00:00');
 insert into users (kind, first_name, last_name, preferred_name, email, phone_number, birth_date)
 values ('CANDIDATE', 'Shift 2', 'Team', 'SHIFT-CANDIDATE', 'shift2.deployimpact+candidate@gmail.com', '999 000 333', '2023-10-15 00:00:00');
+insert into candidates (user_id, years_of_experience, job_status, seek_location_type, work_permit)
+values (2, 5, 'OPEN_TO', 'HYBRID', 'WORK_VISA');
 insert into users (kind, first_name, last_name, preferred_name, email, phone_number, birth_date)
 values ('ASSOCIATION', 'Shift 2', 'Team', 'SHIFT-ASSOCIATION-ADMIN', 'shift2.deployimpact+assadmin@gmail.com', '999 000 333', '2023-10-15 00:00:00');
 insert into association_users (user_id, association_id, role)
