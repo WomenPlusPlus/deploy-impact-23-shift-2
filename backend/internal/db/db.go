@@ -89,6 +89,26 @@ func (s *PostgresDB) GetUserRecord(id int) (*user.UserRecordView, error) {
 	return nil, fmt.Errorf("could not find user record view: id=%d", id)
 }
 
+func (s *PostgresDB) GetAssociationRecord(id int) (*association.AssociationRecordView, error) {
+	query := `select * from associations where id = $1`
+	rows, err := s.db.Queryx(query, id)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		view := new(association.AssociationRecordView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan association record view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user record view: id=%d", id)
+}
+
 func (pdb *PostgresDB) GetAllUsers() ([]*user.UserItemView, error) {
 	res := make([]*user.UserItemView, 0)
 
@@ -224,6 +244,26 @@ func (pdb *PostgresDB) GetUserById(id int) (*user.UserItemView, error) {
 
 	for rows.Next() {
 		view := new(user.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user: id=%d", id)
+}
+
+func (pdb *PostgresDB) GetAssociationById(id int) (*association.AssociationItemView, error) {
+	query := `select * from associations where id = :id`
+	rows, err := pdb.db.Queryx(query, id)
+	defer rows.Close()
+	if err != nil {
+		return nil, fmt.Errorf("fetching association id=%d in db: %w", id, err)
+	}
+
+	for rows.Next() {
+		view := new(association.AssociationItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err

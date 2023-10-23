@@ -108,3 +108,22 @@ func (s *AssociationService) uploadFile(path string, fileHeader *multipart.FileH
 
 	return nil
 }
+
+func (s *AssociationService) GetAssociationById(id int) (*association.ViewAssociationResponse, error) {
+	_, err := s.associationDB.GetAssociationRecord(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting association record: %w", err)
+	}
+	return s.getAssociationById(id)
+}
+
+func (s *AssociationService) getAssociationById(id int) (*association.ViewAssociationResponse, error) {
+	res := new(association.ViewAssociationResponse)
+	assoc, err := s.associationDB.GetAssociationById(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting association user by user id: %w", err)
+	}
+	res.FromAssociaionItemView(assoc)
+
+	return res, nil
+}

@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	entity "shift/internal/entity/association"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -11,20 +12,18 @@ import (
 func (s *APIServer) initAssociationRoutes(router *mux.Router) {
 	router = router.PathPrefix("/associations").Subrouter()
 
-	router.Path("/create").
-		Handler(makeHTTPHandleFunc(s.handleCreateAssociation)).
-		Methods(http.MethodPost)
-
 	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleListAssociations)).
 		Methods(http.MethodGet)
 
-	// router.Path("/all/delete/{id}").
-	// 	Handler(makeHTTPHandleFunc(s.handleDeleteAssociations)).
-	// 	Methods(http.MethodGet)
+	router.Path("/create").
+		Handler(makeHTTPHandleFunc(s.handleCreateAssociation)).
+		Methods(http.MethodPost)
 
-	// router.Use(AuthenticationMiddleware)
-	// router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
+	router.Path("/{id}").
+		Handler(makeHTTPHandleFunc(s.handleViewAssociation)).
+		Methods(http.MethodGet)
+
 }
 
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {
@@ -52,4 +51,24 @@ func (s *APIServer) handleListAssociations(w http.ResponseWriter, r *http.Reques
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, res)
+}
+
+func (s *APIServer) handleViewAssociation(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("View user handler running")
+
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		WriteErrorResponse(w, http.StatusBadRequest, "invalid value for parameter id")
+		return nil
+	}
+
+	assoc, err := s.associationService.GetAssociationById(id)
+	if err != nil {
+		WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return nil
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, assoc)
+
 }
