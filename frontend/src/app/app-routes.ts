@@ -1,31 +1,37 @@
 import { Routes } from '@angular/router';
+import { authenticatedGuard, notAuthenticatedGuard } from '@app/common/guards/authenticated.guard';
 
 const routes: Routes = [
     {
         path: 'login',
         loadComponent: () =>
-            import('./pages/login/login.component').then((m) => m.LoginComponent)
+            import('./pages/login/login.component').then((m) => m.LoginComponent),
+        canActivate: [notAuthenticatedGuard]
     },
     {
         path: 'admin',
-        loadChildren: () => import('./admin/admin.routes')
+        loadChildren: () => import('./admin/admin.routes'),
+        canActivate: [authenticatedGuard]
     },
     {
         path: 'companies',
-        loadChildren: () => import('./companies/companies.routes')
+        loadChildren: () => import('./companies/companies.routes'),
+        canActivate: [authenticatedGuard]
     },
     {
         path: 'jobs',
-        loadChildren: () => import('./jobs/jobs.routes')
+        loadChildren: () => import('./jobs/jobs.routes'),
+        canActivate: [authenticatedGuard]
     },
     {
         path: 'associations',
-        loadChildren: () => import('./associations/associations.routes')
+        loadChildren: () => import('./associations/associations.routes'),
+        canActivate: [authenticatedGuard]
     },
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'login'
+        redirectTo: 'admin'
     },
     {
         path: '**',
