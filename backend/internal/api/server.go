@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"shift/internal/db"
 	"shift/internal/entity"
-	"shift/internal/service"
+	service "shift/internal/service/entity"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -37,7 +37,7 @@ func NewAPIServer(
 		bucketDb:           bucketDB,
 		userService:        service.NewUserService(bucketDB, postgresDB),
 		associationService: service.NewAssociationService(bucketDB, postgresDB),
-		// invitationService:  service.NewInvitationService(bucketDB, postgresDB),
+		invitationService:  service.NewInvitationService(bucketDB, postgresDB),
 	}
 }
 
@@ -51,6 +51,7 @@ func (s *APIServer) Run() {
 
 	s.initUserRoutes(apiRouter)
 	s.initAssociationRoutes(apiRouter)
+	s.initInvitaionRoutes(apiRouter)
 
 	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())

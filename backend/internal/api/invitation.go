@@ -1,33 +1,46 @@
 package api
 
-// func (s *APIServer) initInvitaionRoutes(router *mux.Router) {
-// 	router = router.PathPrefix("/invitations").Subrouter()
+import (
+	"net/http"
+	"shift/internal/entity/invitation"
 
-// 	router.Path("").
-// 		Handler(makeHTTPHandleFunc(s.handleCreateInvitation)).
-// 		Methods(http.MethodPost)
+	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
+)
 
-// 	router.Use(AuthenticationMiddleware)
-// 	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
-// }
+func (s *APIServer) initInvitaionRoutes(router *mux.Router) {
+	router = router.PathPrefix("/invitations").Subrouter()
 
-// func (s *APIServer) handleCreateInvitation(w http.ResponseWriter, r *http.Request) error {
-// 	invRequest := new(entity.CreateInvitationRequest)
-// 	if err := json.NewDecoder(r.Body).Decode(invRequest); err != nil {
-// 		return err
-// 	}
+	router.Path("/create").
+		Handler(makeHTTPHandleFunc(s.handleCreateInvitation)).
+		Methods(http.MethodPost)
 
-// 	inv := entity.NewInvitation(
-// 		invRequest.Kind,
-// 		invRequest.Email,
-// 		invRequest.Subject,
-// 		invRequest.Message,
-// 	)
+	router.Path("").
+		Handler(makeHTTPHandleFunc(s.handleListInvitations)).
+		Methods(http.MethodPost)
 
-// 	if _, err := s.invi.CreateInvitation(inv); err != nil {
-// 		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
-// 	}
+	// router.Use(AuthenticationMiddleware)
+	// router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
+}
 
-// 	return WriteJSONResponse(w, http.StatusOK, inv)
+func (s *APIServer) handleCreateInvitation(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("Create invitation handler is running")
 
-// }
+	req := new(invitation.CreateInvitationRequest)
+	if err := req.FromFormData(r); err != nil {
+		return BadRequestError{Message: err.Error()}
+	}
+
+	res, err := s.invitationService.CreateInvitation(req)
+	if err != nil {
+		return InternalServerError{Message: err.Error()}
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, res)
+}
+
+func (s *APIServer) handleListInvitations(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("List invitations handler running")
+	// res, err := s.invitationService.ListInvitations()
+	return nil
+}

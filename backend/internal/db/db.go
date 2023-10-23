@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"shift/internal/entity/association"
+	"shift/internal/entity/invitation"
 	"shift/internal/entity/user"
 
 	"github.com/sirupsen/logrus"
@@ -170,6 +171,28 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*association.AssociationItemView,
 		res = append(res, view)
 	}
 	fmt.Println(res)
+	return res, nil
+}
+
+func (pdb *PostgresDB) GetAllInvitations() ([]*invitation.InvitationItemView, error) {
+	res := make([]*invitation.InvitationItemView, 0)
+
+	query := `select * from invitations`
+	rows, err := pdb.db.Queryx(query)
+	defer rows.Close()
+	if err != nil {
+		return nil, fmt.Errorf("fetching invitations in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(invitation.InvitationItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
 	return res, nil
 }
 
@@ -408,6 +431,26 @@ func (pdb *PostgresDB) CreateAssociation(assoc *association.AssociationEntity) (
 	return assoc, nil
 }
 
+func (pdb *PostgresDB) CreateInvitation(inv *invitation.InvitationEntity) (*invitation.InvitationEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	invId, err := pdb.createInvitation(tx, inv)
+	if err != nil {
+		return nil, err
+	}
+	inv, err = pdb.getInvitationById(tx, invId)
+	if err != nil {
+		logrus.Errorf("getting added invitations from db: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit invitations creation in db: %v", err)
+		return nil, err
+	}
+
+	return inv, nil
+}
+
 func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*association.AssociationEntity, error) {
 	query := `select * from associations where id = :id`
 	rows, err := tx.Queryx(query, id)
@@ -425,6 +468,26 @@ func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*association
 		return association, nil
 	}
 	return nil, fmt.Errorf("could not find association user with id=%d", id)
+}
+
+func (pdb *PostgresDB) getInvitationById(tx sqlx.Queryer, id int) (*invitation.InvitationEntity, error) {
+	query := `select * from invitations where id = :id`
+	rows, err := tx.Queryx(query, id)
+	if err != nil {
+		logrus.Debugf("failed to get invitation  with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		inv := new(invitation.InvitationEntity)
+		if err := rows.StructScan(inv); err != nil {
+			logrus.Debugf("failed to scan invitation user from db record: %v", err)
+			return nil, err
+		}
+		return inv, nil
+	}
+	return nil, fmt.Errorf("could not find invitation user with id=%d", id)
+
 }
 
 func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *association.AssociationEntity) (int, error) {
@@ -448,6 +511,33 @@ func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *associati
 		return 0, err
 	}
 	return associationId, nil
+}
+
+func (pdb *PostgresDB) createInvitation(tx NamedQuerier, inv *invitation.InvitationEntity) (int, error) {
+	query := `insert into invitations
+		(
+			kind,
+			company_id,
+			role,
+			email,
+			subject,
+			message
+		)
+		values (
+			:kind,
+			:company_id,
+			:role,
+			:email,
+			:subject,
+			:message
+		)
+		returning id`
+	invId, err := PreparedQuery(tx, query, inv)
+	if err != nil {
+		logrus.Debugf("failed to insert association in db: %v", err)
+		return 0, err
+	}
+	return invId, nil
 }
 
 func (pdb *PostgresDB) CreateAssociationUser(associationUser *user.AssociationUserEntity) (*user.AssociationUserEntity, error) {
