@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"shift/internal/entity"
 
 	"github.com/sirupsen/logrus"
@@ -19,7 +20,7 @@ type PostgresDB struct {
 }
 
 func NewPostgresDB() *PostgresDB {
-	connStr := "postgres://postgres:shift2023@localhost:5432/postgres?sslmode=disable"
+	connStr := os.Getenv("POSTGRESQL_URL")
 	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
@@ -144,8 +145,8 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	return res, nil
 }
 
-func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error) {
-	res := make([]*entity.AssociationEntity, 0)
+func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, error) {
+	res := make([]*entity.AssociationItemView, 0)
 
 	query := `select * from associations`
 
@@ -156,7 +157,7 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error)
 	}
 
 	for rows.Next() {
-		view := new(entity.AssociationEntity)
+		view := new(entity.AssociationItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Debugf("failed to scan association view from db record: %v", err)
 			return nil, err
@@ -185,6 +186,26 @@ func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, 
 		return nil, err
 	}
 	return user, nil
+}
+
+func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*entity.AssociationEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	assocId, err := pdb.createAssociation(tx, assoc)
+	if err != nil {
+		return nil, err
+	}
+	assoc, err = pdb.getAssociationById(tx, assocId)
+	if err != nil {
+		logrus.Errorf("getting added associations from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit associations creation in db: %v", err)
+		return nil, err
+	}
+	return assoc, nil
 }
 
 func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
@@ -684,6 +705,25 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 			return nil, err
 		}
 		return associationUser, nil
+	}
+	return nil, fmt.Errorf("could not find association user with id=%d", id)
+}
+
+func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
+	query := `select * from associations where id = :id`
+	rows, err := tx.Queryx(query, id)
+	if err != nil {
+		logrus.Debugf("failed to get association  with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		association := new(entity.AssociationEntity)
+		if err := rows.StructScan(association); err != nil {
+			logrus.Debugf("failed to scan association user from db record: %v", err)
+			return nil, err
+		}
+		return association, nil
 	}
 	return nil, fmt.Errorf("could not find association user with id=%d", id)
 }
