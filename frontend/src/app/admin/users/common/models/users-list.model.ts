@@ -11,7 +11,7 @@ export interface UsersListItemModel {
     firstName: string;
     lastName: string;
     preferredName?: string;
-    imageUrl: string;
+    imageUrl?: string;
     email: string;
     state: UserStateEnum;
 }

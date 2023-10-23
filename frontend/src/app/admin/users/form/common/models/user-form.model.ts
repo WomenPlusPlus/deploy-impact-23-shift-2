@@ -85,7 +85,7 @@ export interface CandidateSpokenLanguagesFormModel {
 export type CandidateSkillsFormGroup = FormModel<CandidateSkillsFormModel>;
 
 export interface CandidateSkillsFormModel {
-    name: string | null; // TODO: select
+    name: string | null;
     years: number | null;
 }
 

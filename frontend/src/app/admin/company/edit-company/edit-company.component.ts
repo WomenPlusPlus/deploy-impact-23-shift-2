@@ -25,7 +25,7 @@ export class EditCompanyComponent implements OnInit {
     profile$ = this.editCompanyStore.profile$;
     vm$: Observable<CreateCompanyState> = this.editCompanyStore.vm$;
     previousName = '';
-    previousPhotoURL = 'assets/profile-picture-default-creation.png';
+    previousPhotoURL = 'assets/profile-picture-default-form.png';
     imageURL$!: Observable<string>;
 
     constructor(

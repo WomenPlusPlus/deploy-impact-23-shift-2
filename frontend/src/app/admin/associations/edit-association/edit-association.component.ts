@@ -25,7 +25,7 @@ export class EditAssociationComponent implements OnInit {
     profile$ = this.editAssociationStore.profile$;
     vm$: Observable<CreateAssociationState> = this.editAssociationStore.vm$;
     previousName = '';
-    previousPhotoURL = 'assets/profile-picture-default-creation.png';
+    previousPhotoURL = 'assets/profile-picture-default-form.png';
     imageURL$!: Observable<string>;
 
     constructor(
