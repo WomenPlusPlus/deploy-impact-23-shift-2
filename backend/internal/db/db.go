@@ -1,7 +1,6 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"log"
@@ -28,34 +27,6 @@ func NewPostgresDB() *PostgresDB {
 	}
 }
 
-func (db *PostgresDB) Init() {
-	db.createUserTable()
-}
-
-func (db *PostgresDB) createUserTable() {
-	query := `
-	CREATE TABLE IF NOT EXISTS users (
-		id serial primary key,
-		firstName varchar(50),
-		lastName varchar(50),
-		preferredName varchar(20),
-		email varchar(100) not null,
-		phoneNumber varchar(20),
-		birthDate timestamp,
-		imageUrl varchar(255),
-		linkedinUrl varchar(250),
-		githubUrl varchar(250),
-		portfolioUrl varchar(250),
-		state varchar(250),
-		createdAt timestamp
-	)`
-	db.db.MustExec(query)
-}
-
-func (s *PostgresDB) UpdateUser(*entity.User) error {
-	return nil
-}
-
 func (s *PostgresDB) DeleteUser(id int) error {
 	query := "DELETE FROM users WHERE id = $1"
 	res, err := s.db.Exec(query, id)
@@ -68,25 +39,6 @@ func (s *PostgresDB) DeleteUser(id int) error {
 		}
 	}
 	return nil
-}
-
-func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
-	users := []*entity.User{}
-	rows, err := s.db.Query("select * from users")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		user, err := createUser(rows)
-		if err != nil {
-			return nil, fmt.Errorf("cannot create user")
-		}
-		users = append(users, user)
-	}
-
-	return users, nil
 }
 
 func (pdb *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
@@ -1241,31 +1193,4 @@ func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity
 		return 0, err
 	}
 	return userId, nil
-}
-
-func createUser(rows *sql.Rows) (*entity.User, error) {
-	var createdAt sql.NullTime
-	user := new(entity.User)
-
-	err := rows.Scan(
-		&user.ID,
-		&user.FirstName,
-		&user.LastName,
-		&user.PreferredName,
-		&user.Email,
-		&user.PhoneNumber,
-		&user.BirthDate,
-		&user.ImageUrl,
-		&user.LinkedinUrl,
-		&user.GithubUrl,
-		&user.PortfolioUrl,
-		&user.State,
-		&createdAt,
-	)
-
-	if err != nil {
-		return nil, fmt.Errorf("cannot scan user row")
-	}
-
-	return user, nil
 }

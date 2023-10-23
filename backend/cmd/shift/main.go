@@ -27,7 +27,6 @@ func main() {
 	ctx := context.Background()
 
 	postgresDB := db.NewPostgresDB()
-	postgresDB.Init()
 	logrus.Tracef("PostgreSQL DB initialized: %T", postgresDB)
 
 	bucketDB := db.NewGoogleBucketDB(ctx)

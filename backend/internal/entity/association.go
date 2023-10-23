@@ -11,9 +11,9 @@ type Association struct {
 type AssociationDB interface {
 	CreateAssociation(*Association) error
 	DeleteAssociation(int) error
-	UpdateAssociation(*User) error
-	GetAssociations() ([]*User, error)
-	GetAssociationByID(int) (*User, error)
+	UpdateAssociation(interface{}) error
+	GetAssociations() ([]interface{}, error)
+	GetAssociationByID(int) (interface{}, error)
 }
 
 type CreateAssociationRequest struct {

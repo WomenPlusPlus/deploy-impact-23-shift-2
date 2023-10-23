@@ -4,24 +4,6 @@ import (
 	"time"
 )
 
-// USER
-
-type User struct {
-	ID            int       `json:"id"`
-	FirstName     string    `json:"firstName"`
-	LastName      string    `json:"lastName"`
-	PreferredName string    `json:"preferredName"`
-	Email         string    `json:"email"`
-	PhoneNumber   string    `json:"phoneNumber"`
-	BirthDate     time.Time `json:"birthDate"`
-	ImageUrl      string    `json:"imageUrl"`
-	LinkedinUrl   string    `json:"linkedinUrl"`
-	GithubUrl     string    `json:"githubUrl"`
-	PortfolioUrl  string    `json:"portfolioUrl"`
-	State         string    `json:"state"`
-	CreatedAt     time.Time `json:"createdAt"`
-}
-
 type UserEntity struct {
 	ID            int       `db:"id"`
 	Kind          string    `db:"kind"`

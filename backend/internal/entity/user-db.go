@@ -2,10 +2,6 @@ package entity
 
 // UserDB is an interface for managing user data.
 type UserDB interface {
-	DeleteUser(int) error
-	UpdateUser(*User) error
-	GetUsers() ([]*User, error)
-
 	GetUserRecord(int) (*UserRecordView, error)
 	GetUserRecordByEmail(string) (*UserRecordView, error)
 	GetProfileByEmail(string) (*UserProfileView, error)
@@ -16,6 +12,7 @@ type UserDB interface {
 	GetCompanyUserByUserId(int) (*UserItemView, error)
 	CreateUser(*UserEntity) (*UserEntity, error)
 	EditUser(int, *UserEntity) (*UserEntity, error)
+	DeleteUser(int) error
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
 	EditAssociationUser(int, *AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
