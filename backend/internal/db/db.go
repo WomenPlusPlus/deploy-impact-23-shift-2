@@ -3,35 +3,22 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"log"
+	"os"
 	"shift/internal/entity"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
-type UserDB interface {
-	DeleteUser(int) error
-	UpdateUser(*entity.User) error
-	GetUsers() ([]*entity.User, error)
-	GetUserByID(int) (*entity.User, error)
-
-	CreateAssociation(*entity.Association) error
-	DeleteAssociation(int) error
-	UpdateAssociation(*entity.Association) error
-	GetAssociations() ([]*entity.Association, error)
-	GetAssociationByID(int) (*entity.Association, error)
-}
-
-// docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
 
 type PostgresDB struct {
 	db *sqlx.DB
 }
 
 func NewPostgresDB() *PostgresDB {
-	connStr := "postgres://postgres:shift2023@localhost:5432/postgres?sslmode=disable"
+	connStr := os.Getenv("POSTGRESQL_URL")
 	db, err := sqlx.Connect("postgres", connStr)
 
 	if err != nil {
@@ -41,34 +28,6 @@ func NewPostgresDB() *PostgresDB {
 	return &PostgresDB{
 		db: db,
 	}
-}
-
-func (db *PostgresDB) Init() {
-	db.createUserTable()
-}
-
-func (db *PostgresDB) createUserTable() {
-	query := `
-	CREATE TABLE IF NOT EXISTS users (
-		id serial primary key,
-		firstName varchar(50),
-		lastName varchar(50),
-		preferredName varchar(20),
-		email varchar(100) not null,
-		phoneNumber varchar(20),
-		birthDate timestamp,
-		imageUrl varchar(255),
-		linkedinUrl varchar(250),
-		githubUrl varchar(250),
-		portfolioUrl varchar(250),
-		state varchar(250),
-		createdAt timestamp
-	)`
-	db.db.MustExec(query)
-}
-
-func (s *PostgresDB) UpdateUser(*entity.User) error {
-	return nil
 }
 
 func (s *PostgresDB) DeleteUser(id int) error {
@@ -187,6 +146,29 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 		res = append(res, view)
 	}
 
+	return res, nil
+}
+
+func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, error) {
+	res := make([]*entity.AssociationItemView, 0)
+
+	query := `select * from associations`
+
+	rows, err := pdb.db.Queryx(query)
+
+	if err != nil {
+		return nil, fmt.Errorf("fetching associations in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.AssociationItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Debugf("failed to scan association view from db record: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+	fmt.Println(res)
 	return res, nil
 }
 
@@ -403,6 +385,68 @@ func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEn
 		return nil, err
 	}
 	return res, nil
+}
+
+func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*entity.AssociationEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	assocId, err := pdb.createAssociation(tx, assoc)
+	if err != nil {
+		return nil, err
+	}
+	assoc, err = pdb.getAssociationById(tx, assocId)
+	if err != nil {
+		logrus.Errorf("getting added associations from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit associations creation in db: %v", err)
+		return nil, err
+	}
+	return assoc, nil
+}
+
+func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
+	query := `select * from associations where id = :id`
+	rows, err := tx.Queryx(query, id)
+	if err != nil {
+		logrus.Debugf("failed to get association  with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		association := new(entity.AssociationEntity)
+		if err := rows.StructScan(association); err != nil {
+			logrus.Debugf("failed to scan association user from db record: %v", err)
+			return nil, err
+		}
+		return association, nil
+	}
+	return nil, fmt.Errorf("could not find association user with id=%d", id)
+}
+
+func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.AssociationEntity) (int, error) {
+	query := `insert into associations
+		(
+			name,
+			logo,
+			website_url,
+			focus
+		)
+		values (
+			:name,
+			:logo,
+			:website_url,
+			:focus
+		)
+		returning id`
+	associationId, err := PreparedQuery(tx, query, association)
+	if err != nil {
+		logrus.Debugf("failed to insert association in db: %v", err)
+		return 0, err
+	}
+	return associationId, nil
 }
 
 func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
