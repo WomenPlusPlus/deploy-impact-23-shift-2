@@ -13,9 +13,7 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address       string
-	userDB        entity.UserDB
-	associationDB entity.AssociationDB
+	address string
 	// invitationDB       entity.InvitationDB
 	bucketDb           entity.BucketDB
 	userService        *service.UserService

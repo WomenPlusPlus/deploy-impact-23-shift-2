@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"shift/internal/entity"
+
+	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
 func (s *APIServer) initUserRoutes(router *mux.Router) {
