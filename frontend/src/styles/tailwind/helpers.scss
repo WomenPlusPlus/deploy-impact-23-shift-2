@@ -21,7 +21,13 @@
 }
 
 .grid-cols-\[auto-1fr\] {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+@media (min-width: 768px) {
+    .md\:grid-cols-\[auto-1fr\] {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
 }
 
 @media (min-width: 1024px) {
