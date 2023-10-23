@@ -25,8 +25,8 @@ func (r *ProfileResponse) FromUserProfileView(v *UserProfileView) {
 	r.State = v.State
 	r.CreatedAt = v.CreatedAt
 
-	if v.PreferredName != "" {
-		r.Name = v.PreferredName
+	if v.PreferredName != nil {
+		r.Name = *v.PreferredName
 	} else {
 		r.Name = fmt.Sprintf("%s %s", v.FirstName, v.LastName)
 	}

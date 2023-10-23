@@ -137,7 +137,7 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 			Kind:          user.Kind,
 			FirstName:     user.FirstName,
 			LastName:      user.LastName,
-			PreferredName: user.PreferredName,
+			PreferredName: utils.SafeUnwrap(user.PreferredName),
 			ImageUrl:      utils.SafeUnwrap(user.ImageUrl),
 			Email:         user.Email,
 			State:         user.State,
@@ -253,14 +253,14 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.Kind = e.Kind
 	r.FirstName = e.FirstName
 	r.LastName = e.LastName
-	r.PreferredName = e.PreferredName
+	r.PreferredName = utils.SafeUnwrap(e.PreferredName)
 	r.Email = e.Email
 	r.PhoneNumber = e.PhoneNumber
 	r.BirthDate = e.BirthDate
 	r.Photo = NewLocalFile(e.ImageUrl)
-	r.LinkedInUrl = e.LinkedInUrl
-	r.GithubUrl = e.GithubUrl
-	r.PortfolioUrl = e.PortfolioUrl
+	r.LinkedInUrl = utils.SafeUnwrap(e.LinkedInUrl)
+	r.GithubUrl = utils.SafeUnwrap(e.GithubUrl)
+	r.PortfolioUrl = utils.SafeUnwrap(e.PortfolioUrl)
 
 	switch e.Kind {
 	case UserKindAssociation:

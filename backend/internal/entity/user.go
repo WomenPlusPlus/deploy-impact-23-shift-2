@@ -27,13 +27,13 @@ type UserEntity struct {
 	Kind          string    `db:"kind"`
 	FirstName     string    `db:"first_name"`
 	LastName      string    `db:"last_name"`
-	PreferredName string    `db:"preferred_name"`
+	PreferredName *string   `db:"preferred_name"`
 	Email         string    `db:"email"`
 	PhoneNumber   string    `db:"phone_number"`
 	BirthDate     time.Time `db:"birth_date"`
-	LinkedInUrl   string    `db:"linkedin_url"`
-	GithubUrl     string    `db:"github_url"`
-	PortfolioUrl  string    `db:"portfolio_url"`
+	LinkedInUrl   *string   `db:"linkedin_url"`
+	GithubUrl     *string   `db:"github_url"`
+	PortfolioUrl  *string   `db:"portfolio_url"`
 	State         string    `db:"state"`
 	CreatedAt     time.Time `db:"created_at"`
 }
@@ -42,13 +42,13 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.Kind = request.Kind
 	u.FirstName = request.FirstName
 	u.LastName = request.LastName
-	u.PreferredName = request.PreferredName
+	u.PreferredName = &request.PreferredName
 	u.Email = request.Email
 	u.PhoneNumber = request.PhoneNumber
 	u.BirthDate = request.BirthDate
-	u.LinkedInUrl = request.LinkedInUrl
-	u.GithubUrl = request.GithubUrl
-	u.PortfolioUrl = request.PortfolioUrl
+	u.LinkedInUrl = &request.LinkedInUrl
+	u.GithubUrl = &request.GithubUrl
+	u.PortfolioUrl = &request.PortfolioUrl
 	u.State = UserStateActive
 	return nil
 }
@@ -364,7 +364,7 @@ type UserProfileView struct {
 	Role          string    `db:"role"`
 	FirstName     string    `db:"first_name"`
 	LastName      string    `db:"last_name"`
-	PreferredName string    `db:"preferred_name"`
+	PreferredName *string   `db:"preferred_name"`
 	ImageUrl      *string   `db:"image_url"`
 	Email         string    `db:"email"`
 	State         string    `db:"state"`
