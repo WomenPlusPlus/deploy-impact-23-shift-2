@@ -13,11 +13,11 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address string
-	// invitationDB       entity.InvitationDB
+	address            string
 	bucketDb           entity.BucketDB
 	userService        *service.UserService
 	associationService *service.AssociationService
+	invitationService  *service.InvitationService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
@@ -37,6 +37,7 @@ func NewAPIServer(
 		bucketDb:           bucketDB,
 		userService:        service.NewUserService(bucketDB, postgresDB),
 		associationService: service.NewAssociationService(bucketDB, postgresDB),
+		// invitationService:  service.NewInvitationService(bucketDB, postgresDB),
 	}
 }
 

@@ -2,7 +2,7 @@ package api
 
 import (
 	"net/http"
-	"shift/internal/entity"
+	entity "shift/internal/entity/association"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"

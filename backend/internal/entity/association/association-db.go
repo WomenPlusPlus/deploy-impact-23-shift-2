@@ -1,4 +1,4 @@
-package entity
+package association
 
 type AssociationDB interface {
 	GetAllAssociations() ([]*AssociationItemView, error)

@@ -1,6 +1,7 @@
-package entity
+package user
 
 import (
+	"shift/internal/entity"
 	"time"
 )
 
@@ -49,7 +50,7 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.LinkedInUrl = request.LinkedInUrl
 	u.GithubUrl = request.GithubUrl
 	u.PortfolioUrl = request.PortfolioUrl
-	u.State = UserStateActive
+	u.State = entity.UserStateActive
 	return nil
 }
 

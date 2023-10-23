@@ -5,23 +5,24 @@ import (
 	"fmt"
 	"mime/multipart"
 	"shift/internal/entity"
+	"shift/internal/entity/association"
 
 	"github.com/sirupsen/logrus"
 )
 
 type AssociationService struct {
 	bucketDB      entity.BucketDB
-	associationDB entity.AssociationDB
+	associationDB association.AssociationDB
 }
 
-func NewAssociationService(bucketDB entity.BucketDB, associationDB entity.AssociationDB) *AssociationService {
+func NewAssociationService(bucketDB entity.BucketDB, associationDB association.AssociationDB) *AssociationService {
 	return &AssociationService{
 		bucketDB:      bucketDB,
 		associationDB: associationDB,
 	}
 }
 
-func (s *AssociationService) CreateAssociation(req *entity.CreateAssociationRequest) (*entity.CreateAssociationResponse, error) {
+func (s *AssociationService) CreateAssociation(req *association.CreateAssociationRequest) (*association.CreateAssociationResponse, error) {
 	ass, err := s.createAssociation(req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create association: %s", err)
@@ -30,53 +31,53 @@ func (s *AssociationService) CreateAssociation(req *entity.CreateAssociationRequ
 	return ass, nil
 }
 
-func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequest) (*entity.CreateAssociationResponse, error) {
-	association := new(entity.AssociationEntity)
+func (s *AssociationService) createAssociation(req *association.CreateAssociationRequest) (*association.CreateAssociationResponse, error) {
+	assoc := new(association.AssociationEntity)
 
-	if err := association.FromCreationRequest(req); err != nil {
+	if err := assoc.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into association entity: %w", err)
 	}
-	logrus.Tracef("Parsed association entity: %+v", association)
+	logrus.Tracef("Parsed association entity: %+v", assoc)
 
-	association, err := s.associationDB.CreateAssociation(association)
+	assoc, err := s.associationDB.CreateAssociation(assoc)
 	if err != nil {
 		return nil, fmt.Errorf("creating new admin: %w", err)
 	}
-	logrus.Tracef("Added association to db: id=%d", association.ID)
+	logrus.Tracef("Added association to db: id=%d", assoc.ID)
 
 	if req.Logo != nil {
-		if err := s.saveLogo(association.ID, req.Logo); err != nil {
+		if err := s.saveLogo(assoc.ID, req.Logo); err != nil {
 			logrus.Errorf("uploading association logo: %v", err)
 		}
 	}
 
-	return &entity.CreateAssociationResponse{
-		ID:            association.ID,
-		AssociationID: association.ID,
+	return &association.CreateAssociationResponse{
+		ID:            assoc.ID,
+		AssociationID: assoc.ID,
 	}, nil
 }
 
-func (s *AssociationService) ListAssociations() (*entity.ListAssociationsResponse, error) {
+func (s *AssociationService) ListAssociations() (*association.ListAssociationsResponse, error) {
 	associations, err := s.associationDB.GetAllAssociations()
 	if err != nil {
 		return nil, fmt.Errorf("getting all associations: %w", err)
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	res := new(entity.ListAssociationsResponse)
+	res := new(association.ListAssociationsResponse)
 	res.FromAssociationsView(associations)
 
 	return res, nil
 }
 
-func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociationsResponse, error) {
+func (s *AssociationService) DeleteAssociation(id int) (*association.ListAssociationsResponse, error) {
 	associations, err := s.associationDB.GetAllAssociations()
 	if err != nil {
 		return nil, fmt.Errorf("getting all associations: %w", err)
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	res := new(entity.ListAssociationsResponse)
+	res := new(association.ListAssociationsResponse)
 
 	return res, nil
 }

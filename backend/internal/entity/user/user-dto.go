@@ -1,4 +1,4 @@
-package entity
+package user
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"regexp"
+	"shift/internal/entity"
 	"shift/internal/utils"
 	"strconv"
 	"strings"
@@ -44,15 +45,15 @@ func (u *EditUserRequest) FromFormData(id int, r *http.Request) error {
 
 func (u *EditUserRequest) FillKindSpecificDetail(kind string) error {
 	switch kind {
-	case UserKindAdmin:
+	case entity.UserKindAdmin:
 		return nil
-	case UserKindAssociation:
+	case entity.UserKindAssociation:
 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
 		return u.fromFormDataAssociation(u.fd)
-	case UserKindCandidate:
+	case entity.UserKindCandidate:
 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
 		return u.fromFormDataCandidate(u.fd)
-	case UserKindCompany:
+	case entity.UserKindCompany:
 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
 		return u.fromFormDataCompany(u.fd)
 	default:
@@ -64,7 +65,7 @@ func (u *EditUserRequest) fromFormData(id int, fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -144,13 +145,13 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 		}
 
 		switch user.Kind {
-		case UserKindAssociation:
+		case entity.UserKindAssociation:
 			item.Role = *user.AssociationUserItemView.Role
 			item.ListAssociationUserResponse = &ListAssociationUserResponse{
 				AssociationUserId: *user.AssociationUserItemView.ID,
 				AssociationId:     *user.AssociationId,
 			}
-		case UserKindCandidate:
+		case entity.UserKindCandidate:
 			item.ListCandidateResponse = &ListCandidateResponse{
 				CandidateId: *user.CandidateItemView.ID,
 				PhoneNumber: user.PhoneNumber,
@@ -159,7 +160,7 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 				HasCV:       utils.SafeUnwrap(user.CVUrl) != "",
 				HasVideo:    utils.SafeUnwrap(user.VideoUrl) != "",
 			}
-		case UserKindCompany:
+		case entity.UserKindCompany:
 			item.Role = *user.CompanyUserItemView.Role
 			item.ListCompanyUserResponse = &ListCompanyUserResponse{
 				CompanyUserId: *user.CompanyUserItemView.ID,
@@ -208,18 +209,18 @@ type ListCompanyUserResponse struct {
 }
 
 type ViewUserResponse struct {
-	ID            int        `json:"id"`
-	Kind          string     `json:"kind"`
-	FirstName     string     `json:"firstName"`
-	LastName      string     `json:"lastName"`
-	PreferredName string     `json:"preferredName"`
-	Email         string     `json:"email"`
-	PhoneNumber   string     `json:"phoneNumber"`
-	BirthDate     time.Time  `json:"birthDate"`
-	Photo         *LocalFile `json:"photo"`
-	LinkedInUrl   string     `json:"linkedInUrl"`
-	GithubUrl     string     `json:"githubUrl"`
-	PortfolioUrl  string     `json:"portfolioUrl"`
+	ID            int               `json:"id"`
+	Kind          string            `json:"kind"`
+	FirstName     string            `json:"firstName"`
+	LastName      string            `json:"lastName"`
+	PreferredName string            `json:"preferredName"`
+	Email         string            `json:"email"`
+	PhoneNumber   string            `json:"phoneNumber"`
+	BirthDate     time.Time         `json:"birthDate"`
+	Photo         *entity.LocalFile `json:"photo"`
+	LinkedInUrl   string            `json:"linkedInUrl"`
+	GithubUrl     string            `json:"githubUrl"`
+	PortfolioUrl  string            `json:"portfolioUrl"`
 
 	AssociationUserId int    `json:"associationUserId,omitempty"`
 	AssociationId     int    `json:"associationId,omitempty"`
@@ -239,17 +240,17 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.Email = e.Email
 	r.PhoneNumber = e.PhoneNumber
 	r.BirthDate = e.BirthDate
-	r.Photo = NewLocalFile(e.ImageUrl)
+	r.Photo = entity.NewLocalFile(e.ImageUrl)
 	r.LinkedInUrl = e.LinkedInUrl
 	r.GithubUrl = e.GithubUrl
 	r.PortfolioUrl = e.PortfolioUrl
 
 	switch e.Kind {
-	case UserKindAssociation:
+	case entity.UserKindAssociation:
 		r.FromAssociationUserItemView(e.AssociationUserItemView)
-	case UserKindCandidate:
+	case entity.UserKindCandidate:
 		r.FromCandidateItemView(e.CandidateItemView)
-	case UserKindCompany:
+	case entity.UserKindCompany:
 		r.FromCompanyUserItemView(e.CompanyUserItemView)
 	}
 }
@@ -272,8 +273,8 @@ func (r *ViewUserResponse) FromCandidateItemView(e *CandidateItemView) {
 	r.SeekValues = utils.SafeUnwrap(e.SeekValues)
 	r.WorkPermit = utils.SafeUnwrap(e.WorkPermit)
 	r.NoticePeriod = utils.SafeUnwrap(e.NoticePeriod)
-	r.CV = NewLocalFile(e.CVUrl)
-	r.Video = NewLocalFile(e.VideoUrl)
+	r.CV = entity.NewLocalFile(e.CVUrl)
+	r.Video = entity.NewLocalFile(e.VideoUrl)
 }
 
 func (r *ViewUserResponse) FromCompanyUserItemView(e *CompanyUserItemView) {
@@ -296,9 +297,9 @@ type ViewUserCandidateResponse struct {
 	NoticePeriod      int                     `json:"noticePeriod"`
 	SpokenLanguages   []UserSpokenLanguage    `json:"spokenLanguages"`
 	Skills            []UserSkill             `json:"skills"`
-	CV                *LocalFile              `json:"cv"`
-	Attachments       []*LocalFile            `json:"attachments"`
-	Video             *LocalFile              `json:"video"`
+	CV                *entity.LocalFile       `json:"cv"`
+	Attachments       []*entity.LocalFile     `json:"attachments"`
+	Video             *entity.LocalFile       `json:"video"`
 	EducationHistory  []UserEducationHistory  `json:"educationHistory"`
 	EmploymentHistory []UserEmploymentHistory `json:"employmentHistory"`
 }
@@ -387,7 +388,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -420,15 +421,15 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	}
 
 	switch u.Kind {
-	case UserKindAdmin:
+	case entity.UserKindAdmin:
 		return nil
-	case UserKindAssociation:
+	case entity.UserKindAssociation:
 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
 		return u.fromFormDataAssociation(fd)
-	case UserKindCandidate:
+	case entity.UserKindCandidate:
 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
 		return u.fromFormDataCandidate(fd)
-	case UserKindCompany:
+	case entity.UserKindCompany:
 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
 		return u.fromFormDataCompany(fd)
 	default:

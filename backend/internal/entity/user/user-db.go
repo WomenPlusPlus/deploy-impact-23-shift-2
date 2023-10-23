@@ -1,4 +1,4 @@
-package entity
+package user
 
 // UserDB is an interface for managing user data.
 type UserDB interface {

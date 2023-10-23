@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"shift/internal/entity"
+	"shift/internal/entity/association"
+	"shift/internal/entity/user"
 
 	"github.com/sirupsen/logrus"
 
@@ -44,8 +45,8 @@ func (s *PostgresDB) DeleteUser(id int) error {
 	return nil
 }
 
-func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
-	users := []*entity.User{}
+func (s *PostgresDB) GetUsers() ([]*user.User, error) {
+	users := []*user.User{}
 	rows, err := s.db.Query("select * from users")
 	defer rows.Close()
 
@@ -64,7 +65,7 @@ func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
 	return users, nil
 }
 
-func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
+func (s *PostgresDB) GetUserRecord(id int) (*user.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users
 				where id = $1`
@@ -76,7 +77,7 @@ func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	}
 
 	for rows.Next() {
-		view := new(entity.UserRecordView)
+		view := new(user.UserRecordView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user record view from db row: %v", err)
 			return nil, err
@@ -87,8 +88,8 @@ func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	return nil, fmt.Errorf("could not find user record view: id=%d", id)
 }
 
-func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
-	res := make([]*entity.UserItemView, 0)
+func (pdb *PostgresDB) GetAllUsers() ([]*user.UserItemView, error) {
+	res := make([]*user.UserItemView, 0)
 
 	query := `select
     				users.id,
@@ -138,7 +139,7 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	}
 
 	for rows.Next() {
-		view := new(entity.UserItemView)
+		view := new(user.UserItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -149,8 +150,8 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	return res, nil
 }
 
-func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, error) {
-	res := make([]*entity.AssociationItemView, 0)
+func (pdb *PostgresDB) GetAllAssociations() ([]*association.AssociationItemView, error) {
+	res := make([]*association.AssociationItemView, 0)
 
 	query := `select * from associations`
 
@@ -161,7 +162,7 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, erro
 	}
 
 	for rows.Next() {
-		view := new(entity.AssociationItemView)
+		view := new(association.AssociationItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Debugf("failed to scan association view from db record: %v", err)
 			return nil, err
@@ -172,7 +173,7 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, erro
 	return res, nil
 }
 
-func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
+func (pdb *PostgresDB) GetUserById(id int) (*user.UserItemView, error) {
 	query := `select
     				users.id,
 					users.kind,
@@ -199,7 +200,7 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 	}
 
 	for rows.Next() {
-		view := new(entity.UserItemView)
+		view := new(user.UserItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -210,7 +211,7 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 	return nil, fmt.Errorf("could not find user: id=%d", id)
 }
 
-func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*entity.UserItemView, error) {
+func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*user.UserItemView, error) {
 	query := `select
     				users.id,
 					users.kind,
@@ -241,7 +242,7 @@ func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*entity.UserItemView,
 	}
 
 	for rows.Next() {
-		view := new(entity.UserItemView)
+		view := new(user.UserItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -252,7 +253,7 @@ func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*entity.UserItemView,
 	return nil, fmt.Errorf("could not find association user: id=%d", id)
 }
 
-func (pdb *PostgresDB) GetCandidateByUserId(id int) (*entity.UserItemView, error) {
+func (pdb *PostgresDB) GetCandidateByUserId(id int) (*user.UserItemView, error) {
 	query := `select
     				users.id,
 					users.kind,
@@ -294,7 +295,7 @@ func (pdb *PostgresDB) GetCandidateByUserId(id int) (*entity.UserItemView, error
 	}
 
 	for rows.Next() {
-		view := new(entity.UserItemView)
+		view := new(user.UserItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -305,7 +306,7 @@ func (pdb *PostgresDB) GetCandidateByUserId(id int) (*entity.UserItemView, error
 	return nil, fmt.Errorf("could not find candidate: id=%d", id)
 }
 
-func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, error) {
+func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*user.UserItemView, error) {
 	query := `select
     				users.id,
 					users.kind,
@@ -336,7 +337,7 @@ func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, err
 	}
 
 	for rows.Next() {
-		view := new(entity.UserItemView)
+		view := new(user.UserItemView)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -347,7 +348,7 @@ func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, err
 	return nil, fmt.Errorf("could not find company user: id=%d", id)
 }
 
-func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, error) {
+func (pdb *PostgresDB) CreateUser(user *user.UserEntity) (*user.UserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -367,7 +368,7 @@ func (pdb *PostgresDB) CreateUser(user *entity.UserEntity) (*entity.UserEntity, 
 	return user, nil
 }
 
-func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEntity, error) {
+func (pdb *PostgresDB) EditUser(id int, user *user.UserEntity) (*user.UserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -387,7 +388,7 @@ func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEn
 	return res, nil
 }
 
-func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*entity.AssociationEntity, error) {
+func (pdb *PostgresDB) CreateAssociation(assoc *association.AssociationEntity) (*association.AssociationEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -407,7 +408,7 @@ func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*enti
 	return assoc, nil
 }
 
-func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
+func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*association.AssociationEntity, error) {
 	query := `select * from associations where id = :id`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
@@ -416,7 +417,7 @@ func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.Asso
 	}
 
 	for rows.Next() {
-		association := new(entity.AssociationEntity)
+		association := new(association.AssociationEntity)
 		if err := rows.StructScan(association); err != nil {
 			logrus.Debugf("failed to scan association user from db record: %v", err)
 			return nil, err
@@ -426,7 +427,7 @@ func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.Asso
 	return nil, fmt.Errorf("could not find association user with id=%d", id)
 }
 
-func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.AssociationEntity) (int, error) {
+func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *association.AssociationEntity) (int, error) {
 	query := `insert into associations
 		(
 			name,
@@ -449,7 +450,7 @@ func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.As
 	return associationId, nil
 }
 
-func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
+func (pdb *PostgresDB) CreateAssociationUser(associationUser *user.AssociationUserEntity) (*user.AssociationUserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -479,7 +480,7 @@ func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.Association
 	return res, nil
 }
 
-func (pdb *PostgresDB) EditAssociationUser(id int, associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
+func (pdb *PostgresDB) EditAssociationUser(id int, associationUser *user.AssociationUserEntity) (*user.AssociationUserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -510,7 +511,7 @@ func (pdb *PostgresDB) EditAssociationUser(id int, associationUser *entity.Assoc
 	return res, nil
 }
 
-func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*entity.CandidateEntity, error) {
+func (pdb *PostgresDB) CreateCandidate(candidate *user.CandidateEntity) (*user.CandidateEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -563,7 +564,7 @@ func (pdb *PostgresDB) CreateCandidate(candidate *entity.CandidateEntity) (*enti
 	return res, nil
 }
 
-func (pdb *PostgresDB) EditCandidate(id int, candidate *entity.CandidateEntity) (*entity.CandidateEntity, error) {
+func (pdb *PostgresDB) EditCandidate(id int, candidate *user.CandidateEntity) (*user.CandidateEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -603,7 +604,7 @@ func (pdb *PostgresDB) EditCandidate(id int, candidate *entity.CandidateEntity) 
 	return res, nil
 }
 
-func (pdb *PostgresDB) CreateCompanyUser(companyUser *entity.CompanyUserEntity) (*entity.CompanyUserEntity, error) {
+func (pdb *PostgresDB) CreateCompanyUser(companyUser *user.CompanyUserEntity) (*user.CompanyUserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -633,7 +634,7 @@ func (pdb *PostgresDB) CreateCompanyUser(companyUser *entity.CompanyUserEntity) 
 	return res, nil
 }
 
-func (pdb *PostgresDB) EditCompanyUser(id int, companyUser *entity.CompanyUserEntity) (*entity.CompanyUserEntity, error) {
+func (pdb *PostgresDB) EditCompanyUser(id int, companyUser *user.CompanyUserEntity) (*user.CompanyUserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 
@@ -664,7 +665,7 @@ func (pdb *PostgresDB) EditCompanyUser(id int, companyUser *entity.CompanyUserEn
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignUserPhoto(record *entity.UserPhotoEntity) error {
+func (pdb *PostgresDB) AssignUserPhoto(record *user.UserPhotoEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteUserPhoto(tx, record.UserID); err != nil {
@@ -683,8 +684,8 @@ func (pdb *PostgresDB) DeleteUserPhoto(userId int) error {
 	return pdb.deleteUserPhoto(pdb.db, userId)
 }
 
-func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkillsEntity, error) {
-	res := make(entity.CandidateSkillsEntity, 0)
+func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (user.CandidateSkillsEntity, error) {
+	res := make(user.CandidateSkillsEntity, 0)
 	query := `select * from candidate_skills where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
@@ -694,7 +695,7 @@ func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkil
 	}
 
 	for rows.Next() {
-		view := new(entity.CandidateSkillEntity)
+		view := new(user.CandidateSkillEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan candidate skills from db row: %v", err)
 			return nil, err
@@ -705,7 +706,7 @@ func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkil
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records entity.CandidateSkillsEntity) error {
+func (pdb *PostgresDB) AssignCandidateSkills(candidateId int, records user.CandidateSkillsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateSkills(tx, candidateId); err != nil {
@@ -723,8 +724,8 @@ func (pdb *PostgresDB) DeleteCandidateSkills(candidateId int) error {
 	return pdb.deleteCandidateSkills(pdb.db, candidateId)
 }
 
-func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (entity.CandidateSpokenLanguagesEntity, error) {
-	res := make(entity.CandidateSpokenLanguagesEntity, 0)
+func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (user.CandidateSpokenLanguagesEntity, error) {
+	res := make(user.CandidateSpokenLanguagesEntity, 0)
 	query := `select * from candidate_spoken_languages where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
@@ -734,7 +735,7 @@ func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (entity.Cand
 	}
 
 	for rows.Next() {
-		view := new(entity.CandidateSpokenLanguageEntity)
+		view := new(user.CandidateSpokenLanguageEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan candidate spoken languages from db row: %v", err)
 			return nil, err
@@ -745,7 +746,7 @@ func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (entity.Cand
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignCandidateSpokenLanguages(candidateId int, records entity.CandidateSpokenLanguagesEntity) error {
+func (pdb *PostgresDB) AssignCandidateSpokenLanguages(candidateId int, records user.CandidateSpokenLanguagesEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateSpokenLanguages(tx, candidateId); err != nil {
@@ -763,8 +764,8 @@ func (pdb *PostgresDB) DeleteCandidateSpokenLanguages(candidateId int) error {
 	return pdb.deleteCandidateSpokenLanguages(pdb.db, candidateId)
 }
 
-func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (entity.CandidateSeekLocationsEntity, error) {
-	res := make(entity.CandidateSeekLocationsEntity, 0)
+func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (user.CandidateSeekLocationsEntity, error) {
+	res := make(user.CandidateSeekLocationsEntity, 0)
 	query := `select * from candidate_seek_locations where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
@@ -774,7 +775,7 @@ func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (entity.Candid
 	}
 
 	for rows.Next() {
-		view := new(entity.CandidateSeekLocationEntity)
+		view := new(user.CandidateSeekLocationEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan candidate seek locations from db row: %v", err)
 			return nil, err
@@ -785,7 +786,7 @@ func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (entity.Candid
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignCandidateSeekLocations(candidateId int, records entity.CandidateSeekLocationsEntity) error {
+func (pdb *PostgresDB) AssignCandidateSeekLocations(candidateId int, records user.CandidateSeekLocationsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateSeekLocations(tx, candidateId); err != nil {
@@ -802,7 +803,7 @@ func (pdb *PostgresDB) AssignCandidateSeekLocations(candidateId int, records ent
 func (pdb *PostgresDB) DeleteCandidateSeekLocations(candidateId int) error {
 	return pdb.deleteCandidateSeekLocations(pdb.db, candidateId)
 }
-func (pdb *PostgresDB) AssignCandidateCV(record *entity.CandidateCVEntity) error {
+func (pdb *PostgresDB) AssignCandidateCV(record *user.CandidateCVEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateCV(tx, record.CandidateID); err != nil {
@@ -820,8 +821,8 @@ func (pdb *PostgresDB) DeleteCandidateCV(candidateId int) error {
 	return pdb.deleteCandidateCV(pdb.db, candidateId)
 }
 
-func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (entity.CandidateAttachmentsEntity, error) {
-	res := make(entity.CandidateAttachmentsEntity, 0)
+func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (user.CandidateAttachmentsEntity, error) {
+	res := make(user.CandidateAttachmentsEntity, 0)
 	query := `select * from candidate_attachments where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
@@ -831,7 +832,7 @@ func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (entity.Candidat
 	}
 
 	for rows.Next() {
-		view := new(entity.CandidateAttachmentEntity)
+		view := new(user.CandidateAttachmentEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan candidate attachments from db row: %v", err)
 			return nil, err
@@ -842,7 +843,7 @@ func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (entity.Candidat
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records entity.CandidateAttachmentsEntity) error {
+func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records user.CandidateAttachmentsEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateAttachments(tx, candidateId); err != nil {
@@ -859,7 +860,7 @@ func (pdb *PostgresDB) AssignCandidateAttachments(candidateId int, records entit
 func (pdb *PostgresDB) DeleteCandidateAttachments(candidateId int) error {
 	return pdb.deleteCandidateAttachments(pdb.db, candidateId)
 }
-func (pdb *PostgresDB) AssignCandidateVideo(record *entity.CandidateVideoEntity) error {
+func (pdb *PostgresDB) AssignCandidateVideo(record *user.CandidateVideoEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateVideo(tx, record.CandidateID); err != nil {
@@ -877,8 +878,8 @@ func (pdb *PostgresDB) DeleteCandidateVideo(candidateId int) error {
 	return pdb.deleteCandidateVideo(pdb.db, candidateId)
 }
 
-func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (entity.CandidateEducationHistoryListEntity, error) {
-	res := make(entity.CandidateEducationHistoryListEntity, 0)
+func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (user.CandidateEducationHistoryListEntity, error) {
+	res := make(user.CandidateEducationHistoryListEntity, 0)
 	query := `select * from candidate_education_history where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
@@ -888,7 +889,7 @@ func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (entity
 	}
 
 	for rows.Next() {
-		view := new(entity.CandidateEducationHistoryEntity)
+		view := new(user.CandidateEducationHistoryEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan candidate education history from db row: %v", err)
 			return nil, err
@@ -899,7 +900,7 @@ func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (entity
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignCandidateEducationHistoryList(candidateId int, records entity.CandidateEducationHistoryListEntity) error {
+func (pdb *PostgresDB) AssignCandidateEducationHistoryList(candidateId int, records user.CandidateEducationHistoryListEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateEducationHistoryList(tx, candidateId); err != nil {
@@ -917,8 +918,8 @@ func (pdb *PostgresDB) DeleteCandidateEducationHistoryList(candidateId int) erro
 	return pdb.deleteCandidateEducationHistoryList(pdb.db, candidateId)
 }
 
-func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (entity.CandidateEmploymentHistoryListEntity, error) {
-	res := make(entity.CandidateEmploymentHistoryListEntity, 0)
+func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (user.CandidateEmploymentHistoryListEntity, error) {
+	res := make(user.CandidateEmploymentHistoryListEntity, 0)
 	query := `select * from candidate_employment_history where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
@@ -928,7 +929,7 @@ func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (entit
 	}
 
 	for rows.Next() {
-		view := new(entity.CandidateEmploymentHistoryEntity)
+		view := new(user.CandidateEmploymentHistoryEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan candidate employment history from db row: %v", err)
 			return nil, err
@@ -939,7 +940,7 @@ func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (entit
 	return res, nil
 }
 
-func (pdb *PostgresDB) AssignCandidateEmploymentHistoryList(candidateId int, records entity.CandidateEmploymentHistoryListEntity) error {
+func (pdb *PostgresDB) AssignCandidateEmploymentHistoryList(candidateId int, records user.CandidateEmploymentHistoryListEntity) error {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
 	if err := pdb.deleteCandidateEmploymentHistoryList(tx, candidateId); err != nil {
@@ -957,7 +958,7 @@ func (pdb *PostgresDB) DeleteCandidateEmploymentHistoryList(candidateId int) err
 	return pdb.deleteCandidateEmploymentHistoryList(pdb.db, candidateId)
 }
 
-func (pdb *PostgresDB) insertUserPhoto(tx NamedQuerier, record *entity.UserPhotoEntity) error {
+func (pdb *PostgresDB) insertUserPhoto(tx NamedQuerier, record *user.UserPhotoEntity) error {
 	query := `insert into user_photos (user_id, image_url) values (:user_id, :image_url)`
 	if _, err := tx.NamedExec(query, record); err != nil {
 		return err
@@ -973,7 +974,7 @@ func (pdb *PostgresDB) deleteUserPhoto(tx sqlx.Execer, userId int) error {
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateSkills(tx NamedQuerier, records entity.CandidateSkillsEntity) error {
+func (pdb *PostgresDB) insertCandidateSkills(tx NamedQuerier, records user.CandidateSkillsEntity) error {
 	query := `insert into candidate_skills (candidate_id, name, years) values (:candidate_id, :name, :years)`
 	for _, record := range records {
 		if _, err := tx.NamedExec(query, record); err != nil {
@@ -991,7 +992,7 @@ func (pdb *PostgresDB) deleteCandidateSkills(tx sqlx.Execer, candidateId int) er
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateSpokenLanguages(tx NamedQuerier, records entity.CandidateSpokenLanguagesEntity) error {
+func (pdb *PostgresDB) insertCandidateSpokenLanguages(tx NamedQuerier, records user.CandidateSpokenLanguagesEntity) error {
 	query := `insert into candidate_spoken_languages (candidate_id, language_id, language_name, language_short_name, level) values (:candidate_id, :language_id, :language_name, :language_short_name, :level)`
 	for _, record := range records {
 		if _, err := tx.NamedExec(query, record); err != nil {
@@ -1009,7 +1010,7 @@ func (pdb *PostgresDB) deleteCandidateSpokenLanguages(tx sqlx.Execer, candidateI
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateSeekLocations(tx NamedQuerier, records entity.CandidateSeekLocationsEntity) error {
+func (pdb *PostgresDB) insertCandidateSeekLocations(tx NamedQuerier, records user.CandidateSeekLocationsEntity) error {
 	query := `insert into candidate_seek_locations (candidate_id, city_id, city_name) values (:candidate_id, :city_id, :city_name)`
 	for _, record := range records {
 		if _, err := tx.NamedExec(query, record); err != nil {
@@ -1027,7 +1028,7 @@ func (pdb *PostgresDB) deleteCandidateSeekLocations(tx sqlx.Execer, candidateId 
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateCV(tx NamedQuerier, record *entity.CandidateCVEntity) error {
+func (pdb *PostgresDB) insertCandidateCV(tx NamedQuerier, record *user.CandidateCVEntity) error {
 	query := `insert into candidate_cvs (candidate_id, cv_url) values (:candidate_id, :cv_url)`
 	if _, err := tx.NamedExec(query, record); err != nil {
 		return err
@@ -1043,7 +1044,7 @@ func (pdb *PostgresDB) deleteCandidateCV(tx sqlx.Execer, candidateId int) error 
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateAttachments(tx NamedQuerier, records entity.CandidateAttachmentsEntity) error {
+func (pdb *PostgresDB) insertCandidateAttachments(tx NamedQuerier, records user.CandidateAttachmentsEntity) error {
 	query := `insert into candidate_attachments (candidate_id, attachment_url) values (:candidate_id, :attachment_url)`
 	for _, record := range records {
 		if _, err := tx.NamedExec(query, record); err != nil {
@@ -1061,7 +1062,7 @@ func (pdb *PostgresDB) deleteCandidateAttachments(tx sqlx.Execer, candidateId in
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateVideo(tx NamedQuerier, record *entity.CandidateVideoEntity) error {
+func (pdb *PostgresDB) insertCandidateVideo(tx NamedQuerier, record *user.CandidateVideoEntity) error {
 	query := `insert into candidate_videos (candidate_id, video_url) values (:candidate_id, :video_url)`
 	if _, err := tx.NamedExec(query, record); err != nil {
 		return err
@@ -1077,7 +1078,7 @@ func (pdb *PostgresDB) deleteCandidateVideo(tx sqlx.Execer, candidateId int) err
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateEducationHistoryList(tx NamedQuerier, records entity.CandidateEducationHistoryListEntity) error {
+func (pdb *PostgresDB) insertCandidateEducationHistoryList(tx NamedQuerier, records user.CandidateEducationHistoryListEntity) error {
 	query := `insert into candidate_education_history (candidate_id, title, description, entity, from_date, to_date) values (:candidate_id, :title, :description, :entity, :from_date, :to_date)`
 	for _, record := range records {
 		if _, err := tx.NamedExec(query, record); err != nil {
@@ -1095,7 +1096,7 @@ func (pdb *PostgresDB) deleteCandidateEducationHistoryList(tx sqlx.Execer, candi
 	return nil
 }
 
-func (pdb *PostgresDB) insertCandidateEmploymentHistoryList(tx NamedQuerier, records entity.CandidateEmploymentHistoryListEntity) error {
+func (pdb *PostgresDB) insertCandidateEmploymentHistoryList(tx NamedQuerier, records user.CandidateEmploymentHistoryListEntity) error {
 	query := `insert into candidate_employment_history (candidate_id, title, description, company, from_date, to_date) values (:candidate_id, :title, :description, :company, :from_date, :to_date)`
 	for _, record := range records {
 		if _, err := tx.NamedExec(query, record); err != nil {
@@ -1113,7 +1114,7 @@ func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, cand
 	return nil
 }
 
-func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity, error) {
+func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*user.UserEntity, error) {
 	query := `select * from users where id = $1`
 	rows, err := tx.Queryx(query, id)
 	defer rows.Close()
@@ -1123,7 +1124,7 @@ func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity,
 	}
 
 	for rows.Next() {
-		user := new(entity.UserEntity)
+		user := new(user.UserEntity)
 		if err := rows.StructScan(user); err != nil {
 			logrus.Errorf("failed to scan user from db row: %v", err)
 			return nil, err
@@ -1133,7 +1134,7 @@ func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity,
 	return nil, fmt.Errorf("could not find user with id=%d", id)
 }
 
-func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.AssociationUserEntity, error) {
+func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*user.AssociationUserEntity, error) {
 	query := `select users.*, association_users.*
 				from users
 				inner join association_users on users.id = association_users.user_id
@@ -1146,7 +1147,7 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 	}
 
 	for rows.Next() {
-		associationUser := new(entity.AssociationUserEntity)
+		associationUser := new(user.AssociationUserEntity)
 		if err := rows.StructScan(associationUser); err != nil {
 			logrus.Errorf("failed to scan association user from db row: %v", err)
 			return nil, err
@@ -1156,7 +1157,7 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 	return nil, fmt.Errorf("could not find association user with id=%d", id)
 }
 
-func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.CandidateEntity, error) {
+func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*user.CandidateEntity, error) {
 	query := `select users.*, candidates.*
 				from users
 				inner join candidates on users.id = candidates.user_id
@@ -1169,7 +1170,7 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 	}
 
 	for rows.Next() {
-		candidate := new(entity.CandidateEntity)
+		candidate := new(user.CandidateEntity)
 		if err := rows.StructScan(candidate); err != nil {
 			logrus.Errorf("failed to scan candidate from db row: %v", err)
 			return nil, err
@@ -1179,7 +1180,7 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 	return nil, fmt.Errorf("could not find candidate with id=%d", id)
 }
 
-func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.CompanyUserEntity, error) {
+func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*user.CompanyUserEntity, error) {
 	query := `select users.*, company_users.*
 				from users
 				inner join company_users on users.id = company_users.user_id
@@ -1192,7 +1193,7 @@ func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.Comp
 	}
 
 	for rows.Next() {
-		companyUser := new(entity.CompanyUserEntity)
+		companyUser := new(user.CompanyUserEntity)
 		if err := rows.StructScan(companyUser); err != nil {
 			logrus.Errorf("failed to scan company user from db row: %v", err)
 			return nil, err
@@ -1202,7 +1203,7 @@ func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.Comp
 	return nil, fmt.Errorf("could not find company user with id=%d", id)
 }
 
-func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int, error) {
+func (pdb *PostgresDB) createUser(tx NamedQuerier, user *user.UserEntity) (int, error) {
 	query := `insert into users
 				(
 				 	kind,
@@ -1237,7 +1238,7 @@ func (pdb *PostgresDB) createUser(tx NamedQuerier, user *entity.UserEntity) (int
 	return userId, nil
 }
 
-func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity) (int, error) {
+func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *user.UserEntity) (int, error) {
 	user.ID = id
 	query := `update users
 				set first_name=:first_name,
@@ -1259,9 +1260,9 @@ func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity
 	return userId, nil
 }
 
-func createUser(rows *sql.Rows) (*entity.User, error) {
+func createUser(rows *sql.Rows) (*user.User, error) {
 	var createdAt sql.NullTime
-	user := new(entity.User)
+	user := new(user.User)
 
 	err := rows.Scan(
 		&user.ID,
