@@ -2,10 +2,14 @@ package api
 
 import (
 	"context"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
+	"log"
 	"net/http"
+	cauth "shift/pkg/auth"
+	"strings"
 )
 
 type ContextKey string
@@ -13,31 +17,69 @@ type ContextKey string
 var (
 	ContextKeyKind  ContextKey = "X-Kind"
 	ContextKeyRole  ContextKey = "X-Role"
+	ContextKeyEmail ContextKey = "X-Email"
 	ContextKeyToken ContextKey = "X-Token"
 )
 
 func CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		allMethods := []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodHead,
+			http.MethodPut,
+			http.MethodDelete,
+			http.MethodPatch,
+		}
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", strings.Join(allMethods, ","))
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization")
+
 		next.ServeHTTP(w, r)
 	})
 }
 
-func AuthenticationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
+func (s *APIServer) AuthenticationMiddleware(next http.Handler) http.Handler {
+	jwtValidator, err := cauth.JwtValidator()
+	if err != nil {
+		log.Fatalf("initializing jwt validator: %v", err)
+	}
 
-		ctx := context.WithValue(r.Context(), ContextKeyKind, r.Header.Get(string(ContextKeyKind)))
-		ctx = context.WithValue(ctx, ContextKeyRole, r.Header.Get(string(ContextKeyRole)))
-		ctx = context.WithValue(ctx, ContextKeyToken, token)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+		ctx := r.Context()
 
 		logrus.Tracef("Running authentication middleware: token=%s", token)
-		if token != "" {
-			logrus.Tracef("Authenticated user: token=%s", token)
-			next.ServeHTTP(w, r.WithContext(ctx))
-		} else {
-			WriteErrorResponse(w, http.StatusForbidden, "Authentication failed!")
+		tokenClaims, err := jwtValidator.ValidateToken(ctx, token)
+		if err != nil {
+			logrus.Tracef("Authentication failed: %v", err)
+			WriteErrorResponse(w, http.StatusUnauthorized, "Authentication failed!")
+			return
 		}
+		claims, ok := tokenClaims.(*validator.ValidatedClaims)
+		if !ok {
+			logrus.Tracef("Authentication failed: invalid claims: %v", err)
+			WriteErrorResponse(w, http.StatusUnauthorized, "Authentication failed: invalid claims!")
+			return
+		}
+		logrus.Tracef("Authenticated user: token=%s, claims=%#v | %#v", token, claims, claims.CustomClaims)
+
+		email := claims.CustomClaims.(*cauth.CustomClaims).Email
+
+		user, err := s.userService.GetUserRecordByEmail(email)
+		if err != nil {
+			logrus.Tracef("Authentication failed: invalid user: %v", err)
+			WriteErrorResponse(w, http.StatusUnauthorized, "Authentication failed: invalid user!")
+			return
+		}
+		logrus.Tracef("Authenticated valid user: user=%v", user)
+
+		ctx = context.WithValue(ctx, ContextKeyKind, user.Kind)
+		ctx = context.WithValue(ctx, ContextKeyRole, user.Role)
+		ctx = context.WithValue(ctx, ContextKeyEmail, user.Email)
+		ctx = context.WithValue(ctx, ContextKeyToken, token)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

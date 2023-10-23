@@ -352,7 +352,21 @@ type CompanyUserItemView struct {
 type UserRecordView struct {
 	ID        int       `db:"id"`
 	Kind      string    `db:"kind"`
+	Role      string    `db:"role"`
 	Email     string    `db:"email"`
 	State     string    `db:"state"`
 	CreatedAt time.Time `db:"created_at"`
+}
+
+type UserProfileView struct {
+	ID            int       `db:"id"`
+	Kind          string    `db:"kind"`
+	Role          string    `db:"role"`
+	FirstName     string    `db:"first_name"`
+	LastName      string    `db:"last_name"`
+	PreferredName string    `db:"preferred_name"`
+	ImageUrl      *string   `db:"image_url"`
+	Email         string    `db:"email"`
+	State         string    `db:"state"`
+	CreatedAt     time.Time `db:"created_at"`
 }

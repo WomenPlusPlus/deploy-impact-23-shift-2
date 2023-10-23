@@ -32,7 +32,7 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleDeleteUser)).
 		Methods(http.MethodDelete)
 
-	router.Use(AuthenticationMiddleware)
+	router.Use(s.AuthenticationMiddleware)
 	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
 }
 
