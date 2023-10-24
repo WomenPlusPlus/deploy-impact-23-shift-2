@@ -11,25 +11,30 @@ import (
 
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
-	address       string
-	userDB        entity.UserDB
-	associationDB entity.AssociationDB
-	invitationDB  entity.InvitationDB
-	bucketDb      entity.BucketDB
-	userService   *service.UserService
+	address        string
+	userService    *service.UserService
+	companyService *service.CompanyService
+	userDB         entity.UserDB
+	companyDB      entity.CompanyDB
+	invitationDB   entity.InvitationDB
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
 func NewAPIServer(
 	address string,
-	bucketDb entity.BucketDB,
+	bucketDB entity.BucketDB,
 	userDB entity.UserDB,
+	companyDB entity.CompanyDB,
+	invitationDB entity.InvitationDB,
+
 ) *APIServer {
 	return &APIServer{
-		address:     address,
-		userDB:      userDB,
-		bucketDb:    bucketDb,
-		userService: service.NewUserService(bucketDb, userDB),
+		address:        address,
+		userService:    service.NewUserService(bucketDB, userDB),
+		companyService: service.NewCompanyService(bucketDB, companyDB),
+		userDB:         userDB,
+		companyDB:      companyDB,
+		invitationDB:   invitationDB,
 	}
 }
 
@@ -43,6 +48,7 @@ func (s *APIServer) Run() {
 
 	s.initUserRoutes(apiRouter)
 	s.initInvitaionRoutes(apiRouter)
+	s.initCompanyRoutes(apiRouter)
 
 	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
