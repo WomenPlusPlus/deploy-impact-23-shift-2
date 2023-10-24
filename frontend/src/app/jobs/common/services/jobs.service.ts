@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { JobLocationTypeEnum, JobTypeEnum } from '@app/common/models/jobs.model';
-import { Job } from '@app/jobs/common/models/job.model';
+import { Job, JobList } from '@app/jobs/common/models/job.model';
 
 //import environment from '@envs/environment';
 
@@ -19,6 +19,7 @@ export class JobsService {
         // TODO: use the API.
         //return this.httpClient.get<JobModel>(`${environment.API_BASE_URL}/api/v1/jobs/${id}`);
         return of({
+            id: 1,
             title: 'Job title',
             skills: [
                 'test 1',
@@ -43,7 +44,16 @@ export class JobsService {
 - Innovate and execute
 - Stay hungry and humble
 - Deliver customer success`,
+                imageUrl:
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
                 id: 1
+            },
+            creator: {
+                imageUrl:
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                name: 'João',
+                id: 2,
+                email: 'joaordev@gmail.com'
             },
             creationDate: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
             benefits: `- Commuter benefits
@@ -76,6 +86,39 @@ export class JobsService {
 - Plan and conduct usability testing and user research sessions with internal users and clients, collecting valuable insights to inform design improvements
 - This includes creating test scenarios, moderating sessions, and analyzing feedback to make data-driven design decisions
 - Define and uphold the user experience standards for both new and existing product capabilities`
+        });
+    }
+
+    getList(): Observable<JobList> {
+        // TODO: use the API.
+        //return this.httpClient.get<JobList>(`${environment.API_BASE_URL}/api/v1/jobs`);
+        return of({
+            items: [
+                {
+                    id: 1,
+                    title: 'Job title',
+                    jobType: JobTypeEnum.INTERNSHIP,
+                    offerSalary: 85_000,
+                    company: {
+                        name: 'ZedTech',
+                        imageUrl:
+                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        id: 1
+                    },
+                    creator: {
+                        imageUrl:
+                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        name: 'João',
+                        id: 2,
+                        email: 'joaordev@gmail.com'
+                    },
+                    creationDate: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
+                    location: {
+                        city: { id: 1, name: 'Zürich' },
+                        type: JobLocationTypeEnum.HYBRID
+                    }
+                }
+            ]
         });
     }
 }
