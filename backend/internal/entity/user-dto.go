@@ -64,7 +64,7 @@ func (u *EditUserRequest) fromFormData(id int, fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\d|\\w|\\.)+(\\+(\\d|\\w|\\.)+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\d|\\w|\\.)+(\\+(\\d|\\w|\\.)+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
