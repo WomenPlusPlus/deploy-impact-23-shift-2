@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
 import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
+import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { JobsListState, JobsListStore } from '@app/jobs/list/jobs-list.store';
 import { ContentErrorComponent } from '@app/ui/content-error/content-error.component';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
@@ -23,7 +24,8 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
         ContentErrorComponent,
         ContentLoadingComponent,
         FormsModule,
-        LetDirective
+        LetDirective,
+        UserKindLabelPipe
     ],
     providers: [JobsListStore],
     templateUrl: './jobs-list.component.html',
@@ -36,6 +38,10 @@ export class JobsListComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadData();
+    }
+
+    onMyJobsChange(state: boolean): void {
+        this.jobListStore.updateFilterOnlyMine(state);
     }
 
     onSearchTermChange(term: string): void {

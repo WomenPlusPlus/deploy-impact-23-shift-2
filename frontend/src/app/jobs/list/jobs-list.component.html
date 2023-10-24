@@ -14,7 +14,16 @@
                     <span class="text-lg">In total</span>
                 </div>
             </header>
-            <section class="px-9 py-4 flex">
+            <section class="p-4 flex">
+                <label class="flex items-center gap-2">
+                    <span>Show only my jobs</span>
+                    <input
+                        type="checkbox"
+                        class="checkbox checkbox-sm"
+                        [ngModel]="vm.onlyMine"
+                        (ngModelChange)="onMyJobsChange(!vm.onlyMine)"
+                    />
+                </label>
                 <input
                     *appLet="vm.searchTerm as searchTerm"
                     type="search"
