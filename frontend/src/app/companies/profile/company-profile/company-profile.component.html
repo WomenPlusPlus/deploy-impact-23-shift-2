@@ -7,64 +7,44 @@
     </ng-container>
     <ng-container *ngIf="!vm.loading && !vm.error">
         <ng-container *ngIf="vm.profile as profile">
-            <div>
-                <div class="flex mb-4">
-                    <div class="basis-1/4 flex-1 mr-4">
-                        <img
-                            class="object-center object-cover"
-                            loading="lazy"
-                            alt="{{ profile.name }} Logo"
-                            src="{{ profile.logo }}"
-                        />
-                    </div>
-                    <div class="basis-3/4 flex-1">
-                        <h1 class="text-3xl mb-3">{{ profile.name }}</h1>
+            <div class="flex">
+                <div class="basis-1/4 mr-3">
+                    <img
+                        class="object-center object-cover"
+                        loading="lazy"
+                        alt="{{ profile.name }} Logo"
+                        src="{{ profile.logo }}"
+                    />
+                    <div class="p-5">
+                        <h1 class="text-4xl mb-4">{{ profile.name }}</h1>
                         <p class="mb-2">{{ profile.address }}</p>
-                        <table class="table max-w-xs">
-                            <tbody>
-                                <tr>
-                                    <th class="pl-0">LinkedIn:</th>
-                                    <td>
-                                        <a target="_blank" href="{{ profile.linkedin }}">{{ profile.linkedin }}</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="pl-0">Kununu:</th>
-                                    <td>
-                                        <a target="_blank" href="{{ profile.kununu }}">{{ profile.kununu }}</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="pl-0">Phone:</th>
-                                    <td>
-                                        <a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="pl-0">Email:</th>
-                                    <td>
-                                        <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <p class="mb-4">
+                            <a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>
+                        </p>
+                        <div class="mb-4">
+                            <a href="mailto:{{ profile.email }}">Email</a>
+                            <a target="_blank" href="{{ profile.linkedin }}">LinkedIn</a>
+                            <a target="_blank" href="{{ profile.kununu }}">Kununu</a>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl mb-3">Jobs Offered</h2>
+                            <p>{{ profile.jobtypes }}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="divide-y divide-gray-700">
-                    <div class="py-2">
-                        <h2 class="text-xl mb-1">Company Mission</h2>
+                <div class="basis-3/4 ml-3">
+                    <div class="p-5">
+                        <h2 class="text-2xl mb-2">About</h2>
                         <p>{{ profile.mission }}</p>
                     </div>
-                    <div class="py-2">
-                        <h2 class="text-xl mb-1">Company Values</h2>
+                    <div class="divider"></div>
+                    <div class="p-5">
+                        <h2 class="text-2xl mb-2">Values</h2>
                         <p>{{ profile.values }}</p>
                     </div>
-                    <div class="py-2">
-                        <h2 class="text-xl mb-1">Job Types</h2>
-                        <p>{{ profile.jobtypes }}</p>
-                    </div>
-                    <div class="py-2">
-                        <h2 class="text-xl mb-1">Expectations We Offer</h2>
+                    <div class="divider"></div>
+                    <div class="p-5">
+                        <h2 class="text-2xl mb-2">Expectations We Offer</h2>
                         <p>{{ profile.expectation }}</p>
                     </div>
                 </div>
