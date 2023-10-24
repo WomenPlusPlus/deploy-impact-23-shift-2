@@ -20,7 +20,19 @@
                         <span>•</span>
                         <span>{{ job.location.type | jobLocationTypeLabel }}</span>
                     </div>
-                    <span>{{ job.creationDate | dateAgo }}</span>
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-6 h-6 rounded-full overflow-hidden flex">
+                            <img
+                                [src]="job.creator.imageUrl || 'assets/profile-picture-default-form.png'"
+                                alt="avatar"
+                                class="object-cover"
+                            />
+                        </div>
+                        <a class="link" [routerLink]="['/admin', 'users', job.creator.id]">
+                            {{ job.creator.name }} ({{ job.creator.email }})
+                        </a>
+                    </div>
+                    <span class="block">{{ job.creationDate | dateAgo }}</span>
                 </section>
                 <section>
                     <!-- TODO: actions -->
@@ -30,7 +42,7 @@
                 <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.experienceYearFrom">
                     <span class="block text-lg mb-1">Experience</span>
                     <span
-                        >{{ job.experienceYearFrom
+                    >{{ job.experienceYearFrom
                         }}{{ job.experienceYearTo ? '-' + job.experienceYearTo : '' }} Years</span
                     >
                 </article>
@@ -41,7 +53,7 @@
                 <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.employmentLevelFrom">
                     <span class="block text-lg mb-1">Employment level</span>
                     <span
-                        >{{ job.employmentLevelFrom
+                    >{{ job.employmentLevelFrom
                         }}{{ job.employmentLevelTo ? '-' + job.employmentLevelTo : '' }}%</span
                     >
                 </article>
@@ -60,9 +72,16 @@
                 <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.mission"></p>
             </section>
             <div class="divider"></div>
-            <section class="py-4">
-                <span class="block mb-6 text-xl font-bold">Overview</span>
-                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.overview"></p>
+            <section class="py-4 after:block after:clear-both">
+                <span class="block mb-4 text-xl font-bold">Overview</span>
+                <div class="w-32 h-32 rounded-full overflow-hidden flex float-left m-4">
+                    <img
+                        [src]="job.company.imageUrl || 'assets/profile-picture-default-form.png'"
+                        alt="company-logo"
+                        class="object-cover"
+                    />
+                </div>
+                <p class="prose max-w-none prose-headings pl-4 inline" [innerHTML]="job.overview"></p>
             </section>
             <div class="divider"></div>
             <section class="py-4">

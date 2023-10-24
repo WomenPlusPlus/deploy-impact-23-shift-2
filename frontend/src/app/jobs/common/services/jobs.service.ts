@@ -12,7 +12,8 @@ import { Job } from '@app/jobs/common/models/job.model';
     providedIn: 'root'
 })
 export class JobsService {
-    constructor(private readonly httpClient: HttpClient) {}
+    constructor(private readonly httpClient: HttpClient) {
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getJobDetails(id: number): Observable<Job> {
@@ -43,7 +44,14 @@ export class JobsService {
 - Innovate and execute
 - Stay hungry and humble
 - Deliver customer success`,
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
                 id: 1
+            },
+            creator: {
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                name: 'João',
+                id: 2,
+                email: 'joaordev@gmail.com'
             },
             creationDate: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
             benefits: `- Commuter benefits

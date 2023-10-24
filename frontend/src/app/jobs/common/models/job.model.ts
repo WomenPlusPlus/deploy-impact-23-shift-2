@@ -5,6 +5,7 @@ export interface Job {
     benefits?: string;
     candidateOverview: string;
     company: JobCompany;
+    creator: JobCreator;
     creationDate: string;
     experienceYearFrom?: number;
     experienceYearTo?: number;
@@ -24,6 +25,14 @@ export interface JobCompany {
     name: string;
     mission: string;
     values: string;
+    imageUrl: string;
+}
+
+export interface JobCreator {
+    id: number;
+    name: string;
+    email: string;
+    imageUrl: string;
 }
 
 export interface JobLocation {
