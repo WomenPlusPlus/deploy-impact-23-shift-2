@@ -112,7 +112,7 @@ export class CompanyProfileService {
 
     getJobsByCompany(id: number): Observable<JobList> {
         // get jobs with the specified Company ID
-        //return this.httpClient.get<JobList>(`${environment.API_BASE_URL}/api/v1/jobs/${id}`);
+        //return this.httpClient.get<JobList>(`${environment.API_BASE_URL}/api/v1/jobs/company/${id}`);
         return of({
             items: [
                 {
