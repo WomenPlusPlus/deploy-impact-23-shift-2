@@ -1,11 +1,8 @@
-package user
+package entity
 
 import (
-	"shift/internal/entity"
 	"time"
 )
-
-// USER
 
 type User struct {
 	ID            int       `json:"id"`
@@ -50,7 +47,7 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.LinkedInUrl = request.LinkedInUrl
 	u.GithubUrl = request.GithubUrl
 	u.PortfolioUrl = request.PortfolioUrl
-	u.State = entity.UserStateActive
+	u.State = UserStateActive
 	return nil
 }
 

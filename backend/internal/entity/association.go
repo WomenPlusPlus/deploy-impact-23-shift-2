@@ -1,4 +1,4 @@
-package association
+package entity
 
 import (
 	"mime/multipart"

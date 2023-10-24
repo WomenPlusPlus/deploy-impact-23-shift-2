@@ -2,7 +2,7 @@ package api
 
 import (
 	"net/http"
-	entity "shift/internal/entity/association"
+	"shift/internal/entity"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -10,13 +10,13 @@ import (
 )
 
 func (s *APIServer) initAssociationRoutes(router *mux.Router) {
-	router = router.PathPrefix("/associations").Subrouter()
+	router = router.PathPrefix("/admin/associations").Subrouter()
 
 	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleListAssociations)).
 		Methods(http.MethodGet)
 
-	router.Path("/create").
+	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleCreateAssociation)).
 		Methods(http.MethodPost)
 

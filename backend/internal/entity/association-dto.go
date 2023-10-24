@@ -1,11 +1,10 @@
-package association
+package entity
 
 import (
 	"fmt"
 	"log"
 	"mime/multipart"
 	"net/http"
-	"shift/internal/entity"
 	"shift/internal/utils"
 	"strings"
 	"time"
@@ -40,12 +39,12 @@ type ListAssociationResponse struct {
 }
 
 type ViewAssociationResponse struct {
-	ID         int               `json:"id"`
-	Name       string            `json:"name"`
-	ImageUrl   *entity.LocalFile `json:"imageUrl,omitempty"`
-	WebsiteUrl string            `json:"websiteUrl,omitempty"`
-	Focus      string            `json:"focus"`
-	CreatedAt  string            `json:"createdAt,omitempty"`
+	ID         int        `json:"id"`
+	Name       string     `json:"name"`
+	ImageUrl   *LocalFile `json:"imageUrl,omitempty"`
+	WebsiteUrl string     `json:"websiteUrl,omitempty"`
+	Focus      string     `json:"focus"`
+	CreatedAt  string     `json:"createdAt,omitempty"`
 }
 
 func (r *ListAssociationsResponse) FromAssociationsView(v []*AssociationItemView) {
@@ -67,7 +66,7 @@ func (r *ListAssociationsResponse) FromAssociationsView(v []*AssociationItemView
 func (r *ViewAssociationResponse) FromAssociaionItemView(a *AssociationItemView) {
 	r.ID = a.AssociationEntity.ID
 	r.Name = a.Name
-	r.ImageUrl = entity.NewLocalFile(a.ImageUrl)
+	r.ImageUrl = NewLocalFile(a.ImageUrl)
 	r.WebsiteUrl = a.WebsiteUrl
 	r.Focus = a.Focus
 	r.CreatedAt = a.CreatedAt

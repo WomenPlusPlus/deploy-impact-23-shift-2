@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 	"shift/internal/entity"
-	"shift/internal/entity/user"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -40,7 +39,7 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
 	logrus.Debugln("Create user handler running")
 
-	req := new(user.CreateUserRequest)
+	req := new(entity.CreateUserRequest)
 	if err := req.FromFormData(r); err != nil {
 		return BadRequestError{Message: err.Error()}
 	}
@@ -93,7 +92,7 @@ func (s *APIServer) handleEditUser(w http.ResponseWriter, r *http.Request) error
 		return nil
 	}
 
-	req := new(user.EditUserRequest)
+	req := new(entity.EditUserRequest)
 	if err := req.FromFormData(id, r); err != nil {
 		return BadRequestError{Message: err.Error()}
 	}

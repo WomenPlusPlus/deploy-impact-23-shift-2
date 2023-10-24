@@ -1,4 +1,4 @@
-package association
+package entity
 
 type AssociationDB interface {
 	GetAssociationRecord(int) (*AssociationRecordView, error)

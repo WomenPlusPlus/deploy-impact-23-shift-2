@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"mime/multipart"
 	"shift/internal/entity"
-	"shift/internal/entity/user"
 	"shift/internal/utils"
 
 	"github.com/sirupsen/logrus"
@@ -13,17 +12,17 @@ import (
 
 type UserService struct {
 	bucketDB entity.BucketDB
-	userDB   user.UserDB
+	userDB   entity.UserDB
 }
 
-func NewUserService(bucketDB entity.BucketDB, userDB user.UserDB) *UserService {
+func NewUserService(bucketDB entity.BucketDB, userDB entity.UserDB) *UserService {
 	return &UserService{
 		bucketDB: bucketDB,
 		userDB:   userDB,
 	}
 }
 
-func (s *UserService) CreateUser(req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
+func (s *UserService) CreateUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
 	switch req.Kind {
 	case entity.UserKindAdmin:
 		return s.createAdmin(req)
@@ -38,7 +37,7 @@ func (s *UserService) CreateUser(req *user.CreateUserRequest) (*user.CreateUserR
 	}
 }
 
-func (s *UserService) EditUser(id int, req *user.EditUserRequest) (*user.CreateUserResponse, error) {
+func (s *UserService) EditUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
 	user, err := s.userDB.GetUserRecord(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting user record: %w", err)
@@ -61,7 +60,7 @@ func (s *UserService) EditUser(id int, req *user.EditUserRequest) (*user.CreateU
 	}
 }
 
-func (s *UserService) ListUsers() (*user.ListUsersResponse, error) {
+func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	users, err := s.userDB.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("getting all users: %w", err)
@@ -82,12 +81,12 @@ func (s *UserService) ListUsers() (*user.ListUsersResponse, error) {
 		}
 	}
 
-	res := new(user.ListUsersResponse)
+	res := new(entity.ListUsersResponse)
 	res.FromUsersView(users)
 	return res, nil
 }
 
-func (s *UserService) GetUserById(id int) (*user.ViewUserResponse, error) {
+func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	user, err := s.userDB.GetUserRecord(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting user record: %w", err)
@@ -107,8 +106,8 @@ func (s *UserService) GetUserById(id int) (*user.ViewUserResponse, error) {
 	return nil, fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
 }
 
-func (s *UserService) createAdmin(req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-	admin := new(user.UserEntity)
+func (s *UserService) createAdmin(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	admin := new(entity.UserEntity)
 	if err := admin.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into admin entity: %w", err)
 	}
@@ -129,13 +128,13 @@ func (s *UserService) createAdmin(req *user.CreateUserRequest) (*user.CreateUser
 		logrus.Tracef("No admin image added: id=%d", admin.ID)
 	}
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     admin.ID,
 		UserID: admin.ID,
 	}, nil
 }
-func (s *UserService) createAssociationUser(req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-	associationUser := new(user.AssociationUserEntity)
+func (s *UserService) createAssociationUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	associationUser := new(entity.AssociationUserEntity)
 	if err := associationUser.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into association user entity: %w", err)
 	}
@@ -156,13 +155,13 @@ func (s *UserService) createAssociationUser(req *user.CreateUserRequest) (*user.
 		logrus.Tracef("No association user image added: id=%d", associationUser.ID)
 	}
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     associationUser.ID,
 		UserID: associationUser.UserID,
 	}, nil
 }
-func (s *UserService) createCandidate(req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-	candidate := new(user.CandidateEntity)
+func (s *UserService) createCandidate(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	candidate := new(entity.CandidateEntity)
 	if err := candidate.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into candidate entity: %w", err)
 	}
@@ -175,31 +174,31 @@ func (s *UserService) createCandidate(req *user.CreateUserRequest) (*user.Create
 	}
 	logrus.Tracef("Added candidate to db: id=%d", candidate.ID)
 
-	skills := make(user.CandidateSkillsEntity, 0)
+	skills := make(entity.CandidateSkillsEntity, 0)
 	if err := skills.FromCreationRequest(req, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into skills entity: %w", err)
 	}
 	logrus.Tracef("Parsed skills entity: %+v", skills)
 
-	spokenLanguages := make(user.CandidateSpokenLanguagesEntity, 0)
+	spokenLanguages := make(entity.CandidateSpokenLanguagesEntity, 0)
 	if err := spokenLanguages.FromCreationRequest(req, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into spoken languages entity: %w", err)
 	}
 	logrus.Tracef("Parsed spoken languages entity: %+v", spokenLanguages)
 
-	seekLocations := make(user.CandidateSeekLocationsEntity, 0)
+	seekLocations := make(entity.CandidateSeekLocationsEntity, 0)
 	if err := seekLocations.FromCreationRequest(req, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into seek locations entity: %w", err)
 	}
 	logrus.Tracef("Parsed seek locations entity: %+v", seekLocations)
 
-	educationHistoryList := make(user.CandidateEducationHistoryListEntity, 0)
+	educationHistoryList := make(entity.CandidateEducationHistoryListEntity, 0)
 	if err := educationHistoryList.FromCreationRequest(req, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into education history list entity: %w", err)
 	}
 	logrus.Tracef("Parsed education history list entity: %+v", educationHistoryList)
 
-	employmentHistoryList := make(user.CandidateEmploymentHistoryListEntity, 0)
+	employmentHistoryList := make(entity.CandidateEmploymentHistoryListEntity, 0)
 	if err := employmentHistoryList.FromCreationRequest(req, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into employment history list entity: %w", err)
 	}
@@ -291,14 +290,14 @@ func (s *UserService) createCandidate(req *user.CreateUserRequest) (*user.Create
 		logrus.Tracef("No candidate video added: id=%d", candidate.ID)
 	}
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     candidate.ID,
 		UserID: candidate.UserID,
 	}, nil
 }
 
-func (s *UserService) createCompanyUser(req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-	companyUser := new(user.CompanyUserEntity)
+func (s *UserService) createCompanyUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	companyUser := new(entity.CompanyUserEntity)
 	if err := companyUser.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into company user entity: %w", err)
 	}
@@ -319,14 +318,14 @@ func (s *UserService) createCompanyUser(req *user.CreateUserRequest) (*user.Crea
 		logrus.Tracef("No company user image added: id=%d", companyUser.ID)
 	}
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     companyUser.ID,
 		UserID: companyUser.UserID,
 	}, nil
 }
 
-func (s *UserService) editAdmin(id int, req *user.EditUserRequest) (*user.CreateUserResponse, error) {
-	admin := new(user.UserEntity)
+func (s *UserService) editAdmin(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	admin := new(entity.UserEntity)
 	if err := admin.FromCreationRequest(req.CreateUserRequest); err != nil {
 		return nil, fmt.Errorf("parsing request into admin entity: %w", err)
 	}
@@ -340,14 +339,14 @@ func (s *UserService) editAdmin(id int, req *user.EditUserRequest) (*user.Create
 
 	s.editUserPhoto(id, req)
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     admin.ID,
 		UserID: admin.ID,
 	}, nil
 }
 
-func (s *UserService) editAssociationUser(id int, req *user.EditUserRequest) (*user.CreateUserResponse, error) {
-	associationUser := new(user.AssociationUserEntity)
+func (s *UserService) editAssociationUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	associationUser := new(entity.AssociationUserEntity)
 	if err := associationUser.FromCreationRequest(req.CreateUserRequest); err != nil {
 		return nil, fmt.Errorf("parsing request into association user entity: %w", err)
 	}
@@ -361,13 +360,13 @@ func (s *UserService) editAssociationUser(id int, req *user.EditUserRequest) (*u
 
 	s.editUserPhoto(id, req)
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     associationUser.ID,
 		UserID: associationUser.UserID,
 	}, nil
 }
-func (s *UserService) editCandidate(id int, req *user.EditUserRequest) (*user.CreateUserResponse, error) {
-	candidate := new(user.CandidateEntity)
+func (s *UserService) editCandidate(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	candidate := new(entity.CandidateEntity)
 	if err := candidate.FromCreationRequest(req.CreateUserRequest); err != nil {
 		return nil, fmt.Errorf("parsing request into candidate entity: %w", err)
 	}
@@ -380,31 +379,31 @@ func (s *UserService) editCandidate(id int, req *user.EditUserRequest) (*user.Cr
 	}
 	logrus.Tracef("Added candidate to db: id=%d", candidate.ID)
 
-	skills := make(user.CandidateSkillsEntity, 0)
+	skills := make(entity.CandidateSkillsEntity, 0)
 	if err := skills.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into skills entity: %w", err)
 	}
 	logrus.Tracef("Parsed skills entity: %+v", skills)
 
-	spokenLanguages := make(user.CandidateSpokenLanguagesEntity, 0)
+	spokenLanguages := make(entity.CandidateSpokenLanguagesEntity, 0)
 	if err := spokenLanguages.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into spoken languages entity: %w", err)
 	}
 	logrus.Tracef("Parsed spoken languages entity: %+v", spokenLanguages)
 
-	seekLocations := make(user.CandidateSeekLocationsEntity, 0)
+	seekLocations := make(entity.CandidateSeekLocationsEntity, 0)
 	if err := seekLocations.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into seek locations entity: %w", err)
 	}
 	logrus.Tracef("Parsed seek locations entity: %+v", seekLocations)
 
-	educationHistoryList := make(user.CandidateEducationHistoryListEntity, 0)
+	educationHistoryList := make(entity.CandidateEducationHistoryListEntity, 0)
 	if err := educationHistoryList.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into education history list entity: %w", err)
 	}
 	logrus.Tracef("Parsed education history list entity: %+v", educationHistoryList)
 
-	employmentHistoryList := make(user.CandidateEmploymentHistoryListEntity, 0)
+	employmentHistoryList := make(entity.CandidateEmploymentHistoryListEntity, 0)
 	if err := employmentHistoryList.FromCreationRequest(req.CreateUserRequest, candidate.ID); err != nil {
 		return nil, fmt.Errorf("parsing request into employment history list entity: %w", err)
 	}
@@ -445,14 +444,14 @@ func (s *UserService) editCandidate(id int, req *user.EditUserRequest) (*user.Cr
 	s.editCandidateAttachments(id, candidate.ID, req)
 	s.editCandidateVideo(id, candidate.ID, req)
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     candidate.ID,
 		UserID: candidate.UserID,
 	}, nil
 }
 
-func (s *UserService) editCompanyUser(id int, req *user.EditUserRequest) (*user.CreateUserResponse, error) {
-	companyUser := new(user.CompanyUserEntity)
+func (s *UserService) editCompanyUser(id int, req *entity.EditUserRequest) (*entity.CreateUserResponse, error) {
+	companyUser := new(entity.CompanyUserEntity)
 	if err := companyUser.FromCreationRequest(req.CreateUserRequest); err != nil {
 		return nil, fmt.Errorf("parsing request into company user entity: %w", err)
 	}
@@ -466,17 +465,17 @@ func (s *UserService) editCompanyUser(id int, req *user.EditUserRequest) (*user.
 
 	s.editUserPhoto(id, req)
 
-	return &user.CreateUserResponse{
+	return &entity.CreateUserResponse{
 		ID:     companyUser.ID,
 		UserID: companyUser.UserID,
 	}, nil
 }
 
-func (s *UserService) getAdminByUserId(id int) (*user.ViewUserResponse, error) {
-	res := new(user.ViewUserResponse)
+func (s *UserService) getAdminByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
 	admin, err := s.userDB.GetUserById(id)
 	if err != nil {
-		return nil, fmt.Errorf("getting association user by user id: %w", err)
+		return nil, fmt.Errorf("getting association user by association id: %w", err)
 	}
 	res.FromUserItemView(admin)
 	if res.Photo != nil {
@@ -485,8 +484,8 @@ func (s *UserService) getAdminByUserId(id int) (*user.ViewUserResponse, error) {
 	return res, nil
 }
 
-func (s *UserService) getAssociationUserByUserId(id int) (*user.ViewUserResponse, error) {
-	res := new(user.ViewUserResponse)
+func (s *UserService) getAssociationUserByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
 	associationUser, err := s.userDB.GetAssociationUserByUserId(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting association by user id: %w", err)
@@ -498,8 +497,8 @@ func (s *UserService) getAssociationUserByUserId(id int) (*user.ViewUserResponse
 	return res, nil
 }
 
-func (s *UserService) getCandidateByUserId(id int) (*user.ViewUserResponse, error) {
-	res := new(user.ViewUserResponse)
+func (s *UserService) getCandidateByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
 
 	candidate, err := s.userDB.GetCandidateByUserId(id)
 	if err != nil {
@@ -511,19 +510,19 @@ func (s *UserService) getCandidateByUserId(id int) (*user.ViewUserResponse, erro
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate skills by user id: %w", err)
 	}
-	res.Skills = make([]user.UserSkill, len(skills))
+	res.Skills = make([]entity.UserSkill, len(skills))
 	for i, skill := range skills {
-		res.Skills[i] = user.UserSkill{Name: skill.Name, Years: skill.Years}
+		res.Skills[i] = entity.UserSkill{Name: skill.Name, Years: skill.Years}
 	}
 
 	spokenLanguages, err := s.userDB.GetCandidateSpokenLanguages(res.CandidateId)
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate spoken languages by user id: %w", err)
 	}
-	res.SpokenLanguages = make([]user.UserSpokenLanguage, len(spokenLanguages))
+	res.SpokenLanguages = make([]entity.UserSpokenLanguage, len(spokenLanguages))
 	for i, spokenLanguage := range spokenLanguages {
-		res.SpokenLanguages[i] = user.UserSpokenLanguage{
-			Language: user.UserLanguage{
+		res.SpokenLanguages[i] = entity.UserSpokenLanguage{
+			Language: entity.UserLanguage{
 				Id:        spokenLanguage.LanguageID,
 				Name:      spokenLanguage.LanguageName,
 				ShortName: spokenLanguage.LanguageShortName,
@@ -536,9 +535,9 @@ func (s *UserService) getCandidateByUserId(id int) (*user.ViewUserResponse, erro
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate seek locations by user id: %w", err)
 	}
-	res.SeekLocations = make([]user.UserLocation, len(seekLocations))
+	res.SeekLocations = make([]entity.UserLocation, len(seekLocations))
 	for i, seekLocation := range seekLocations {
-		res.SeekLocations[i] = user.UserLocation{
+		res.SeekLocations[i] = entity.UserLocation{
 			Id:   seekLocation.CityID,
 			Name: seekLocation.CityName,
 		}
@@ -559,9 +558,9 @@ func (s *UserService) getCandidateByUserId(id int) (*user.ViewUserResponse, erro
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate education history list by user id: %w", err)
 	}
-	res.EducationHistory = make([]user.UserEducationHistory, len(educationHistoryList))
+	res.EducationHistory = make([]entity.UserEducationHistory, len(educationHistoryList))
 	for i, history := range educationHistoryList {
-		res.EducationHistory[i] = user.UserEducationHistory{
+		res.EducationHistory[i] = entity.UserEducationHistory{
 			Title:       history.Title,
 			Description: history.Description,
 			Entity:      history.Entity,
@@ -574,9 +573,9 @@ func (s *UserService) getCandidateByUserId(id int) (*user.ViewUserResponse, erro
 	if err != nil {
 		return nil, fmt.Errorf("getting candidate employment history list by user id: %w", err)
 	}
-	res.EmploymentHistory = make([]user.UserEmploymentHistory, len(employmentHistoryList))
+	res.EmploymentHistory = make([]entity.UserEmploymentHistory, len(employmentHistoryList))
 	for i, history := range employmentHistoryList {
-		res.EmploymentHistory[i] = user.UserEmploymentHistory{
+		res.EmploymentHistory[i] = entity.UserEmploymentHistory{
 			Title:       history.Title,
 			Description: history.Description,
 			Company:     history.Company,
@@ -597,8 +596,8 @@ func (s *UserService) getCandidateByUserId(id int) (*user.ViewUserResponse, erro
 	return res, nil
 }
 
-func (s *UserService) getCompanyUserByUserId(id int) (*user.ViewUserResponse, error) {
-	res := new(user.ViewUserResponse)
+func (s *UserService) getCompanyUserByUserId(id int) (*entity.ViewUserResponse, error) {
+	res := new(entity.ViewUserResponse)
 	companyUser, err := s.userDB.GetCompanyUserByUserId(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting company user by user id: %w", err)
@@ -610,7 +609,7 @@ func (s *UserService) getCompanyUserByUserId(id int) (*user.ViewUserResponse, er
 	return res, nil
 }
 
-func (s *UserService) editUserPhoto(id int, req *user.EditUserRequest) {
+func (s *UserService) editUserPhoto(id int, req *entity.EditUserRequest) {
 	println(req.UpdatePhoto)
 	if !req.UpdatePhoto {
 		return
@@ -627,7 +626,7 @@ func (s *UserService) editUserPhoto(id int, req *user.EditUserRequest) {
 	}
 }
 
-func (s *UserService) editCandidateCV(id, candidateId int, req *user.EditUserRequest) {
+func (s *UserService) editCandidateCV(id, candidateId int, req *entity.EditUserRequest) {
 	if !req.UpdateCV {
 		return
 	}
@@ -643,7 +642,7 @@ func (s *UserService) editCandidateCV(id, candidateId int, req *user.EditUserReq
 	}
 }
 
-func (s *UserService) editCandidateAttachments(id, candidateId int, req *user.EditUserRequest) {
+func (s *UserService) editCandidateAttachments(id, candidateId int, req *entity.EditUserRequest) {
 	if !req.UpdateAttachments {
 		return
 	}
@@ -659,7 +658,7 @@ func (s *UserService) editCandidateAttachments(id, candidateId int, req *user.Ed
 	}
 }
 
-func (s *UserService) editCandidateVideo(id, candidateId int, req *user.EditUserRequest) {
+func (s *UserService) editCandidateVideo(id, candidateId int, req *entity.EditUserRequest) {
 	if !req.UpdateVideo {
 		return
 	}
@@ -681,7 +680,7 @@ func (s *UserService) savePhoto(userId int, photoHeader *multipart.FileHeader) e
 		return fmt.Errorf("uploading photo: %w", err)
 	}
 	logrus.Tracef("Added photo to bucket: id=%d", userId)
-	if err := s.userDB.AssignUserPhoto(user.NewUserPhotoEntity(userId, path)); err != nil {
+	if err := s.userDB.AssignUserPhoto(entity.NewUserPhotoEntity(userId, path)); err != nil {
 		return fmt.Errorf("storing photo to db: %v", err)
 	}
 	logrus.Tracef("Added photo to db: id=%d", userId)
@@ -746,7 +745,7 @@ func (s *UserService) saveCV(userId, candidateId int, cvHeader *multipart.FileHe
 		return fmt.Errorf("uploading cv: %w", err)
 	}
 	logrus.Tracef("Added cv to bucket: id=%d", userId)
-	if err := s.userDB.AssignCandidateCV(user.NewCandidateCVEntity(candidateId, path)); err != nil {
+	if err := s.userDB.AssignCandidateCV(entity.NewCandidateCVEntity(candidateId, path)); err != nil {
 		return fmt.Errorf("storing cv to db: %v", err)
 	}
 	logrus.Tracef("Added cv to db: id=%d", userId)
@@ -754,14 +753,14 @@ func (s *UserService) saveCV(userId, candidateId int, cvHeader *multipart.FileHe
 }
 
 func (s *UserService) saveAttachments(userId, candidateId int, attachmentsHeader []*multipart.FileHeader) error {
-	attachments := make(user.CandidateAttachmentsEntity, len(attachmentsHeader))
+	attachments := make(entity.CandidateAttachmentsEntity, len(attachmentsHeader))
 	for i, attachmentHeader := range attachmentsHeader {
 		path := fmt.Sprintf("%d/attachments/%s", userId, attachmentHeader.Filename)
 		if err := s.uploadFile(path, attachmentHeader); err != nil {
 			return fmt.Errorf("uploading attachments: %w", err)
 		}
 		logrus.Tracef("Added attachments to bucket: id=%d", userId)
-		attachments[i] = user.NewCandidateAttachmentEntity(candidateId, path)
+		attachments[i] = entity.NewCandidateAttachmentEntity(candidateId, path)
 		logrus.Tracef("Added attachments to db: id=%d", userId)
 	}
 	if err := s.userDB.AssignCandidateAttachments(candidateId, attachments); err != nil {
@@ -776,7 +775,7 @@ func (s *UserService) saveVideo(userId, candidateId int, videoHeader *multipart.
 		return fmt.Errorf("uploading video: %w", err)
 	}
 	logrus.Tracef("Added video to bucket: id=%d", userId)
-	if err := s.userDB.AssignCandidateVideo(user.NewCandidateVideoEntity(candidateId, path)); err != nil {
+	if err := s.userDB.AssignCandidateVideo(entity.NewCandidateVideoEntity(candidateId, path)); err != nil {
 		return fmt.Errorf("storing video to db: %v", err)
 	}
 	logrus.Tracef("Added video to db: id=%d", userId)

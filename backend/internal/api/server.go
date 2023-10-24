@@ -1,11 +1,9 @@
 package api
 
 import (
-	"context"
 	"net/http"
-	"shift/internal/db"
 	"shift/internal/entity"
-	service "shift/internal/service/entity"
+	"shift/internal/service"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -14,7 +12,6 @@ import (
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
 	address            string
-	bucketDb           entity.BucketDB
 	userService        *service.UserService
 	associationService *service.AssociationService
 	invitationService  *service.InvitationService
@@ -23,21 +20,16 @@ type APIServer struct {
 // NewAPIServer creates a new instance of APIServer with the given address.
 func NewAPIServer(
 	address string,
+	bucketDB entity.BucketDB,
+	userDB entity.UserDB,
+	associationDB entity.AssociationDB,
+	invitationDB entity.InvitationDB,
 ) *APIServer {
-	ctx := context.Background()
-
-	bucketDB := db.NewGoogleBucketDB(ctx)
-	logrus.Tracef("GCP Bucket initialized: %T", bucketDB)
-
-	postgresDB := db.NewPostgresDB()
-	logrus.Tracef("PostgreSQL DB initialized: %T", postgresDB)
-
 	return &APIServer{
 		address:            address,
-		bucketDb:           bucketDB,
-		userService:        service.NewUserService(bucketDB, postgresDB),
-		associationService: service.NewAssociationService(bucketDB, postgresDB),
-		invitationService:  service.NewInvitationService(bucketDB, postgresDB),
+		userService:        service.NewUserService(bucketDB, userDB),
+		associationService: service.NewAssociationService(bucketDB, associationDB),
+		invitationService:  service.NewInvitationService(bucketDB, invitationDB),
 	}
 }
 

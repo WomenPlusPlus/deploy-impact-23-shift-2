@@ -1,6 +1,5 @@
-package user
+package entity
 
-// UserDB is an interface for managing user data.
 type UserDB interface {
 	GetUserRecord(int) (*UserRecordView, error)
 	GetAllUsers() ([]*UserItemView, error)

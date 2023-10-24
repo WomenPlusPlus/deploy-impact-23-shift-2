@@ -5,24 +5,23 @@ import (
 	"fmt"
 	"mime/multipart"
 	"shift/internal/entity"
-	"shift/internal/entity/association"
 
 	"github.com/sirupsen/logrus"
 )
 
 type AssociationService struct {
 	bucketDB      entity.BucketDB
-	associationDB association.AssociationDB
+	associationDB entity.AssociationDB
 }
 
-func NewAssociationService(bucketDB entity.BucketDB, associationDB association.AssociationDB) *AssociationService {
+func NewAssociationService(bucketDB entity.BucketDB, associationDB entity.AssociationDB) *AssociationService {
 	return &AssociationService{
 		bucketDB:      bucketDB,
 		associationDB: associationDB,
 	}
 }
 
-func (s *AssociationService) CreateAssociation(req *association.CreateAssociationRequest) (*association.CreateAssociationResponse, error) {
+func (s *AssociationService) CreateAssociation(req *entity.CreateAssociationRequest) (*entity.CreateAssociationResponse, error) {
 	ass, err := s.createAssociation(req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create association: %s", err)
@@ -31,8 +30,8 @@ func (s *AssociationService) CreateAssociation(req *association.CreateAssociatio
 	return ass, nil
 }
 
-func (s *AssociationService) createAssociation(req *association.CreateAssociationRequest) (*association.CreateAssociationResponse, error) {
-	assoc := new(association.AssociationEntity)
+func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequest) (*entity.CreateAssociationResponse, error) {
+	assoc := new(entity.AssociationEntity)
 
 	if err := assoc.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into association entity: %w", err)
@@ -51,33 +50,33 @@ func (s *AssociationService) createAssociation(req *association.CreateAssociatio
 		}
 	}
 
-	return &association.CreateAssociationResponse{
+	return &entity.CreateAssociationResponse{
 		ID:            assoc.ID,
 		AssociationID: assoc.ID,
 	}, nil
 }
 
-func (s *AssociationService) ListAssociations() (*association.ListAssociationsResponse, error) {
+func (s *AssociationService) ListAssociations() (*entity.ListAssociationsResponse, error) {
 	associations, err := s.associationDB.GetAllAssociations()
 	if err != nil {
 		return nil, fmt.Errorf("getting all associations: %w", err)
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	res := new(association.ListAssociationsResponse)
+	res := new(entity.ListAssociationsResponse)
 	res.FromAssociationsView(associations)
 
 	return res, nil
 }
 
-func (s *AssociationService) DeleteAssociation(id int) (*association.ListAssociationsResponse, error) {
+func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociationsResponse, error) {
 	associations, err := s.associationDB.GetAllAssociations()
 	if err != nil {
 		return nil, fmt.Errorf("getting all associations: %w", err)
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	res := new(association.ListAssociationsResponse)
+	res := new(entity.ListAssociationsResponse)
 
 	return res, nil
 }
@@ -109,7 +108,7 @@ func (s *AssociationService) uploadFile(path string, fileHeader *multipart.FileH
 	return nil
 }
 
-func (s *AssociationService) GetAssociationById(id int) (*association.ViewAssociationResponse, error) {
+func (s *AssociationService) GetAssociationById(id int) (*entity.ViewAssociationResponse, error) {
 	_, err := s.associationDB.GetAssociationRecord(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting association record: %w", err)
@@ -117,8 +116,8 @@ func (s *AssociationService) GetAssociationById(id int) (*association.ViewAssoci
 	return s.getAssociationById(id)
 }
 
-func (s *AssociationService) getAssociationById(id int) (*association.ViewAssociationResponse, error) {
-	res := new(association.ViewAssociationResponse)
+func (s *AssociationService) getAssociationById(id int) (*entity.ViewAssociationResponse, error) {
+	res := new(entity.ViewAssociationResponse)
 	assoc, err := s.associationDB.GetAssociationById(id)
 	if err != nil {
 		return nil, fmt.Errorf("getting association user by user id: %w", err)

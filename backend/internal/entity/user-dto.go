@@ -1,4 +1,4 @@
-package user
+package entity
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"regexp"
-	"shift/internal/entity"
 	"shift/internal/utils"
 	"strconv"
 	"strings"
@@ -45,15 +44,15 @@ func (u *EditUserRequest) FromFormData(id int, r *http.Request) error {
 
 func (u *EditUserRequest) FillKindSpecificDetail(kind string) error {
 	switch kind {
-	case entity.UserKindAdmin:
+	case UserKindAdmin:
 		return nil
-	case entity.UserKindAssociation:
+	case UserKindAssociation:
 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
 		return u.fromFormDataAssociation(u.fd)
-	case entity.UserKindCandidate:
+	case UserKindCandidate:
 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
 		return u.fromFormDataCandidate(u.fd)
-	case entity.UserKindCompany:
+	case UserKindCompany:
 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
 		return u.fromFormDataCompany(u.fd)
 	default:
@@ -145,13 +144,13 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 		}
 
 		switch user.Kind {
-		case entity.UserKindAssociation:
+		case UserKindAssociation:
 			item.Role = *user.AssociationUserItemView.Role
 			item.ListAssociationUserResponse = &ListAssociationUserResponse{
 				AssociationUserId: *user.AssociationUserItemView.ID,
 				AssociationId:     *user.AssociationId,
 			}
-		case entity.UserKindCandidate:
+		case UserKindCandidate:
 			item.ListCandidateResponse = &ListCandidateResponse{
 				CandidateId: *user.CandidateItemView.ID,
 				PhoneNumber: user.PhoneNumber,
@@ -160,7 +159,7 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 				HasCV:       utils.SafeUnwrap(user.CVUrl) != "",
 				HasVideo:    utils.SafeUnwrap(user.VideoUrl) != "",
 			}
-		case entity.UserKindCompany:
+		case UserKindCompany:
 			item.Role = *user.CompanyUserItemView.Role
 			item.ListCompanyUserResponse = &ListCompanyUserResponse{
 				CompanyUserId: *user.CompanyUserItemView.ID,
@@ -209,18 +208,18 @@ type ListCompanyUserResponse struct {
 }
 
 type ViewUserResponse struct {
-	ID            int               `json:"id"`
-	Kind          string            `json:"kind"`
-	FirstName     string            `json:"firstName"`
-	LastName      string            `json:"lastName"`
-	PreferredName string            `json:"preferredName"`
-	Email         string            `json:"email"`
-	PhoneNumber   string            `json:"phoneNumber"`
-	BirthDate     time.Time         `json:"birthDate"`
-	Photo         *entity.LocalFile `json:"photo"`
-	LinkedInUrl   string            `json:"linkedInUrl"`
-	GithubUrl     string            `json:"githubUrl"`
-	PortfolioUrl  string            `json:"portfolioUrl"`
+	ID            int        `json:"id"`
+	Kind          string     `json:"kind"`
+	FirstName     string     `json:"firstName"`
+	LastName      string     `json:"lastName"`
+	PreferredName string     `json:"preferredName"`
+	Email         string     `json:"email"`
+	PhoneNumber   string     `json:"phoneNumber"`
+	BirthDate     time.Time  `json:"birthDate"`
+	Photo         *LocalFile `json:"photo"`
+	LinkedInUrl   string     `json:"linkedInUrl"`
+	GithubUrl     string     `json:"githubUrl"`
+	PortfolioUrl  string     `json:"portfolioUrl"`
 
 	AssociationUserId int    `json:"associationUserId,omitempty"`
 	AssociationId     int    `json:"associationId,omitempty"`
@@ -240,17 +239,17 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.Email = e.Email
 	r.PhoneNumber = e.PhoneNumber
 	r.BirthDate = e.BirthDate
-	r.Photo = entity.NewLocalFile(e.ImageUrl)
+	r.Photo = NewLocalFile(e.ImageUrl)
 	r.LinkedInUrl = e.LinkedInUrl
 	r.GithubUrl = e.GithubUrl
 	r.PortfolioUrl = e.PortfolioUrl
 
 	switch e.Kind {
-	case entity.UserKindAssociation:
+	case UserKindAssociation:
 		r.FromAssociationUserItemView(e.AssociationUserItemView)
-	case entity.UserKindCandidate:
+	case UserKindCandidate:
 		r.FromCandidateItemView(e.CandidateItemView)
-	case entity.UserKindCompany:
+	case UserKindCompany:
 		r.FromCompanyUserItemView(e.CompanyUserItemView)
 	}
 }
@@ -273,8 +272,8 @@ func (r *ViewUserResponse) FromCandidateItemView(e *CandidateItemView) {
 	r.SeekValues = utils.SafeUnwrap(e.SeekValues)
 	r.WorkPermit = utils.SafeUnwrap(e.WorkPermit)
 	r.NoticePeriod = utils.SafeUnwrap(e.NoticePeriod)
-	r.CV = entity.NewLocalFile(e.CVUrl)
-	r.Video = entity.NewLocalFile(e.VideoUrl)
+	r.CV = NewLocalFile(e.CVUrl)
+	r.Video = NewLocalFile(e.VideoUrl)
 }
 
 func (r *ViewUserResponse) FromCompanyUserItemView(e *CompanyUserItemView) {
@@ -297,9 +296,9 @@ type ViewUserCandidateResponse struct {
 	NoticePeriod      int                     `json:"noticePeriod"`
 	SpokenLanguages   []UserSpokenLanguage    `json:"spokenLanguages"`
 	Skills            []UserSkill             `json:"skills"`
-	CV                *entity.LocalFile       `json:"cv"`
-	Attachments       []*entity.LocalFile     `json:"attachments"`
-	Video             *entity.LocalFile       `json:"video"`
+	CV                *LocalFile              `json:"cv"`
+	Attachments       []*LocalFile            `json:"attachments"`
+	Video             *LocalFile              `json:"video"`
 	EducationHistory  []UserEducationHistory  `json:"educationHistory"`
 	EmploymentHistory []UserEmploymentHistory `json:"employmentHistory"`
 }
@@ -421,15 +420,15 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	}
 
 	switch u.Kind {
-	case entity.UserKindAdmin:
+	case UserKindAdmin:
 		return nil
-	case entity.UserKindAssociation:
+	case UserKindAssociation:
 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
 		return u.fromFormDataAssociation(fd)
-	case entity.UserKindCandidate:
+	case UserKindCandidate:
 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
 		return u.fromFormDataCandidate(fd)
-	case entity.UserKindCompany:
+	case UserKindCompany:
 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
 		return u.fromFormDataCompany(fd)
 	default:
