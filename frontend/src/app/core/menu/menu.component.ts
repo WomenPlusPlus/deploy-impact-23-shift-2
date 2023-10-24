@@ -4,7 +4,6 @@ import {
     faBuilding,
     faCircleInfo,
     faEnvelope,
-    faIdCard,
     faList,
     faListCheck,
     faSheetPlastic,
@@ -51,7 +50,6 @@ export class MenuComponent implements OnChanges {
     protected readonly faSquareCaretLeft = faSquareCaretLeft;
     protected readonly faSquareCaretRight = faSquareCaretRight;
     protected readonly faSheetPlastic = faSheetPlastic;
-    protected readonly faIdCard = faIdCard;
 
     constructor(
         private readonly el: ElementRef<HTMLElement>,
@@ -78,7 +76,7 @@ export class MenuComponent implements OnChanges {
         }
 
         if (el) {
-            el.querySelector('summary')?.click();
+            (el.querySelector('details summary') as HTMLDetailsElement)?.click();
         }
     }
 }

@@ -1,5 +1,5 @@
 <ul
-    class="menu flex flex-col gap-2 px-3 pb-4 font-medium text-lg h-full"
+    class="menu flex flex-col flex-nowrap gap-2 px-3 pb-4 font-medium text-lg h-full"
     [ngClass]="{ 'sm:menu-horizontal sm:flex-col': !expanded }"
 >
     <li>
@@ -25,7 +25,7 @@
         </a>
     </li>
     <li>
-        <details [open]="!expanded ? false : undefined">
+        <details [open]="!expanded ? false : undefined" (click)="$event.stopPropagation()">
             <summary
                 #toggleEl
                 class="flex"
