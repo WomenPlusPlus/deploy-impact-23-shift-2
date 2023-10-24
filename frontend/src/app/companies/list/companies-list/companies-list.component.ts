@@ -10,12 +10,17 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
 
 import { CompaniesListStore } from './companies-list.store';
 import { CompanyCardComponent } from './company-card/company-card.component';
+import { faAdd } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-companies-list',
     standalone: true,
     imports: [
         CommonModule,
+        RouterModule,
+        FontAwesomeModule,
         CompanyCardComponent,
         ContentErrorComponent,
         ContentLoadingComponent,
@@ -28,6 +33,8 @@ import { CompanyCardComponent } from './company-card/company-card.component';
 export class CompaniesListComponent implements OnInit {
     readonly vm$ = this.companiesListStore.vm$;
     searchTerm$ = this.companiesListStore.searchString$;
+
+    protected readonly faAdd = faAdd;
 
     constructor(private readonly companiesListStore: CompaniesListStore) {}
 

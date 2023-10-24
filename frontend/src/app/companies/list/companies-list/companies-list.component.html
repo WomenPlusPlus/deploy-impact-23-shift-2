@@ -6,20 +6,33 @@
         <app-content-loading class="block h-screen/2-s"></app-content-loading>
     </ng-container>
     <ng-container *ngIf="!vm.loading && !vm.error">
-        <div class="px-9 py-4">
+        <header class="p-4 mb-5 flex justify-between items-center">
+            <h1 class="text-5xl">Companies</h1>
+            <div class="grid justify-items-center px-4">
+                <span class="text-5xl">{{ vm.list?.items?.length || 0 }}</span>
+                <span class="text-lg">In total</span>
+            </div>
+        </header>
+        <div class="px-9 py-4 flex">
             <input
                 *appLet="searchTerm$ | async as searchTerm"
                 type="search"
                 placeholder="Search"
-                class="input input-bordered input-sm rounded w-full sm:w-80"
+                class="input input-bordered input-sm ml-auto rounded w-full sm:w-80"
                 [class.input-error]="searchTerm.length && searchTerm.length < 3"
                 [ngModel]="searchTerm"
                 (ngModelChange)="onSearchTermChange($event)"
             />
         </div>
         <div
-            class="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-rows-auto-[20rem] gap-x-4 gap-y-8 justify-items-center p-4"
+            class="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-rows-auto-[minmax(min-content-20rem)] gap-x-4 gap-y-8 justify-items-center p-4"
         >
+            <a class="card w-full max-w-xs bg-base-200 shadow-xl relative" [routerLink]="['/admin', 'companies']">
+                <div class="grid gap-2 justify-items-center text-2xl absolute inset-center">
+                    <fa-icon [icon]="faAdd" />
+                    <span>Add new</span>
+                </div>
+            </a>
             <ng-container *ngIf="vm.list?.items?.length">
                 <app-company-card *ngFor="let item of $any(vm.list!.items!)" [company]="item" class="max-w-xs relative">
                 </app-company-card>

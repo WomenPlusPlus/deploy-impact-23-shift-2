@@ -10,12 +10,17 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
 
 import { AssociationCardComponent } from './association-card/association-card.component';
 import { AssociationsListStore } from './associations-list.store';
+import { faAdd } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-associations-list',
     standalone: true,
     imports: [
         CommonModule,
+        RouterModule,
+        FontAwesomeModule,
         AssociationCardComponent,
         ContentErrorComponent,
         ContentLoadingComponent,
@@ -40,4 +45,6 @@ export class AssociationsListComponent implements OnInit {
     onSearchTermChange(term: string): void {
         this.associationsListStore.updateFilterSearchTerm(term);
     }
+
+    protected readonly faAdd = faAdd;
 }

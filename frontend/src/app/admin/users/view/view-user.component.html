@@ -41,7 +41,7 @@
                             <button
                                 class="btn btn-sm btn-ghost flex-nowrap text-left"
                                 [disabled]="user.state !== userStateEnum.ACTIVE"
-                                (click)="onDelete(user.id)"
+                                (click)="deleteConfirmation.show()"
                             >
                                 <fa-icon [icon]="faRemove" class="text-lg align-middle mr-2"/>
                                 <span>Delete user</span>
@@ -75,6 +75,21 @@
                 <div class="divider"></div>
                 <app-view-candidate-sections [user]="user"></app-view-candidate-sections>
             </ng-container>
+
+            <dialog class="modal" #deleteConfirmation tabindex="0" (keyup.escape)="deleteConfirmation.close()">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg">Are you sure?</h3>
+                    <p class="py-4">If you delete {{ user.email }} there is no way to revert the action.</p>
+                    <div class="modal-action">
+                        <form method="dialog" class="flex gap-2">
+                            <button type="button" class="btn btn-primary basis-16" (click)="onDelete(user.id); deleteConfirmation.close()">
+                                Yes
+                            </button>
+                            <button class="btn basis-16">No</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
         </ng-container>
     </ng-template>
 </ng-container>
