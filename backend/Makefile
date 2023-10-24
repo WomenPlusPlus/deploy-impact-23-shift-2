@@ -13,11 +13,11 @@ run: build
 docker-build:
 	@docker build -t $(BINARY_NAME) .
 docker-run:
-	docker run -p $(PORT):$(PORT) $(BINARY_NAME)
-
+	docker run -d --name=app -p 28016:28016 -v /home/shift2_deployimpact/app:/app --net=host shift2/server:0.0.5
 docker-migrate:
 	migrate -database ${POSTGRESQL_URL} -path internal/db/migrations up
-
+docker-stop:
+	docker stop app && docker rm app
 docker-run-db:
 	mkdir -p $(DATA_PATH) && docker run -d --rm --name shift2-db -v $(DATA_PATH):/var/lib/postgresql -p 5432:5432 -e POSTGRES_PASSWORD=shift2023 postgres
 docker-pull:
