@@ -2,6 +2,7 @@ import { JobLocationTypeEnum, JobTypeEnum } from '@app/common/models/jobs.model'
 import { LocationCity } from '@app/common/models/location.model';
 
 export interface Job {
+    id: number;
     benefits?: string;
     candidateOverview: string;
     company: JobCompany;
@@ -38,4 +39,25 @@ export interface JobCreator {
 export interface JobLocation {
     city: LocationCity;
     type: JobLocationTypeEnum;
+}
+
+export interface JobList {
+    items: JobItem[];
+}
+
+export interface JobItem {
+    id: number;
+    title: string;
+    jobType: JobTypeEnum;
+    offerSalary: number;
+    company: JobCompanyItem;
+    creator: JobCreator;
+    creationDate: string;
+    location: JobLocation;
+}
+
+export interface JobCompanyItem {
+    id: number;
+    name: string;
+    imageUrl: string;
 }
