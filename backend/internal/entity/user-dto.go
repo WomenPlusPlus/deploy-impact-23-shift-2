@@ -48,13 +48,13 @@ func (u *EditUserRequest) FillKindSpecificDetail(kind string) error {
 		return nil
 	case UserKindAssociation:
 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
-		return u.fromFormDataAssociation(u.fd)
+		return u.fromFormDataEditAssociation(u.fd)
 	case UserKindCandidate:
 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
 		return u.fromFormDataCandidate(u.fd)
 	case UserKindCompany:
 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
-		return u.fromFormDataCompany(u.fd)
+		return u.fromFormDataEditCompany(u.fd)
 	default:
 		return fmt.Errorf("unknown user kind: %s", u.Kind)
 	}
@@ -64,7 +64,7 @@ func (u *EditUserRequest) fromFormData(id int, fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\d|\\w|\\.)+(\\+(\\d|\\w|\\.)+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -473,6 +473,21 @@ func (u *CreateUserRequest) fromFormDataAssociation(fd *formdata.FormData) error
 	return nil
 }
 
+func (u *CreateUserRequest) fromFormDataEditAssociation(fd *formdata.FormData) error {
+	fd.Validate("associationId").Required().HasN(1)
+
+	if fd.HasErrors() {
+		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
+	}
+
+	id, err := strconv.Atoi(fd.Get("associationId").First())
+	if err != nil {
+		return fmt.Errorf("invalid association id format: %v", err)
+	}
+	u.AssociationId = id
+	return nil
+}
+
 func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 	fd.Validate("yearsOfExperience").Required().HasN(1)
 	fd.Validate("jobStatus").Required().HasN(1)
@@ -560,5 +575,20 @@ func (u *CreateUserRequest) fromFormDataCompany(fd *formdata.FormData) error {
 	}
 	u.CompanyId = id
 	u.CompanyRole = fd.Get("role").First()
+	return nil
+}
+
+func (u *CreateUserRequest) fromFormDataEditCompany(fd *formdata.FormData) error {
+	fd.Validate("companyId").Required().HasN(1)
+
+	if fd.HasErrors() {
+		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
+	}
+
+	id, err := strconv.Atoi(fd.Get("companyId").First())
+	if err != nil {
+		return fmt.Errorf("invalid company id format: %v", err)
+	}
+	u.CompanyId = id
 	return nil
 }

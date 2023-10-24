@@ -426,7 +426,7 @@ func (pdb *PostgresDB) EditAssociationUser(id int, associationUser *entity.Assoc
 	associationUser.UserID = userId
 
 	query := `update association_users
-				set association_id=:association_id, role=:role
+				set association_id=:association_id
 				where user_id=:user_id
 				returning id`
 	associationUserId, err := PreparedQuery(tx, query, associationUser)
@@ -580,7 +580,7 @@ func (pdb *PostgresDB) EditCompanyUser(id int, companyUser *entity.CompanyUserEn
 	companyUser.UserID = userId
 
 	query := `update company_users
-				set company_id=:company_id, role=:role
+				set company_id=:company_id
 				where user_id=:user_id
 				returning id`
 	companyUserId, err := PreparedQuery(tx, query, companyUser)
