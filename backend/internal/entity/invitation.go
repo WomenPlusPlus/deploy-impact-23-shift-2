@@ -6,13 +6,17 @@ import (
 
 type InvitationEntity struct {
 	ID        int       `db:"id"`
-	CompanyID string    `db:"company_id"`
+	CompanyID int       `db:"company_id"`
 	Kind      string    `db:"kind"`
 	Role      string    `db:"kind"`
 	Email     string    `db:"email"`
 	Subject   string    `db:"subject"`
 	Message   string    `db:"message"`
 	CreatedAt time.Time `db:"created_at"`
+}
+
+type InvitationItemView struct {
+	*InvitationEntity
 }
 
 func NewInvitation(kind, email, subject, message string) *InvitationEntity {

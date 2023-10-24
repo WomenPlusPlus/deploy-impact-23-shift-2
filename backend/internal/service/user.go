@@ -3,10 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"mime/multipart"
 	"shift/internal/entity"
 	"shift/internal/utils"
+
+	"github.com/sirupsen/logrus"
 )
 
 type UserService struct {
@@ -527,7 +528,7 @@ func (s *UserService) getAdminByUserId(id int) (*entity.ViewUserResponse, error)
 	res := new(entity.ViewUserResponse)
 	admin, err := s.userDB.GetUserById(id)
 	if err != nil {
-		return nil, fmt.Errorf("getting association user by user id: %w", err)
+		return nil, fmt.Errorf("getting association user by association id: %w", err)
 	}
 	res.FromUserItemView(admin)
 	if res.Photo != nil {

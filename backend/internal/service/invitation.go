@@ -20,24 +20,32 @@ func NewInvitationService(bucketDB entity.BucketDB, invitationDB entity.Invitati
 }
 
 func (s *InvitationService) CreateInvitation(req *entity.CreateInvitationRequest) (*entity.CreateInvitationResponse, error) {
-	switch req.Kind {
-	case entity.InvitationKindAdmin:
-		return s.createInvitation(req)
-	default:
-		return nil, fmt.Errorf("unknown inviation kind: %s", req.Kind)
+	inv, err := s.createInvitation(req)
+	if err != nil {
+		return nil, err
 	}
+	return inv, err
 
 }
 
+// func (s *InvitationService) ListInvitations() (*user.ListUsersResponse, error) {
+// invs, err := s.invitationDB.GetAllAssociations()
+// }
+
 func (s *InvitationService) createInvitation(req *entity.CreateInvitationRequest) (*entity.CreateInvitationResponse, error) {
-	invitation := new(entity.InvitationEntity)
-	if err := invitation.FromCreationRequest(req); err != nil {
+	inv := new(entity.InvitationEntity)
+	if err := inv.FromCreationRequest(req); err != nil {
 		return nil, fmt.Errorf("parsing request into invitation entity: %w", err)
 	}
-	logrus.Tracef("Parsed invitation entity: %+v", invitation)
+	logrus.Tracef("Parsed invitation entity: %+v", inv)
+	inv, err := s.invitationDB.CreateInvitation(inv)
+	if err != nil {
+		return nil, fmt.Errorf("creating new invitation: %w", err)
+	}
+	logrus.Tracef("Added invitation to db: id=%d", inv.ID)
 
 	return &entity.CreateInvitationResponse{
-		ID:           invitation.ID,
-		InvitationID: invitation.ID,
+		ID:           inv.ID,
+		InvitationID: inv.CompanyID,
 	}, nil
 }
