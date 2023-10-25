@@ -4,34 +4,38 @@
     [class.opacity-30]="user.state === userStateEnum.DELETED"
     [routerLink]="['.', user.id]"
 >
-    <figure class="relative h-40 shrink-0">
-        <img
-            [src]="user.imageUrl || 'assets/profile-picture-default-form.png'"
-            alt="avatar" class="object-center object-cover"
-            loading="lazy"
-        />
-    </figure>
-    <div class="card-body relative">
-        <h2 class="card-title">
-            <span class="truncate">{{ user.preferredName || user.firstName + ' ' + user.lastName }}</span>
-        </h2>
-        <div class="flex gap-1">
-            <span
-                class="badge text-base-100 badge-sm"
-                [class.bg-yellow-400]="user.kind === userKindEnum.ADMIN"
-                [class.bg-red-400]="user.kind === userKindEnum.CANDIDATE"
-                [class.bg-blue-400]="user.kind === userKindEnum.COMPANY"
-                [class.bg-green-600]="user.kind === userKindEnum.ASSOCIATION"
-            >{{ user.kind | userKindLabel }}</span
-            >
-            <span class="badge bg-gray-400 text-base-100 badge-sm" *ngIf="user.kind === userKindEnum.COMPANY">{{
-                $company(user).role | userCompanyRoleLabel
-                }}</span>
-            <span class="badge bg-gray-400 text-base-100 badge-sm" *ngIf="user.kind === userKindEnum.ASSOCIATION">{{
-                $association(user).role | userAssociationRoleLabel
-                }}</span>
+    <div class="card-body px-8 pt-12 pb-8 flex flex-row gap-4 relative">
+        <picture class="w-20 h-20 rounded-full overflow-hidden flex shrink-0">
+            <img
+                [src]="user.imageUrl || 'assets/profile-picture-default-form.png'"
+                alt="avatar"
+                class="object-center object-cover"
+                loading="lazy"
+            />
+        </picture>
+        <div class="grid grid-rows-[auto_1fr_auto] items-start p-4">
+            <div class="card-title block truncate">
+                {{ user.preferredName || user.firstName + ' ' + user.lastName }}
+            </div>
+            <span class="break-all text-primary min-h-16 mb-4">{{ user.email }}</span>
+            <div class="flex gap-1">
+                <span
+                    class="badge text-base-100 badge-md"
+                    [class.bg-yellow-400]="user.kind === userKindEnum.ADMIN"
+                    [class.bg-red-400]="user.kind === userKindEnum.CANDIDATE"
+                    [class.bg-blue-400]="user.kind === userKindEnum.COMPANY"
+                    [class.bg-green-600]="user.kind === userKindEnum.ASSOCIATION"
+                >
+                    {{ user.kind | userKindLabel }}
+                </span>
+                <span class="badge bg-gray-400 text-base-100 badge-md" *ngIf="user.kind === userKindEnum.COMPANY">
+                    {{ $company(user).role | userCompanyRoleLabel }}
+                </span>
+                <span class="badge bg-gray-400 text-base-100 badge-md" *ngIf="user.kind === userKindEnum.ASSOCIATION">
+                    {{ $association(user).role | userAssociationRoleLabel }}
+                </span>
+            </div>
         </div>
-        <p class="break-all">[{{ user.id }}]: {{ user.email }}</p>
     </div>
 </a>
 
