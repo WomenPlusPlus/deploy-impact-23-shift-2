@@ -74,7 +74,7 @@ export class EditAssociationComponent implements OnInit {
                         focus: data.focus
                     });
                     this.previousName = data.name;
-                    this.previousPhotoURL = data.logo;
+                    this.previousPhotoURL = data.imageUrl;
                 });
         } else {
             this.router.navigate(['/admin/associations']);

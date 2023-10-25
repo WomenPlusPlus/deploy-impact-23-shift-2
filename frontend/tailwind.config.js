@@ -28,7 +28,7 @@ module.exports = {
             {
                 dark: {
                     'color-scheme': 'dark',
-                    'primary-content': '#6869a4',
+                    'primary-content': '#ffffff',
                     'secondary-content': '#ffffff',
                     'accent-content': '#ffffff',
                     'neutral-focus': '#242b33',
