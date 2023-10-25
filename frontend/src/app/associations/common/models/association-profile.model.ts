@@ -2,7 +2,7 @@ export interface AssociationProfileModel {
     id: number;
     name: string;
     logo: string;
-    url: string;
+    websiteUrl: string;
     focus: string;
 }
 

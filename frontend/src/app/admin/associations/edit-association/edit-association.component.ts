@@ -58,7 +58,7 @@ export class EditAssociationComponent implements OnInit {
         this.form = this.fb.group({
             name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
             logo: this.fb.control(new File([], ''), Validators.required),
-            url: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
+            websiteUrl: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             focus: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
         });
         this.id = Number(this.route.snapshot.paramMap.get('id'));
@@ -70,7 +70,7 @@ export class EditAssociationComponent implements OnInit {
                     this.form.patchValue({
                         name: data.name,
                         logo: null,
-                        url: data.url,
+                        websiteUrl: data.websiteUrl,
                         focus: data.focus
                     });
                     this.previousName = data.name;

@@ -52,7 +52,7 @@ export class CreateAssociationComponent implements OnInit {
         this.form = this.fb.group({
             name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
             logo: this.fb.control(new File([], ''), Validators.required),
-            url: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
+            websiteUrl: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
             focus: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
         });
     }

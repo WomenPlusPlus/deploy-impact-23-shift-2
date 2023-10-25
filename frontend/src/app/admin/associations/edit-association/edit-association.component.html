@@ -44,19 +44,23 @@
                     </div>
                 </div>
             </fieldset>
-            <fieldset id="edit-url" class="md:flex md:items-start w-full my-5" *appLet="form.controls.url as control">
-                <label for="url" class="md:w-1/4">Website URL:</label>
+            <fieldset
+                id="edit-url"
+                class="md:flex md:items-start w-full my-5"
+                *appLet="form.controls.websiteUrl as control"
+            >
+                <label for="websiteUrl" class="md:w-1/4">Website URL:</label>
                 <div class="md:w-3/4">
                     <input
                         type="text"
-                        id="url"
-                        name="url"
-                        formControlName="url"
+                        id="websiteUrl"
+                        name="websiteUrl"
+                        formControlName="websiteUrl"
                         class="w-full input input-bordered"
                         [class.input-error]="control.invalid && control.touched"
                     />
                     <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.url.errors | formErrorMessage
+                        form.controls.websiteUrl.errors | formErrorMessage
                     }}</span>
                 </div>
             </fieldset>
