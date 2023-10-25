@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faEllipsisV, faExternalLink, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
@@ -21,9 +21,8 @@ export class AssociationCardComponent {
     @Input() association!: AssociationProfileModel;
     @Input() deleting!: boolean;
 
-    protected readonly faEye = faEye;
-    protected readonly faExternalLink = faExternalLink;
     protected readonly faEllipsisV = faEllipsisV;
+    protected readonly faExternalLinkAlt = faExternalLinkAlt;
 
     protected readonly userKindEnum = UserKindEnum;
 

@@ -1,10 +1,17 @@
 <a class="card w-full h-full bg-base-200 shadow-xl" [routerLink]="['.', company.id]">
-    <figure class="relative h-40">
-        <img [src]="company.logo" alt="{{ company.name }}" class="object-center object-cover" loading="lazy" />
-    </figure>
-    <div class="card-body relative">
-        <h2 class="card-title">{{ company.name }}</h2>
-        <p class="break-all">{{ company.address }}</p>
+    <div class="card-body px-6 pt-8 pb-6 flex flex-row gap-4 relative">
+        <picture class="w-20 h-20 rounded-full overflow-hidden flex shrink-0">
+            <img
+                [src]="company.logo || 'assets/profile-picture-default-form.png'"
+                [alt]="company.name"
+                class="object-center object-cover"
+                loading="lazy"
+            />
+        </picture>
+        <div class="grid grid-rows-[auto_1fr] items-start p-4">
+            <div class="card-title block truncate">{{ company.name }}</div>
+            <span class="break-all text-primary min-h-6 mb-4">{{ company.address }}</span>
+        </div>
     </div>
 </a>
 <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">

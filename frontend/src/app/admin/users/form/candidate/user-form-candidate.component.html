@@ -19,7 +19,7 @@
                 <img
                     [src]="imagePreview.url"
                     [title]="imagePreview.name"
-                    class="h-full aspect-video object-center object-cover rounded"
+                    class="h-full aspect-square object-center object-cover rounded"
                     alt="profile-picture"
                 />
                 <div>
@@ -168,7 +168,7 @@
             *appLet="jobForm.controls.yearsOfExperience as control"
         >
             <label for="years-of-experience" class="mb-1"
-            >Years of experience<span class="text-red-400">*</span>:</label
+                >Years of experience<span class="text-red-400">*</span>:</label
             >
             <input
                 type="number"
@@ -233,7 +233,7 @@
             *appLet="jobForm.controls.seekLocations as control"
         >
             <label for="seek-locations" class="mb-1"
-            >Preferred locations (cities)<span class="text-red-400">*</span>:</label
+                >Preferred locations (cities)<span class="text-red-400">*</span>:</label
             >
             <div class="dropdown">
                 <input
@@ -388,7 +388,12 @@
                 (input)="onCVUpload($event)"
                 [class.input-error]="control.invalid && control.touched"
             />
-            <app-file-item *ngIf="control.value" [file]="control.value" class="my-2" (remove)="onCVRemove()"></app-file-item>
+            <app-file-item
+                *ngIf="control.value"
+                [file]="control.value"
+                class="my-2"
+                (remove)="onCVRemove()"
+            ></app-file-item>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>
@@ -429,7 +434,12 @@
                 (input)="onVideoUpload($event)"
                 [class.input-error]="control.invalid && control.touched"
             />
-            <app-file-item *ngIf="control.value" [file]="control.value" class="my-2" (remove)="onVideoRemove()"></app-file-item>
+            <app-file-item
+                *ngIf="control.value"
+                [file]="control.value"
+                class="my-2"
+                (remove)="onVideoRemove()"
+            ></app-file-item>
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
                 {{ control.errors | formErrorMessage }}
             </span>

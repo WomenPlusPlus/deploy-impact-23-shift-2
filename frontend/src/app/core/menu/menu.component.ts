@@ -65,7 +65,7 @@ export class MenuComponent implements OnChanges {
             return;
         }
 
-        const activeLink = this.el.nativeElement.querySelector('a.active');
+        const activeLink = this.el.nativeElement.querySelector('a.link-active');
         if (!activeLink) {
             return;
         }
