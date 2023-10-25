@@ -13,11 +13,14 @@ type NamedQuerier interface {
 
 func PreparedQuery(tx NamedQuerier, query string, arg any) (int, error) {
 	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return 0, fmt.Errorf("failed to execute prepared query: %w", err)
+	}
 
 	var id int
 	err = stmt.Get(&id, arg)
 	if err != nil {
-		return 0, fmt.Errorf("unable to create record: %w", err)
+		return 0, fmt.Errorf("unable to retrieve id from prepared query: %w", err)
 	}
 	return id, nil
 }

@@ -1,5 +1,5 @@
-insert into associations (id, name, logo_url, website_url, focus)
-values (1, 'name', 'logo', 'website', 'focus');
+insert into associations (name, logo_url, website_url, focus)
+values ('name', 'logo', 'website', 'focus');
 insert into companies (id)
 values (1);
 
