@@ -190,8 +190,8 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	return res, nil
 }
 
-func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, error) {
-	res := make([]*entity.AssociationItemView, 0)
+func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error) {
+	res := make([]*entity.AssociationEntity, 0)
 
 	query := `select * from associations`
 
@@ -202,7 +202,7 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationItemView, erro
 	}
 
 	for rows.Next() {
-		view := new(entity.AssociationItemView)
+		view := new(entity.AssociationEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Debugf("failed to scan association view from db record: %v", err)
 			return nil, err
@@ -273,7 +273,7 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 	return nil, fmt.Errorf("could not find user: id=%d", id)
 }
 
-func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationItemView, error) {
+func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationEntity, error) {
 	query := `select * from associations where id = :id`
 	rows, err := pdb.db.Queryx(query, id)
 	defer rows.Close()
@@ -282,7 +282,7 @@ func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationItemView, 
 	}
 
 	for rows.Next() {
-		view := new(entity.AssociationItemView)
+		view := new(entity.AssociationEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -490,6 +490,16 @@ func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*enti
 	return assoc, nil
 }
 
+func (pdb *PostgresDB) AssignAssociationLogo(id int, logoUrl string) error {
+	query := `update associations set logo_url=$1 where id=$2`
+
+	_, err := pdb.db.Queryx(query, logoUrl, id)
+	if err != nil {
+		return fmt.Errorf("could not assign logo %s to association %d: %w", logoUrl, id, err)
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) CreateInvitation(inv *entity.InvitationEntity) (*entity.InvitationEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -553,13 +563,11 @@ func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.As
 	query := `insert into associations
 		(
 			name,
-			logo_url,
 			website_url,
 			focus
 		)
 		values (
 			:name,
-			:logo_url,
 			:website_url,
 			:focus
 		)

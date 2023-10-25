@@ -5,17 +5,12 @@ import (
 )
 
 type AssociationEntity struct {
-	ID         int                   `db:"id"`
-	Name       string                `db:"name"`
-	Logo       *multipart.FileHeader `db:"logo_url"`
-	WebsiteUrl string                `db:"website_url"`
-	Focus      string                `db:"focus"`
-	CreatedAt  string                `db:"created_at"`
-}
-
-type AssociationItemView struct {
-	ImageUrl *string `db:"image_url"`
-	*AssociationEntity
+	ID         int     `db:"id"`
+	Name       string  `db:"name"`
+	Logo       *string `db:"logo_url"`
+	WebsiteUrl string  `db:"website_url"`
+	Focus      string  `db:"focus"`
+	CreatedAt  string  `db:"created_at"`
 }
 
 type AssociationRecordView struct {
