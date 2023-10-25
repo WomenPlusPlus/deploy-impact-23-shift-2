@@ -25,8 +25,8 @@ export class AssociationProfileService {
     }
 
     getAssociationsList(): Observable<AssociationsListModel> {
-        //return this.httpClient.get<AssociationProfileModel>(`${environment.API_BASE_URL}/api/v1/associations/`);
-        return of({
+        return this.httpClient.get<AssociationsListModel>(`${environment.API_BASE_URL}/api/v1/admin/associations`);
+        /*return of({
             items: [
                 {
                     id: 0,
@@ -57,7 +57,7 @@ export class AssociationProfileService {
                     focus: 'At Dummy Association, we value innovation, sustainability, and diversity. We are dedicated to developing software that advances the world while protecting the environment.'
                 }
             ]
-        });
+        });*/
     }
 
     deleteAssociation(id: number): Observable<void> {
