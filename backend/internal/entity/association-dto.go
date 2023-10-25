@@ -2,14 +2,12 @@ package entity
 
 import (
 	"fmt"
+	"github.com/neox5/go-formdata"
 	"log"
 	"mime/multipart"
 	"net/http"
 	"shift/internal/utils"
 	"strings"
-	"time"
-
-	"github.com/neox5/go-formdata"
 )
 
 type CreateAssociationRequest struct {
@@ -17,7 +15,6 @@ type CreateAssociationRequest struct {
 	Logo       *multipart.FileHeader `json:"logo"`
 	WebsiteUrl string                `json:"websiteUrl"`
 	Focus      string                `json:"focus"`
-	CreatedAt  time.Time             `json:"createdAt"`
 }
 
 type CreateAssociationResponse struct {
@@ -99,6 +96,5 @@ func (a *CreateAssociationRequest) fromFormData(fd *formdata.FormData) error {
 	a.WebsiteUrl = fd.Get("websiteUrl").First()
 	a.Focus = fd.Get("focus").First()
 
-	// a.CreateAssociationRequest = new(CreateAssociationRequest)
-	return a.fromFormData(fd)
+	return nil
 }

@@ -511,10 +511,10 @@ func (pdb *PostgresDB) CreateInvitation(inv *entity.InvitationEntity) (*entity.I
 }
 
 func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
-	query := `select * from associations where id = :id`
+	query := `select * from associations where id = $1`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
-		logrus.Debugf("failed to get association  with id=%d in db: %v", id, err)
+		logrus.Debugf("failed to get association with id=%d in db: %v", id, err)
 		return nil, err
 	}
 
@@ -553,13 +553,13 @@ func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.As
 	query := `insert into associations
 		(
 			name,
-			logo,
+			logo_url,
 			website_url,
 			focus
 		)
 		values (
 			:name,
-			:logo,
+			:logo_url,
 			:website_url,
 			:focus
 		)
@@ -593,7 +593,7 @@ func (pdb *PostgresDB) createInvitation(tx NamedQuerier, inv *entity.InvitationE
 		returning id`
 	invId, err := PreparedQuery(tx, query, inv)
 	if err != nil {
-		logrus.Debugf("failed to insert association in db: %v", err)
+		logrus.Debugf("failed to insert invitations in db: %v", err)
 		return 0, err
 	}
 	return invId, nil

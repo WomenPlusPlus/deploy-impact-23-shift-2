@@ -76,7 +76,7 @@ create table if not exists associations
 (
     id          serial primary key,
     name        varchar(100)  not null,
-    logo_url    varchar(512)  not null,
+    logo_url    varchar(512),
     website_url varchar(512)  not null,
     focus       varchar(1024) not null
 );
