@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faGlobe, faExternalLink } from '@fortawesome/free-solid-svg-icons';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
@@ -26,7 +26,6 @@ export class AssociationProfileComponent {
     readonly vm$ = this.associationProfileStore.vm$;
 
     protected readonly faGlobe = faGlobe;
-    protected readonly faExternalLink = faExternalLink;
     protected readonly userKindEnum = UserKindEnum;
 
     constructor(
