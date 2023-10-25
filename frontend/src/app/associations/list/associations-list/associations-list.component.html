@@ -25,19 +25,22 @@
             />
         </div>
         <div
-            class="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-rows-auto-[minmax(min-content-20rem)] gap-x-4 gap-y-8 justify-items-center p-4"
+            class="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 grid-rows-auto-[minmax(min-content-10rem)] gap-x-4 gap-y-8 justify-items-center p-4"
         >
-            <a class="card w-full max-w-xs bg-base-200 shadow-xl relative" [routerLink]="['/admin', 'associations']">
-                <div class="grid gap-2 justify-items-center text-2xl absolute inset-center">
-                    <fa-icon [icon]="faAdd" />
-                    <span>Add new</span>
+            <a
+                class="card h-full w-full max-w-md bg-base-200 shadow-xl relative"
+                [routerLink]="['/admin', 'associations']"
+            >
+                <div class="grid gap-2 justify-items-center absolute inset-center">
+                    <fa-icon [icon]="faAdd" class="text-2xl" />
+                    <span class="text-lg">Add new</span>
                 </div>
             </a>
             <ng-container *ngIf="vm.list?.items?.length">
                 <app-association-card
                     *ngFor="let item of $any(vm.list!.items!)"
                     [association]="item"
-                    class="max-w-xs relative"
+                    class="h-full w-full max-w-md"
                 ></app-association-card>
             </ng-container>
         </div>
