@@ -42,6 +42,7 @@ func (s *APIServer) Run() {
 	apiRouter := router.PathPrefix("/api/v1").Subrouter()
 
 	s.initUserRoutes(apiRouter)
+	s.initProfileRoutes(apiRouter)
 	s.initAssociationRoutes(apiRouter)
 	s.initInvitaionRoutes(apiRouter)
 

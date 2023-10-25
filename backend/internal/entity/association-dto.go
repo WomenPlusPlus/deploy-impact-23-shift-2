@@ -44,13 +44,13 @@ type ViewAssociationResponse struct {
 	CreatedAt  string     `json:"createdAt,omitempty"`
 }
 
-func (r *ListAssociationsResponse) FromAssociationsView(v []*AssociationItemView) {
+func (r *ListAssociationsResponse) FromAssociations(v []*AssociationEntity) {
 	r.Items = make([]ListAssociationResponse, len(v))
 	for i, assoc := range v {
 		item := ListAssociationResponse{
-			ID:         assoc.AssociationEntity.ID,
+			ID:         assoc.ID,
 			Name:       assoc.Name,
-			ImageUrl:   utils.SafeUnwrap(assoc.ImageUrl),
+			ImageUrl:   utils.SafeUnwrap(assoc.Logo),
 			WebsiteUrl: assoc.WebsiteUrl,
 			Focus:      assoc.Focus,
 			CreatedAt:  assoc.CreatedAt,
@@ -60,10 +60,10 @@ func (r *ListAssociationsResponse) FromAssociationsView(v []*AssociationItemView
 	}
 }
 
-func (r *ViewAssociationResponse) FromAssociaionItemView(a *AssociationItemView) {
-	r.ID = a.AssociationEntity.ID
+func (r *ViewAssociationResponse) FromAssociation(a *AssociationEntity) {
+	r.ID = a.ID
 	r.Name = a.Name
-	r.ImageUrl = NewLocalFile(a.ImageUrl)
+	r.ImageUrl = NewLocalFile(a.Logo)
 	r.WebsiteUrl = a.WebsiteUrl
 	r.Focus = a.Focus
 	r.CreatedAt = a.CreatedAt

@@ -63,13 +63,28 @@ func (s *AssociationService) ListAssociations() (*entity.ListAssociationsRespons
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
+	ctx := context.Background()
+	for _, association := range associations {
+		if association.Logo == nil {
+			continue
+		}
+		imageUrl, err := s.bucketDB.SignUrl(ctx, *association.Logo)
+		if err != nil {
+			logrus.Errorf("could not sign url for association logo: %v", err)
+		} else {
+			logrus.Tracef("Signed url for association logo: id=%d, url=%v", association.ID, imageUrl)
+			association.Logo = &imageUrl
+		}
+	}
+
 	res := new(entity.ListAssociationsResponse)
-	res.FromAssociationsView(associations)
+	res.FromAssociations(associations)
 
 	return res, nil
 }
 
 func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociationsResponse, error) {
+	// TODO
 	associations, err := s.associationDB.GetAllAssociations()
 	if err != nil {
 		return nil, fmt.Errorf("getting all associations: %w", err)
@@ -84,10 +99,13 @@ func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociations
 func (s *AssociationService) saveLogo(associationId int, logoHeader *multipart.FileHeader) error {
 	path := fmt.Sprintf("%d/logo/%s", associationId, logoHeader.Filename)
 	if err := s.uploadFile(path, logoHeader); err != nil {
-		return fmt.Errorf("uploading photo: %w", err)
+		return fmt.Errorf("uploading logo: %w", err)
 	}
 	logrus.Tracef("Added photo to bucket: id=%d", associationId)
 
+	if err := s.associationDB.AssignAssociationLogo(associationId, path); err != nil {
+		return fmt.Errorf("saving logo: %w", err)
+	}
 	logrus.Tracef("Added photo to db: id=%d", associationId)
 	return nil
 }
@@ -117,12 +135,23 @@ func (s *AssociationService) GetAssociationById(id int) (*entity.ViewAssociation
 }
 
 func (s *AssociationService) getAssociationById(id int) (*entity.ViewAssociationResponse, error) {
-	res := new(entity.ViewAssociationResponse)
 	assoc, err := s.associationDB.GetAssociationById(id)
 	if err != nil {
-		return nil, fmt.Errorf("getting association user by user id: %w", err)
+		return nil, fmt.Errorf("getting association by id: %w", err)
 	}
-	res.FromAssociaionItemView(assoc)
+
+	if assoc.Logo != nil {
+		imageUrl, err := s.bucketDB.SignUrl(context.Background(), *assoc.Logo)
+		if err != nil {
+			logrus.Errorf("could not sign url for association logo: %v", err)
+		} else {
+			logrus.Tracef("Signed url for association logo: id=%d, url=%v", assoc.ID, imageUrl)
+			assoc.Logo = &imageUrl
+		}
+	}
+
+	res := new(entity.ViewAssociationResponse)
+	res.FromAssociation(assoc)
 
 	return res, nil
 }
