@@ -5,7 +5,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'invitations']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Invitations"
         >
@@ -16,7 +16,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'associations']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Associations"
         >
@@ -29,26 +29,24 @@
             <summary
                 #toggleEl
                 class="flex"
-                [ngClass]="{ 'tooltip tooltip-right after:hidden sm:justify-center active': !expanded }"
+                [ngClass]="{
+                    'tooltip tooltip-right after:hidden sm:justify-center active': !expanded,
+                    'mb-1': expanded
+                }"
                 data-tip="Companies"
             >
-                <a
-                    class="flex gap-2 mr-auto"
-                    routerLinkActive="active"
-                    [routerLink]="['/admin', 'companies']"
-                    *ngIf="expanded"
-                >
+                <a class="flex gap-2 mr-auto" [routerLink]="['/admin', 'companies']" *ngIf="expanded">
                     <fa-icon [icon]="faBuilding" class="text-center w-6" />
                     <span class="ml-1 truncate">Companies</span>
                 </a>
                 <fa-icon *ngIf="!expanded" [icon]="faBuilding" class="text-center w-6" />
             </summary>
             <ul tabindex="0" [ngClass]="{ 'top-[-1rem] left-16': !expanded }" (click)="!expanded && toggleEl.click()">
-                <li>
+                <li class="mb-1">
                     <a
                         class="flex flex-nowrap gap-2"
                         [routerLink]="['/companies']"
-                        routerLinkActive="active"
+                        routerLinkActive="link-active text-base-100 bg-primary"
                         [ngClass]="{ 'tooltip tooltip-right': !expanded }"
                         data-tip="Companies Profile"
                     >
@@ -60,7 +58,7 @@
                     <a
                         class="flex flex-nowrap gap-2"
                         [routerLink]="['/jobs']"
-                        routerLinkActive="active"
+                        routerLinkActive="link-active text-base-100 bg-primary"
                         [ngClass]="{ 'tooltip tooltip-right': !expanded }"
                         data-tip="Job listings"
                     >
@@ -74,7 +72,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'users']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Users"
         >
@@ -85,7 +83,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'training']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Training"
         >
@@ -96,7 +94,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'help-center']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Help Center"
         >
@@ -107,7 +105,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'requests']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Requests"
         >
@@ -118,7 +116,7 @@
     <li>
         <a
             [routerLink]="['/admin', 'variables']"
-            routerLinkActive="active"
+            routerLinkActive="text-base-100 bg-primary"
             [ngClass]="{ 'tooltip tooltip-right': !expanded }"
             data-tip="Variables"
         >
