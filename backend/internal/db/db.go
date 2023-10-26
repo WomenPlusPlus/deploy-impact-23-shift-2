@@ -88,10 +88,10 @@ func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordVie
 func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationRecordView, error) {
 	query := `select * from associations where id = $1`
 	rows, err := s.db.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.AssociationRecordView)
@@ -213,18 +213,18 @@ func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error)
 	return res, nil
 }
 
-func (pdb *PostgresDB) GetAllInvitations() ([]*entity.InvitationItemView, error) {
-	res := make([]*entity.InvitationItemView, 0)
+func (pdb *PostgresDB) GetAllInvitations() ([]*entity.InvitationEntity, error) {
+	res := make([]*entity.InvitationEntity, 0)
 
-	query := `select * from invitations`
+	query := `select * from invites`
 	rows, err := pdb.db.Queryx(query)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching invitations in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
-		view := new(entity.InvitationItemView)
+		view := new(entity.InvitationEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -233,6 +233,26 @@ func (pdb *PostgresDB) GetAllInvitations() ([]*entity.InvitationItemView, error)
 	}
 
 	return res, nil
+}
+
+func (pdb *PostgresDB) GetInvitationByEmail(email string) (*entity.InvitationEntity, error) {
+	query := `select * from invites where email=$1`
+	rows, err := pdb.db.Queryx(query, email)
+	if err != nil {
+		return nil, fmt.Errorf("fetching invitation by email in db: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.InvitationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find invitation: email=%s", email)
 }
 
 func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
@@ -276,10 +296,10 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationEntity, error) {
 	query := `select * from associations where id = :id`
 	rows, err := pdb.db.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching association id=%d in db: %w", id, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.AssociationEntity)
@@ -518,6 +538,22 @@ func (pdb *PostgresDB) CreateInvitation(inv *entity.InvitationEntity) (*entity.I
 	}
 
 	return inv, nil
+}
+
+func (pdb *PostgresDB) UpdateInvitationState(id int, state string) error {
+	query := `update invites set state=$2 where id=$1`
+	if _, err := pdb.db.Queryx(query, id, state); err != nil {
+		return fmt.Errorf("executing query: %w", err)
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) SetInvitationTicket(id int, ticket string) error {
+	query := `update invites set state='PENDING', ticket=$2 where id=$1`
+	if _, err := pdb.db.Queryx(query, id, ticket); err != nil {
+		return fmt.Errorf("executing query: %w", err)
+	}
+	return nil
 }
 
 func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
