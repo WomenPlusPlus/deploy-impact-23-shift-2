@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
+
 import { authenticatedGuard, notAuthenticatedGuard } from '@app/common/guards/authenticated.guard';
 
 const routes: Routes = [
     {
         path: 'login',
-        loadComponent: () =>
-            import('./pages/login/login.component').then((m) => m.LoginComponent),
+        loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
         canActivate: [notAuthenticatedGuard]
     },
     {
@@ -26,6 +26,11 @@ const routes: Routes = [
     {
         path: 'associations',
         loadChildren: () => import('./associations/associations.routes'),
+        canActivate: [authenticatedGuard]
+    },
+    {
+        path: 'dashboard',
+        loadChildren: () => import('./dashboard/dashboard.routes'),
         canActivate: [authenticatedGuard]
     },
     {
