@@ -8,17 +8,9 @@ import (
 	"golang.org/x/exp/slices"
 	"log"
 	"net/http"
+	"shift/internal/entity"
 	cauth "shift/pkg/auth"
 	"strings"
-)
-
-type ContextKey string
-
-var (
-	ContextKeyKind  ContextKey = "X-Kind"
-	ContextKeyRole  ContextKey = "X-Role"
-	ContextKeyEmail ContextKey = "X-Email"
-	ContextKeyToken ContextKey = "X-Token"
 )
 
 func CORSMiddleware(next http.Handler) http.Handler {
@@ -75,21 +67,22 @@ func (s *APIServer) AuthenticationMiddleware(next http.Handler) http.Handler {
 		}
 		logrus.Tracef("Authenticated valid user: user=%v", user)
 
-		ctx = context.WithValue(ctx, ContextKeyKind, user.Kind)
-		ctx = context.WithValue(ctx, ContextKeyRole, user.Role)
-		ctx = context.WithValue(ctx, ContextKeyEmail, user.Email)
-		ctx = context.WithValue(ctx, ContextKeyToken, token)
+		ctx = context.WithValue(ctx, entity.ContextKeyKind, user.Kind)
+		ctx = context.WithValue(ctx, entity.ContextKeyRole, user.Role)
+		ctx = context.WithValue(ctx, entity.ContextKeyUserId, user.ID)
+		ctx = context.WithValue(ctx, entity.ContextKeyEmail, user.Email)
+		ctx = context.WithValue(ctx, entity.ContextKeyToken, token)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func AuthorizationMiddleware(key ContextKey, values ...string) mux.MiddlewareFunc {
+func AuthorizationMiddleware(key entity.ContextKey, values ...string) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return AuthorizationHandler(next, key, values...)
 	}
 }
 
-func AuthorizationHandler(next http.Handler, key ContextKey, values ...string) http.Handler {
+func AuthorizationHandler(next http.Handler, key entity.ContextKey, values ...string) http.Handler {
 	handler := AuthorizationCase(next, key, values...)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !handler(w, r) {
@@ -109,7 +102,7 @@ func AuthorizationSwitch(handlers ...func(http.ResponseWriter, *http.Request) bo
 	})
 }
 
-func AuthorizationCase(next http.Handler, key ContextKey, values ...string) func(http.ResponseWriter, *http.Request) bool {
+func AuthorizationCase(next http.Handler, key entity.ContextKey, values ...string) func(http.ResponseWriter, *http.Request) bool {
 	return func(w http.ResponseWriter, r *http.Request) bool {
 		value, ok := r.Context().Value(key).(string)
 		if !ok {

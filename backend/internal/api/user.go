@@ -33,7 +33,7 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Methods(http.MethodDelete)
 
 	router.Use(s.AuthenticationMiddleware)
-	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
+	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {

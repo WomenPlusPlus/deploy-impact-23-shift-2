@@ -13,18 +13,18 @@ func (s *APIServer) initAuthorizationRoutes(router *mux.Router) {
 	router.Path("").
 		Handler(
 			AuthorizationSwitch(
-				AuthorizationCase(makeHTTPHandleFunc(s.handleAdminAuthorization), ContextKeyKind, entity.UserKindAdmin),
+				AuthorizationCase(makeHTTPHandleFunc(s.handleAdminAuthorization), entity.ContextKeyKind, entity.UserKindAdmin),
 				AuthorizationCase(
 					AuthorizationHandler(
 						makeHTTPHandleFunc(s.handleEntityAuthorization),
-						ContextKeyRole,
+						entity.ContextKeyRole,
 						entity.UserRoleAdmin,
 					),
-					ContextKeyKind,
+					entity.ContextKeyKind,
 					entity.UserKindAssociation,
 					entity.UserKindCompany,
 				),
-				AuthorizationCase(makeHTTPHandleFunc(s.handleCandidateAuthorization), ContextKeyKind, entity.UserKindCandidate),
+				AuthorizationCase(makeHTTPHandleFunc(s.handleCandidateAuthorization), entity.ContextKeyKind, entity.UserKindCandidate),
 			),
 		).
 		Methods(http.MethodPost)

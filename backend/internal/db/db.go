@@ -540,7 +540,7 @@ func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.Asso
 }
 
 func (pdb *PostgresDB) getInvitationById(tx sqlx.Queryer, id int) (*entity.InvitationEntity, error) {
-	query := `select * from invitations where id = :id`
+	query := `select * from invites where id = $1`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get invitation  with id=%d in db: %v", id, err)
@@ -581,22 +581,22 @@ func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.As
 }
 
 func (pdb *PostgresDB) createInvitation(tx NamedQuerier, inv *entity.InvitationEntity) (int, error) {
-	query := `insert into invitations
+	query := `insert into invites
 		(
+		 	creator_id,
 			kind,
-			company_id,
 			role,
+		 	entity_id,
 			email,
-			subject,
-			message
+		 	expire_at
 		)
 		values (
+		 	:creator_id,
 			:kind,
-			:company_id,
 			:role,
+		 	:entity_id,
 			:email,
-			:subject,
-			:message
+		 	:expire_at
 		)
 		returning id`
 	invId, err := PreparedQuery(tx, query, inv)
