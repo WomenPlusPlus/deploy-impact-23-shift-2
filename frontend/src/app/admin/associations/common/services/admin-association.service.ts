@@ -13,9 +13,9 @@ import { AssociationProfileModel } from '@app/associations/common/models/associa
 export class AdminAssociationService {
     constructor(private readonly httpClient: HttpClient) {}
 
-    createAssociation(payload: FormData): Observable<void> {
+    createAssociation(payload: FormData): Observable<{ id: number }> {
         // post association data to back end
-        return this.httpClient.post<void>(`${environment.API_BASE_URL}/api/v1/admin/associations`, payload);
+        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/admin/associations`, payload);
     }
 
     editAssociation(payload: FormData, id: number): Observable<void> {

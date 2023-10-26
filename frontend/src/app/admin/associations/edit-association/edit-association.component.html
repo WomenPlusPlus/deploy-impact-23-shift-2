@@ -3,87 +3,8 @@
         <h1 class="text-3xl mb-5">
             Edit Association <i *ngIf="previousName">"{{ previousName }}"</i>
         </h1>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <fieldset id="edit-name" class="md:flex md:items-start w-full my-5" *appLet="form.controls.name as control">
-                <label for="name" class="md:w-1/4">Association Name:</label>
-                <div class="md:w-3/4">
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        formControlName="name"
-                        class="w-full input input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                    />
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.name.errors | formErrorMessage
-                    }}</span>
-                </div>
-            </fieldset>
-            <fieldset id="edit-logo" class="md:flex md:items-start w-full my-5" *appLet="form.controls.logo as control">
-                <label for="logo" class="md:w-1/4">Logo:</label>
-                <div class="md:w-3/4">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        id="logo"
-                        name="logo"
-                        class="w-full file-input file-input-ghost file-input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                        (change)="onFileSelected($event)"
-                    />
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.logo.errors | formErrorMessage
-                    }}</span>
-                    <div class="w-full h-72 mt-8 mb-4">
-                        <img
-                            [src]="imageURL$ | async"
-                            class="h-full aspect-video object-center object-cover rounded"
-                            alt="profile-picture"
-                        />
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset
-                id="edit-url"
-                class="md:flex md:items-start w-full my-5"
-                *appLet="form.controls.websiteUrl as control"
-            >
-                <label for="websiteUrl" class="md:w-1/4">Website URL:</label>
-                <div class="md:w-3/4">
-                    <input
-                        type="text"
-                        id="websiteUrl"
-                        name="websiteUrl"
-                        formControlName="websiteUrl"
-                        class="w-full input input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                    />
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.websiteUrl.errors | formErrorMessage
-                    }}</span>
-                </div>
-            </fieldset>
-            <fieldset
-                id="edit-focus"
-                class="md:flex md:items-start w-full my-5"
-                *appLet="form.controls.focus as control"
-            >
-                <label for="focus" class="md:w-1/4">Main Focus:</label>
-                <div class="md:w-3/4">
-                    <textarea
-                        id="focus"
-                        name="focus"
-                        formControlName="focus"
-                        rows="5"
-                        class="w-full textarea textarea-bordered resize-y"
-                        [class.textarea-error]="control.invalid && control.touched"
-                    ></textarea>
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.focus.errors | formErrorMessage
-                    }}</span>
-                </div>
-            </fieldset>
+        <form (ngSubmit)="onSubmit()">
+            <app-association-form [form]="form" [previousImage]="previousPhotoURL"></app-association-form>
             <button
                 class="btn btn-primary btn-wide float-right"
                 type="submit"
