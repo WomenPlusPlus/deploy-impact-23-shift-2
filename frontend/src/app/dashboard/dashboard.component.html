@@ -1,3 +1,6 @@
 <ng-container *ngIf="true | isAuthorized: userKindEnum.COMPANY | async">
     <app-company-dashboard></app-company-dashboard>
 </ng-container>
+<ng-container *ngIf="true | isAuthorized: userKindEnum.ASSOCIATION | async">
+    <app-association-dashboard></app-association-dashboard>
+</ng-container>
