@@ -10,7 +10,8 @@ import {
     faSitemap,
     faSquareCaretLeft,
     faSquareCaretRight,
-    faUser
+    faUser,
+    faChartLine
 } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
@@ -50,6 +51,7 @@ export class MenuComponent implements OnChanges {
     protected readonly faSquareCaretLeft = faSquareCaretLeft;
     protected readonly faSquareCaretRight = faSquareCaretRight;
     protected readonly faSheetPlastic = faSheetPlastic;
+    protected readonly faChartLine = faChartLine;
 
     constructor(
         private readonly el: ElementRef<HTMLElement>,
