@@ -25,19 +25,7 @@ import { SetupAssociationUserFormStore } from '@app/setup/association/setup-asso
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit {
-    @Input() profile: ProfileSetup = {
-        email: 'test@t.c',
-        association: {
-            id: 2,
-            name: 'Test Association',
-            imageUrl: {
-                name: 'test',
-                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
-            },
-            websiteUrl: 'http://test-association-link',
-            focus: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
-        }
-    } as ProfileSetup;
+    @Input() profile!: ProfileSetup;
 
     @ViewChild('childFormEl', { static: false })
     childFormComponent?: UserFormComponent<UserFormGroup, UserFormModel>;
@@ -75,7 +63,8 @@ export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit 
             associationId: this.profile.association?.id,
             user: {
                 ...this.childFormComponent.formValue,
-                kind: this.profile.kind
+                kind: this.profile.kind,
+                role: this.profile.role
             },
             association: associationData
         });

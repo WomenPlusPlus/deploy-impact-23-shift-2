@@ -1,10 +1,10 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { CompanySizeEnum } from '@app/common/models/companies.model';
+import { LocalFile } from '@app/common/models/files.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { Language, LocationCity } from '@app/common/models/location.model';
-import { UserKindEnum } from '@app/common/models/users.model';
-import { LocalFile } from '@app/common/models/files.model';
+import { UserKindEnum, UserRoleEnum } from '@app/common/models/users.model';
 
 export interface UserFormComponent<T extends UserFormGroup = any, S extends UserFormModel = any> {
     form: FormGroup<T>;
@@ -34,7 +34,7 @@ export interface UserFormAssociationFormModel extends UserFormModel {
     associationId: number | null;
 }
 
-export type UserFormSubmissionModel = UserFormModel & { kind: UserKindEnum };
+export type UserFormSubmissionModel = UserFormModel & { kind: UserKindEnum; role?: UserRoleEnum };
 
 export interface UserDetailsFormModel {
     firstName: string | null;

@@ -92,10 +92,18 @@ export class CreateInviteComponent implements OnInit, OnDestroy {
             kind: this.fb.control(UserKindEnum.CANDIDATE, [Validators.required]),
             role: this.fb.control(UserRoleEnum.ADMIN, [Validators.required]),
             companyId: this.fb.control<number | null>(null, [
-                this.requiredIf(() => this.form?.controls.kind.value === UserKindEnum.COMPANY)
+                this.requiredIf(
+                    () =>
+                        this.form?.controls.kind.value === UserKindEnum.COMPANY &&
+                        this.form.controls.role.value !== UserRoleEnum.ADMIN
+                )
             ]),
             associationId: this.fb.control<number | null>(null, [
-                this.requiredIf(() => this.form?.controls.kind.value === UserKindEnum.ASSOCIATION)
+                this.requiredIf(
+                    () =>
+                        this.form?.controls.kind.value === UserKindEnum.ASSOCIATION &&
+                        this.form.controls.role.value !== UserRoleEnum.ADMIN
+                )
             ]),
             email: this.fb.control('', [Validators.required, Validators.minLength(5), Validators.maxLength(512)]),
             subject: this.fb.control(DEFAULT_INVITATION_SUBJECT, [

@@ -25,25 +25,7 @@ import { SetupCompanyUserFormStore } from '@app/setup/company/setup-company-user
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupCompanyUserFormComponent implements OnInit, AfterViewInit {
-    @Input() profile: ProfileSetup = {
-        email: 'test@',
-        company: {
-            id: 1,
-            name: 'Test Company',
-            address: 'Street 123, Test',
-            logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
-            linkedin: 'testlink',
-            kununu: 'testlink',
-            phone: '0123456789',
-            email: 'test@test.com',
-            mission:
-                'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            values: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            jobtypes:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ',
-            expectation: 'Lorem ipsum dolor sit amet'
-        }
-    } as ProfileSetup;
+    @Input() profile!: ProfileSetup;
 
     @ViewChild('childFormEl', { static: false })
     childFormComponent?: UserFormComponent<UserFormGroup, UserFormModel>;
@@ -81,7 +63,8 @@ export class SetupCompanyUserFormComponent implements OnInit, AfterViewInit {
             companyId: this.profile.company?.id,
             user: {
                 ...this.childFormComponent.formValue,
-                kind: this.profile.kind
+                kind: this.profile.kind,
+                role: this.profile.role
             },
             company: companyData
         });
