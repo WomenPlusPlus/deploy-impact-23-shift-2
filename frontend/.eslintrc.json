@@ -44,7 +44,8 @@
             "files": ["*.ts"],
             "extends": ["plugin:@ngrx/recommended"],
             "rules": {
-                "@ngrx/updater-explicit-return-type": "off"
+                "@ngrx/updater-explicit-return-type": "off",
+                "@ngrx/avoid-mapping-selectors": "off"
             }
         }
     ],

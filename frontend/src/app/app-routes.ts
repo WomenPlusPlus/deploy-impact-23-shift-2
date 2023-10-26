@@ -9,6 +9,11 @@ const routes: Routes = [
         canActivate: [notAuthenticatedGuard]
     },
     {
+        path: 'setup',
+        loadComponent: () => import('./setup/setup-screen.component').then((m) => m.SetupScreenComponent),
+        canActivate: [authenticatedGuard]
+    },
+    {
         path: 'admin',
         loadChildren: () => import('./admin/admin.routes'),
         canActivate: [authenticatedGuard]
@@ -36,7 +41,7 @@ const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'admin'
+        redirectTo: 'setup'
     },
     {
         path: '**',

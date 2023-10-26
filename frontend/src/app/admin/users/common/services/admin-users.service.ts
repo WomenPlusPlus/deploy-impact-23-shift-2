@@ -7,32 +7,43 @@ import environment from '@envs/environment';
 
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
 import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
-import { UserDetails } from '@app/common/models/users.model';
-import { UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { EditUserResponse } from '@app/admin/users/form/common/models/edit-user.model';
+import { UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
+import { UserDetails } from '@app/common/models/users.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AdminUsersService {
-    constructor(private readonly httpClient: HttpClient) {
-    }
+    constructor(private readonly httpClient: HttpClient) {}
 
     getById(id: number): Observable<UserDetails> {
         return this.httpClient.get<UserDetails>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
     }
 
     getList(): Observable<UsersListModel> {
-        return this.httpClient
-            .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);
+        return this.httpClient.get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);
     }
 
     createUser(user: UserFormModel): Observable<CreateUserResponse> {
-        return this.httpClient.post<CreateUserResponse>(`${environment.API_BASE_URL}/api/v1/users`, this.mapUserToFormData(user));
+        return this.httpClient.post<CreateUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/users`,
+            this.mapUserToFormData(user)
+        );
+    }
+
+    setupUser(user: UserFormModel): Observable<CreateUserResponse> {
+        return this.httpClient.post<CreateUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/users/setup`,
+            this.mapUserToFormData(user)
+        );
     }
 
     editUser(id: number, user: UserFormModel): Observable<EditUserResponse> {
-        return this.httpClient.put<EditUserResponse>(`${environment.API_BASE_URL}/api/v1/users/${id}`, this.mapUserToFormData(user));
+        return this.httpClient.put<EditUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/users/${id}`,
+            this.mapUserToFormData(user)
+        );
     }
 
     deleteUser(id: number): Observable<void> {
