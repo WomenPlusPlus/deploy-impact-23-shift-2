@@ -1,5 +1,5 @@
 import { HotToastService } from '@ngneat/hot-toast';
-import { catchError, EMPTY, Observable, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 
@@ -24,6 +24,7 @@ const initialState: UserFormState = {
 
 interface FormSubmissionModel {
     user: UserFormSubmissionModel;
+    associationId?: number;
     association: FormData;
 }
 
@@ -38,10 +39,10 @@ export class SetupAssociationUserFormStore extends ComponentStore<UserFormState>
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             switchMap((payload) =>
-                this.adminAssociationService.createAssociation(payload.association).pipe(
-                    switchMap(({ id }) =>
+                this.createAssociation(payload).pipe(
+                    switchMap((associationId) =>
                         this.adminUsersService
-                            .setupUser({ ...payload.user, associationId: id } as UserFormAssociationFormModel)
+                            .setupUser({ ...payload.user, associationId } as UserFormAssociationFormModel)
                             .pipe(
                                 tapResponse(
                                     () => {
@@ -75,5 +76,12 @@ export class SetupAssociationUserFormStore extends ComponentStore<UserFormState>
         private readonly toast: HotToastService
     ) {
         super(initialState);
+    }
+
+    private createAssociation({ associationId, association }: FormSubmissionModel): Observable<number> {
+        if (associationId) {
+            return of(associationId);
+        }
+        return this.adminAssociationService.createAssociation(association).pipe(map(({ id }) => id));
     }
 }

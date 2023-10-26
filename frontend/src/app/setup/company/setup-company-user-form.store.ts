@@ -1,5 +1,5 @@
 import { HotToastService } from '@ngneat/hot-toast';
-import { catchError, EMPTY, Observable, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 
@@ -21,6 +21,7 @@ const initialState: UserFormState = {
 
 interface FormSubmissionModel {
     user: UserFormSubmissionModel;
+    companyId?: number;
     company: FormData;
 }
 
@@ -35,10 +36,10 @@ export class SetupCompanyUserFormStore extends ComponentStore<UserFormState> {
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             switchMap((payload) =>
-                this.adminCompanyService.createCompany(payload.company).pipe(
-                    switchMap(({ id }) =>
+                this.createCompany(payload).pipe(
+                    switchMap((companyId) =>
                         this.adminUsersService
-                            .setupUser({ ...payload.user, companyId: id } as UserFormCompanyFormModel)
+                            .setupUser({ ...payload.user, companyId } as UserFormCompanyFormModel)
                             .pipe(
                                 tapResponse(
                                     () => {
@@ -72,5 +73,12 @@ export class SetupCompanyUserFormStore extends ComponentStore<UserFormState> {
         private readonly toast: HotToastService
     ) {
         super(initialState);
+    }
+
+    private createCompany({ companyId, company }: FormSubmissionModel): Observable<number> {
+        if (companyId) {
+            return of(companyId);
+        }
+        return this.adminCompanyService.createCompany(company).pipe(map(({ id }) => id));
     }
 }

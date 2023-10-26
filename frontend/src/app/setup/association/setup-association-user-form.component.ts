@@ -13,7 +13,6 @@ import {
 import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
 import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { ProfileSetup } from '@app/common/models/profile.model';
-import { UserKindEnum } from '@app/common/models/users.model';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { SetupAssociationUserFormStore } from '@app/setup/association/setup-association-user-form.store';
 
@@ -26,7 +25,17 @@ import { SetupAssociationUserFormStore } from '@app/setup/association/setup-asso
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit {
-    @Input() profile: ProfileSetup = { email: 'testa' } as ProfileSetup;
+    @Input() profile: ProfileSetup = {
+        email: 'test@t.c',
+        association: {
+            id: 2,
+            name: 'Test Association',
+            imageUrl:
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+            websiteUrl: 'http://test-association-link',
+            focus: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+        }
+    } as ProfileSetup;
 
     @ViewChild('childFormEl', { static: false })
     childFormComponent?: UserFormComponent<UserFormGroup, UserFormModel>;
@@ -61,6 +70,7 @@ export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit 
             associationData.append(key, formValue[key as keyof CreateAssociationFormGroup] as string);
         }
         this.setupAssociationUserStore.submitForm({
+            associationId: this.profile.association?.id,
             user: {
                 ...this.childFormComponent.formValue,
                 kind: this.profile.kind
@@ -71,10 +81,10 @@ export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit 
 
     private initForm(): void {
         this.associationForm = this.fb.group({
-            name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control(new File([], ''), Validators.required),
-            websiteUrl: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            focus: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
+            name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            logo: this.fb.control<File | null>(null),
+            websiteUrl: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            focus: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
         });
     }
 
@@ -84,7 +94,12 @@ export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit 
             return;
         }
         form.patchValue({ details: { email: this.profile.email } });
-    }
+        form.controls.details.controls.email.disable({ emitEvent: false });
 
-    protected readonly UserKindEnum = UserKindEnum;
+        if (!this.profile.association) {
+            return;
+        }
+        this.associationForm.patchValue(this.profile.association);
+        this.associationForm.disable({ emitEvent: false });
+    }
 }

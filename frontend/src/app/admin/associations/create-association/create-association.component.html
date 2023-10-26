@@ -1,7 +1,7 @@
 <div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
     <ng-container *ngIf="!vm.submitted; else submittedContainer">
         <h1 class="text-3xl mb-5">Add a new Association</h1>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()">
             <app-association-form [form]="form"></app-association-form>
             <button
                 class="btn btn-primary btn-wide float-right"

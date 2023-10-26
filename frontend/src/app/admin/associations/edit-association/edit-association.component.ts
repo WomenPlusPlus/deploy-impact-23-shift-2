@@ -38,8 +38,8 @@ export class EditAssociationComponent implements OnInit {
     constructor(
         private readonly fb: FormBuilder,
         private readonly editAssociationStore: EditAssociationStore,
-        private route: ActivatedRoute,
-        private router: Router
+        private readonly route: ActivatedRoute,
+        private readonly router: Router
     ) {}
 
     ngOnInit(): void {
@@ -57,10 +57,10 @@ export class EditAssociationComponent implements OnInit {
 
     private initForm(): void {
         this.form = this.fb.group({
-            name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control(new File([], ''), Validators.required),
-            websiteUrl: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            focus: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
+            name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            logo: this.fb.control<File | null>(null),
+            websiteUrl: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            focus: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
         });
 
         this.id = Number(this.route.snapshot.paramMap.get('id'));

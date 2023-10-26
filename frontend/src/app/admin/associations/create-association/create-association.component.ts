@@ -52,10 +52,10 @@ export class CreateAssociationComponent implements OnInit {
 
     private initForm(): void {
         this.form = this.fb.group({
-            name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control(new File([], ''), Validators.required),
-            websiteUrl: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            focus: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
+            name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            logo: this.fb.control<File | null>(null),
+            websiteUrl: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            focus: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
         });
     }
 }

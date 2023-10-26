@@ -50,24 +50,19 @@ export class CreateCompanyComponent implements OnInit {
         this.createCompanyStore.submitForm(formData);
     }
 
-    onFileSelected(event: Event): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
-        this.form.controls.logo.setValue(file || null);
-    }
-
     private initForm(): void {
         this.form = this.fb.group({
-            name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            address: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control(new File([], ''), Validators.required),
-            linkedin: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            kununu: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            phone: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            email: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            mission: this.fb.control('', [Validators.required, Validators.maxLength(1024)]),
-            values: this.fb.control('', [Validators.required, Validators.maxLength(1024)]),
-            jobtypes: this.fb.control('', [Validators.required, Validators.maxLength(1024)]),
-            expectation: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
+            name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            address: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            logo: this.fb.control<File | null>(null),
+            linkedin: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            kununu: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            phone: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            email: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            mission: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
+            values: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
+            jobtypes: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
+            expectation: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
         });
     }
 }
