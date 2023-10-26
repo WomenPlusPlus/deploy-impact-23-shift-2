@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { CompanyFormComponent } from '@app/admin/company/form/company-form.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 
@@ -14,7 +15,15 @@ import { CreateCompanyState, CreateCompanyStore } from './create-company.store';
 @Component({
     selector: 'app-create-company',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorMessagePipe, RouterModule, LetDirective],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FormErrorMessagePipe,
+        RouterModule,
+        LetDirective,
+        CompanyFormComponent
+    ],
     providers: [CreateCompanyStore],
     templateUrl: './create-company.component.html'
 })
