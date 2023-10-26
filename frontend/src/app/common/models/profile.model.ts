@@ -1,5 +1,6 @@
-import { Company } from '@app/common/models/companies.model';
+import { AssociationProfileModel } from '@app/associations/common/models/association-profile.model';
 import { UserKindEnum, UserRoleEnum, UserStateEnum } from '@app/common/models/users.model';
+import { CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
 
 export interface Profile {
     id: number;
@@ -16,6 +17,6 @@ export interface ProfileSetup {
     email: string;
     kind: UserKindEnum;
     role?: UserRoleEnum;
-    company?: Company;
-    association?: Company;
+    company?: CompanyProfileModel;
+    association?: AssociationProfileModel;
 }

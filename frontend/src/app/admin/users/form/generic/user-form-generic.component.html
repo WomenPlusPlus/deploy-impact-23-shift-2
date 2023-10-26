@@ -1,4 +1,4 @@
-<div class="grid lg:grid-cols-[20rem-1fr]" [formGroup]="form">
+<div class="grid" [formGroup]="form" [ngClass]="{ 'lg:grid-cols-[20rem-1fr]': !singleColumn }">
     <span class="text-3xl m-3">Personal details</span>
     <section formGroupName="details">
         <fieldset id="photo-field" class="form-control w-full my-4" *appLet="detailsForm.controls.photo as control">
@@ -19,7 +19,7 @@
                 <img
                     [src]="imagePreview.url"
                     [title]="imagePreview.name"
-                    class="h-full aspect-video object-center object-cover rounded"
+                    class="h-full aspect-square object-center object-cover rounded"
                     alt="profile-picture"
                 />
                 <div>
@@ -94,6 +94,7 @@
                 name="email"
                 formControlName="email"
                 class="input input-bordered"
+                [readonly]="false | isAuthorized: userKindEnum.ADMIN | async"
                 [class.input-error]="control.invalid && control.touched"
             />
             <span class="text-error mt-1" *ngIf="control.invalid && control.touched">

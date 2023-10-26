@@ -1,6 +1,6 @@
 <ng-container [formGroup]="form">
     <fieldset id="company-name" class="md:flex md:items-start w-full my-4" *appLet="form.controls.name as control">
-        <label for="name" class="md:w-1/4">Company Name:</label>
+        <label for="name" class="md:w-1/4">Company Name<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <input
                 type="text"
@@ -20,7 +20,7 @@
         class="md:flex md:items-start w-full my-4"
         *appLet="form.controls.address as control"
     >
-        <label for="address" class="md:w-1/4">Address:</label>
+        <label for="address" class="md:w-1/4">Address<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <input
                 type="text"
@@ -64,7 +64,7 @@
         class="md:flex md:items-start w-full my-4"
         *appLet="form.controls.linkedin as control"
     >
-        <label for="linkedin" class="md:w-1/4">LinkedIn URL:</label>
+        <label for="linkedin" class="md:w-1/4">LinkedIn URL<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <input
                 type="text"
@@ -80,7 +80,7 @@
         </div>
     </fieldset>
     <fieldset id="company-kununu" class="md:flex md:items-start w-full my-4" *appLet="form.controls.kununu as control">
-        <label for="kununu" class="md:w-1/4">Kununu URL:</label>
+        <label for="kununu" class="md:w-1/4">Kununu URL<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <input
                 type="text"
@@ -96,7 +96,7 @@
         </div>
     </fieldset>
     <fieldset id="company-phone" class="md:flex md:items-start w-full my-4" *appLet="form.controls.phone as control">
-        <label for="phone" class="md:w-1/4">Phone Number:</label>
+        <label for="phone" class="md:w-1/4">Phone Number<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <input
                 type="text"
@@ -112,7 +112,7 @@
         </div>
     </fieldset>
     <fieldset id="company-email" class="md:flex md:items-start w-full my-4" *appLet="form.controls.email as control">
-        <label for="email" class="md:w-1/4">Email:</label>
+        <label for="email" class="md:w-1/4">Email<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <input
                 type="email"
@@ -132,7 +132,7 @@
         class="md:flex md:items-start w-full my-4"
         *appLet="form.controls.mission as control"
     >
-        <label for="mission" class="md:w-1/4">Company Mission:</label>
+        <label for="mission" class="md:w-1/4">Company Mission<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <textarea
                 id="mission"
@@ -148,7 +148,7 @@
         </div>
     </fieldset>
     <fieldset id="company-values" class="md:flex md:items-start w-full my-4" *appLet="form.controls.values as control">
-        <label for="values" class="md:w-1/4">Company Values:</label>
+        <label for="values" class="md:w-1/4">Company Values<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <textarea
                 id="values"
@@ -168,7 +168,7 @@
         class="md:flex md:items-start w-full my-4"
         *appLet="form.controls.jobtypes as control"
     >
-        <label for="jobtypes" class="md:w-1/4">Job Types:</label>
+        <label for="jobtypes" class="md:w-1/4">Job Types<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <textarea
                 id="jobtypes"
@@ -188,7 +188,7 @@
         class="md:flex md:items-start w-full my-4"
         *appLet="form.controls.expectation as control"
     >
-        <label for="expectation" class="md:w-1/4">Expectations we offer:</label>
+        <label for="expectation" class="md:w-1/4">Expectations we offer<span class="text-red-400">*</span>:</label>
         <div class="md:w-3/4">
             <textarea
                 id="expectation"

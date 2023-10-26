@@ -47,8 +47,8 @@ export class IsAuthorizedPipe implements PipeTransform {
             const kinds = Array.isArray(kind) ? kind : [kind];
             const found = kinds.includes(profile.kind);
 
-            if (!found && isTrue) {
-                return !isTrue;
+            if (found !== isTrue) {
+                return false;
             }
         }
         if (role) {
@@ -59,10 +59,10 @@ export class IsAuthorizedPipe implements PipeTransform {
             const roles = Array.isArray(role) ? role : [role];
             const found = roles.includes(profile.role);
 
-            if (!found && isTrue) {
-                return !isTrue;
+            if (found !== isTrue) {
+                return false;
             }
         }
-        return !isTrue;
+        return true;
     }
 }

@@ -1,11 +1,15 @@
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { UserFormCompanyFormGroup, UserFormCompanyFormModel, UserFormComponent } from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
+import {
+    UserFormCompanyFormGroup,
+    UserFormCompanyFormModel,
+    UserFormComponent
+} from '@app/admin/users/form/common/models/user-form.model';
 import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FilterFusePipe } from '@app/common/pipes/filter-fuse/filter-fuse.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
@@ -31,6 +35,8 @@ import { SelectSingleComponent } from '@app/ui/select-single/select-single.compo
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserFormCompanyComponent implements UserFormComponent, OnInit {
+    @Input() singleColumn = false;
+
     @ViewChild(UserFormGenericComponent, { static: true })
     childFormComponent!: UserFormGenericComponent;
 
