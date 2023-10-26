@@ -30,8 +30,10 @@ export class SetupAssociationUserFormComponent implements OnInit, AfterViewInit 
         association: {
             id: 2,
             name: 'Test Association',
-            imageUrl:
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+            imageUrl: {
+                name: 'test',
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+            },
             websiteUrl: 'http://test-association-link',
             focus: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
         }

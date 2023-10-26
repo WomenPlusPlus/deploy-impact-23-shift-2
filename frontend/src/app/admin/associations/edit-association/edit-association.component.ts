@@ -33,7 +33,7 @@ export class EditAssociationComponent implements OnInit {
     form!: FormGroup<CreateAssociationFormGroup>;
     vm$: Observable<CreateAssociationState> = this.editAssociationStore.vm$;
     previousName = '';
-    previousPhotoURL = 'assets/profile-picture-default-form.png';
+    previousPhotoURL?: string;
 
     constructor(
         private readonly fb: FormBuilder,
@@ -80,7 +80,7 @@ export class EditAssociationComponent implements OnInit {
                     focus: data.focus
                 });
                 this.previousName = data.name;
-                this.previousPhotoURL = data.imageUrl;
+                this.previousPhotoURL = data.imageUrl?.url;
             });
     }
 }

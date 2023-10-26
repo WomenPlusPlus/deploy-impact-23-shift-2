@@ -9,6 +9,7 @@ import { UsersListModel } from '@app/admin/users/common/models/users-list.model'
 import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
 import { EditUserResponse } from '@app/admin/users/form/common/models/edit-user.model';
 import { UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
+import { ProfileSetup } from '@app/common/models/profile.model';
 import { UserDetails } from '@app/common/models/users.model';
 
 @Injectable({
@@ -32,13 +33,6 @@ export class AdminUsersService {
         );
     }
 
-    setupUser(user: UserFormModel): Observable<CreateUserResponse> {
-        return this.httpClient.post<CreateUserResponse>(
-            `${environment.API_BASE_URL}/api/v1/users/setup`,
-            this.mapUserToFormData(user)
-        );
-    }
-
     editUser(id: number, user: UserFormModel): Observable<EditUserResponse> {
         return this.httpClient.put<EditUserResponse>(
             `${environment.API_BASE_URL}/api/v1/users/${id}`,
@@ -48,6 +42,17 @@ export class AdminUsersService {
 
     deleteUser(id: number): Observable<void> {
         return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
+    }
+
+    getSetupInfo(): Observable<ProfileSetup> {
+        return this.httpClient.get<ProfileSetup>(`${environment.API_BASE_URL}/api/v1/setup`);
+    }
+
+    setupUser(user: UserFormModel): Observable<CreateUserResponse> {
+        return this.httpClient.post<CreateUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/setup`,
+            this.mapUserToFormData(user)
+        );
     }
 
     private mapUserToFormData(user: UserFormModel): FormData {
@@ -61,7 +66,6 @@ export class AdminUsersService {
             for (const key of Object.keys(wrapper)) {
                 const value: any = wrapper[key as keyof typeof wrapper];
                 if (!value) {
-                    formData.append(key, value);
                     continue;
                 }
                 if (value instanceof Date) {

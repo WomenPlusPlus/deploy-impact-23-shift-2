@@ -1,9 +1,31 @@
-<main class="fixed top-0 left-0 h-screen-s w-screen grid justify-items-center overflow-auto">
-    <div class="p-10 sm:p-20 md:p-32 lg:p-48 w-full max-w-screen-xl">
+<main *ngIf="vm$ | async as vm" class="fixed top-0 left-0 h-screen-s w-screen grid justify-items-center overflow-auto">
+    <div class="p-10 sm:p-20 md:p-28 xl:p-36 w-full max-w-screen-xl">
         <span class="block text-3xl lg:text-5xl font-bold mb-6">Let's get started!</span>
         <p class="text-lg lg:text-xl mb-12">
             Welcome to <strong>Shift 2</strong>! Please fill in your account details to get started.
         </p>
-        <app-setup-candidate-form></app-setup-candidate-form>
+        <ng-container *ngIf="vm.error">
+            <app-content-error class="block h-screen/2-s" titleText=""></app-content-error>
+        </ng-container>
+        <ng-container *ngIf="vm.loading">
+            <app-content-loading class="block h-screen/2-s"></app-content-loading>
+        </ng-container>
+        <ng-container *ngIf="!vm.loading && !vm.error">
+            <ng-container [ngSwitch]="vm.profile?.kind">
+                <app-setup-admin-form *ngSwitchCase="userKindEnum.ADMIN" [profile]="vm.profile!"></app-setup-admin-form>
+                <app-setup-association-user-form
+                    *ngSwitchCase="userKindEnum.ASSOCIATION"
+                    [profile]="vm.profile!"
+                ></app-setup-association-user-form>
+                <app-setup-candidate-form
+                    *ngSwitchCase="userKindEnum.CANDIDATE"
+                    [profile]="vm.profile!"
+                ></app-setup-candidate-form>
+                <app-setup-company-user-form
+                    *ngSwitchCase="userKindEnum.COMPANY"
+                    [profile]="vm.profile!"
+                ></app-setup-company-user-form>
+            </ng-container>
+        </ng-container>
     </div>
 </main>

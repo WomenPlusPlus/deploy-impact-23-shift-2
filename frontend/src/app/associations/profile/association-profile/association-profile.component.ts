@@ -3,7 +3,7 @@ import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
 
@@ -17,7 +17,14 @@ import { AssociationProfileStore } from './association-profile.store';
 @Component({
     selector: 'app-association-profile',
     standalone: true,
-    imports: [CommonModule, ContentErrorComponent, ContentLoadingComponent, FontAwesomeModule, IsAuthorizedPipe],
+    imports: [
+        CommonModule,
+        RouterModule,
+        ContentErrorComponent,
+        ContentLoadingComponent,
+        FontAwesomeModule,
+        IsAuthorizedPipe
+    ],
     providers: [provideComponentStore(AssociationProfileStore)],
     templateUrl: './association-profile.component.html'
 })

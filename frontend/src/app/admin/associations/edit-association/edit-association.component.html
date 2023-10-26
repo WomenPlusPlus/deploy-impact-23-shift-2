@@ -4,7 +4,7 @@
             Edit Association <i *ngIf="previousName">"{{ previousName }}"</i>
         </h1>
         <form (ngSubmit)="onSubmit()">
-            <app-association-form [form]="form" [previousImage]="previousPhotoURL"></app-association-form>
+            <app-association-form [form]="form" [previousImage]="previousPhotoURL || ''"></app-association-form>
             <button
                 class="btn btn-primary btn-wide float-right"
                 type="submit"
