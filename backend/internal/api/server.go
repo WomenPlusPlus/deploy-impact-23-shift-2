@@ -44,7 +44,7 @@ func (s *APIServer) Run() {
 	s.initUserRoutes(apiRouter)
 	s.initProfileRoutes(apiRouter)
 	s.initAssociationRoutes(apiRouter)
-	s.initInvitaionRoutes(apiRouter)
+	s.initInvitationRoutes(apiRouter)
 
 	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())

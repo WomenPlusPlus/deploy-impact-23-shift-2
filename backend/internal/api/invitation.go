@@ -8,32 +8,30 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s *APIServer) initInvitaionRoutes(router *mux.Router) {
+func (s *APIServer) initInvitationRoutes(router *mux.Router) {
 	router = router.PathPrefix("/invitations").Subrouter()
 
-	router.Path("/create").
+	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleCreateInvitation)).
 		Methods(http.MethodPost)
 
-	router.Use(s.AuthenticationMiddleware)
-	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
 	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleListInvitations)).
-		Methods(http.MethodPost)
+		Methods(http.MethodGet)
 
-	// router.Use(AuthenticationMiddleware)
-	// router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
+	router.Use(s.AuthenticationMiddleware)
+	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateInvitation(w http.ResponseWriter, r *http.Request) error {
 	logrus.Debugln("Create invitation handler is running")
 
 	req := new(entity.CreateInvitationRequest)
-	if err := req.FromFormData(r); err != nil {
+	if err := req.FromRequestJSON(r); err != nil {
 		return BadRequestError{Message: err.Error()}
 	}
 
-	res, err := s.invitationService.CreateInvitation(req)
+	res, err := s.invitationService.CreateInvitation(r.Context(), req)
 	if err != nil {
 		return InternalServerError{Message: err.Error()}
 	}

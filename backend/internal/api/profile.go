@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"shift/internal/entity"
 )
 
 func (s *APIServer) initProfileRoutes(router *mux.Router) {
@@ -14,7 +15,7 @@ func (s *APIServer) initProfileRoutes(router *mux.Router) {
 
 func (s *APIServer) handleGetUserProfile(w http.ResponseWriter, r *http.Request) error {
 	logrus.Debugln("Get user profile handler")
-	email, ok := r.Context().Value(ContextKeyEmail).(string)
+	email, ok := r.Context().Value(entity.ContextKeyEmail).(string)
 	if !ok {
 		WriteErrorResponse(w, http.StatusUnauthorized, "Email not provided!")
 		return nil
