@@ -1,0 +1,22 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <form (ngSubmit)="onSubmit()">
+        <app-user-form-generic #childFormEl [singleColumn]="true"></app-user-form-generic>
+        <div class="divider"></div>
+        <span class="block text-3xl mt-10 mb-3 mx-3">Association details</span>
+        <app-association-form
+            class="block mt-10"
+            [form]="associationForm"
+            [previousImage]="profile.association?.imageUrl || ''"
+        ></app-association-form>
+        <div class="sticky flex flex-col bottom-0 pb-4 bg-base-100 w-full">
+            <div class="divider mt-0"></div>
+            <button
+                type="submit"
+                class="btn btn-primary ml-auto"
+                [disabled]="!childForm?.valid || !associationForm.valid || vm.submitting"
+            >
+                Setup
+            </button>
+        </div>
+    </form>
+</ng-container>
