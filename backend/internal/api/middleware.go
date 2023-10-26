@@ -2,11 +2,12 @@ package api
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
-	"log"
 	"net/http"
 	"shift/internal/entity"
 	cauth "shift/pkg/auth"
@@ -33,26 +34,14 @@ func CORSMiddleware(next http.Handler) http.Handler {
 }
 
 func (s *APIServer) AuthenticationMiddleware(next http.Handler) http.Handler {
-	jwtValidator, err := cauth.JwtValidator()
-	if err != nil {
-		log.Fatalf("initializing jwt validator: %v", err)
-	}
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		ctx := r.Context()
 
 		logrus.Tracef("Running authentication middleware: token=%s", token)
-		tokenClaims, err := jwtValidator.ValidateToken(ctx, token)
+		claims, err := s.parseToken(ctx, token)
 		if err != nil {
-			logrus.Tracef("Authentication failed: %v", err)
-			WriteErrorResponse(w, http.StatusUnauthorized, "Authentication failed!")
-			return
-		}
-		claims, ok := tokenClaims.(*validator.ValidatedClaims)
-		if !ok {
-			logrus.Tracef("Authentication failed: invalid claims: %v", err)
-			WriteErrorResponse(w, http.StatusUnauthorized, "Authentication failed: invalid claims!")
+			WriteErrorResponse(w, http.StatusUnauthorized, fmt.Sprintf("Authentication failed: %s!", err))
 			return
 		}
 		logrus.Tracef("Authenticated user: token=%s, claims=%#v | %#v", token, claims, claims.CustomClaims)
@@ -74,6 +63,20 @@ func (s *APIServer) AuthenticationMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, entity.ContextKeyToken, token)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func (s *APIServer) parseToken(ctx context.Context, token string) (*validator.ValidatedClaims, error) {
+	tokenClaims, err := s.jwtValidator.ValidateToken(ctx, token)
+	if err != nil {
+		logrus.Tracef("Authentication failed: %v", err)
+		return nil, errors.New("invalid token")
+	}
+	claims, ok := tokenClaims.(*validator.ValidatedClaims)
+	if !ok {
+		logrus.Tracef("Authentication failed: invalid claims: %v", err)
+		return nil, errors.New("invalid claims")
+	}
+	return claims, nil
 }
 
 func AuthorizationMiddleware(key entity.ContextKey, values ...string) mux.MiddlewareFunc {

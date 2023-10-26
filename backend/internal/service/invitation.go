@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"shift/internal/entity"
 	"shift/internal/utils"
+	cauth "shift/pkg/auth"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -41,5 +42,31 @@ func (s *InvitationService) CreateInvitation(ctx context.Context, req *entity.Cr
 	}
 	logrus.Tracef("Added invitation to db: id=%d", inv.ID)
 
+	ticket, err := cauth.InviteUser(inv.Email)
+	if err != nil {
+		logrus.Errorf("unable to invite user: %v", err)
+		if err := s.invitationDB.UpdateInvitationState(inv.ID, entity.InvitationStateError); err != nil {
+			logrus.Errorf("unable to update invite on db with error state: %v", err)
+		}
+	} else {
+		logrus.Tracef("Created new user invite: ticket=%s", ticket)
+		if err := s.invitationDB.SetInvitationTicket(inv.ID, ticket); err != nil {
+			logrus.Errorf("unable to update invite ticket on db: %v", err)
+		}
+	}
+
 	return &entity.CreateInvitationResponse{ID: inv.ID}, nil
+}
+
+func (s *InvitationService) GetInvitationByEmail(email string) (*entity.InvitationItemView, error) {
+	inv, err := s.invitationDB.GetInvitationByEmail(email)
+	if err != nil {
+		return nil, fmt.Errorf("getting invitation by email %s: %w", email, err)
+	}
+	logrus.Tracef("Added invitation to db: id=%d", inv.ID)
+
+	res := new(entity.InvitationItemView)
+	res.FromInvitationEntity(inv)
+
+	return res, nil
 }

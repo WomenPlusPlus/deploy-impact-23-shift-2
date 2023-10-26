@@ -1,9 +1,12 @@
 package api
 
 import (
+	"github.com/auth0/go-jwt-middleware/v2/validator"
+	"log"
 	"net/http"
 	"shift/internal/entity"
 	"shift/internal/service"
+	cauth "shift/pkg/auth"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -12,6 +15,7 @@ import (
 // APIServer represents an HTTP server for the JSON API.
 type APIServer struct {
 	address            string
+	jwtValidator       *validator.Validator
 	userService        *service.UserService
 	associationService *service.AssociationService
 	invitationService  *service.InvitationService
@@ -25,9 +29,15 @@ func NewAPIServer(
 	associationDB entity.AssociationDB,
 	invitationDB entity.InvitationDB,
 ) *APIServer {
+	jwtValidator, err := cauth.JwtValidator()
+	if err != nil {
+		log.Fatalf("initializing jwt validator: %v", err)
+	}
+
 	return &APIServer{
 		address:            address,
-		userService:        service.NewUserService(bucketDB, userDB),
+		jwtValidator:       jwtValidator,
+		userService:        service.NewUserService(bucketDB, userDB, invitationDB),
 		associationService: service.NewAssociationService(bucketDB, associationDB),
 		invitationService:  service.NewInvitationService(bucketDB, invitationDB),
 	}

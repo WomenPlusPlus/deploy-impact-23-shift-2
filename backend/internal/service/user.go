@@ -11,14 +11,16 @@ import (
 )
 
 type UserService struct {
-	bucketDB entity.BucketDB
-	userDB   entity.UserDB
+	bucketDB     entity.BucketDB
+	userDB       entity.UserDB
+	invitationDB entity.InvitationDB
 }
 
-func NewUserService(bucketDB entity.BucketDB, userDB entity.UserDB) *UserService {
+func NewUserService(bucketDB entity.BucketDB, userDB entity.UserDB, invitationDB entity.InvitationDB) *UserService {
 	return &UserService{
-		bucketDB: bucketDB,
-		userDB:   userDB,
+		bucketDB:     bucketDB,
+		userDB:       userDB,
+		invitationDB: invitationDB,
 	}
 }
 
@@ -133,6 +135,24 @@ func (s *UserService) GetUserRecordByEmail(email string) (*entity.UserRecordResp
 }
 
 func (s *UserService) GetProfileByEmail(email string) (*entity.ProfileResponse, error) {
+	user, err := s.getProfileByEmail(email)
+	if err == nil {
+		return user, nil
+	}
+
+	logrus.Tracef("Could not find profile by email: email=%s, error=%v", email, err)
+	inv, err := s.invitationDB.GetInvitationByEmail(email)
+	if err != nil {
+		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", email, err)
+		return nil, err
+	}
+
+	res := new(entity.ProfileResponse)
+	res.FromInvitationEntity(inv)
+	return res, nil
+}
+
+func (s *UserService) getProfileByEmail(email string) (*entity.ProfileResponse, error) {
 	user, err := s.userDB.GetProfileByEmail(email)
 	if err != nil {
 		return nil, err

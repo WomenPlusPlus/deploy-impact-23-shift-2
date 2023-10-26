@@ -2,14 +2,15 @@ package entity
 
 import (
 	"fmt"
+	"shift/internal/utils"
 	"time"
 )
 
 type ProfileResponse struct {
-	ID        int       `json:"id"`
+	ID        int       `json:"id,omitempty"`
 	Kind      string    `json:"kind"`
 	Role      string    `json:"role,omitempty"`
-	Name      string    `json:"name"`
+	Name      string    `json:"name,omitempty"`
 	Email     string    `json:"email"`
 	Avatar    *string   `json:"avatar,omitempty"`
 	State     string    `json:"state"`
@@ -30,4 +31,12 @@ func (r *ProfileResponse) FromUserProfileView(v *UserProfileView) {
 	} else {
 		r.Name = fmt.Sprintf("%s %s", v.FirstName, v.LastName)
 	}
+}
+
+func (r *ProfileResponse) FromInvitationEntity(e *InvitationEntity) {
+	r.Kind = e.Kind
+	r.Role = utils.SafeUnwrap(e.Role)
+	r.Email = e.Email
+	r.State = UserStateInvited
+	r.CreatedAt = e.CreatedAt
 }
