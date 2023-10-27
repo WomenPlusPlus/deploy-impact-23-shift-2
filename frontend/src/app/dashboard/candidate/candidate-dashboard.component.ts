@@ -3,7 +3,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
 
@@ -11,30 +11,29 @@ import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-loc
 import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
 
-import { CompanyDashboardStore } from './company-dashboard.store';
+import { CandidateDashboardStore } from './candidate-dashboard.store';
 
 @Component({
-    selector: 'app-company-dashboard',
+    selector: 'app-candidate-dashboard',
     standalone: true,
-    imports: [CommonModule, RouterLink, ContentLoadingComponent, JobTypePipe, JobLocationTypePipe, FontAwesomeModule],
-    providers: [provideComponentStore(CompanyDashboardStore)],
-    templateUrl: './company-dashboard.component.html'
+    imports: [CommonModule, RouterLink, ContentLoadingComponent, JobLocationTypePipe, JobTypePipe, FontAwesomeModule],
+    providers: [provideComponentStore(CandidateDashboardStore)],
+    templateUrl: './candidate-dashboard.component.html'
 })
-export class CompanyDashboardComponent implements OnInit {
+export class CandidateDashboardComponent implements OnInit {
     @Input() id!: number;
-    readonly vm$ = this.companyDashboardStore.vm$;
+    readonly vm$ = this.candidateDashboardStore.vm$;
 
     protected readonly faArrowRight = faArrowRight;
 
     constructor(
-        private readonly companyDashboardStore: CompanyDashboardStore,
+        private readonly candidateDashboardStore: CandidateDashboardStore,
         private router: Router
     ) {}
 
     ngOnInit(): void {
         if (this.id) {
-            this.companyDashboardStore.getJobs(this.id);
-            this.companyDashboardStore.getUsers(this.id);
+            this.candidateDashboardStore.getJobs();
         } else {
             this.router.navigate(['/']);
         }

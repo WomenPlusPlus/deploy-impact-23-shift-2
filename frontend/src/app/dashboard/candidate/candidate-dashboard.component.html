@@ -7,7 +7,7 @@
             <section class="p-4 basis-full mb-12 mt-4 card bg-base-200">
                 <ng-container *ngIf="vm.jobs?.items as jobs">
                     <section class="p-4 mb-5 flex justify-between items-center">
-                        <h1 class="text-3xl">Jobs</h1>
+                        <h1 class="text-3xl">Shortlisted Jobs</h1>
                         <div class="grid justify-items-center px-4">
                             <span class="text-5xl">{{ jobs.length || 0 }}</span>
                             <span class="text-lg">In total</span>
@@ -19,7 +19,6 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Job Type</th>
-                                    <th>Creator</th>
                                     <th>Location</th>
                                     <th>Creation Date</th>
                                 </tr>
@@ -30,11 +29,6 @@
                                         <a [routerLink]="['/jobs', job.id]" class="link">{{ job.title }}</a>
                                     </td>
                                     <td>{{ job.jobType | jobTypeLabel }}</td>
-                                    <td>
-                                        <a [routerLink]="['/admin', 'users', job.creator.id]" class="link">
-                                            {{ job.creator.name }} ({{ job.creator.email }})
-                                        </a>
-                                    </td>
                                     <td>
                                         {{ job.location.city.name }}
                                         •
@@ -51,44 +45,40 @@
             <div class="basis-2/5 mb-12">
                 <section class="p-8 basis-2/5 mb-12 card bg-base-200">
                     <div class="text-3xl">
-                        <a [routerLink]="['/admin', 'jobs', 'create']" class="flex justify-between">
-                            Create Job Listing
+                        <a [routerLink]="['/admin', 'users', id]" class="flex justify-between">
+                            View My Profile
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
                     </div>
                 </section>
                 <section class="p-8 basis-2/5 mb-12 card bg-base-200">
                     <div class="text-3xl">
-                        <a [routerLink]="['/companies', id]" class="flex justify-between">
-                            View Company Profile
+                        <a [routerLink]="['/associations']" class="flex justify-between">
+                            Find Associations
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
                     </div>
                 </section>
             </div>
 
-            <section class="p-8 basis-1/2 mb-12 card bg-base-200">
-                <ng-container *ngIf="vm.users?.items as users">
-                    <section class="px-4 mb-5 flex justify-between items-center">
-                        <h1 class="text-3xl">Company Users</h1>
-                        <span class="badge bg-gray-400 text-base-100 badge-md"> {{ users.length || 0 }} in Total </span>
-                    </section>
-                    <section class="overflow-x-auto">
-                        <table class="table table-lg">
-                            <tbody>
-                                <tr *ngFor="let user of users">
-                                    <td>
-                                        <a [routerLink]="['/admin', 'users', user.id]" class="link"
-                                            >{{ user.firstName }} {{ user.lastName }} {{ user.preferredName }}</a
-                                        >
-                                    </td>
-                                    <td>{{ user.email }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </section>
-                </ng-container>
-            </section>
+            <div class="basis-1/2 mb-12">
+                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                    <div class="text-3xl">
+                        <a [routerLink]="['/jobs']" class="flex justify-between">
+                            Search for Job Listings
+                            <fa-icon [icon]="faArrowRight"></fa-icon>
+                        </a>
+                    </div>
+                </section>
+                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                    <div class="text-3xl">
+                        <a [routerLink]="['/companies']" class="flex justify-between">
+                            Find Companies
+                            <fa-icon [icon]="faArrowRight"></fa-icon>
+                        </a>
+                    </div>
+                </section>
+            </div>
         </div>
     </ng-container>
 </ng-container>
