@@ -23,6 +23,7 @@ import {
     DescriptionListComponent,
     DescriptionListItemComponent
 } from '@app/ui/description-list/description-list.component';
+import { UserBadgesComponent } from '@app/ui/user-badges/user-badges.component';
 
 @Component({
     selector: 'app-user-card',
@@ -37,7 +38,8 @@ import {
         UserKindLabelPipe,
         UserAssociationRoleLabelPipe,
         UserCompanyRoleLabelPipe,
-        UserStateLabelPipe
+        UserStateLabelPipe,
+        UserBadgesComponent
     ],
     templateUrl: './user-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush

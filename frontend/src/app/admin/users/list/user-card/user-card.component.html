@@ -18,23 +18,7 @@
                 {{ user.preferredName || user.firstName + ' ' + user.lastName }}
             </div>
             <span class="break-all text-primary min-h-16 mb-4">{{ user.email }}</span>
-            <div class="flex gap-1">
-                <span
-                    class="badge text-base-100 badge-md"
-                    [class.bg-yellow-400]="user.kind === userKindEnum.ADMIN"
-                    [class.bg-red-400]="user.kind === userKindEnum.CANDIDATE"
-                    [class.bg-blue-400]="user.kind === userKindEnum.COMPANY"
-                    [class.bg-green-600]="user.kind === userKindEnum.ASSOCIATION"
-                >
-                    {{ user.kind | userKindLabel }}
-                </span>
-                <span class="badge bg-gray-400 text-base-100 badge-md" *ngIf="user.kind === userKindEnum.COMPANY">
-                    {{ $company(user).role | userCompanyRoleLabel }}
-                </span>
-                <span class="badge bg-gray-400 text-base-100 badge-md" *ngIf="user.kind === userKindEnum.ASSOCIATION">
-                    {{ $association(user).role | userAssociationRoleLabel }}
-                </span>
-            </div>
+            <app-user-badges [kind]="user.kind" [role]="$any(user).role"></app-user-badges>
         </div>
     </div>
 </a>

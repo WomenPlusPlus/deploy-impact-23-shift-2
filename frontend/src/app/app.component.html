@@ -1,7 +1,7 @@
 <ng-container *ngIf="vm$ | async as vm">
     <div class="drawer" *ngIf="vm.authenticated && vm.validated; else unauthorizedContainer">
         <input id="aside-drawer" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content flex flex-col">
+        <div class="drawer-content flex flex-col overflow-hidden">
             <nav class="fixed top-0 z-50 w-full bg-base-300 border-b border-gray-300 dark:border-gray-700">
                 <app-navbar>
                     <div class="flex-none sm:hidden">
