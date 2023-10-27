@@ -1,27 +1,38 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faRemove } from '@fortawesome/free-solid-svg-icons';
 import { map, Observable, startWith } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
-import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { LocalFile } from '@app/common/models/files.model';
+import { UserKindEnum } from '@app/common/models/users.model';
+import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.pipe';
 import { fileUrl } from '@app/common/utils/file.util';
-import { faRemove } from '@fortawesome/free-solid-svg-icons';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
 @Component({
     selector: 'app-user-form-generic',
     standalone: true,
-    imports: [CommonModule, FontAwesomeModule, FormErrorMessagePipe, LetDirective, ReactiveFormsModule],
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        FormErrorMessagePipe,
+        LetDirective,
+        ReactiveFormsModule,
+        IsAuthorizedPipe
+    ],
     templateUrl: './user-form-generic.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserFormGenericComponent implements UserFormComponent, OnInit {
+    @Input() singleColumn = false;
+
     form!: FormGroup<UserFormGroup>;
     imagePreview$!: Observable<LocalFile>;
 
@@ -44,8 +55,9 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
         };
     }
 
-    constructor(private readonly fb: FormBuilder) {
-    }
+    protected readonly userKindEnum = UserKindEnum;
+
+    constructor(private readonly fb: FormBuilder) {}
 
     ngOnInit(): void {
         this.initForm();
@@ -103,9 +115,10 @@ export class UserFormGenericComponent implements UserFormComponent, OnInit {
             map((file: LocalFile | File | null) => ({
                 name: file?.name || '',
                 url: fileUrl(file, DEFAULT_PHOTO_URL) as string
-            })),
+            }))
         );
     }
 
     protected readonly faRemove = faRemove;
+    protected readonly UserKindEnum = UserKindEnum;
 }

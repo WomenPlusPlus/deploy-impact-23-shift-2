@@ -14,6 +14,6 @@ export class AdminInvitationsService {
     constructor(private readonly httpClient: HttpClient) {}
 
     invite(payload: CreateInviteFormModel): Observable<void> {
-        return this.httpClient.post<void>(`${environment.API_BASE_URL}/api/v1/admin/invitations`, payload);
+        return this.httpClient.post<void>(`${environment.API_BASE_URL}/api/v1/invitations`, payload);
     }
 }

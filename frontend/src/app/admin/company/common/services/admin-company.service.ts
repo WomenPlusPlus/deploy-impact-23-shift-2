@@ -13,9 +13,9 @@ import { CompanyProfileModel } from '@app/companies/profile/common/models/compan
 export class AdminCompanyService {
     constructor(private readonly httpClient: HttpClient) {}
 
-    createCompany(payload: FormData): Observable<void> {
+    createCompany(payload: FormData): Observable<{ id: number }> {
         // post company data to back
-        return this.httpClient.post<void>(`${environment.API_BASE_URL}/api/v1/admin/company`, payload);
+        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/admin/company`, payload);
     }
 
     editCompany(payload: FormData, id: number): Observable<void> {

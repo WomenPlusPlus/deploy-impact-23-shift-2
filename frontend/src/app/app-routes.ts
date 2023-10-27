@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authenticatedGuard, notAuthenticatedGuard } from '@app/common/guards/authenticated.guard';
+import { activatedGuard, invitedGuard } from '@app/common/guards/setup.guard';
 
 const routes: Routes = [
     {
@@ -9,29 +10,34 @@ const routes: Routes = [
         canActivate: [notAuthenticatedGuard]
     },
     {
+        path: 'setup',
+        loadComponent: () => import('./setup/setup-screen.component').then((m) => m.SetupScreenComponent),
+        canActivate: [authenticatedGuard, invitedGuard]
+    },
+    {
         path: 'admin',
         loadChildren: () => import('./admin/admin.routes'),
-        canActivate: [authenticatedGuard]
+        canActivate: [authenticatedGuard, activatedGuard]
     },
     {
         path: 'companies',
         loadChildren: () => import('./companies/companies.routes'),
-        canActivate: [authenticatedGuard]
+        canActivate: [authenticatedGuard, activatedGuard]
     },
     {
         path: 'jobs',
         loadChildren: () => import('./jobs/jobs.routes'),
-        canActivate: [authenticatedGuard]
+        canActivate: [authenticatedGuard, activatedGuard]
     },
     {
         path: 'associations',
         loadChildren: () => import('./associations/associations.routes'),
-        canActivate: [authenticatedGuard]
+        canActivate: [authenticatedGuard, activatedGuard]
     },
     {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.routes'),
-        canActivate: [authenticatedGuard]
+        canActivate: [authenticatedGuard, activatedGuard]
     },
     {
         path: '',

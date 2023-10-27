@@ -4,7 +4,7 @@ import { map, Observable, startWith } from 'rxjs';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
@@ -24,12 +24,15 @@ import {
 } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
+import { LocalFile } from '@app/common/models/files.model';
 import { JobLocationTypeEnum, JobStatusEnum, JobTypeEnum, WorkPermitEnum } from '@app/common/models/jobs.model';
 import { Language, LocationCity } from '@app/common/models/location.model';
+import { UserKindEnum } from '@app/common/models/users.model';
 import { CompanySizePipe } from '@app/common/pipes/company-size/company-size.pipe';
 import { FilterCityPipe } from '@app/common/pipes/filter-city/filter-city.pipe';
 import { FilterLanguagePipe } from '@app/common/pipes/filter-language/filter-language.pipe';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.pipe';
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
 import { JobStatusPipe } from '@app/common/pipes/job-status/job-status.pipe';
 import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
@@ -37,7 +40,6 @@ import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-la
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
-import { LocalFile } from '@app/common/models/files.model';
 import { fileUrl } from '@app/common/utils/file.util';
 import { FileItemComponent } from '@app/ui/file-item/file-item.component';
 
@@ -63,12 +65,15 @@ const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
         JobLocationTypePipe,
         WorkPermitPipe,
         FilterLanguagePipe,
-        FileItemComponent
+        FileItemComponent,
+        IsAuthorizedPipe
     ],
     templateUrl: './user-form-candidate.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserFormCandidateComponent implements UserFormComponent, OnInit {
+    @Input() singleColumn = false;
+
     form!: FormGroup<UserFormCandidateFormGroup>;
     spokenLanguagesForm!: FormGroup<CandidateSpokenLanguagesFormGroup>;
     skillsForm!: FormGroup<CandidateSkillsFormGroup>;
@@ -169,14 +174,14 @@ export class UserFormCandidateComponent implements UserFormComponent, OnInit {
         CompanySizeEnum.MEDIUM,
         CompanySizeEnum.LARGE
     ];
+    protected readonly userKindEnum = UserKindEnum;
     protected readonly faAdd = faAdd;
     protected readonly faRemove = faRemove;
 
     constructor(
         private readonly fb: FormBuilder,
         private readonly store: Store
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initForm();
@@ -462,7 +467,7 @@ export class UserFormCandidateComponent implements UserFormComponent, OnInit {
             map((file: LocalFile | File | null) => ({
                 name: file?.name || '',
                 url: fileUrl(file, DEFAULT_PHOTO_URL) as string
-            })),
+            }))
         );
 
         this.cities$ = this.store.select(selectLocationCities);
