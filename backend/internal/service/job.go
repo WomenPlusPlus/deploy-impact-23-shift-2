@@ -22,7 +22,7 @@ func NewJobService(bucketDB entity.BucketDB, jobDB entity.JobDB) *JobService {
 func (s *JobService) CreateJob(req *entity.CreateJobRequest) (*entity.CreateJobResponse, error) {
 
 	//s.createJob(req)
-
+	return nil, nil
 }
 
 func (s *JobService) ListJobs() (*entity.ListJobsResponse, error) {

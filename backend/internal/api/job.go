@@ -80,7 +80,7 @@ func (s *APIServer) handleDeleteJob(w http.ResponseWriter, r *http.Request) erro
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
 
-	if _, err := s.jobDB.GetJobById(id); err != nil {
+	if _, err := s.jobService.GetJobById(id); err != nil {
 		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 	}
 
