@@ -1,6 +1,6 @@
 # SHIFT Project - Team 2
 
-# :bookmark_tabs: Table of Contents
+## :bookmark_tabs: Table of Contents
 <!-- TOC -->
 * [Our Solution](#bulb-our-solution)
 * [Tech Stack](#toolbox-tech-stack)
@@ -16,13 +16,13 @@
 * [Further development](#pushpin-further-development)
 <!-- TOC -->
 
-# :bulb: Our Solution
+## :bulb: Our Solution
 * TODO
 * Describe it
 - ...
 - Matching algorithm: A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md). 
 
-# :toolbox: Tech Stack
+## :toolbox: Tech Stack
 | Backend     | Frontend | Database | Cloud Storage | Deployments |
 |-------------|----------|----------|---------------|-------------|
 | Golang      |Angular   |PostgreSQL| GCP           | GCP         |
@@ -32,33 +32,33 @@
 * TODO
 * Explain why
 
-# :dart: Site Map
+## :dart: Site Map
 * [The site map design](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
 
-# :art: Designs
+## :art: Designs
 * The designs were created using [Figma](https://www.figma.com/file/3BlcYSbbfCmx8oc5XdCKUN/Shift?type=design&node-id=1-1428&mode=design&t=UaqFM0xV7kPHePNj-0).
  
-# :sparkles: Architecture
+## :sparkles: Architecture
 * [The architecture diagram](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/architecture.jpg)
 
-# :game_die: Database
+## :game_die: Database
 * [The database schema](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
 
-# :package:Development
+## :package:Development
 * TODO
 
-# :books: Third-party libraries
+## :books: Third-party libraries
 * TODO
 * List them
 
-# :memo: License file
+## :memo: License file
 * [GNU General Public License v3.0](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/LICENSE)  
 
-# :computer: Getting started
+## :computer: Getting started
 * TODO
 * How to run and install the project
 
-# :woman_technologist: Team members :man_technologist:
+## :woman_technologist: Team members :man_technologist:
 | Name                                                                         | Role            | GitHub                                            |
 |------------------------------------------------------------------------------|-----------------|---------------------------------------------------|
 | [Adamantia Milia](https://www.linkedin.com/in/adamantia-milia/)              | Frontend        | [mandyjker](https://github.com/mandyjker)         |
@@ -68,5 +68,5 @@
 | [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)              | Backend         | [istvzsig](https://github.com/istvzsig)           |
 | [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
 
-# :pushpin: Further development
+## :pushpin: Further development
 * For any further development, please contact [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/).
