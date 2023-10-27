@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCog } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { map, Observable } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
@@ -19,10 +19,9 @@ import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-l
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersFiltersComponent implements OnInit {
-    mode$ = this.usersListStore.mode$;
     searchTerm$ = this.usersListStore.filterSearchTerm$;
 
-    protected readonly faCog = faCog;
+    protected readonly faEye = faEye;
     protected readonly userKindsOptions$: Observable<{ label: UserKindEnum; value: boolean }[]> =
         this.usersListStore.filterKinds$.pipe(
             map((selected: { [kind in UserKindEnum]: boolean }) =>
@@ -50,8 +49,8 @@ export class UsersFiltersComponent implements OnInit {
         this.usersListStore.updateFilterSearchTerm(term);
     }
 
-    onDetailedModeChange(event: boolean): void {
-        this.usersListStore.setMode(event ? 'detailed' : 'short');
+    onDetailedModeChange(): void {
+        this.usersListStore.toggleMode();
     }
 
     private initData(): void {
