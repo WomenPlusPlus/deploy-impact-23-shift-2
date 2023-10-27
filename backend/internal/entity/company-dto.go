@@ -21,7 +21,7 @@ type CreateCompanyRequest struct {
 	Email               string                      `json:"email"`
 	Phone               string                      `json:"phone"`
 	Logo                *multipart.FileHeader       `json:"logo"`
-	CompanySize         string                      `json:"companySize"` //from predef list?
+	CompanySize         string                      `json:"companySize"`
 	Country             string                      `json:"country"`
 	AddressLine1        string                      `json:"addressLine1"`
 	City                string                      `json:"city"`
@@ -30,9 +30,8 @@ type CreateCompanyRequest struct {
 	NumberAddress       string                      `json:"numberAddress"`
 	AdditionalLocations []CompanyAdditionalLocation `json:"additionalLocations"`
 	Mission             string                      `json:"mission"`
-	Values              string                      `json:"company_values"` // ? Type of field? should be from predefined?
-	//SpokenLanguages     []CompanySpokenLanguage     `json:"spokenLanguages"`
-	JobTypes string `json:"jobTypes"`
+	Values              string                      `json:"company_values"`
+	JobTypes            string                      `json:"jobTypes"`
 }
 
 type CreateCompanyResponse struct {
@@ -81,7 +80,7 @@ type ListCompanyResponse struct {
 	ContactPersonName string `json:"contactPersonName"`
 	Email             string `json:"email"`
 	Phone             string `json:"phone"`
-	CompanySize       string `json:"companySize"` //from predef list?
+	CompanySize       string `json:"companySize"`
 	Country           string `json:"country"`
 	AddressLine1      string `json:"addressLine1"`
 	City              string `json:"city"`
@@ -89,7 +88,7 @@ type ListCompanyResponse struct {
 	Street            string `json:"street"`
 	NumberAddress     string `json:"numberAddress"`
 	Mission           string `json:"mission"`
-	Values            string `json:"company_values"` // ? Type of field? should be from predefined?
+	Values            string `json:"company_values"`
 	JobTypes          string `json:"jobTypes"`
 }
 
@@ -103,7 +102,7 @@ type ViewCompanyResponse struct {
 	Email               string                      `json:"email"`
 	Phone               string                      `json:"phone"`
 	Logo                *LocalFile                  `json:"logo"`
-	CompanySize         string                      `json:"companySize"` //from predef list?
+	CompanySize         string                      `json:"companySize"`
 	Country             string                      `json:"country"`
 	AddressLine1        string                      `json:"addressLine1"`
 	City                string                      `json:"city"`
@@ -112,7 +111,7 @@ type ViewCompanyResponse struct {
 	NumberAddress       string                      `json:"numberAddress"`
 	AdditionalLocations []CompanyAdditionalLocation `json:"additionalLocations"`
 	Mission             string                      `json:"mission"`
-	Values              string                      `json:"company_values"` // ? Type of field? should be from predefined?
+	Values              string                      `json:"company_values"`
 	JobTypes            string                      `json:"jobTypes"`
 }
 
@@ -221,176 +220,3 @@ func (u *CreateCompanyRequest) fromFormData(fd *formdata.FormData) error {
 
 	return nil
 }
-
-// func (u *CreateUserRequest) FromFormData(r *http.Request) error {
-// 	fd, err := formdata.Parse(r)
-// 	if err == formdata.ErrNotMultipartFormData {
-// 		return fmt.Errorf("unsupported media type: %w", err)
-// 	}
-// 	if err != nil {
-// 		log.Printf("unable to parse form data: %v", err)
-// 		return fmt.Errorf("unable to parse form data")
-// 	}
-// 	return u.fromFormData(fd)
-// }
-
-// func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
-// 	fd.Validate("kind").Required().HasN(1)
-// 	fd.Validate("firstName").Required().HasN(1)
-// 	fd.Validate("lastName").Required().HasN(1)
-// 	fd.Validate("preferredName")
-// 	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
-// 	fd.Validate("phoneNumber").Required().HasNMin(1)
-// 	fd.Validate("birthDate").Required().HasNMin(1)
-// 	fd.Validate("photo")
-// 	fd.Validate("linkedInUrl")
-// 	fd.Validate("githubUrl")
-// 	fd.Validate("portfolioUrl")
-
-// 	if fd.HasErrors() {
-// 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
-// 	}
-
-// 	u.Kind = fd.Get("kind").First()
-// 	u.FirstName = fd.Get("firstName").First()
-// 	u.LastName = fd.Get("lastName").First()
-// 	u.PreferredName = fd.Get("preferredName").First()
-// 	u.Email = fd.Get("email").First()
-// 	u.PhoneNumber = fd.Get("phoneNumber").First()
-// 	u.Photo = fd.GetFile("photo").First()
-// 	u.LinkedInUrl = fd.Get("linkedInUrl").First()
-// 	u.GithubUrl = fd.Get("githubUrl").First()
-// 	u.PortfolioUrl = fd.Get("portfolioUrl").First()
-
-// 	birthDateStr := fd.Get("birthDate").First()
-// 	if birthDateStr != "" {
-// 		birthDate, err := time.Parse("2006-01-02T15:04:05Z07:00", birthDateStr)
-// 		if err != nil {
-// 			return fmt.Errorf("invalid birth date format: %v", err)
-// 		}
-// 		u.BirthDate = birthDate
-// 	}
-
-// 	switch u.Kind {
-// 	case UserKindAdmin:
-// 		return nil
-// 	case UserKindAssociation:
-// 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
-// 		return u.fromFormDataAssociation(fd)
-// 	case UserKindCandidate:
-// 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
-// 		return u.fromFormDataCandidate(fd)
-// 	case UserKindCompany:
-// 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
-// 		return u.fromFormDataCompany(fd)
-// 	default:
-// 		return fmt.Errorf("unknown user kind: %s", u.Kind)
-// 	}
-// }
-
-// func (u *CreateUserRequest) fromFormDataAssociation(fd *formdata.FormData) error {
-// 	fd.Validate("associationId").Required().HasN(1)
-// 	fd.Validate("role").Required().HasN(1)
-
-// 	if fd.HasErrors() {
-// 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
-// 	}
-
-// 	id, err := strconv.Atoi(fd.Get("associationId").First())
-// 	if err != nil {
-// 		return fmt.Errorf("invalid association id format: %v", err)
-// 	}
-// 	u.AssociationId = id
-// 	u.AssociationRole = fd.Get("role").First()
-// 	return nil
-// }
-
-// func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
-// 	fd.Validate("yearsOfExperience").Required().HasN(1)
-// 	fd.Validate("jobStatus").Required().HasN(1)
-// 	fd.Validate("seekJobType")
-// 	fd.Validate("seekCompanySize")
-// 	fd.Validate("seekLocations").Required().HasN(1)
-// 	fd.Validate("seekLocationType").Required().HasN(1)
-// 	fd.Validate("seekSalary")
-// 	fd.Validate("seekValues")
-// 	fd.Validate("workPermit").Required().HasN(1)
-// 	fd.Validate("noticePeriod")
-// 	fd.Validate("spokenLanguages")
-// 	fd.Validate("skills")
-// 	fd.Validate("cv")
-// 	fd.Validate("attachments")
-// 	fd.Validate("video")
-// 	fd.Validate("educationHistory")
-// 	fd.Validate("employmentHistory")
-
-// 	if fd.HasErrors() {
-// 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
-// 	}
-
-// 	u.JobStatus = fd.Get("jobStatus").First()
-// 	u.SeekJobType = fd.Get("seekJobType").First()
-// 	u.SeekCompanySize = fd.Get("seekCompanySize").First()
-// 	u.SeekLocationType = fd.Get("seekLocationType").First()
-// 	u.SeekValues = fd.Get("seekValues").First()
-// 	u.WorkPermit = fd.Get("workPermit").First()
-// 	u.CV = fd.GetFile("cv").First()
-// 	u.Attachments = fd.GetFile("attachments")
-// 	u.Video = fd.GetFile("video").First()
-
-// 	if err := utils.Atoi(fd.Get("yearsOfExperience").First(), &u.YearsOfExperience); err != nil {
-// 		return fmt.Errorf("invalid years of experience value: %w", err)
-// 	}
-
-// 	if err := utils.AtoiOpt(fd.Get("seekSalary").First(), &u.SeekSalary); err != nil {
-// 		return fmt.Errorf("invalid seek salary value: %w", err)
-// 	}
-
-// 	if err := utils.Atoi(fd.Get("noticePeriod").First(), &u.NoticePeriod); err != nil {
-// 		return fmt.Errorf("invalid notice period value: %w", err)
-// 	}
-
-// 	u.SeekLocations = make([]UserLocation, 0)
-// 	if err := utils.JSONFromString(fd.Get("seekLocations").First(), &u.SeekLocations); err != nil {
-// 		return fmt.Errorf("invalid seekLocations value: %w", err)
-// 	}
-
-// 	u.SpokenLanguages = make([]UserSpokenLanguage, 0)
-// 	if err := utils.JSONFromStringOpt(fd.Get("spokenLanguages").First(), &u.SpokenLanguages); err != nil {
-// 		return fmt.Errorf("invalid spokenLanguages value: %w", err)
-// 	}
-
-// 	u.Skills = make([]UserSkill, 0)
-// 	if err := utils.JSONFromStringOpt(fd.Get("skills").First(), &u.Skills); err != nil {
-// 		return fmt.Errorf("invalid skills value: %w", err)
-// 	}
-
-// 	u.EducationHistory = make([]UserEducationHistory, 0)
-// 	if err := utils.JSONFromStringOpt(fd.Get("educationHistory").First(), &u.EducationHistory); err != nil {
-// 		return fmt.Errorf("invalid educationHistory value: %w", err)
-// 	}
-
-// 	u.EmploymentHistory = make([]UserEmploymentHistory, 0)
-// 	if err := utils.JSONFromStringOpt(fd.Get("employmentHistory").First(), &u.EmploymentHistory); err != nil {
-// 		return fmt.Errorf("invalid employmentHistory value: %w", err)
-// 	}
-
-// 	return nil
-// }
-
-// func (u *CreateUserRequest) fromFormDataCompany(fd *formdata.FormData) error {
-// 	fd.Validate("companyId").Required().HasN(1)
-// 	fd.Validate("role").Required().HasN(1)
-
-// 	if fd.HasErrors() {
-// 		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
-// 	}
-
-// 	id, err := strconv.Atoi(fd.Get("companyId").First())
-// 	if err != nil {
-// 		return fmt.Errorf("invalid company id format: %v", err)
-// 	}
-// 	u.CompanyId = id
-// 	u.CompanyRole = fd.Get("role").First()
-// 	return nil
-// }

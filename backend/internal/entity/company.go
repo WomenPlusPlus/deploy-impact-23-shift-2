@@ -16,7 +16,7 @@ type Company struct {
 	Email               string                      `json:"email"`
 	Phone               string                      `json:"phone"`
 	LogoUrl             string                      `json:"logoUrl"`
-	CompanySize         string                      `json:"companySize"` //from predef list?
+	CompanySize         string                      `json:"companySize"`
 	Country             string                      `json:"country"`
 	AddressLine1        string                      `json:"addressLine1"`
 	City                string                      `json:"city"`
@@ -25,10 +25,9 @@ type Company struct {
 	NumberAddress       string                      `json:"numberAddress"`
 	AdditionalLocations []CompanyAdditionalLocation `json:"additionalLocations"`
 	Mission             string                      `json:"mission"`
-	Values              string                      `json:"company_values"` // ? Type of field? should be from predefined?
-	//SpokenLanguages     []CompanySpokenLanguage     `json:"spokenLanguages"`
-	JobTypes  string    `json:"jobTypes"`
-	CreatedAt time.Time `json:"createdAt"`
+	Values              string                      `json:"company_values"`
+	JobTypes            string                      `json:"jobTypes"`
+	CreatedAt           time.Time                   `json:"createdAt"`
 }
 
 type CompanyEntity struct {
@@ -40,7 +39,7 @@ type CompanyEntity struct {
 	ContactPersonName string    `db:"contact_person_name"`
 	Email             string    `db:"email"`
 	Phone             string    `db:"phone"`
-	CompanySize       string    `db:"company_size"` //from predef list?
+	CompanySize       string    `db:"company_size"`
 	Country           string    `db:"country"`
 	AddressLine1      string    `db:"address_line1"`
 	City              string    `db:"city"`
@@ -48,7 +47,7 @@ type CompanyEntity struct {
 	Street            string    `db:"street"`
 	NumberAddress     string    `db:"number_address"`
 	Mission           string    `db:"mission"`
-	Values            string    `db:"company_values"` // ? Type of field? should be from predefined?
+	Values            string    `db:"company_values"`
 	JobTypes          string    `db:"job_types"`
 	CreatedAt         time.Time `db:"created_at"`
 }
@@ -117,26 +116,3 @@ type CompanyItemView struct {
 	LogoUrl *string `db:"logo_url"`
 	*CompanyEntity
 }
-
-// ?
-// type CompanyRecordView struct {
-// 	ID                int       `db:"id"`
-// 	CompanyName       string    `db:"company_name"`
-// 	// LinkedinUrl       string    `db:"linkedin_url"`
-// 	// KununuUrl         string    `db:"kununu_url"`
-// 	// WebsiteUrl        string    `db:"website_url"`
-// 	// ContactPersonName string    `db:"contact_person_name"`
-// 	// Email             string    `db:"email"`
-// 	// Phone             string    `db:"phone"`
-// 	// CompanySize       string    `db:"company_size"` //from predef list?
-// 	// Country           string    `db:"country"`
-// 	// AddressLine1      string    `db:"address_line1"`
-// 	// City              string    `db:"city"`
-// 	// PostalCode        string    `db:"postal_code"`
-// 	// Street            string    `db:"street"`
-// 	// NumberAddress     string    `db:"number_address"`
-// 	// Mission           string    `db:"mission"`
-// 	// Values            string    `db:"company_values"` // ? Type of field? should be from predefined?
-// 	// JobTypes          string    `db:"job_types"`
-// 	CreatedAt         time.Time `db:"created_at"`
-// }

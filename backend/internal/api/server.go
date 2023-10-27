@@ -14,9 +14,11 @@ type APIServer struct {
 	address        string
 	userService    *service.UserService
 	companyService *service.CompanyService
+	jobService     *service.JobService
 	userDB         entity.UserDB
 	companyDB      entity.CompanyDB
 	invitationDB   entity.InvitationDB
+	jobDB          entity.JobDB
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
@@ -26,15 +28,18 @@ func NewAPIServer(
 	userDB entity.UserDB,
 	companyDB entity.CompanyDB,
 	invitationDB entity.InvitationDB,
+	jobDB entity.JobDB,
 
 ) *APIServer {
 	return &APIServer{
 		address:        address,
 		userService:    service.NewUserService(bucketDB, userDB),
 		companyService: service.NewCompanyService(bucketDB, companyDB),
+		jobService:     service.NewJobService(bucketDB, jobDB),
 		userDB:         userDB,
 		companyDB:      companyDB,
 		invitationDB:   invitationDB,
+		jobDB:          jobDB,
 	}
 }
 
@@ -50,7 +55,6 @@ func (s *APIServer) Run() {
 	s.initInvitaionRoutes(apiRouter)
 	s.initCompanyRoutes(apiRouter)
 
-	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
 
 	logrus.Println("JSON API Server is running on port", s.address)

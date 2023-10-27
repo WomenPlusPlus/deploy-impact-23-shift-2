@@ -24,10 +24,6 @@ func (s *APIServer) initCompanyRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleViewCompany)).
 		Methods(http.MethodGet)
 
-	// router.Path("/{id}").
-	// 	Handler(makeHTTPHandleFunc(s.handleEditCompany)).
-	// 	Methods(http.MethodPut)
-
 	router.Path("/{id}").
 		Handler(makeHTTPHandleFunc(s.handleDeleteCompany)).
 		Methods(http.MethodDelete)
@@ -81,7 +77,6 @@ func (s *APIServer) handleViewCompany(w http.ResponseWriter, r *http.Request) er
 }
 
 func (s *APIServer) handleDeleteCompany(w http.ResponseWriter, r *http.Request) error {
-	// TODO:
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
 

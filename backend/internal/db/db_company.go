@@ -10,22 +10,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// type PostgresDB struct {
-// 	db *sqlx.DB
-// }
-
-// func NewPostgresDB() *PostgresDB {
-// 	db, err := sqlx.Connect("postgres", os.Getenv("POSTGRESQL_URL"))
-
-// 	if err != nil {
-// 		log.Fatalln(err)
-// 	}
-
-// 	return &PostgresDB{
-// 		db: db,
-// 	}
-// }
-
 func (s *PostgresDB) DeleteCompany(id int) error {
 	query := "DELETE FROM companies WHERE id = $1"
 	res, err := s.db.Exec(query, id)

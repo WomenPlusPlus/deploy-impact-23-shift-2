@@ -1,6 +1,6 @@
 package entity
 
-// CompanyDB is an interface for managing company and jobs data.
+// CompanyDB is an interface for managing company  data.
 type CompanyDB interface {
 	CreateCompany(*CompanyEntity) (*CompanyEntity, error)
 	DeleteCompany(int) error
