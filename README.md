@@ -19,7 +19,7 @@
 # :bulb: Our Solution
 * TODO - Describe
 - ...
-- Matching algorithm: A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/matching.md). 
+- Matching algorithm: A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md). 
 
 # :toolbox: Tech Stack
 | Backend     | Frontend | Database | Cloud Storage | Deployments |
