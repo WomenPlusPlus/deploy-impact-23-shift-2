@@ -1,3 +1,5 @@
+import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
+
 export interface UsersList {
     items: UsersItem[];
 }
@@ -8,4 +10,6 @@ export interface UsersItem {
     lastName: string;
     preferredName?: string;
     email: string;
+    kind: UserKindEnum;
+    state: UserStateEnum;
 }
