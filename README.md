@@ -33,16 +33,16 @@
 * Explain why
 
 # :dart: Site Map
-* [Site map](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
+* [The site map design](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
 
 # :art: Designs
 * The designs were created using [Figma](https://www.figma.com/file/3BlcYSbbfCmx8oc5XdCKUN/Shift?type=design&node-id=1-1428&mode=design&t=UaqFM0xV7kPHePNj-0).
  
 # :sparkles: Architecture
-* [Architecture Miro board](https://miro.com/app/board/uXjVNf9ugWA=/?share_link_id=474651830078)
+* [The architecture diagram](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/architecture.jpg)
 
 # :game_die: Database
-* [Database Miro board](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
+* [The database schema](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
 
 # :package:Development
 * TODO
@@ -69,4 +69,4 @@
 | [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
 
 # :pushpin: Further development
-* For any further development, please contact João Rodrigues via [e-mail](mailto:joaordev@gmail.com?subject=deploy-impact-23-shift-2) or [LinkedIn](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/).
+* For any further development, please contact [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/).
