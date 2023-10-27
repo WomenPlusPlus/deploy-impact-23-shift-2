@@ -31,8 +31,7 @@
 * TODO - Explain why
 
 # :dart: Site Map
-* TODO
-* Link to the Miro board
+* [Site map](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
 
 # :art: Designs
 * The designs were created using [Figma](https://www.figma.com/file/3BlcYSbbfCmx8oc5XdCKUN/Shift?type=design&node-id=1-1428&mode=design&t=UaqFM0xV7kPHePNj-0).
