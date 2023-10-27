@@ -51,8 +51,7 @@
 * TODO - List them
 
 # :memo: License file
-GPL v3 
-included in repository files 
+[GNU GPL v3.0](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/LICENSE)  
 
 # :computer: Getting started
 * TODO - How to run and install the project
