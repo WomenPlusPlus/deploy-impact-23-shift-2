@@ -7,14 +7,19 @@
     </ng-container>
     <ng-container *ngIf="!vm.loading && !vm.error">
         <ng-container *ngIf="vm.list?.items as invites">
-            <header class="p-4 mb-5 flex justify-between items-center">
+            <header class="p-4 mb-5 flex flex-wrap items-center gap-x-10 gap-y-4">
                 <h1 class="text-5xl">Invites</h1>
-                <div class="grid justify-items-center px-4">
-                    <span class="text-5xl">{{ invites.length || 0 }}</span>
-                    <span class="text-lg">In total</span>
+                <a class="btn btn-sm btn-primary mt-2" [routerLink]="['/admin', 'invitations', 'create']"
+                    >Invite new user</a
+                >
+                <div class="grid justify-items-end px-4 ml-auto w-full sm:w-auto">
+                    <article class="grid justify-items-center">
+                        <span class="text-5xl">{{ invites.length || 0 }}</span>
+                        <span class="text-lg">In total</span>
+                    </article>
                 </div>
             </header>
-            <section class="p-4 flex">
+            <section class="p-4 flex flex-wrap gap-x-10 gap-y-4">
                 <label class="flex items-center gap-2">
                     <span>Show only my invites</span>
                     <input
