@@ -146,6 +146,9 @@ func (s *UserService) GetProfileByEmail(email string) (*entity.ProfileResponse, 
 	if err == nil {
 		return user, nil
 	}
+	if user.State != entity.UserStateActive {
+		return nil, fmt.Errorf("could not find user with email %s", email)
+	}
 
 	logrus.Tracef("Could not find profile by email: email=%s, error=%v", email, err)
 	inv, err := s.invitationService.GetInvitationByEmail(email)
@@ -193,6 +196,12 @@ func (s *UserService) GetProfileSetupByEmail(email string) (*entity.ProfileSetup
 }
 
 func (s *UserService) SetupProfile(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	if user, err := s.userDB.GetUserRecordByEmail(req.Email); err == nil {
+		return nil, fmt.Errorf("user %s already created: id=%d", req.Email, user.ID)
+	} else {
+		logrus.Tracef("Setting up inexistent user: %v", err)
+	}
+
 	inv, err := s.invitationService.GetInvitationByEmail(req.Email)
 	if err != nil {
 		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", req.Email, err)

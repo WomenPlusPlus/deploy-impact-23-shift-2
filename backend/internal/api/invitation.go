@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"shift/internal/entity"
 
@@ -39,8 +40,15 @@ func (s *APIServer) handleCreateInvitation(w http.ResponseWriter, r *http.Reques
 	return WriteJSONResponse(w, http.StatusOK, res)
 }
 
-func (s *APIServer) handleListInvitations(w http.ResponseWriter, r *http.Request) error {
+func (s *APIServer) handleListInvitations(w http.ResponseWriter, _ *http.Request) error {
 	logrus.Debugln("List invitations handler running")
-	// res, err := s.invitationService.ListInvitations()
-	return nil
+
+	res, err := s.invitationService.GetAllInvitation()
+	if err != nil {
+		return InternalServerError{Message: err.Error()}
+	}
+
+	fmt.Printf("%+v\n", res)
+
+	return WriteJSONResponse(w, http.StatusOK, res)
 }

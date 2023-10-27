@@ -66,7 +66,7 @@ func (pdb *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users
-				where email = $1`
+				where email = $1 and state = 'ACTIVE'`
 	rows, err := pdb.db.Queryx(query, email)
 	if err != nil {
 		return nil, err
