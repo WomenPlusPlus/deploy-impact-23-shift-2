@@ -11,16 +11,23 @@ import (
 )
 
 type UserService struct {
-	bucketDB     entity.BucketDB
-	userDB       entity.UserDB
-	invitationDB entity.InvitationDB
+	bucketDB      entity.BucketDB
+	userDB        entity.UserDB
+	invitationDB  entity.InvitationDB
+	associationDB entity.AssociationDB
 }
 
-func NewUserService(bucketDB entity.BucketDB, userDB entity.UserDB, invitationDB entity.InvitationDB) *UserService {
+func NewUserService(
+	bucketDB entity.BucketDB,
+	userDB entity.UserDB,
+	invitationDB entity.InvitationDB,
+	associationDB entity.AssociationDB,
+) *UserService {
 	return &UserService{
-		bucketDB:     bucketDB,
-		userDB:       userDB,
-		invitationDB: invitationDB,
+		bucketDB:      bucketDB,
+		userDB:        userDB,
+		invitationDB:  invitationDB,
+		associationDB: associationDB,
 	}
 }
 
@@ -146,9 +153,42 @@ func (s *UserService) GetProfileByEmail(email string) (*entity.ProfileResponse, 
 		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", email, err)
 		return nil, err
 	}
+	logrus.Tracef("Found invite for email %s: invite=%v", email, inv)
 
 	res := new(entity.ProfileResponse)
 	res.FromInvitationEntity(inv)
+	return res, nil
+}
+
+func (s *UserService) GetProfileSetupByEmail(email string) (*entity.ProfileSetupInfoResponse, error) {
+	inv, err := s.invitationDB.GetInvitationByEmail(email)
+	if err != nil {
+		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", email, err)
+		return nil, err
+	}
+
+	res := new(entity.ProfileSetupInfoResponse)
+	res.FromInvitationEntity(inv)
+
+	switch inv.Kind {
+	case entity.UserKindAssociation:
+		if inv.EntityID == nil {
+			break
+		}
+		association, err := s.associationDB.GetAssociationById(*inv.EntityID)
+		if err != nil {
+			return nil, fmt.Errorf("could not get association data: %w", err)
+		}
+		res.Association = new(entity.ViewAssociationResponse)
+		res.Association.FromAssociation(association)
+	case entity.UserKindCompany:
+		if inv.EntityID == nil {
+			break
+		}
+		// TODO
+		res.Company = &struct{ Id int }{Id: *inv.EntityID}
+	}
+
 	return res, nil
 }
 
