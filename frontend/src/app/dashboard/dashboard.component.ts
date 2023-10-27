@@ -6,6 +6,7 @@ import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.
 
 import { AdminDashboardComponent } from './admin/admin-dashboard.component';
 import { AssociationDashboardComponent } from './association/association-dashboard/association-dashboard.component';
+import { CandidateDashboardComponent } from './candidate/candidate-dashboard.component';
 import { CompanyDashboardComponent } from './company/company-dashboard/company-dashboard.component';
 
 @Component({
@@ -16,7 +17,8 @@ import { CompanyDashboardComponent } from './company/company-dashboard/company-d
         IsAuthorizedPipe,
         CompanyDashboardComponent,
         AssociationDashboardComponent,
-        AdminDashboardComponent
+        AdminDashboardComponent,
+        CandidateDashboardComponent
     ],
     templateUrl: './dashboard.component.html'
 })

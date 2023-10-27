@@ -1,0 +1,84 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <div class="md:flex flex-row flex-wrap justify-between">
+            <section class="p-4 basis-full mb-12 mt-4 card bg-base-200">
+                <ng-container *ngIf="vm.jobs?.items as jobs">
+                    <section class="p-4 mb-5 flex justify-between items-center">
+                        <h1 class="text-3xl">Shortlisted Jobs</h1>
+                        <div class="grid justify-items-center px-4">
+                            <span class="text-5xl">{{ jobs.length || 0 }}</span>
+                            <span class="text-lg">In total</span>
+                        </div>
+                    </section>
+                    <section class="overflow-x-auto">
+                        <table class="table table-lg">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Job Type</th>
+                                    <th>Location</th>
+                                    <th>Creation Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let job of jobs">
+                                    <td>
+                                        <a [routerLink]="['/jobs', job.id]" class="link">{{ job.title }}</a>
+                                    </td>
+                                    <td>{{ job.jobType | jobTypeLabel }}</td>
+                                    <td>
+                                        {{ job.location.city.name }}
+                                        •
+                                        {{ job.location.type | jobLocationTypeLabel }}
+                                    </td>
+                                    <td>{{ job.creationDate | date }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </ng-container>
+            </section>
+
+            <div class="basis-2/5 mb-12">
+                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                    <div class="text-3xl">
+                        <a [routerLink]="['/admin', 'users', 1]" class="flex justify-between">
+                            View My Profile
+                            <fa-icon [icon]="faArrowRight"></fa-icon>
+                        </a>
+                    </div>
+                </section>
+                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                    <div class="text-3xl">
+                        <a [routerLink]="['/associations']" class="flex justify-between">
+                            Find Associations
+                            <fa-icon [icon]="faArrowRight"></fa-icon>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <div class="basis-1/2 mb-12">
+                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                    <div class="text-3xl">
+                        <a [routerLink]="['/jobs']" class="flex justify-between">
+                            Search for Job Listings
+                            <fa-icon [icon]="faArrowRight"></fa-icon>
+                        </a>
+                    </div>
+                </section>
+                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                    <div class="text-3xl">
+                        <a [routerLink]="['/companies']" class="flex justify-between">
+                            Find Companies
+                            <fa-icon [icon]="faArrowRight"></fa-icon>
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>

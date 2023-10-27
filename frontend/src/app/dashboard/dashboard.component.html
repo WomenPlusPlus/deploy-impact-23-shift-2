@@ -7,3 +7,6 @@
 <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
     <app-admin-dashboard></app-admin-dashboard>
 </ng-container>
+<ng-container *ngIf="true | isAuthorized: userKindEnum.CANDIDATE | async">
+    <app-candidate-dashboard></app-candidate-dashboard>
+</ng-container>
