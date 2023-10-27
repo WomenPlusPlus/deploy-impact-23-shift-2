@@ -5,7 +5,7 @@
 * [Our Solution](#bulb-our-solution)
 * [Tech Stack](#toolbox-tech-stack)
 * [Site Map](#dart-site-map)
-* [Wireframes - current and future](#art-wireframes---current-and-future)
+* [Designs](#art-wireframes---current-and-future)
 * [Architecture](#sparkles-architecture)
 * [Database](#game_die-database)
 * [Development](#packagedevelopment)
