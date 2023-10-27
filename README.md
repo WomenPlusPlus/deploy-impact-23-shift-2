@@ -18,6 +18,8 @@
 
 # :bulb: Our Solution
 * TODO - Describe
+- ...
+- Matching algorithm: Matching algorithm for candidate to recomment jobs and for company to recommned candidates for jobs. It was not implemented due to time and capacity constraints, however the idea can be found in matching.md file 
 
 # :toolbox: Tech Stack
 | Backend     | Frontend | Database | Cloud Storage | Deployments |
