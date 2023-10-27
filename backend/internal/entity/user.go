@@ -73,13 +73,21 @@ func (c *CandidateEntity) FromCreationRequest(request *CreateUserRequest) error 
 	}
 	c.YearsOfExperience = request.YearsOfExperience
 	c.JobStatus = request.JobStatus
-	c.SeekJobType = request.SeekJobType
-	c.SeekCompanySize = request.SeekCompanySize
 	c.SeekLocationType = request.SeekLocationType
 	c.SeekSalary = &request.SeekSalary
 	c.SeekValues = &request.SeekValues
 	c.WorkPermit = request.WorkPermit
 	c.NoticePeriod = &request.NoticePeriod
+	if request.SeekJobType != "" {
+		c.SeekJobType = request.SeekJobType
+	} else {
+		c.SeekJobType = JobTypeAny
+	}
+	if request.SeekCompanySize != "" {
+		c.SeekCompanySize = request.SeekCompanySize
+	} else {
+		c.SeekCompanySize = CompanySizeAny
+	}
 	return nil
 }
 

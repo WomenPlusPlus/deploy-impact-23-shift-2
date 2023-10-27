@@ -1,7 +1,7 @@
 package entity
 
 type AssociationDB interface {
-	GetAssociationRecord(int) (*AssociationRecordView, error)
+	GetAssociationRecord(int) (*AssociationEntity, error)
 	GetAllAssociations() ([]*AssociationEntity, error)
 	CreateAssociation(*AssociationEntity) (*AssociationEntity, error)
 	GetAssociationById(int) (*AssociationEntity, error)

@@ -6,7 +6,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"shift/internal/utils"
 	"strings"
 )
 
@@ -27,12 +26,12 @@ type ListAssociationsResponse struct {
 }
 
 type ListAssociationResponse struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	ImageUrl   string `json:"imageUrl,omitempty"`
-	WebsiteUrl string `json:"websiteUrl,omitempty"`
-	Focus      string `json:"focus"`
-	CreatedAt  string `json:"createdAt,omitempty"`
+	ID         int        `json:"id"`
+	Name       string     `json:"name"`
+	ImageUrl   *LocalFile `json:"imageUrl,omitempty"`
+	WebsiteUrl string     `json:"websiteUrl,omitempty"`
+	Focus      string     `json:"focus"`
+	CreatedAt  string     `json:"createdAt,omitempty"`
 }
 
 type ViewAssociationResponse struct {
@@ -50,7 +49,7 @@ func (r *ListAssociationsResponse) FromAssociations(v []*AssociationEntity) {
 		item := ListAssociationResponse{
 			ID:         assoc.ID,
 			Name:       assoc.Name,
-			ImageUrl:   utils.SafeUnwrap(assoc.Logo),
+			ImageUrl:   NewLocalFile(assoc.Logo),
 			WebsiteUrl: assoc.WebsiteUrl,
 			Focus:      assoc.Focus,
 			CreatedAt:  assoc.CreatedAt,

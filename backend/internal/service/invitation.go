@@ -58,6 +58,10 @@ func (s *InvitationService) CreateInvitation(ctx context.Context, req *entity.Cr
 	return &entity.CreateInvitationResponse{ID: inv.ID}, nil
 }
 
+func (s *InvitationService) UpdateInvitationState(id int, state string) error {
+	return s.invitationDB.UpdateInvitationState(id, state)
+}
+
 func (s *InvitationService) GetInvitationByEmail(email string) (*entity.InvitationItemView, error) {
 	inv, err := s.invitationDB.GetInvitationByEmail(email)
 	if err != nil {

@@ -30,10 +30,10 @@ func (i *CreateInvitationRequest) FromRequestJSON(r *http.Request) error {
 	if !utils.EmailRegex.MatchString(i.Email) {
 		return fmt.Errorf("invalid email format")
 	}
-	if i.Kind == UserKindAssociation && (i.Role == nil || i.AssociationId == nil) {
+	if i.Kind == UserKindAssociation && (i.Role == nil || *i.Role != UserRoleAdmin && i.AssociationId == nil) {
 		return fmt.Errorf("invalid association user: role and association id must be defined")
 	}
-	if i.Kind == UserKindCompany && (i.Role == nil || i.CompanyId == nil) {
+	if i.Kind == UserKindCompany && (i.Role == nil || *i.Role != UserRoleAdmin && i.CompanyId == nil) {
 		return fmt.Errorf("invalid company user: role and company id must be defined")
 	}
 	return nil

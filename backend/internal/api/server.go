@@ -34,12 +34,15 @@ func NewAPIServer(
 		log.Fatalf("initializing jwt validator: %v", err)
 	}
 
+	associationService := service.NewAssociationService(bucketDB, associationDB)
+	invitationService := service.NewInvitationService(bucketDB, invitationDB)
+
 	return &APIServer{
 		address:            address,
 		jwtValidator:       jwtValidator,
-		userService:        service.NewUserService(bucketDB, userDB, invitationDB, associationDB),
-		associationService: service.NewAssociationService(bucketDB, associationDB),
-		invitationService:  service.NewInvitationService(bucketDB, invitationDB),
+		userService:        service.NewUserService(bucketDB, userDB, invitationService, associationService),
+		associationService: associationService,
+		invitationService:  invitationService,
 	}
 }
 

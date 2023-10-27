@@ -11,23 +11,23 @@ import (
 )
 
 type UserService struct {
-	bucketDB      entity.BucketDB
-	userDB        entity.UserDB
-	invitationDB  entity.InvitationDB
-	associationDB entity.AssociationDB
+	bucketDB           entity.BucketDB
+	userDB             entity.UserDB
+	invitationService  *InvitationService
+	associationService *AssociationService
 }
 
 func NewUserService(
 	bucketDB entity.BucketDB,
 	userDB entity.UserDB,
-	invitationDB entity.InvitationDB,
-	associationDB entity.AssociationDB,
+	invitationService *InvitationService,
+	associationService *AssociationService,
 ) *UserService {
 	return &UserService{
-		bucketDB:      bucketDB,
-		userDB:        userDB,
-		invitationDB:  invitationDB,
-		associationDB: associationDB,
+		bucketDB:           bucketDB,
+		userDB:             userDB,
+		invitationService:  invitationService,
+		associationService: associationService,
 	}
 }
 
@@ -148,7 +148,7 @@ func (s *UserService) GetProfileByEmail(email string) (*entity.ProfileResponse, 
 	}
 
 	logrus.Tracef("Could not find profile by email: email=%s, error=%v", email, err)
-	inv, err := s.invitationDB.GetInvitationByEmail(email)
+	inv, err := s.invitationService.GetInvitationByEmail(email)
 	if err != nil {
 		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", email, err)
 		return nil, err
@@ -156,37 +156,77 @@ func (s *UserService) GetProfileByEmail(email string) (*entity.ProfileResponse, 
 	logrus.Tracef("Found invite for email %s: invite=%v", email, inv)
 
 	res := new(entity.ProfileResponse)
-	res.FromInvitationEntity(inv)
+	res.FromInvitationView(inv)
 	return res, nil
 }
 
 func (s *UserService) GetProfileSetupByEmail(email string) (*entity.ProfileSetupInfoResponse, error) {
-	inv, err := s.invitationDB.GetInvitationByEmail(email)
+	inv, err := s.invitationService.GetInvitationByEmail(email)
 	if err != nil {
 		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", email, err)
 		return nil, err
 	}
+	logrus.Tracef("Found invite for email %s: invite=%v", email, inv)
 
 	res := new(entity.ProfileSetupInfoResponse)
-	res.FromInvitationEntity(inv)
+	res.FromInvitationView(inv)
 
 	switch inv.Kind {
 	case entity.UserKindAssociation:
 		if inv.EntityID == nil {
 			break
 		}
-		association, err := s.associationDB.GetAssociationById(*inv.EntityID)
+		association, err := s.associationService.GetAssociationById(*inv.EntityID)
 		if err != nil {
 			return nil, fmt.Errorf("could not get association data: %w", err)
 		}
-		res.Association = new(entity.ViewAssociationResponse)
-		res.Association.FromAssociation(association)
+		res.Association = association
 	case entity.UserKindCompany:
 		if inv.EntityID == nil {
 			break
 		}
 		// TODO
 		res.Company = &struct{ Id int }{Id: *inv.EntityID}
+	}
+
+	return res, nil
+}
+
+func (s *UserService) SetupProfile(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
+	inv, err := s.invitationService.GetInvitationByEmail(req.Email)
+	if err != nil {
+		logrus.Tracef("Could not find invite for unauthorized email: email=%s, error=%v", req.Email, err)
+		return nil, err
+	}
+	req.Kind = inv.Kind
+
+	var res *entity.CreateUserResponse
+
+	switch req.Kind {
+	case entity.UserKindAdmin:
+		if res, err = s.createAdmin(req); err != nil {
+			return nil, fmt.Errorf("setup admin profile: %w", err)
+		}
+	case entity.UserKindAssociation:
+		req.AssociationRole = utils.SafeUnwrap(inv.Role)
+		if res, err = s.createAssociationUser(req); err != nil {
+			return nil, fmt.Errorf("setup association user profile: %w", err)
+		}
+	case entity.UserKindCandidate:
+		if res, err = s.createCandidate(req); err != nil {
+			return nil, fmt.Errorf("setup candidate profile: %w", err)
+		}
+	case entity.UserKindCompany:
+		req.CompanyRole = utils.SafeUnwrap(inv.Role)
+		if res, err = s.createCompanyUser(req); err != nil {
+			return nil, fmt.Errorf("setup company user profile: %w", err)
+		}
+	default:
+		return nil, fmt.Errorf("unknown user kind: %s", req.Kind)
+	}
+
+	if err := s.invitationService.UpdateInvitationState(inv.ID, entity.InvitationStateAccepted); err != nil {
+		logrus.Errorf("Could not update the invite state to accepted: id=%d", inv.ID)
 	}
 
 	return res, nil

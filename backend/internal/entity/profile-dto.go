@@ -33,7 +33,7 @@ func (r *ProfileResponse) FromUserProfileView(v *UserProfileView) {
 	}
 }
 
-func (r *ProfileResponse) FromInvitationEntity(e *InvitationEntity) {
+func (r *ProfileResponse) FromInvitationView(e *InvitationItemView) {
 	r.Kind = e.Kind
 	r.Role = utils.SafeUnwrap(e.Role)
 	r.Email = e.Email
@@ -51,7 +51,7 @@ type ProfileSetupInfoResponse struct {
 	CreatedAt   time.Time                `json:"created_at"`
 }
 
-func (r *ProfileSetupInfoResponse) FromInvitationEntity(e *InvitationEntity) {
+func (r *ProfileSetupInfoResponse) FromInvitationView(e *InvitationItemView) {
 	r.InviteId = e.ID
 	r.Kind = e.Kind
 	r.Role = e.Role
