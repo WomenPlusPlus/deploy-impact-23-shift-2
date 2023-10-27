@@ -85,7 +85,7 @@ func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordVie
 	return nil, fmt.Errorf("could not find user record view: email=%s", email)
 }
 
-func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationRecordView, error) {
+func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationEntity, error) {
 	query := `select * from associations where id = $1`
 	rows, err := s.db.Queryx(query, id)
 	if err != nil {
@@ -94,7 +94,7 @@ func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationRecordView
 	defer rows.Close()
 
 	for rows.Next() {
-		view := new(entity.AssociationRecordView)
+		view := new(entity.AssociationEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan association record view from db row: %v", err)
 			return nil, err
@@ -294,7 +294,7 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 }
 
 func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationEntity, error) {
-	query := `select * from associations where id = :id`
+	query := `select * from associations where id = $1`
 	rows, err := pdb.db.Queryx(query, id)
 	if err != nil {
 		return nil, fmt.Errorf("fetching association id=%d in db: %w", id, err)

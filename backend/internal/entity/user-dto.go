@@ -5,7 +5,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"regexp"
 	"shift/internal/utils"
 	"strconv"
 	"strings"
@@ -64,7 +63,7 @@ func (u *EditUserRequest) fromFormData(id int, fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\d|\\w|\\.)+(\\+(\\d|\\w|\\.)+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(utils.EmailRegex)
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -407,7 +406,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile(`^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$`))
+	fd.Validate("email").Required().HasNMin(1).Match(utils.EmailRegex)
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -529,7 +528,7 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 		return fmt.Errorf("invalid seek salary value: %w", err)
 	}
 
-	if err := utils.Atoi(fd.Get("noticePeriod").First(), &u.NoticePeriod); err != nil {
+	if err := utils.AtoiOpt(fd.Get("noticePeriod").First(), &u.NoticePeriod); err != nil {
 		return fmt.Errorf("invalid notice period value: %w", err)
 	}
 

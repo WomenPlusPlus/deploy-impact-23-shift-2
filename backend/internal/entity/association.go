@@ -1,9 +1,5 @@
 package entity
 
-import (
-	"mime/multipart"
-)
-
 type AssociationEntity struct {
 	ID         int     `db:"id"`
 	Name       string  `db:"name"`
@@ -11,15 +7,6 @@ type AssociationEntity struct {
 	WebsiteUrl string  `db:"website_url"`
 	Focus      string  `db:"focus"`
 	CreatedAt  string  `db:"created_at"`
-}
-
-type AssociationRecordView struct {
-	ID         int                   `db:"id"`
-	Name       string                `db:"name"`
-	Logo       *multipart.FileHeader `db:"logo"`
-	WebsiteUrl string                `db:"website_url"`
-	Focus      string                `db:"focus"`
-	CreatedAt  string                `db:"created_at"`
 }
 
 func (a *AssociationEntity) FromCreationRequest(request *CreateAssociationRequest) error {

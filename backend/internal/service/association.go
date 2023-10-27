@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"shift/internal/entity"
+	"shift/internal/utils"
 
 	"github.com/sirupsen/logrus"
 )
@@ -63,22 +64,16 @@ func (s *AssociationService) ListAssociations() (*entity.ListAssociationsRespons
 	}
 	logrus.Tracef("Get all associations from db: total=%d", len(associations))
 
-	ctx := context.Background()
-	for _, association := range associations {
-		if association.Logo == nil {
-			continue
-		}
-		imageUrl, err := s.bucketDB.SignUrl(ctx, *association.Logo)
-		if err != nil {
-			logrus.Errorf("could not sign url for association logo: %v", err)
-		} else {
-			logrus.Tracef("Signed url for association logo: id=%d, url=%v", association.ID, imageUrl)
-			association.Logo = &imageUrl
-		}
-	}
-
 	res := new(entity.ListAssociationsResponse)
 	res.FromAssociations(associations)
+
+	ctx := context.Background()
+	for _, association := range res.Items {
+		if association.ImageUrl == nil {
+			continue
+		}
+		utils.ReplaceWithSignedUrl(ctx, s.bucketDB, &association.ImageUrl.Url)
+	}
 
 	return res, nil
 }

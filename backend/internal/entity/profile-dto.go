@@ -33,10 +33,28 @@ func (r *ProfileResponse) FromUserProfileView(v *UserProfileView) {
 	}
 }
 
-func (r *ProfileResponse) FromInvitationEntity(e *InvitationEntity) {
+func (r *ProfileResponse) FromInvitationView(e *InvitationItemView) {
 	r.Kind = e.Kind
 	r.Role = utils.SafeUnwrap(e.Role)
 	r.Email = e.Email
 	r.State = UserStateInvited
+	r.CreatedAt = e.CreatedAt
+}
+
+type ProfileSetupInfoResponse struct {
+	InviteId    int                      `json:"inviteId"`
+	Kind        string                   `json:"kind"`
+	Role        *string                  `json:"role,omitempty"`
+	Email       string                   `json:"email"`
+	Company     interface{}              `json:"company,omitempty"`
+	Association *ViewAssociationResponse `json:"association,omitempty"`
+	CreatedAt   time.Time                `json:"created_at"`
+}
+
+func (r *ProfileSetupInfoResponse) FromInvitationView(e *InvitationItemView) {
+	r.InviteId = e.ID
+	r.Kind = e.Kind
+	r.Role = e.Role
+	r.Email = e.Email
 	r.CreatedAt = e.CreatedAt
 }
