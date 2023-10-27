@@ -30,29 +30,3 @@ func (i *InvitationEntity) FromCreationRequest(request *CreateInvitationRequest)
 	}
 	return nil
 }
-
-type InvitationItemView struct {
-	ID        int       `json:"id"`
-	CreatorID int       `json:"creatorId"`
-	EntityID  *int      `json:"entityId"`
-	Kind      string    `json:"kind"`
-	Role      *string   `json:"role"`
-	Email     string    `json:"email"`
-	State     string    `json:"state"`
-	Ticket    *string   `json:"ticket"`
-	ExpireAt  time.Time `json:"expireAt"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
-func (i *InvitationItemView) FromInvitationEntity(e *InvitationEntity) {
-	i.ID = e.ID
-	i.CreatorID = e.CreatorID
-	i.EntityID = e.EntityID
-	i.Kind = e.Kind
-	i.Role = e.Role
-	i.Email = e.Email
-	i.State = e.State
-	i.Ticket = e.Ticket
-	i.ExpireAt = e.ExpireAt
-	i.CreatedAt = e.CreatedAt
-}

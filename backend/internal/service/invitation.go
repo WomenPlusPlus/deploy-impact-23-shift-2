@@ -74,3 +74,23 @@ func (s *InvitationService) GetInvitationByEmail(email string) (*entity.Invitati
 
 	return res, nil
 }
+
+func (s *InvitationService) GetAllInvitation() (*entity.InvitationListResponse, error) {
+	invs, err := s.invitationDB.GetAllInvitations()
+	if err != nil {
+		return nil, fmt.Errorf("getting all invitations: %w", err)
+	}
+	logrus.Tracef("Added invitation to db: total=%d", len(invs))
+
+	items := make([]*entity.InvitationItemView, len(invs))
+	for i, inv := range invs {
+		item := new(entity.InvitationItemView)
+		item.FromInvitationEntity(inv)
+		items[i] = item
+	}
+
+	res := new(entity.InvitationListResponse)
+	res.Items = items
+
+	return res, nil
+}
