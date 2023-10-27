@@ -19,7 +19,7 @@
 # :bulb: Our Solution
 * TODO - Describe
 - ...
-- Matching algorithm: Matching algorithm for candidate to recomment jobs and for company to recommned candidates for jobs. It was not implemented due to time and capacity constraints, however the idea can be found in matching.md file 
+- Matching algorithm: A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/matching.md). 
 
 # :toolbox: Tech Stack
 | Backend     | Frontend | Database | Cloud Storage | Deployments |
@@ -34,17 +34,14 @@
 * TODO
 * Link to the Miro board
 
-# :art: Wireframes - current and future
-* TODO
-* Link to the Figma file
+# :art: Designs
+* The designs were created using [Figma](https://www.figma.com/file/3BlcYSbbfCmx8oc5XdCKUN/Shift?type=design&node-id=1-1428&mode=design&t=UaqFM0xV7kPHePNj-0).
  
 # :sparkles: Architecture
-* TODO
-* Link to the Miro board
+* [Architecture Miro board](https://miro.com/app/board/uXjVNf9ugWA=/?share_link_id=474651830078)
 
 # :game_die: Database
-* TODO
-* Link to the Miro board
+* [Database Miro board](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
 
 # :package:Development
 * TODO
@@ -53,7 +50,7 @@
 * TODO - List them
 
 # :memo: License file
-[GNU GPL v3.0](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/LICENSE)  
+* [GNU General Public License v3.0](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/LICENSE)  
 
 # :computer: Getting started
 * TODO - How to run and install the project
