@@ -1,6 +1,10 @@
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faAdd } from '@fortawesome/free-solid-svg-icons';
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
 
@@ -16,6 +20,8 @@ import { CompanyCardComponent } from './company-card/company-card.component';
     standalone: true,
     imports: [
         CommonModule,
+        RouterModule,
+        FontAwesomeModule,
         CompanyCardComponent,
         ContentErrorComponent,
         ContentLoadingComponent,
@@ -28,6 +34,8 @@ import { CompanyCardComponent } from './company-card/company-card.component';
 export class CompaniesListComponent implements OnInit {
     readonly vm$ = this.companiesListStore.vm$;
     searchTerm$ = this.companiesListStore.searchString$;
+
+    protected readonly faAdd = faAdd;
 
     constructor(private readonly companiesListStore: CompaniesListStore) {}
 

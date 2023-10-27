@@ -1,0 +1,46 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error">
+        <app-content-error class="block h-screen/2-s"></app-content-error>
+    </ng-container>
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container *ngIf="vm.profile as profile">
+            <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
+                <a [routerLink]="['/admin', 'associations', profile.id, 'edit']" class="float-right btn">Edit</a>
+            </ng-container>
+            <div class="md:flex">
+                <div class="basis-1/4 md:mr-5">
+                    <img
+                        class="object-center object-cover"
+                        loading="lazy"
+                        [alt]="profile.imageUrl?.name || 'logo'"
+                        [src]="profile.imageUrl?.url || 'assets/profile-picture-default-form.png'"
+                    />
+                    <div class="p-5">
+                        <h1 class="text-4xl mb-8">{{ profile.name }}</h1>
+                        <p class="mb-3 text-xl">Visit Our Website</p>
+                        <p class="mb-6">
+                            <a [href]="profile.websiteUrl" rel="noreferrer noopener">
+                                <fa-icon [icon]="faGlobe"></fa-icon>
+                                {{ profile.websiteUrl }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <div class="basis-3/4 md:ml-5">
+                    <div class="p-5">
+                        <h2 class="text-2xl mb-4">About</h2>
+                        <p class="leading-8">{{ profile.focus }}</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="p-5">
+                        <h2 class="text-2xl mb-4">Programs Offered</h2>
+                        <p class="leading-8">There are no programs created yet.</p>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</ng-container>

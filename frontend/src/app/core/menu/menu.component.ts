@@ -4,14 +4,14 @@ import {
     faBuilding,
     faCircleInfo,
     faEnvelope,
-    faIdCard,
     faList,
     faListCheck,
     faSheetPlastic,
     faSitemap,
     faSquareCaretLeft,
     faSquareCaretRight,
-    faUser
+    faUser,
+    faChartLine
 } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
@@ -51,7 +51,7 @@ export class MenuComponent implements OnChanges {
     protected readonly faSquareCaretLeft = faSquareCaretLeft;
     protected readonly faSquareCaretRight = faSquareCaretRight;
     protected readonly faSheetPlastic = faSheetPlastic;
-    protected readonly faIdCard = faIdCard;
+    protected readonly faChartLine = faChartLine;
 
     constructor(
         private readonly el: ElementRef<HTMLElement>,
@@ -67,7 +67,7 @@ export class MenuComponent implements OnChanges {
             return;
         }
 
-        const activeLink = this.el.nativeElement.querySelector('a.active');
+        const activeLink = this.el.nativeElement.querySelector('a.link-active');
         if (!activeLink) {
             return;
         }
@@ -78,7 +78,7 @@ export class MenuComponent implements OnChanges {
         }
 
         if (el) {
-            el.querySelector('summary')?.click();
+            (el.querySelector('details summary') as HTMLDetailsElement)?.click();
         }
     }
 }

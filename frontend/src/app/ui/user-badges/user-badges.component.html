@@ -1,0 +1,17 @@
+<div class="flex gap-1">
+    <span
+        class="badge text-base-100 badge-md"
+        [class.bg-yellow-400]="kind === userKindEnum.ADMIN"
+        [class.bg-red-400]="kind === userKindEnum.CANDIDATE"
+        [class.bg-blue-400]="kind === userKindEnum.COMPANY"
+        [class.bg-green-600]="kind === userKindEnum.ASSOCIATION"
+    >
+        {{ kind | userKindLabel }}
+    </span>
+    <span class="badge bg-gray-400 text-base-100 badge-md" *ngIf="kind === userKindEnum.COMPANY">
+        {{ role! | userCompanyRoleLabel }}
+    </span>
+    <span class="badge bg-gray-400 text-base-100 badge-md" *ngIf="kind === userKindEnum.ASSOCIATION">
+        {{ role! | userAssociationRoleLabel }}
+    </span>
+</div>

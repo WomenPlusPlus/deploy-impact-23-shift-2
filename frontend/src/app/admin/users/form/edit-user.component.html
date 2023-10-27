@@ -1,0 +1,56 @@
+<div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
+    <ng-container
+        *ngIf="vm.submitted; else notSubmittedContainer"
+        [ngTemplateOutlet]="submittedContainer"
+    ></ng-container>
+    <ng-template #notSubmittedContainer>
+        <ng-container *ngIf="!vm.user; else userFormContainer" [ngTemplateOutlet]="loadingContainer"></ng-container>
+    </ng-template>
+    <ng-template #userFormContainer>
+        <form *ngIf="vm.user" (ngSubmit)="onSubmit(vm.user)">
+            <ng-container [ngSwitch]="vm.user.kind">
+                <app-user-form-candidate *ngSwitchCase="userKindsEnum.CANDIDATE" #childFormEl></app-user-form-candidate>
+                <app-user-form-company *ngSwitchCase="userKindsEnum.COMPANY" #childFormEl></app-user-form-company>
+                <app-user-form-association
+                    *ngSwitchCase="userKindsEnum.ASSOCIATION"
+                    #childFormEl
+                ></app-user-form-association>
+                <app-user-form-generic *ngSwitchDefault #childFormEl></app-user-form-generic>
+            </ng-container>
+            <div class="sticky flex flex-col bottom-0 pb-4 bg-base-100 w-full">
+                <div class="divider mt-0"></div>
+                <button type="submit" class="btn btn-primary ml-auto" [disabled]="!childForm || childForm.invalid">
+                    Edit {{ vm.user.kind | userKindLabel }}
+                </button>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template #loadingContainer>
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-template>
+
+    <ng-template #submittedContainer>
+        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+            <div class="mx-auto max-w-screen-sm text-center">
+                <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
+                    Edited {{ userEmail }} successfully!
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a
+                        [routerLink]="['/admin', 'users', vm.response?.userId]"
+                        class="btn btn-primary inline-flex hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                    >
+                        Check user
+                    </a>
+                    <a
+                        [routerLink]="['/']"
+                        class="btn btn-link inline-flex text-white focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                    >
+                        Back to Homepage
+                    </a>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

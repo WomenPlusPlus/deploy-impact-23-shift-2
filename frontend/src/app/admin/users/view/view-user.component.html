@@ -1,0 +1,111 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error">
+        <app-content-error class="block h-screen/2-s"></app-content-error>
+    </ng-container>
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container [ngTemplateOutlet]="contentContainer"></ng-container>
+    </ng-container>
+
+    <ng-template #contentContainer>
+        <ng-container *ngIf="vm.user as user">
+            <header class="p-4">
+                <span class="block text-3xl mx-5 mb-0">{{
+                    user.preferredName || user.firstName + ' ' + user.lastName
+                }}</span>
+                <span class="block text-sm mx-5 mb-6 opacity-50">{{ user.state | userStateLabel }}</span>
+                <div class="flex items-center flex-wrap sm:flex-nowrap gap-4 mb-10">
+                    <div class="w-36 h-36 rounded-full overflow-hidden flex">
+                        <img
+                            *ngIf="user.photo"
+                            [src]="user.photo.url"
+                            [alt]="user.photo.name"
+                            [title]="user.photo.name"
+                            class="object-cover"
+                        />
+                        <img
+                            *ngIf="!user.photo"
+                            src="assets/profile-picture-default-form.png"
+                            alt="default"
+                            class="object-cover"
+                        />
+                    </div>
+                    <ul class="grid self-end gap-2 py-4">
+                        <li class="font-bold">
+                            <a class="btn btn-sm btn-ghost flex-nowrap text-left" [href]="'mailto:' + user.email">
+                                <fa-icon [icon]="faMessage" class="text-lg align-middle mr-2" />
+                                <span>Message</span>
+                            </a>
+                        </li>
+                        <li class="font-bold">
+                            <a
+                                class="btn btn-sm btn-ghost flex-nowrap text-left"
+                                [routerLink]="['.', 'edit']"
+                                [class.btn-disabled]="user.state !== userStateEnum.ACTIVE"
+                            >
+                                <fa-icon [icon]="faEdit" class="text-lg align-middle mr-2" />
+                                <span>Edit information</span>
+                            </a>
+                        </li>
+                        <li class="font-bold">
+                            <button
+                                class="btn btn-sm btn-ghost flex-nowrap text-left"
+                                [disabled]="user.state !== userStateEnum.ACTIVE"
+                                (click)="deleteConfirmation.show()"
+                            >
+                                <fa-icon [icon]="faRemove" class="text-lg align-middle mr-2" />
+                                <span>Delete user</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="p-4 mb-10 grid place-content-start place-items-start">
+                <span class="block mb-6 text-xl font-bold">Personal Information</span>
+                <dl class="grid grid-cols-1 md:grid-cols-2 justify-around items-start gap-y-4 gap-x-12">
+                    <div class="grid grid-cols-2 md:grid-cols-[auto-1fr] gap-x-10 gap-y-4">
+                        <dt class="font-bold">First name</dt>
+                        <dd class="break-words">{{ user.firstName }}</dd>
+                        <dt class="font-bold">Last name</dt>
+                        <dd class="break-words">{{ user.lastName }}</dd>
+                        <dt class="font-bold">Preferred name</dt>
+                        <dd class="break-words">{{ user.preferredName || '-' }}</dd>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-[auto-1fr] gap-x-10 gap-y-4">
+                        <dt class="font-bold">Email</dt>
+                        <dd class="break-words">{{ user.email }}</dd>
+                        <dt class="font-bold">Phone</dt>
+                        <dd class="break-words">{{ user.phoneNumber }}</dd>
+                        <dt class="font-bold">Birth date</dt>
+                        <dd class="break-words">{{ user.birthDate | date }}</dd>
+                    </div>
+                </dl>
+            </section>
+            <ng-container *ngIf="user.kind === userKindEnum.CANDIDATE">
+                <div class="divider"></div>
+                <app-view-candidate-sections [user]="user"></app-view-candidate-sections>
+            </ng-container>
+
+            <dialog class="modal" #deleteConfirmation tabindex="0" (keyup.escape)="deleteConfirmation.close()">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg">Are you sure?</h3>
+                    <p class="py-4">If you delete {{ user.email }} there is no way to revert the action.</p>
+                    <div class="modal-action">
+                        <form method="dialog" class="flex gap-2">
+                            <button
+                                type="button"
+                                class="btn btn-primary basis-16"
+                                (click)="onDelete(user.id); deleteConfirmation.close()"
+                            >
+                                Yes
+                            </button>
+                            <button class="btn basis-16">No</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+        </ng-container>
+    </ng-template>
+</ng-container>

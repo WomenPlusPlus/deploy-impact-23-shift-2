@@ -32,8 +32,8 @@ func (s *APIServer) initUserRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleDeleteUser)).
 		Methods(http.MethodDelete)
 
-	router.Use(AuthenticationMiddleware)
-	router.Use(AuthorizationMiddleware(ContextKeyKind, entity.UserKindAdmin))
+	router.Use(s.AuthenticationMiddleware)
+	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
@@ -110,7 +110,7 @@ func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) err
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
 
-	if _, err := s.userDB.GetUserById(id); err != nil {
+	if _, err := s.userService.GetUserById(id); err != nil {
 		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
 	}
 

@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -6,9 +6,11 @@ import { Injectable } from '@angular/core';
 import environment from '@envs/environment';
 
 import { UsersListModel } from '@app/admin/users/common/models/users-list.model';
-import { CreateUserFormModel } from '@app/admin/users/creation/common/models/create-user.model';
-import { JobStatusEnum } from '@app/common/models/jobs.model';
-import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
+import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
+import { EditUserResponse } from '@app/admin/users/form/common/models/edit-user.model';
+import { UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
+import { ProfileSetup } from '@app/common/models/profile.model';
+import { UserDetails } from '@app/common/models/users.model';
 
 @Injectable({
     providedIn: 'root'
@@ -16,97 +18,71 @@ import { UserRoleEnum, UserKindEnum, UserStateEnum } from '@app/common/models/us
 export class AdminUsersService {
     constructor(private readonly httpClient: HttpClient) {}
 
-    getList(): Observable<UsersListModel> {
-        // TODO: once the API is defined, delete this mock and use the endpoint instead.
-        return of({
-            items: [
-                {
-                    id: 0,
-                    firstName: 'Test',
-                    lastName: '123',
-                    preferredName: 'Testing Admin',
-                    imageUrl:
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
-                    email: 'test@test.com',
-                    kind: UserKindEnum.ADMIN,
-                    state: UserStateEnum.ACTIVE
-                },
-                {
-                    id: 1,
-                    firstName: 'João',
-                    lastName: 'Rodrigues',
-                    preferredName: 'John Cena',
-                    imageUrl: 'https://cdn.wrestletalk.com/wp-content/uploads/2023/09/john-cena-september-2-d.jpg',
-                    email: 'john-cena@mail.com',
-                    kind: UserKindEnum.CANDIDATE,
-                    state: UserStateEnum.DELETED,
-                    phoneNumber: '999 000 555',
-                    ratingSkill: 10,
-                    jobStatus: JobStatusEnum.SEARCHING,
-                    hasCV: true,
-                    hasVideo: false
-                },
-                {
-                    id: 2,
-                    firstName: 'Katy',
-                    lastName: 'Perry',
-                    imageUrl:
-                        'https://www.koimoi.com/wp-content/new-galleries/2023/08/when-katy-perry-got-naughty-about-her-intimate-sx-life-deets-inside-001.jpg',
-                    email: 'kat@perry.com',
-                    kind: UserKindEnum.COMPANY,
-                    state: UserStateEnum.ACTIVE,
-                    role: UserRoleEnum.ADMIN
-                },
-                {
-                    id: 3,
-                    firstName: 'Tom',
-                    lastName: 'Jerry',
-                    preferredName: 'Tom&Jerry',
-                    imageUrl: 'https://myinspiringthoughts.com/wp-content/uploads/2020/12/tomjerry1.jpg',
-                    email: 'tom-jerry@movies.com',
-                    kind: UserKindEnum.COMPANY,
-                    state: UserStateEnum.ANONYMOUS,
-                    role: UserRoleEnum.USER
-                },
-                {
-                    id: 4,
-                    firstName: 'Tom',
-                    lastName: 'Cruise',
-                    imageUrl:
-                        'https://images.hindustantimes.com/img/2022/07/03/1600x900/Tom_Cruise_Top_Gun_Maverick_1656809669304_1656809705950.jpg',
-                    email: 'tom-cruise@movies.com',
-                    kind: UserKindEnum.ASSOCIATION,
-                    state: UserStateEnum.ACTIVE,
-                    role: UserRoleEnum.ADMIN
-                },
-                {
-                    id: 5,
-                    firstName: 'Céline',
-                    lastName: 'Dion',
-                    imageUrl: 'https://assets.medpagetoday.net/media/images/102xxx/102195.jpg?width=0.6',
-                    email: 'dion@email.com',
-                    kind: UserKindEnum.ASSOCIATION,
-                    state: UserStateEnum.ACTIVE,
-                    role: UserRoleEnum.USER
-                }
-            ]
-        });
-        /*return this.httpClient
-            .get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);*/
+    getById(id: number): Observable<UserDetails> {
+        return this.httpClient.get<UserDetails>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
     }
 
-    createUser(user: CreateUserFormModel): Observable<{ id: number }> {
+    getList(): Observable<UsersListModel> {
+        return this.httpClient.get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);
+    }
+
+    createUser(user: UserFormModel): Observable<CreateUserResponse> {
+        return this.httpClient.post<CreateUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/users`,
+            this.mapUserToFormData(user)
+        );
+    }
+
+    editUser(id: number, user: UserFormModel): Observable<EditUserResponse> {
+        return this.httpClient.put<EditUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/users/${id}`,
+            this.mapUserToFormData(user)
+        );
+    }
+
+    deleteUser(id: number): Observable<void> {
+        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
+    }
+
+    getSetupInfo(): Observable<ProfileSetup> {
+        return this.httpClient.get<ProfileSetup>(`${environment.API_BASE_URL}/api/v1/setup`);
+    }
+
+    setupUser(user: UserFormModel): Observable<CreateUserResponse> {
+        return this.httpClient.post<CreateUserResponse>(
+            `${environment.API_BASE_URL}/api/v1/setup`,
+            this.mapUserToFormData(user)
+        );
+    }
+
+    private mapUserToFormData(user: UserFormModel): FormData {
         const formData = new FormData();
         for (const key of Object.keys(user)) {
-            const wrapper = user[key as keyof CreateUserFormModel];
+            const wrapper = user[key as keyof UserFormModel];
             if (typeof wrapper !== 'object') {
                 formData.append(key, wrapper);
                 continue;
             }
             for (const key of Object.keys(wrapper)) {
-                const value = wrapper[key as keyof typeof wrapper];
-                if (typeof value !== 'object') {
+                const value: any = wrapper[key as keyof typeof wrapper];
+                if (!value) {
+                    continue;
+                }
+                if (value instanceof Date) {
+                    formData.append(key, value.toISOString());
+                    continue;
+                }
+                if (typeof value !== 'object' || value instanceof File) {
                     formData.append(key, value);
+                    continue;
+                }
+                if (Array.isArray(value) && value[0] instanceof File) {
+                    for (const v of value) {
+                        formData.append(key, v);
+                    }
+                    continue;
+                }
+                if (key === 'photo' || key === 'cv' || key === 'video' || key === 'attachments') {
                     continue;
                 }
                 try {
@@ -116,10 +92,6 @@ export class AdminUsersService {
                 }
             }
         }
-        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/users`, formData);
-    }
-
-    deleteUser(id: number): Observable<void> {
-        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
+        return formData;
     }
 }

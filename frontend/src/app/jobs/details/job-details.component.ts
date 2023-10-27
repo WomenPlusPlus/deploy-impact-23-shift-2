@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChange,
+    ViewEncapsulation
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { DateAgoPipe } from '@app/common/pipes/date-ago/date-ago.pipe';
@@ -27,7 +35,9 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class JobDetailsComponent implements OnInit {
+export class JobDetailsComponent implements OnInit, OnChanges {
+    @Input() id?: number;
+
     vm$ = this.jobDetailsStore.vm$;
 
     constructor(
@@ -37,7 +47,17 @@ export class JobDetailsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        const id = Number(this.route.snapshot.paramMap.get('id'));
+        this.loadData();
+    }
+
+    ngOnChanges(changes: Record<keyof JobDetailsComponent, SimpleChange>): void {
+        if (changes.id && !changes.id.firstChange) {
+            this.loadData();
+        }
+    }
+
+    private loadData() {
+        const id = this.id || Number(this.route.snapshot.paramMap.get('id'));
         if (id && !isNaN(id)) {
             this.jobDetailsStore.getDetails(id);
         } else {

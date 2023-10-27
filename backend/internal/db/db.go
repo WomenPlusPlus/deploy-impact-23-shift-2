@@ -1,39 +1,23 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"log"
+	"os"
 	"shift/internal/entity"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
-type UserDB interface {
-	DeleteUser(int) error
-	UpdateUser(*entity.User) error
-	GetUsers() ([]*entity.User, error)
-	GetUserByID(int) (*entity.User, error)
-
-	CreateAssociation(*entity.Association) error
-	DeleteAssociation(int) error
-	UpdateAssociation(*entity.Association) error
-	GetAssociations() ([]*entity.Association, error)
-	GetAssociationByID(int) (*entity.Association, error)
-}
-
-// docker run --name shift-postgres -e POSTGRES_PASSWORD=shift2023 -p 5432:5432 -d postgres
 
 type PostgresDB struct {
 	db *sqlx.DB
 }
 
 func NewPostgresDB() *PostgresDB {
-	connStr := "postgres://postgres:shift2023@localhost:5432/postgres?sslmode=disable"
-	db, err := sqlx.Connect("postgres", connStr)
-
+	db, err := sqlx.Connect("postgres", os.Getenv("POSTGRESQL_URL"))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -41,34 +25,6 @@ func NewPostgresDB() *PostgresDB {
 	return &PostgresDB{
 		db: db,
 	}
-}
-
-func (db *PostgresDB) Init() {
-	db.createUserTable()
-}
-
-func (db *PostgresDB) createUserTable() {
-	query := `
-	CREATE TABLE IF NOT EXISTS users (
-		id serial primary key,
-		firstName varchar(50),
-		lastName varchar(50),
-		preferredName varchar(20),
-		email varchar(100) not null,
-		phoneNumber varchar(20),
-		birthDate timestamp,
-		imageUrl varchar(255),
-		linkedinUrl varchar(250),
-		githubUrl varchar(250),
-		portfolioUrl varchar(250),
-		state varchar(250),
-		createdAt timestamp
-	)`
-	db.db.MustExec(query)
-}
-
-func (s *PostgresDB) UpdateUser(*entity.User) error {
-	return nil
 }
 
 func (s *PostgresDB) DeleteUser(id int) error {
@@ -85,36 +41,15 @@ func (s *PostgresDB) DeleteUser(id int) error {
 	return nil
 }
 
-func (s *PostgresDB) GetUsers() ([]*entity.User, error) {
-	users := []*entity.User{}
-	rows, err := s.db.Query("select * from users")
-	defer rows.Close()
-
-	if err != nil {
-		return nil, err
-	}
-
-	for rows.Next() {
-		user, err := createUser(rows)
-		if err != nil {
-			return nil, fmt.Errorf("cannot create user")
-		}
-		users = append(users, user)
-	}
-
-	return users, nil
-}
-
-func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
+func (pdb *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users
 				where id = $1`
-	rows, err := s.db.Queryx(query, id)
-	defer rows.Close()
-
+	rows, err := pdb.db.Queryx(query, id)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.UserRecordView)
@@ -126,6 +61,71 @@ func (s *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	}
 
 	return nil, fmt.Errorf("could not find user record view: id=%d", id)
+}
+
+func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordView, error) {
+	query := `select id, kind, email, state, created_at
+				from users
+				where email = $1 and state = 'ACTIVE'`
+	rows, err := pdb.db.Queryx(query, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.UserRecordView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user record view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user record view: email=%s", email)
+}
+
+func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationEntity, error) {
+	query := `select * from associations where id = $1`
+	rows, err := s.db.Queryx(query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.AssociationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan association record view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user record view: id=%v", id)
+}
+
+func (pdb *PostgresDB) GetProfileByEmail(email string) (*entity.UserProfileView, error) {
+	query := `select users.id, kind, first_name, last_name, preferred_name, email, state, created_at, image_url
+				from users
+				left outer join user_photos on users.id = user_photos.user_id
+				where email = $1`
+	rows, err := pdb.db.Queryx(query, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.UserProfileView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user record view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user record view: email=%s", email)
 }
 
 func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
@@ -173,10 +173,10 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 				left outer join candidate_videos on candidates.id = candidate_videos.candidate_id
     `
 	rows, err := pdb.db.Queryx(query)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching users in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.UserItemView)
@@ -188,6 +188,71 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 	}
 
 	return res, nil
+}
+
+func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error) {
+	res := make([]*entity.AssociationEntity, 0)
+
+	query := `select * from associations`
+
+	rows, err := pdb.db.Queryx(query)
+
+	if err != nil {
+		return nil, fmt.Errorf("fetching associations in db: %w", err)
+	}
+
+	for rows.Next() {
+		view := new(entity.AssociationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Debugf("failed to scan association view from db record: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+	fmt.Println(res)
+	return res, nil
+}
+
+func (pdb *PostgresDB) GetAllInvitations() ([]*entity.InvitationEntity, error) {
+	res := make([]*entity.InvitationEntity, 0)
+
+	query := `select * from invites`
+	rows, err := pdb.db.Queryx(query)
+	if err != nil {
+		return nil, fmt.Errorf("fetching invitations in db: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.InvitationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
+func (pdb *PostgresDB) GetInvitationByEmail(email string) (*entity.InvitationEntity, error) {
+	query := `select * from invites where email=$1`
+	rows, err := pdb.db.Queryx(query, email)
+	if err != nil {
+		return nil, fmt.Errorf("fetching invitation by email in db: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.InvitationEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find invitation: email=%s", email)
 }
 
 func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
@@ -211,13 +276,33 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching user id=%d in db: %w", id, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.UserItemView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find user: id=%d", id)
+}
+
+func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationEntity, error) {
+	query := `select * from associations where id = $1`
+	rows, err := pdb.db.Queryx(query, id)
+	if err != nil {
+		return nil, fmt.Errorf("fetching association id=%d in db: %w", id, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.AssociationEntity)
 		if err := rows.StructScan(view); err != nil {
 			logrus.Errorf("failed to scan user view from db row: %v", err)
 			return nil, err
@@ -253,10 +338,10 @@ func (pdb *PostgresDB) GetAssociationUserByUserId(id int) (*entity.UserItemView,
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching association user id=%d in db: %w", id, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.UserItemView)
@@ -306,10 +391,10 @@ func (pdb *PostgresDB) GetCandidateByUserId(id int) (*entity.UserItemView, error
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching candidate id=%d in db: %w", id, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.UserItemView)
@@ -348,10 +433,10 @@ func (pdb *PostgresDB) GetCompanyUserByUserId(id int) (*entity.UserItemView, err
 				where users.id = $1
     `
 	rows, err := pdb.db.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching company user id=%d in db: %w", id, err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.UserItemView)
@@ -405,6 +490,159 @@ func (pdb *PostgresDB) EditUser(id int, user *entity.UserEntity) (*entity.UserEn
 	return res, nil
 }
 
+func (pdb *PostgresDB) CreateAssociation(assoc *entity.AssociationEntity) (*entity.AssociationEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	assocId, err := pdb.createAssociation(tx, assoc)
+	if err != nil {
+		return nil, err
+	}
+	assoc, err = pdb.getAssociationById(tx, assocId)
+	if err != nil {
+		logrus.Errorf("getting added associations from db: %v", err)
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit associations creation in db: %v", err)
+		return nil, err
+	}
+	return assoc, nil
+}
+
+func (pdb *PostgresDB) AssignAssociationLogo(id int, logoUrl string) error {
+	query := `update associations set logo_url=$1 where id=$2`
+
+	_, err := pdb.db.Queryx(query, logoUrl, id)
+	if err != nil {
+		return fmt.Errorf("could not assign logo %s to association %d: %w", logoUrl, id, err)
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) CreateInvitation(inv *entity.InvitationEntity) (*entity.InvitationEntity, error) {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	invId, err := pdb.createInvitation(tx, inv)
+	if err != nil {
+		return nil, err
+	}
+	inv, err = pdb.getInvitationById(tx, invId)
+	if err != nil {
+		logrus.Errorf("getting added invitations from db: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit invitations creation in db: %v", err)
+		return nil, err
+	}
+
+	return inv, nil
+}
+
+func (pdb *PostgresDB) UpdateInvitationState(id int, state string) error {
+	query := `update invites set state=$2 where id=$1`
+	if _, err := pdb.db.Queryx(query, id, state); err != nil {
+		return fmt.Errorf("executing query: %w", err)
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) SetInvitationTicket(id int, ticket string) error {
+	query := `update invites set state='PENDING', ticket=$2 where id=$1`
+	if _, err := pdb.db.Queryx(query, id, ticket); err != nil {
+		return fmt.Errorf("executing query: %w", err)
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
+	query := `select * from associations where id = $1`
+	rows, err := tx.Queryx(query, id)
+	if err != nil {
+		logrus.Debugf("failed to get association with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		association := new(entity.AssociationEntity)
+		if err := rows.StructScan(association); err != nil {
+			logrus.Debugf("failed to scan association user from db record: %v", err)
+			return nil, err
+		}
+		return association, nil
+	}
+	return nil, fmt.Errorf("could not find association user with id=%d", id)
+}
+
+func (pdb *PostgresDB) getInvitationById(tx sqlx.Queryer, id int) (*entity.InvitationEntity, error) {
+	query := `select * from invites where id = $1`
+	rows, err := tx.Queryx(query, id)
+	if err != nil {
+		logrus.Debugf("failed to get invitation  with id=%d in db: %v", id, err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		inv := new(entity.InvitationEntity)
+		if err := rows.StructScan(inv); err != nil {
+			logrus.Debugf("failed to scan invitation user from db record: %v", err)
+			return nil, err
+		}
+		return inv, nil
+	}
+	return nil, fmt.Errorf("could not find invitation user with id=%d", id)
+
+}
+
+func (pdb *PostgresDB) createAssociation(tx NamedQuerier, association *entity.AssociationEntity) (int, error) {
+	query := `insert into associations
+		(
+			name,
+			website_url,
+			focus
+		)
+		values (
+			:name,
+			:website_url,
+			:focus
+		)
+		returning id`
+	associationId, err := PreparedQuery(tx, query, association)
+	if err != nil {
+		logrus.Debugf("failed to insert association in db: %v", err)
+		return 0, err
+	}
+	return associationId, nil
+}
+
+func (pdb *PostgresDB) createInvitation(tx NamedQuerier, inv *entity.InvitationEntity) (int, error) {
+	query := `insert into invites
+		(
+		 	creator_id,
+			kind,
+			role,
+		 	entity_id,
+			email,
+		 	expire_at
+		)
+		values (
+		 	:creator_id,
+			:kind,
+			:role,
+		 	:entity_id,
+			:email,
+		 	:expire_at
+		)
+		returning id`
+	invId, err := PreparedQuery(tx, query, inv)
+	if err != nil {
+		logrus.Debugf("failed to insert invitations in db: %v", err)
+		return 0, err
+	}
+	return invId, nil
+}
+
 func (pdb *PostgresDB) CreateAssociationUser(associationUser *entity.AssociationUserEntity) (*entity.AssociationUserEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -446,7 +684,7 @@ func (pdb *PostgresDB) EditAssociationUser(id int, associationUser *entity.Assoc
 	associationUser.UserID = userId
 
 	query := `update association_users
-				set association_id=:association_id, role=:role
+				set association_id=:association_id
 				where user_id=:user_id
 				returning id`
 	associationUserId, err := PreparedQuery(tx, query, associationUser)
@@ -600,7 +838,7 @@ func (pdb *PostgresDB) EditCompanyUser(id int, companyUser *entity.CompanyUserEn
 	companyUser.UserID = userId
 
 	query := `update company_users
-				set company_id=:company_id, role=:role
+				set company_id=:company_id
 				where user_id=:user_id
 				returning id`
 	companyUserId, err := PreparedQuery(tx, query, companyUser)
@@ -644,10 +882,10 @@ func (pdb *PostgresDB) GetCandidateSkills(candidateId int) (entity.CandidateSkil
 	query := `select * from candidate_skills where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching skills for candidate in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.CandidateSkillEntity)
@@ -684,10 +922,10 @@ func (pdb *PostgresDB) GetCandidateSpokenLanguages(candidateId int) (entity.Cand
 	query := `select * from candidate_spoken_languages where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching spoken languages for candidate in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.CandidateSpokenLanguageEntity)
@@ -724,10 +962,10 @@ func (pdb *PostgresDB) GetCandidateSeekLocations(candidateId int) (entity.Candid
 	query := `select * from candidate_seek_locations where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching seek locations for candidate in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.CandidateSeekLocationEntity)
@@ -781,10 +1019,10 @@ func (pdb *PostgresDB) GetCandidateAttachments(candidateId int) (entity.Candidat
 	query := `select * from candidate_attachments where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching attachments for candidate in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.CandidateAttachmentEntity)
@@ -838,10 +1076,10 @@ func (pdb *PostgresDB) GetCandidateEducationHistoryList(candidateId int) (entity
 	query := `select * from candidate_education_history where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching education history for candidate in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.CandidateEducationHistoryEntity)
@@ -878,10 +1116,10 @@ func (pdb *PostgresDB) GetCandidateEmploymentHistoryList(candidateId int) (entit
 	query := `select * from candidate_employment_history where candidate_id = $1`
 
 	rows, err := pdb.db.Queryx(query, candidateId)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("fetching employment history for candidate in db: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		view := new(entity.CandidateEmploymentHistoryEntity)
@@ -1072,11 +1310,11 @@ func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, cand
 func (pdb *PostgresDB) getUserById(tx sqlx.Queryer, id int) (*entity.UserEntity, error) {
 	query := `select * from users where id = $1`
 	rows, err := tx.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get user with id=%d in db: %v", id, err)
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		user := new(entity.UserEntity)
@@ -1095,11 +1333,11 @@ func (pdb *PostgresDB) getAssociationUserById(tx sqlx.Queryer, id int) (*entity.
 				inner join association_users on users.id = association_users.user_id
 				where association_users.id = $1`
 	rows, err := tx.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get association user with id=%d in db: %v", id, err)
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		associationUser := new(entity.AssociationUserEntity)
@@ -1118,11 +1356,11 @@ func (pdb *PostgresDB) getCandidateById(tx sqlx.Queryer, id int) (*entity.Candid
 				inner join candidates on users.id = candidates.user_id
 				where candidates.id = $1`
 	rows, err := tx.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get candidate with id=%d in db: %v", id, err)
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		candidate := new(entity.CandidateEntity)
@@ -1141,11 +1379,11 @@ func (pdb *PostgresDB) getCompanyUserById(tx sqlx.Queryer, id int) (*entity.Comp
 				inner join company_users on users.id = company_users.user_id
 				where company_users.id = $1`
 	rows, err := tx.Queryx(query, id)
-	defer rows.Close()
 	if err != nil {
 		logrus.Debugf("failed to get company user with id=%d in db: %v", id, err)
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		companyUser := new(entity.CompanyUserEntity)
@@ -1213,31 +1451,4 @@ func (pdb *PostgresDB) editUser(tx NamedQuerier, id int, user *entity.UserEntity
 		return 0, err
 	}
 	return userId, nil
-}
-
-func createUser(rows *sql.Rows) (*entity.User, error) {
-	var createdAt sql.NullTime
-	user := new(entity.User)
-
-	err := rows.Scan(
-		&user.ID,
-		&user.FirstName,
-		&user.LastName,
-		&user.PreferredName,
-		&user.Email,
-		&user.PhoneNumber,
-		&user.BirthDate,
-		&user.ImageUrl,
-		&user.LinkedinUrl,
-		&user.GithubUrl,
-		&user.PortfolioUrl,
-		&user.State,
-		&createdAt,
-	)
-
-	if err != nil {
-		return nil, fmt.Errorf("cannot scan user row")
-	}
-
-	return user, nil
 }

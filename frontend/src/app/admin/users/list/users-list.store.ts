@@ -105,7 +105,7 @@ export class UsersListStore extends ComponentStore<UsersListState> {
         ...pick(initialState, 'filters', 'mode')
     }));
 
-    setMode = this.updater((state, mode: UsersListMode) => ({ ...state, mode }));
+    toggleMode = this.updater((state) => ({ ...state, mode: state.mode !== 'detailed' ? 'detailed' : 'short' }));
 
     updateFilterKind = this.updater((state, kind: UserKindEnum) => ({
         ...state,

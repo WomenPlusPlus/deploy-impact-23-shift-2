@@ -16,6 +16,7 @@ var (
 	UserStateActive    = "ACTIVE"
 	UserStateAnonymous = "ANONYMOUS"
 	UserStateDeleted   = "DELETED"
+	UserStateInvited   = "INVITED"
 )
 
 var (
@@ -56,5 +57,9 @@ var (
 )
 
 var (
-	InvitationKindAdmin = "ADMIN"
+	InvitationStateCreated   = "CREATED"
+	InvitationStatePending   = "PENDING"
+	InvitationStateError     = "ERROR"
+	InvitationStateAccepted  = "ACCEPTED"
+	InvitationStateCancelled = "CANCELLED"
 )

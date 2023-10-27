@@ -4,8 +4,6 @@ import (
 	"time"
 )
 
-// USER
-
 type User struct {
 	ID            int       `json:"id"`
 	FirstName     string    `json:"firstName"`
@@ -27,13 +25,13 @@ type UserEntity struct {
 	Kind          string    `db:"kind"`
 	FirstName     string    `db:"first_name"`
 	LastName      string    `db:"last_name"`
-	PreferredName string    `db:"preferred_name"`
+	PreferredName *string   `db:"preferred_name"`
 	Email         string    `db:"email"`
 	PhoneNumber   string    `db:"phone_number"`
 	BirthDate     time.Time `db:"birth_date"`
-	LinkedInUrl   string    `db:"linkedin_url"`
-	GithubUrl     string    `db:"github_url"`
-	PortfolioUrl  string    `db:"portfolio_url"`
+	LinkedInUrl   *string   `db:"linkedin_url"`
+	GithubUrl     *string   `db:"github_url"`
+	PortfolioUrl  *string   `db:"portfolio_url"`
 	State         string    `db:"state"`
 	CreatedAt     time.Time `db:"created_at"`
 }
@@ -42,29 +40,29 @@ func (u *UserEntity) FromCreationRequest(request *CreateUserRequest) error {
 	u.Kind = request.Kind
 	u.FirstName = request.FirstName
 	u.LastName = request.LastName
-	u.PreferredName = request.PreferredName
+	u.PreferredName = &request.PreferredName
 	u.Email = request.Email
 	u.PhoneNumber = request.PhoneNumber
 	u.BirthDate = request.BirthDate
-	u.LinkedInUrl = request.LinkedInUrl
-	u.GithubUrl = request.GithubUrl
-	u.PortfolioUrl = request.PortfolioUrl
+	u.LinkedInUrl = &request.LinkedInUrl
+	u.GithubUrl = &request.GithubUrl
+	u.PortfolioUrl = &request.PortfolioUrl
 	u.State = UserStateActive
 	return nil
 }
 
 type CandidateEntity struct {
-	ID                int    `db:"id"`
-	UserID            int    `db:"user_id"`
-	YearsOfExperience int    `db:"years_of_experience"`
-	JobStatus         string `db:"job_status"`
-	SeekJobType       string `db:"seek_job_type"`
-	SeekCompanySize   string `db:"seek_company_size"`
-	SeekLocationType  string `db:"seek_location_type"`
-	SeekSalary        int    `db:"seek_salary"`
-	SeekValues        string `db:"seek_values"`
-	WorkPermit        string `db:"work_permit"`
-	NoticePeriod      int    `db:"notice_period"`
+	ID                int     `db:"id"`
+	UserID            int     `db:"user_id"`
+	YearsOfExperience int     `db:"years_of_experience"`
+	JobStatus         string  `db:"job_status"`
+	SeekJobType       string  `db:"seek_job_type"`
+	SeekCompanySize   string  `db:"seek_company_size"`
+	SeekLocationType  string  `db:"seek_location_type"`
+	SeekSalary        *int    `db:"seek_salary"`
+	SeekValues        *string `db:"seek_values"`
+	WorkPermit        string  `db:"work_permit"`
+	NoticePeriod      *int    `db:"notice_period"`
 	*UserEntity
 }
 
@@ -75,13 +73,21 @@ func (c *CandidateEntity) FromCreationRequest(request *CreateUserRequest) error 
 	}
 	c.YearsOfExperience = request.YearsOfExperience
 	c.JobStatus = request.JobStatus
-	c.SeekJobType = request.SeekJobType
-	c.SeekCompanySize = request.SeekCompanySize
 	c.SeekLocationType = request.SeekLocationType
-	c.SeekSalary = request.SeekSalary
-	c.SeekValues = request.SeekValues
+	c.SeekSalary = &request.SeekSalary
+	c.SeekValues = &request.SeekValues
 	c.WorkPermit = request.WorkPermit
-	c.NoticePeriod = request.NoticePeriod
+	c.NoticePeriod = &request.NoticePeriod
+	if request.SeekJobType != "" {
+		c.SeekJobType = request.SeekJobType
+	} else {
+		c.SeekJobType = JobTypeAny
+	}
+	if request.SeekCompanySize != "" {
+		c.SeekCompanySize = request.SeekCompanySize
+	} else {
+		c.SeekCompanySize = CompanySizeAny
+	}
 	return nil
 }
 
@@ -352,7 +358,21 @@ type CompanyUserItemView struct {
 type UserRecordView struct {
 	ID        int       `db:"id"`
 	Kind      string    `db:"kind"`
+	Role      string    `db:"role"`
 	Email     string    `db:"email"`
 	State     string    `db:"state"`
 	CreatedAt time.Time `db:"created_at"`
+}
+
+type UserProfileView struct {
+	ID            int       `db:"id"`
+	Kind          string    `db:"kind"`
+	Role          string    `db:"role"`
+	FirstName     string    `db:"first_name"`
+	LastName      string    `db:"last_name"`
+	PreferredName *string   `db:"preferred_name"`
+	ImageUrl      *string   `db:"image_url"`
+	Email         string    `db:"email"`
+	State         string    `db:"state"`
+	CreatedAt     time.Time `db:"created_at"`
 }

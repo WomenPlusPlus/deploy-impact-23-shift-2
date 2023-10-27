@@ -6,6 +6,10 @@ const routes: Routes = [
         loadComponent: () => import('./list/jobs-list.component').then((m) => m.JobsListComponent)
     },
     {
+        path: 'search',
+        loadComponent: () => import('./search/search-jobs.component').then((m) => m.SearchJobsComponent)
+    },
+    {
         path: ':id',
         loadComponent: () => import('./details/job-details.component').then((m) => m.JobDetailsComponent)
     },

@@ -1,2 +1,77 @@
-<!-- TODO -->
-<p>jobs-list works!</p>
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error">
+        <app-content-error class="block h-screen/2-s"></app-content-error>
+    </ng-container>
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container *ngIf="vm.list?.items as jobs">
+            <header class="p-4 mb-5 flex justify-between items-center">
+                <h1 class="text-5xl">Jobs</h1>
+                <div class="grid justify-items-center px-4">
+                    <span class="text-5xl">{{ jobs.length || 0 }}</span>
+                    <span class="text-lg">In total</span>
+                </div>
+            </header>
+            <section class="p-4 flex">
+                <label class="flex items-center gap-2">
+                    <span>Show only my jobs</span>
+                    <input
+                        type="checkbox"
+                        class="checkbox checkbox-sm"
+                        [ngModel]="vm.onlyMine"
+                        (ngModelChange)="onMyJobsChange(!vm.onlyMine)"
+                    />
+                </label>
+                <input
+                    *appLet="vm.searchTerm as searchTerm"
+                    type="search"
+                    placeholder="Search"
+                    class="input input-bordered input-sm ml-auto rounded w-full sm:w-80"
+                    [class.input-error]="searchTerm.length && searchTerm.length < 3"
+                    [ngModel]="searchTerm"
+                    (ngModelChange)="onSearchTermChange($event)"
+                />
+            </section>
+            <section class="overflow-x-auto">
+                <table class="table table-lg">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Title</th>
+                            <th>Job Type</th>
+                            <th>Creator</th>
+                            <th>Company</th>
+                            <th>Location</th>
+                            <th>Creation Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let job of jobs">
+                            <th>
+                                <a [routerLink]="['/jobs', job.id]" class="link">#{{ job.id }}</a>
+                            </th>
+                            <td>{{ job.title }}</td>
+                            <td>{{ job.jobType | jobTypeLabel }}</td>
+                            <td>
+                                <a [routerLink]="['/admin', 'users', job.creator.id]" class="link">
+                                    {{ job.creator.name }} ({{ job.creator.email }})
+                                </a>
+                            </td>
+                            <td>
+                                <a [routerLink]="['/companies', job.company.id]" class="link">{{ job.company.name }}</a>
+                            </td>
+                            <td>
+                                {{ job.location.city.name }}
+                                •
+                                {{ job.location.type | jobLocationTypeLabel }}
+                            </td>
+                            <td>{{ job.creationDate | date }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </ng-container>
+    </ng-container>
+</ng-container>

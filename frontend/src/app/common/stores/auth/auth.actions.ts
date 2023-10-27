@@ -1,8 +1,13 @@
-import { createActionGroup, emptyProps } from '@ngrx/store';
+import { createActionGroup, emptyProps, props } from '@ngrx/store';
+
+import { Profile } from '@app/common/models/profile.model';
 
 export const AuthActions = createActionGroup({
     source: 'Auth Page',
     events: {
-        Login: emptyProps()
+        InitAuthenticated: emptyProps(),
+        InitNotAuthenticated: emptyProps(),
+        AccountLoadedSuccess: props<{ account: Profile }>(),
+        AccountLoadedError: emptyProps()
     }
 });

@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { AssociationFormComponent } from '@app/admin/associations/form/association-form.component';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 
@@ -14,7 +15,15 @@ import { CreateAssociationState, CreateAssociationStore } from './create-associa
 @Component({
     selector: 'app-create-association',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorMessagePipe, RouterModule, LetDirective],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FormErrorMessagePipe,
+        RouterModule,
+        LetDirective,
+        AssociationFormComponent
+    ],
     providers: [CreateAssociationStore],
     templateUrl: './create-association.component.html'
 })
@@ -22,8 +31,6 @@ export class CreateAssociationComponent implements OnInit {
     form!: FormGroup<CreateAssociationFormGroup>;
 
     vm$: Observable<CreateAssociationState> = this.createAssociationStore.vm$;
-
-    selectedFile: File | null = null;
 
     constructor(
         private readonly fb: FormBuilder,
@@ -43,17 +50,12 @@ export class CreateAssociationComponent implements OnInit {
         this.createAssociationStore.submitForm(formData);
     }
 
-    onFileSelected(event: Event): void {
-        const file = (event.target as HTMLInputElement).files?.[0];
-        this.form.controls.logo.setValue(file || null);
-    }
-
     private initForm(): void {
         this.form = this.fb.group({
-            name: this.fb.control('', [Validators.required, Validators.maxLength(256)]),
-            logo: this.fb.control(new File([], ''), Validators.required),
-            url: this.fb.control('', [Validators.required, Validators.maxLength(512)]),
-            focus: this.fb.control('', [Validators.required, Validators.maxLength(1024)])
+            name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
+            logo: this.fb.control<File | null>(null),
+            websiteUrl: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            focus: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
         });
     }
 }

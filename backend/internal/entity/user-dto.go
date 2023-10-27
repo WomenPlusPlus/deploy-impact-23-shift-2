@@ -5,7 +5,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"regexp"
 	"shift/internal/utils"
 	"strconv"
 	"strings"
@@ -48,13 +47,13 @@ func (u *EditUserRequest) FillKindSpecificDetail(kind string) error {
 		return nil
 	case UserKindAssociation:
 		u.CreateUserAssociationRequest = new(CreateUserAssociationRequest)
-		return u.fromFormDataAssociation(u.fd)
+		return u.fromFormDataEditAssociation(u.fd)
 	case UserKindCandidate:
 		u.CreateUserCandidateRequest = new(CreateUserCandidateRequest)
 		return u.fromFormDataCandidate(u.fd)
 	case UserKindCompany:
 		u.CreateUserCompanyRequest = new(CreateUserCompanyRequest)
-		return u.fromFormDataCompany(u.fd)
+		return u.fromFormDataEditCompany(u.fd)
 	default:
 		return fmt.Errorf("unknown user kind: %s", u.Kind)
 	}
@@ -64,7 +63,7 @@ func (u *EditUserRequest) fromFormData(id int, fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(utils.EmailRegex)
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -137,7 +136,7 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 			Kind:          user.Kind,
 			FirstName:     user.FirstName,
 			LastName:      user.LastName,
-			PreferredName: user.PreferredName,
+			PreferredName: utils.SafeUnwrap(user.PreferredName),
 			ImageUrl:      utils.SafeUnwrap(user.ImageUrl),
 			Email:         user.Email,
 			State:         user.State,
@@ -207,6 +206,24 @@ type ListCompanyUserResponse struct {
 	CompanyId     int `json:"companyId"`
 }
 
+type UserRecordResponse struct {
+	ID        int       `json:"id"`
+	Kind      string    `json:"kind"`
+	Role      string    `json:"role"`
+	Email     string    `json:"email"`
+	State     string    `json:"state"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+func (r *UserRecordResponse) FromUserRecordView(v *UserRecordView) {
+	r.ID = v.ID
+	r.Kind = v.Kind
+	r.Role = v.Role
+	r.Email = v.Email
+	r.State = v.State
+	r.CreatedAt = v.CreatedAt
+}
+
 type ViewUserResponse struct {
 	ID            int        `json:"id"`
 	Kind          string     `json:"kind"`
@@ -216,10 +233,11 @@ type ViewUserResponse struct {
 	Email         string     `json:"email"`
 	PhoneNumber   string     `json:"phoneNumber"`
 	BirthDate     time.Time  `json:"birthDate"`
-	Photo         *LocalFile `json:"photo"`
+	Photo         *LocalFile `json:"photo,omitempty"`
 	LinkedInUrl   string     `json:"linkedInUrl"`
 	GithubUrl     string     `json:"githubUrl"`
 	PortfolioUrl  string     `json:"portfolioUrl"`
+	State         string     `json:"state"`
 
 	AssociationUserId int    `json:"associationUserId,omitempty"`
 	AssociationId     int    `json:"associationId,omitempty"`
@@ -235,14 +253,15 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.Kind = e.Kind
 	r.FirstName = e.FirstName
 	r.LastName = e.LastName
-	r.PreferredName = e.PreferredName
+	r.PreferredName = utils.SafeUnwrap(e.PreferredName)
 	r.Email = e.Email
 	r.PhoneNumber = e.PhoneNumber
 	r.BirthDate = e.BirthDate
+	r.State = e.State
 	r.Photo = NewLocalFile(e.ImageUrl)
-	r.LinkedInUrl = e.LinkedInUrl
-	r.GithubUrl = e.GithubUrl
-	r.PortfolioUrl = e.PortfolioUrl
+	r.LinkedInUrl = utils.SafeUnwrap(e.LinkedInUrl)
+	r.GithubUrl = utils.SafeUnwrap(e.GithubUrl)
+	r.PortfolioUrl = utils.SafeUnwrap(e.PortfolioUrl)
 
 	switch e.Kind {
 	case UserKindAssociation:
@@ -387,7 +406,7 @@ func (u *CreateUserRequest) fromFormData(fd *formdata.FormData) error {
 	fd.Validate("firstName").Required().HasN(1)
 	fd.Validate("lastName").Required().HasN(1)
 	fd.Validate("preferredName")
-	fd.Validate("email").Required().HasNMin(1).Match(regexp.MustCompile("^(\\w|\\.)+(\\+\\d+)?@([\\w-]+\\.)+[\\w-]{2,10}$"))
+	fd.Validate("email").Required().HasNMin(1).Match(utils.EmailRegex)
 	fd.Validate("phoneNumber").Required().HasNMin(1)
 	fd.Validate("birthDate").Required().HasNMin(1)
 	fd.Validate("photo")
@@ -453,6 +472,21 @@ func (u *CreateUserRequest) fromFormDataAssociation(fd *formdata.FormData) error
 	return nil
 }
 
+func (u *CreateUserRequest) fromFormDataEditAssociation(fd *formdata.FormData) error {
+	fd.Validate("associationId").Required().HasN(1)
+
+	if fd.HasErrors() {
+		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
+	}
+
+	id, err := strconv.Atoi(fd.Get("associationId").First())
+	if err != nil {
+		return fmt.Errorf("invalid association id format: %v", err)
+	}
+	u.AssociationId = id
+	return nil
+}
+
 func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 	fd.Validate("yearsOfExperience").Required().HasN(1)
 	fd.Validate("jobStatus").Required().HasN(1)
@@ -494,7 +528,7 @@ func (u *CreateUserRequest) fromFormDataCandidate(fd *formdata.FormData) error {
 		return fmt.Errorf("invalid seek salary value: %w", err)
 	}
 
-	if err := utils.Atoi(fd.Get("noticePeriod").First(), &u.NoticePeriod); err != nil {
+	if err := utils.AtoiOpt(fd.Get("noticePeriod").First(), &u.NoticePeriod); err != nil {
 		return fmt.Errorf("invalid notice period value: %w", err)
 	}
 
@@ -540,5 +574,20 @@ func (u *CreateUserRequest) fromFormDataCompany(fd *formdata.FormData) error {
 	}
 	u.CompanyId = id
 	u.CompanyRole = fd.Get("role").First()
+	return nil
+}
+
+func (u *CreateUserRequest) fromFormDataEditCompany(fd *formdata.FormData) error {
+	fd.Validate("companyId").Required().HasN(1)
+
+	if fd.HasErrors() {
+		return fmt.Errorf("validation errors: %s", strings.Join(fd.Errors(), "; "))
+	}
+
+	id, err := strconv.Atoi(fd.Get("companyId").First())
+	if err != nil {
+		return fmt.Errorf("invalid company id format: %v", err)
+	}
+	u.CompanyId = id
 	return nil
 }
