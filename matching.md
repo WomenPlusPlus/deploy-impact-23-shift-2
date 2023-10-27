@@ -54,10 +54,10 @@ assumed predefined language levels (beginner, intermediate, advanced), and prede
 5. Values,  Job description fields / Candidate about me field  -> 0.4
 
 ###  Algorithm:
-Build vector having the elements on subsequent positions for every item of the matched entity (job for candidates and candidates for jobs)
-Apply weighting to positions
-Calculate distances between the base vector and the matched entity vectors and choose n closest ones and return them. 
+- Build vector having the elements on subsequent positions for every item of the matched entity (job for candidates and candidates for jobs)
+- Apply weighting to positions
+- Calculate distances between the base vector and the matched entity vectors and choose n closest ones and return them. 
 (Due to the fact that different positions of the vectors will have different value scales (some numerical and some categorical) - the matching algorithm should take into account this property)
 
-
-- Companies - candidates match can be done in the same way, having all jobs posted by the company as company representation and then calculating the summed distance of vectors
+<br />
+Companies - candidates match can be done in the same way, having all jobs posted by the company as company representation and then calculating the summed distance of vectors
