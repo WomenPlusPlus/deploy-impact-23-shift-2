@@ -51,7 +51,8 @@
 * TODO - List them
 
 # :memo: License file
-* TODO
+GPL v3 
+included in repository files 
 
 # :computer: Getting started
 * TODO - How to run and install the project
