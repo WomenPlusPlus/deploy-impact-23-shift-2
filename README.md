@@ -17,7 +17,8 @@
 <!-- TOC -->
 
 # :bulb: Our Solution
-* TODO - Describe
+* TODO
+* Describe it
 - ...
 - Matching algorithm: A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md). 
 
@@ -28,7 +29,8 @@
 | Gorilla mux |DaisyUI   |Auth0     |               | Vercel      |
 | SQLX        |NgRX      |          |               |             |
 
-* TODO - Explain why
+* TODO
+* Explain why
 
 # :dart: Site Map
 * [Site map](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
@@ -46,13 +48,15 @@
 * TODO
 
 # :books: Third-party libraries
-* TODO - List them
+* TODO
+* List them
 
 # :memo: License file
 * [GNU General Public License v3.0](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/LICENSE)  
 
 # :computer: Getting started
-* TODO - How to run and install the project
+* TODO
+* How to run and install the project
 
 # :woman_technologist: Team members :man_technologist:
 | Name                                                                         | Role            | GitHub                                            |
@@ -65,4 +69,4 @@
 | [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
 
 # :pushpin: Further development
-* Please contact [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/)
+* For any further development, please contact João Rodrigues via [e-mail](mailto:joaordev@gmail.com?subject=deploy-impact-23-shift-2) or [LinkedIn](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/).
