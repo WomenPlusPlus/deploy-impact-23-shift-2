@@ -3,12 +3,11 @@
 ## :bookmark_tabs: Table of Contents
 <!-- TOC -->
 * [Our Solution](#bulb-our-solution)
-* [Tech Stack](#toolbox-tech-stack)
 * [Site Map](#dart-site-map)
 * [Designs](#art-designs)
+* [Tech Stack](#toolbox-tech-stack)
 * [Architecture](#sparkles-architecture)
 * [Database](#game_die-database)
-* [Development](#packagedevelopment)
 * [Third-party libraries](#books-third-party-libraries)
 * [License file](#memo-license-file)
 * [Getting started](#computer-getting-started)
@@ -23,6 +22,12 @@
 * Matching algorithm:
   * A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md). 
 
+## :dart: Site Map
+* [The site map design](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
+
+## :art: Designs
+* The designs were created using [Figma](https://www.figma.com/file/3BlcYSbbfCmx8oc5XdCKUN/Shift?type=design&node-id=1-1428&mode=design&t=UaqFM0xV7kPHePNj-0).
+ 
 ## :toolbox: Tech Stack
 | Backend     | Frontend | Database | Cloud Storage | Deployments |
 |-------------|----------|----------|---------------|-------------|
@@ -30,23 +35,11 @@
 | Gorilla mux |DaisyUI   |Auth0     |               | Vercel      |
 | SQLX        |NgRX      |          |               |             |
 
-* TODO
-* Explain why
-
-## :dart: Site Map
-* [The site map design](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
-
-## :art: Designs
-* The designs were created using [Figma](https://www.figma.com/file/3BlcYSbbfCmx8oc5XdCKUN/Shift?type=design&node-id=1-1428&mode=design&t=UaqFM0xV7kPHePNj-0).
- 
 ## :sparkles: Architecture
 * [The architecture diagram](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/architecture.jpg)
 
 ## :game_die: Database
 * [The database schema](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
-
-## :package:Development
-* TODO
 
 ## :books: Third-party libraries
 * TODO
