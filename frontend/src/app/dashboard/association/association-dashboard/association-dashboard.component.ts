@@ -2,7 +2,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
@@ -19,7 +19,7 @@ import { AssociationDashboardStore } from './association-dashboard.store';
     templateUrl: './association-dashboard.component.html'
 })
 export class AssociationDashboardComponent implements OnInit {
-    id?: number;
+    @Input() id!: number;
     readonly vm$ = this.associationDashboardStore.vm$;
 
     protected readonly faArrowRight = faArrowRight;
@@ -30,7 +30,6 @@ export class AssociationDashboardComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.id = 1;
         if (this.id) {
             this.associationDashboardStore.getUsers(this.id);
         } else {

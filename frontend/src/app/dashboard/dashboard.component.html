@@ -1,12 +1,14 @@
-<ng-container *ngIf="true | isAuthorized: userKindEnum.COMPANY | async">
-    <app-company-dashboard></app-company-dashboard>
-</ng-container>
-<ng-container *ngIf="true | isAuthorized: userKindEnum.ASSOCIATION | async">
-    <app-association-dashboard></app-association-dashboard>
-</ng-container>
-<ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
-    <app-admin-dashboard></app-admin-dashboard>
-</ng-container>
-<ng-container *ngIf="true | isAuthorized: userKindEnum.CANDIDATE | async">
-    <app-candidate-dashboard></app-candidate-dashboard>
+<ng-container *ngIf="profile$ | async as profile">
+    <ng-container *ngIf="true | isAuthorized: userKindEnum.COMPANY | async">
+        <app-company-dashboard [id]="profile.id"></app-company-dashboard>
+    </ng-container>
+    <ng-container *ngIf="true | isAuthorized: userKindEnum.ASSOCIATION | async">
+        <app-association-dashboard [id]="profile.id"></app-association-dashboard>
+    </ng-container>
+    <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
+        <app-admin-dashboard [id]="profile.id"></app-admin-dashboard>
+    </ng-container>
+    <ng-container *ngIf="true | isAuthorized: userKindEnum.CANDIDATE | async">
+        <app-candidate-dashboard [id]="profile.id"></app-candidate-dashboard>
+    </ng-container>
 </ng-container>

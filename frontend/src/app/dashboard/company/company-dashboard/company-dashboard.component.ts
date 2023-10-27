@@ -2,7 +2,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
@@ -21,7 +21,7 @@ import { CompanyDashboardStore } from './company-dashboard.store';
     templateUrl: './company-dashboard.component.html'
 })
 export class CompanyDashboardComponent implements OnInit {
-    id?: number;
+    @Input() id!: number;
     readonly vm$ = this.companyDashboardStore.vm$;
 
     protected readonly faArrowRight = faArrowRight;
@@ -32,7 +32,6 @@ export class CompanyDashboardComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.id = 1;
         if (this.id) {
             this.companyDashboardStore.getJobs(this.id);
             this.companyDashboardStore.getUsers(this.id);

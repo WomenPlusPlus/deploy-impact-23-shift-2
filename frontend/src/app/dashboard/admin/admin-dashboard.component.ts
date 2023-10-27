@@ -2,7 +2,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
@@ -21,7 +21,7 @@ import { AdminDashboardStore } from './admin-dashboard.store';
     templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
-    id?: number;
+    @Input() id!: number;
     readonly vm$ = this.adminDashboardStore.vm$;
 
     protected readonly faArrowRight = faArrowRight;
@@ -34,7 +34,6 @@ export class AdminDashboardComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.id = 1;
         if (this.id) {
             this.adminDashboardStore.getUsers();
             this.adminDashboardStore.getAssociations();
