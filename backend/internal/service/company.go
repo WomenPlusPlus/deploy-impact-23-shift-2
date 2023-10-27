@@ -23,8 +23,12 @@ func NewCompanyService(bucketDB entity.BucketDB, companyDB entity.CompanyDB) *Co
 }
 
 func (s *CompanyService) CreateCompany(req *entity.CreateCompanyRequest) (*entity.CreateCompanyResponse, error) {
+	company, err := s.createCompany(req)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create company: %s", err)
+	}
 
-	return s.createCompany(req)
+	return company, nil
 
 }
 
@@ -35,22 +39,17 @@ func (s *CompanyService) ListCompanies() (*entity.ListCompaniesResponse, error) 
 	}
 	logrus.Tracef("Get all companies from db: total=%d", len(companies))
 
+	res := new(entity.ListCompaniesResponse)
+	res.FromCompanies(companies)
+
 	ctx := context.Background()
-	for _, company := range companies {
-		if company == nil {
+	for _, company := range res.Items {
+		if company.Logo == nil {
 			continue
 		}
-		logoUrl, err := s.bucketDB.SignUrl(ctx, *company.LogoUrl)
-		if err != nil {
-			logrus.Errorf("could not sign url for company logo: %v", err)
-		} else {
-			logrus.Tracef("Signed url for company logo : id=%d, url=%v", company.CompanyEntity.ID, logoUrl)
-			company.LogoUrl = &logoUrl
-		}
+		utils.ReplaceWithSignedUrl(ctx, s.bucketDB, &company.Logo.Url)
 	}
 
-	res := new(entity.ListCompaniesResponse)
-	res.FromCompaniesView(companies)
 	return res, nil
 }
 
@@ -61,19 +60,7 @@ func (s *CompanyService) GetCompanyById(id int) (*entity.ViewCompanyResponse, er
 	if err != nil {
 		return nil, fmt.Errorf("getting company by id: %w", err)
 	}
-	res.FromCompanyItemView(company)
-
-	additionalLocations, err := s.companyDB.GetCompanyAdditionalLocations(res.ID)
-	if err != nil {
-		return nil, fmt.Errorf("getting company additional locations by company id: %w", err)
-	}
-	res.AdditionalLocations = make([]entity.CompanyAdditionalLocation, len(additionalLocations))
-	for i, additionalLocation := range additionalLocations {
-		res.AdditionalLocations[i] = entity.CompanyAdditionalLocation{
-			Id:   additionalLocation.CityID,
-			Name: additionalLocation.CityName,
-		}
-	}
+	res.FromCompanyEntity(company)
 
 	if res.Logo != nil {
 		utils.ReplaceWithSignedUrl(context.Background(), s.bucketDB, &res.Logo.Url)
@@ -89,47 +76,32 @@ func (s *CompanyService) createCompany(req *entity.CreateCompanyRequest) (*entit
 	}
 	logrus.Tracef("Parsed company entity: %+v", company)
 
-	additionalLocations := make(entity.CompanyAdditonalLocationsEntity, 0)
-	if err := additionalLocations.FromCreationRequest(req, company.ID); err != nil {
-		return nil, fmt.Errorf("parsing request into additional locations entity: %w", err)
+	company, err := s.companyDB.CreateCompany(company)
+	if err != nil {
+		return nil, fmt.Errorf("creating new company: %w", err)
 	}
-	logrus.Tracef("Parsed additional locations entity: %+v", additionalLocations)
-
-	if len(additionalLocations) > 0 {
-		if err := s.companyDB.AssignCompanyAdditionalLocations(company.ID, additionalLocations); err != nil {
-			logrus.Errorf("creating new additional locations: %v", err)
-		} else {
-			logrus.Tracef("Added additional locations to db: id=%d, total=%d", company.ID, len(additionalLocations))
-		}
-	} else {
-		logrus.Tracef("No additional locations added to db: id=%d", company.ID)
-	}
+	logrus.Tracef("Added company to db: id=%d", company.ID)
 
 	if req.Logo != nil {
 		if err := s.saveLogo(company.ID, req.Logo); err != nil {
-			logrus.Errorf("uploading company logo : %v", err)
+			logrus.Errorf("uploading company logo: %v", err)
 		}
-		logrus.Tracef("Added  company logo: id=%d", company.ID)
-	} else {
-		logrus.Tracef("No  company logo added: id=%d", company.ID)
 	}
 
-	return &entity.CreateCompanyResponse{
-		ID:        company.ID,
-		CompanyID: company.ID,
-	}, nil
+	return &entity.CreateCompanyResponse{ID: company.ID}, nil
 }
 
 func (s *CompanyService) saveLogo(companyId int, logoHeader *multipart.FileHeader) error {
-	path := fmt.Sprintf("%d/logo/%s", companyId, logoHeader.Filename)
+	path := fmt.Sprintf("companies/%d/logo/%s", companyId, logoHeader.Filename)
 	if err := s.uploadFile(path, logoHeader); err != nil {
 		return fmt.Errorf("uploading logo: %w", err)
 	}
-	logrus.Tracef("Added logo to bucket: id=%d", companyId)
-	if err := s.companyDB.AssignCompanyLogo(entity.NewCompanyLogoEntity(companyId, path)); err != nil {
-		return fmt.Errorf("storing logo to db: %v", err)
+	logrus.Tracef("Added logo to bucket: id=%d, path=%s", companyId, path)
+
+	if err := s.companyDB.AssignCompanyLogo(companyId, path); err != nil {
+		return fmt.Errorf("saving logo: %w", err)
 	}
-	logrus.Tracef("Added logo to db: id=%d", companyId)
+	logrus.Tracef("Added photo to db: id=%d", companyId)
 	return nil
 }
 

@@ -58,8 +58,20 @@ create table if not exists candidates
 
 create table if not exists companies
 (
-    id serial primary key
-    -- TODO: temporary, replace with what Adrianna has on her branch.
+    id            serial primary key,
+    name          varchar(512)  not null,
+    logo_url      varchar(512),
+    linkedin_url  varchar(512),
+    kununu_url    varchar(512),
+    website_url   varchar(512),
+    contact_email varchar(512)  not null,
+    contact_phone varchar(128)  not null,
+    company_size  company_size           default 'ANY',
+    address       varchar(256)  not null,
+    mission       varchar(4096) not null,
+    values        varchar(4096) not null,
+    job_types     varchar(512)  not null,
+    created_at    timestamp     not null default CURRENT_TIMESTAMP
 );
 
 create table if not exists company_users
@@ -146,9 +158,9 @@ create table if not exists candidate_attachments
 
 create table if not exists candidate_videos
 (
-    id        serial primary key,
+    id           serial primary key,
     candidate_id int          not null,
-    video_url varchar(512) not null,
+    video_url    varchar(512) not null,
     constraint fk_candidate foreign key (candidate_id) references candidates (id)
 );
 

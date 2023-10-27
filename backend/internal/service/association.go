@@ -41,7 +41,7 @@ func (s *AssociationService) createAssociation(req *entity.CreateAssociationRequ
 
 	assoc, err := s.associationDB.CreateAssociation(assoc)
 	if err != nil {
-		return nil, fmt.Errorf("creating new admin: %w", err)
+		return nil, fmt.Errorf("creating new association: %w", err)
 	}
 	logrus.Tracef("Added association to db: id=%d", assoc.ID)
 
@@ -92,11 +92,11 @@ func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociations
 }
 
 func (s *AssociationService) saveLogo(associationId int, logoHeader *multipart.FileHeader) error {
-	path := fmt.Sprintf("%d/logo/%s", associationId, logoHeader.Filename)
+	path := fmt.Sprintf("associations/%d/logo/%s", associationId, logoHeader.Filename)
 	if err := s.uploadFile(path, logoHeader); err != nil {
 		return fmt.Errorf("uploading logo: %w", err)
 	}
-	logrus.Tracef("Added photo to bucket: id=%d", associationId)
+	logrus.Tracef("Added logo to bucket: id=%d, path=%s", associationId, path)
 
 	if err := s.associationDB.AssignAssociationLogo(associationId, path); err != nil {
 		return fmt.Errorf("saving logo: %w", err)

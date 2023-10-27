@@ -28,6 +28,9 @@ func (s *APIServer) initCompanyRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleDeleteCompany)).
 		Methods(http.MethodDelete)
 
+	router.Use(s.AuthenticationMiddleware)
+	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
+
 }
 
 func (s *APIServer) handleCreateCompany(w http.ResponseWriter, r *http.Request) error {
@@ -76,6 +79,7 @@ func (s *APIServer) handleViewCompany(w http.ResponseWriter, r *http.Request) er
 	return WriteJSONResponse(w, http.StatusOK, company)
 }
 
+// TODO
 func (s *APIServer) handleDeleteCompany(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
