@@ -4,10 +4,11 @@ import { Observable, switchMap, tap } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+
 import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
+import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
 
 import { UserFormSubmissionModel } from './common/models/user-form.model';
-import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
 
 export interface UserFormState {
     response: CreateUserResponse | null;

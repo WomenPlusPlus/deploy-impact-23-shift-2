@@ -1,7 +1,10 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
+
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+import { Store } from '@ngrx/store';
+
 import { isAuthenticated$ } from '@app/common/utils/auth.util';
 
 export const authenticatedGuard: CanActivateFn = () => {

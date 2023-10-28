@@ -1,9 +1,9 @@
-import { HttpEvent, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-
+import { AuthService } from '@auth0/auth0-angular';
 import { first, Observable } from 'rxjs';
 import { mergeMap, switchMap } from 'rxjs/operators';
-import { AuthService } from '@auth0/auth0-angular';
+
+import { HttpEvent, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const auth = inject(AuthService);
@@ -26,13 +26,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         );
     };
 
-
     return auth.isAuthenticated$.pipe(
         first(),
-        switchMap((authenticated) => !authenticated
-            ? next(req)
-            : auth0Interceptor()
-        )
+        switchMap((authenticated) => (!authenticated ? next(req) : auth0Interceptor()))
     );
 };
 

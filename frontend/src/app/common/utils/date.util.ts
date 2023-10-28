@@ -1,5 +1,5 @@
 export function toInputDateValue(value: Date | string): string {
-    const date = (value instanceof Date) ? value : new Date(value);
+    const date = value instanceof Date ? value : new Date(value);
     const yyyy = date.getFullYear();
     const mm = date.getUTCMonth() + 1;
     const dd = date.getUTCDate();

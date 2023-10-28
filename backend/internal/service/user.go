@@ -115,6 +115,14 @@ func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	return nil, fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
 }
 
+func (s *UserService) GetUserByCompanyUserId(companyUserId int) (*entity.ViewUserResponse, error) {
+	user, err := s.userDB.GetUserRecordByCompanyUserId(companyUserId)
+	if err != nil {
+		return nil, fmt.Errorf("getting user record by company user id: %w", err)
+	}
+	return s.getCompanyUserByUserId(user.ID)
+}
+
 func (s *UserService) GetUserRecordByEmail(email string) (*entity.UserRecordResponse, error) {
 	user, err := s.userDB.GetUserRecordByEmail(email)
 	if err != nil {

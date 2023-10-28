@@ -1,6 +1,10 @@
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faAdd } from '@fortawesome/free-solid-svg-icons';
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { provideComponentStore } from '@ngrx/component-store';
 
@@ -10,9 +14,6 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
 
 import { AssociationCardComponent } from './association-card/association-card.component';
 import { AssociationsListStore } from './associations-list.store';
-import { faAdd } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-associations-list',

@@ -5,8 +5,7 @@
             <dt class="font-bold mb-2">Resume</dt>
             <dd class="ml-2" *ngIf="!candidate.cv">-</dd>
             <dd class="ml-2" *ngIf="candidate.cv">
-                <a [href]="candidate.cv.url" target="_blank" rel="noreferrer noopener"
-                   class="btn btn-sm btn-ghost">
+                <a [href]="candidate.cv.url" target="_blank" rel="noreferrer noopener" class="btn btn-sm btn-ghost">
                     <fa-icon [icon]="faFileAlt" class="mr-2"></fa-icon>
                     <span>{{ candidate.cv.name }}</span>
                 </a>
@@ -16,8 +15,7 @@
             <dt class="font-bold mb-2">Video</dt>
             <dd class="ml-2" *ngIf="!candidate.video">-</dd>
             <dd class="ml-2" *ngIf="candidate.video">
-                <a [href]="candidate.video.url" target="_blank" rel="noreferrer noopener"
-                   class="btn btn-sm btn-ghost">
+                <a [href]="candidate.video.url" target="_blank" rel="noreferrer noopener" class="btn btn-sm btn-ghost">
                     <fa-icon [icon]="faPlay" class="mr-2"></fa-icon>
                     <span>{{ candidate.video.name }}</span>
                 </a>
@@ -54,8 +52,8 @@
         <dd>
             <ul *ngIf="candidate.spokenLanguages.length">
                 <li *ngFor="let spokenLanguage of candidate.spokenLanguages" class="break-words">
-                    {{ spokenLanguage.language.name }} ({{ spokenLanguage.language.shortName }}):
-                    level {{ spokenLanguage.level }}
+                    {{ spokenLanguage.language.name }} ({{ spokenLanguage.language.shortName }}): level
+                    {{ spokenLanguage.level }}
                 </li>
             </ul>
             <span class="break-words" *ngIf="!candidate.spokenLanguages.length"></span>
@@ -82,12 +80,16 @@
         <dt class="font-bold">Preferred locations</dt>
         <dd>
             <ul *ngIf="candidate.seekLocations.length">
-                <li *ngFor="let seekLocation of candidate.seekLocations" class="break-words">{{ seekLocation.name }}</li>
+                <li *ngFor="let seekLocation of candidate.seekLocations" class="break-words">
+                    {{ seekLocation.name }}
+                </li>
             </ul>
             <span class="break-words" *ngIf="!candidate.seekLocations.length"></span>
         </dd>
         <dt class="font-bold">Environment</dt>
-        <dd class="break-words">{{ candidate.seekLocationType ? (candidate.seekLocationType | jobLocationTypeLabel) : '-' }}</dd>
+        <dd class="break-words">
+            {{ candidate.seekLocationType ? (candidate.seekLocationType | jobLocationTypeLabel) : '-' }}
+        </dd>
         <dt class="font-bold">Salary</dt>
         <dd class="break-words">{{ candidate.seekSalary ? (candidate.seekSalary | currency) : '-' }}</dd>
         <dt class="font-bold">Company size</dt>
@@ -109,8 +111,9 @@
             <dt class="font-bold">Description</dt>
             <dd class="break-words">{{ education.description }}</dd>
             <dt class="font-bold">Date</dt>
-            <dd class="break-words">{{ education.fromDate | date }}
-                - {{ education.toDate ? (education.toDate | date) : 'on going' }}</dd>
+            <dd class="break-words">
+                {{ education.fromDate | date }} - {{ education.toDate ? (education.toDate | date) : 'on going' }}
+            </dd>
         </dl>
     </div>
     <div class="flex flex-col gap-4">
@@ -124,8 +127,9 @@
             <dt class="font-bold">Description</dt>
             <dd class="break-words">{{ employment.description }}</dd>
             <dt class="font-bold">Date</dt>
-            <dd class="break-words">{{ employment.fromDate | date }}
-                - {{ employment.toDate ? (employment.toDate | date) : 'on going' }}</dd>
+            <dd class="break-words">
+                {{ employment.fromDate | date }} - {{ employment.toDate ? (employment.toDate | date) : 'on going' }}
+            </dd>
         </dl>
     </div>
 </section>

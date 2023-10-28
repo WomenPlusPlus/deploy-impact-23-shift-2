@@ -1,7 +1,7 @@
 insert into associations (name, logo_url, website_url, focus)
 values ('name', 'logo', 'website', 'focus');
-insert into companies (id)
-values (1);
+insert into companies (name, contact_email, contact_phone, address, mission, values, job_types)
+values ('name', 'contact_email', 'contact_phone', 'address', 'mission', 'values', 'job_types');
 
 insert into users (kind, first_name, last_name, preferred_name, email, phone_number, birth_date)
 values ('ADMIN', 'Shift 2', 'Team', 'SHIFT-ADMIN', 'shift2.deployimpact+admin@gmail.com', '999 000 333',
@@ -34,9 +34,9 @@ values ('COMPANY', 'Shift 2', 'Team', 'SHIFT-COMPANY-USER', 'shift2.deployimpact
 insert into company_users (user_id, company_id, role)
 values (6, 1, 'USER');
 
-INSERT INTO invites (id, creator_id, kind, role, entity_id, email, state, ticket, expire_at, created_at)
-VALUES (DEFAULT, 1, 'CANDIDATE', null, null, 'joaordev+candidate@gmail.com',
-        'ACCEPTED', null, '2023-10-31 09:08:49.000000', DEFAULT);
-INSERT INTO invites (id, creator_id, kind, role, entity_id, email, state, ticket, expire_at, created_at)
-VALUES (DEFAULT, 1, 'ASSOCIATION', 'ADMIN', null, 'joaordev+assadmin@gmail.com',
-        'PENDING', null, '2023-10-31 18:09:57.000000', DEFAULT);
+insert into invites (id, creator_id, kind, role, entity_id, email, state, ticket, expire_at, created_at)
+values (default, 1, 'CANDIDATE', null, null, 'joaordev+candidate@gmail.com',
+        'ACCEPTED', null, '2023-10-31 09:08:49.000000', default);
+insert into invites (id, creator_id, kind, role, entity_id, email, state, ticket, expire_at, created_at)
+values (default, 1, 'ASSOCIATION', 'ADMIN', null, 'joaordev+assadmin@gmail.com',
+        'PENDING', null, '2023-10-31 18:09:57.000000', default);

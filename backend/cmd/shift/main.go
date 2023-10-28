@@ -32,7 +32,7 @@ func main() {
 	bucketDB := db.NewGoogleBucketDB(ctx)
 	logrus.Tracef("GCP Bucket initialized: %T", bucketDB)
 
-	server := api.NewAPIServer(":"+os.Getenv("API_PORT"), bucketDB, postgresDB, postgresDB, postgresDB)
+	server := api.NewAPIServer(":"+os.Getenv("API_PORT"), bucketDB, postgresDB, postgresDB, postgresDB, postgresDB, postgresDB)
 	logrus.Tracef("Server initialized: %T", server)
 	server.Run()
 }
