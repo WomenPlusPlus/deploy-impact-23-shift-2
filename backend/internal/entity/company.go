@@ -18,6 +18,7 @@ type CompanyEntity struct {
 	Mission      string    `db:"mission"`
 	Values       string    `db:"values"`
 	JobTypes     string    `db:"job_types"`
+	Expectation  *string   `db:"expectation"`
 	CreatedAt    time.Time `db:"created_at"`
 }
 
@@ -31,5 +32,6 @@ func (c *CompanyEntity) FromCreationRequest(req *CreateCompanyRequest) error {
 	c.Mission = req.Mission
 	c.Values = req.Values
 	c.JobTypes = req.JobTypes
+	c.Expectation = req.Expectation
 	return nil
 }

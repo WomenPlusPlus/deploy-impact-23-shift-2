@@ -57,6 +57,7 @@ type ViewCompanyResponse struct {
 	Mission      string     `json:"mission"`
 	Values       string     `json:"values"`
 	JobTypes     string     `json:"jobTypes"`
+	Expectation  *string    `json:"expectation,omitempty"`
 	CreatedAt    time.Time  `json:"createdAt"`
 }
 
@@ -73,6 +74,7 @@ func (r *ViewCompanyResponse) FromCompanyEntity(e *CompanyEntity) {
 	r.Mission = e.Mission
 	r.Values = e.Values
 	r.JobTypes = e.JobTypes
+	r.Expectation = e.Expectation
 	r.CreatedAt = e.CreatedAt
 }
 

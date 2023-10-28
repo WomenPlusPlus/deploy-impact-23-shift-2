@@ -71,6 +71,7 @@ create table if not exists companies
     mission       varchar(4096) not null,
     values        varchar(4096) not null,
     job_types     varchar(512)  not null,
+    expectation   varchar(512),
     created_at    timestamp     not null default CURRENT_TIMESTAMP
 );
 
