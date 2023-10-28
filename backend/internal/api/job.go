@@ -34,11 +34,11 @@ func (s *APIServer) handleCreateJob(w http.ResponseWriter, r *http.Request) erro
 	logrus.Debugln("Create job handler running")
 
 	req := new(entity.CreateJobRequest)
-	if err := req.FromFormData(r); err != nil {
+	if err := req.FromRequestJSON(r); err != nil {
 		return BadRequestError{Message: err.Error()}
 	}
 
-	res, err := s.jobService.CreateJob(req)
+	res, err := s.jobService.CreateJob(r.Context(), req)
 	if err != nil {
 		return InternalServerError{Message: err.Error()}
 	}
@@ -49,7 +49,7 @@ func (s *APIServer) handleCreateJob(w http.ResponseWriter, r *http.Request) erro
 func (s *APIServer) handleListJobs(w http.ResponseWriter, r *http.Request) error {
 	logrus.Debugln("List jobs handler running")
 
-	res, err := s.jobService.ListJobs()
+	res, err := s.jobService.GetAllJobs()
 	if err != nil {
 		return InternalServerError{Message: err.Error()}
 	}
@@ -76,6 +76,7 @@ func (s *APIServer) handleViewJob(w http.ResponseWriter, r *http.Request) error 
 	return WriteJSONResponse(w, http.StatusOK, job)
 }
 
+// TODO
 func (s *APIServer) handleDeleteJob(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)

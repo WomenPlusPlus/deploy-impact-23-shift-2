@@ -18,7 +18,7 @@ create table if not exists jobs
     deleted               boolean       not null default false,
     start_date            timestamp,
     created_at            timestamp     not null default CURRENT_TIMESTAMP,
-    constraint fk_creator foreign key (creator_id) references users (id)
+    constraint fk_creator foreign key (creator_id) references company_users (id)
 );
 
 create table if not exists job_locations
@@ -36,7 +36,6 @@ create table if not exists job_skills
     id     serial primary key,
     job_id int         not null,
     name   varchar(64) not null,
-    years  int         not null,
     constraint fk_job foreign key (job_id) references jobs (id)
 );
 

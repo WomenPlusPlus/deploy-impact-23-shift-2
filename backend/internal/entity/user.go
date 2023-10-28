@@ -131,7 +131,6 @@ type UserPhotoEntity struct {
 	ID       int    `db:"id"`
 	UserID   int    `db:"user_id"`
 	ImageUrl string `db:"image_url"`
-	*UserEntity
 }
 
 func NewUserPhotoEntity(userId int, imageUrl string) *UserPhotoEntity {

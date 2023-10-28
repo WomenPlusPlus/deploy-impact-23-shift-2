@@ -63,6 +63,29 @@ func (pdb *PostgresDB) GetCompanyById(id int) (*entity.CompanyEntity, error) {
 	return nil, fmt.Errorf("could not find company: id=%d", id)
 }
 
+func (pdb *PostgresDB) GetCompanyByCompanyUserId(companyUserId int) (*entity.CompanyEntity, error) {
+	query := `select companies.*
+				from companies
+				inner join company_users on companies.id = company_users.company_id
+				where company_users.id = $1`
+	rows, err := pdb.db.Queryx(query, companyUserId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching company by company user id=%d in db: %w", companyUserId, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		view := new(entity.CompanyEntity)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan company view from db row: %v", err)
+			return nil, err
+		}
+		return view, nil
+	}
+
+	return nil, fmt.Errorf("could not find company: company_user_id=%d", companyUserId)
+}
+
 func (pdb *PostgresDB) createCompany(tx NamedQuerier, company *entity.CompanyEntity) (int, error) {
 	query := `insert into companies
 				(

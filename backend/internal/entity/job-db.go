@@ -1,9 +1,13 @@
 package entity
 
-// JobDB is an interface for managing  jobs data.
 type JobDB interface {
-	CreateJob(*JobEntity) (*JobEntity, error)
+	CreateJob(job *JobEntity) (*JobEntity, error)
+	AssignJobLocation(jobId int, location *JobLocationEntity) error
+	AssignJobSkills(jobId int, skills JobSkillsEntity) error
+	AssignJobLanguages(jobId int, locations JobLanguagesEntity) error
 	DeleteJob(int) error
-	GetAllJobs() ([]*JobItemView, error)
-	GetJobById(int) (*JobItemView, error)
+	GetAllJobs() ([]*JobView, error)
+	GetJobById(int) (*JobView, error)
+	GetSkillsByJobId(int) (JobSkillsEntity, error)
+	GetLanguagesByJobId(int) (JobLanguagesEntity, error)
 }
