@@ -21,28 +21,28 @@
                         <span>{{ job.location.type | jobLocationTypeLabel }}</span>
                     </div>
                     <div class="flex items-center gap-2 mb-6">
-                        <div class="w-6 h-6 rounded-full overflow-hidden flex">
+                        <div class="w-12 h-12 rounded-full overflow-hidden flex">
                             <img
-                                [src]="job.creator.imageUrl || 'assets/profile-picture-default-form.png'"
+                                [src]="job.creator.imageUrl?.url || 'assets/profile-picture-default-form.png'"
                                 alt="avatar"
                                 class="object-cover"
                             />
                         </div>
-                        <a class="link" [routerLink]="['/admin', 'users', job.creator.id]">
-                            {{ job.creator.name }} ({{ job.creator.email }})
-                        </a>
+                        <p>
+                            {{ job.creator.name }}<br />
+                            <a class="link" [routerLink]="['/admin', 'users', job.creator.id]">
+                                {{ job.creator.email }}
+                            </a>
+                        </p>
                     </div>
-                    <span class="block">{{ job.creationDate | dateAgo }}</span>
-                </section>
-                <section>
-                    <!-- TODO: actions -->
+                    <span class="block">{{ job.createdAt | dateAgo }}</span>
                 </section>
             </header>
             <section class="flex flex-wrap gap-y-4 gap-x-8 py-4">
                 <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.experienceYearFrom">
                     <span class="block text-lg mb-1">Experience</span>
                     <span
-                    >{{ job.experienceYearFrom
+                        >{{ job.experienceYearFrom
                         }}{{ job.experienceYearTo ? '-' + job.experienceYearTo : '' }} Years</span
                     >
                 </article>
@@ -53,7 +53,7 @@
                 <article class="border rounded border-gray-400 pt-2 pb-4 px-6 basis-52" *ngIf="job.employmentLevelFrom">
                     <span class="block text-lg mb-1">Employment level</span>
                     <span
-                    >{{ job.employmentLevelFrom
+                        >{{ job.employmentLevelFrom
                         }}{{ job.employmentLevelTo ? '-' + job.employmentLevelTo : '' }}%</span
                     >
                 </article>
@@ -76,7 +76,7 @@
                 <span class="block mb-4 text-xl font-bold">Overview</span>
                 <div class="w-32 h-32 rounded-full overflow-hidden flex float-left m-4">
                     <img
-                        [src]="job.company.imageUrl || 'assets/profile-picture-default-form.png'"
+                        [src]="job.company.logo?.url || 'assets/profile-picture-default-form.png'"
                         alt="company-logo"
                         class="object-cover"
                     />

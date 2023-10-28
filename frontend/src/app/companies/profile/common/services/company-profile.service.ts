@@ -41,18 +41,24 @@ export class CompanyProfileService {
                     offerSalary: 85_000,
                     company: {
                         name: 'ZedTech',
-                        imageUrl:
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        logo: {
+                            name: '1200px-SMPTE_Color_Bars.svg.png',
+                            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+                        },
+                        mission: 'My mission',
+                        values: 'My values',
                         id: id
                     },
                     creator: {
-                        imageUrl:
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        imageUrl: {
+                            name: '1200px-SMPTE_Color_Bars.svg.png',
+                            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+                        },
                         name: 'Test',
                         id: 2,
                         email: 'test@test.com'
                     },
-                    creationDate: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
+                    createdAt: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
                     location: {
                         city: { id: 1, name: 'Zürich' },
                         type: JobLocationTypeEnum.HYBRID
@@ -65,18 +71,24 @@ export class CompanyProfileService {
                     offerSalary: 75_000,
                     company: {
                         name: 'ZedTech',
-                        imageUrl:
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        logo: {
+                            name: '1200px-SMPTE_Color_Bars.svg.png',
+                            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+                        },
+                        mission: 'My mission',
+                        values: 'My values',
                         id: id
                     },
                     creator: {
-                        imageUrl:
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        imageUrl: {
+                            name: '1200px-SMPTE_Color_Bars.svg.png',
+                            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+                        },
                         name: 'Test',
                         id: 2,
                         email: 'test@test.com'
                     },
-                    creationDate: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
+                    createdAt: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
                     location: {
                         city: { id: 1, name: 'Zürich' },
                         type: JobLocationTypeEnum.HYBRID
@@ -89,18 +101,24 @@ export class CompanyProfileService {
                     offerSalary: 80_000,
                     company: {
                         name: 'ZedTech',
-                        imageUrl:
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        logo: {
+                            name: '1200px-SMPTE_Color_Bars.svg.png',
+                            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+                        },
+                        mission: 'My mission',
+                        values: 'My values',
                         id: id
                     },
                     creator: {
-                        imageUrl:
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png',
+                        imageUrl: {
+                            name: '1200px-SMPTE_Color_Bars.svg.png',
+                            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png'
+                        },
                         name: 'Test',
                         id: 2,
                         email: 'test@test.com'
                     },
-                    creationDate: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
+                    createdAt: new Date(new Date().getTime() - 22 * 60 * 60 * 1000).toISOString(),
                     location: {
                         city: { id: 1, name: 'Geneva' },
                         type: JobLocationTypeEnum.HYBRID
