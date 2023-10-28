@@ -1,4 +1,7 @@
-<div class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-6 mx-auto" *ngIf="vm$ | async as vm">
+<div
+    class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-10 mx-auto card bg-base-200 mt-10"
+    *ngIf="vm$ | async as vm"
+>
     <ng-container *ngIf="!vm.submitted; else submittedContainer">
         <h1 class="text-3xl mb-5">Send an invitation</h1>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -151,11 +154,12 @@
                 <div class="collapse-content">
                     <div class="text-center bg-slate-800 p-8">
                         <a
-                            class="tracking-wider btn btn-ghost normal-case text-xl mb-8 mx-auto"
+                            class="tracking-wider btn btn-ghost normal-case text-xl mb-8 mx-auto text-info"
                             href="https://shift2-deployimpact.vercel.app/"
-                            >SHIFT 2</a
                         >
-                        <div class="p-5 bg-white rounded-lg">
+                            <img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png" />
+                        </a>
+                        <div class="p-5 bg-white rounded-lg text-neutral">
                             <h3 class="text-2xl my-5 mx-auto">You have been invited to join Shift2 platform!</h3>
                             <p class="mx-auto my-4 whitespace-pre-wrap max-w-sm md:max-w-lg">
                                 {{ form.controls.message.value }}
@@ -173,8 +177,9 @@
                             <a
                                 class="tracking-wider btn btn-ghost normal-case text-xl"
                                 href="https://shift2-deployimpact.vercel.app/"
-                                >SHIFT 2</a
                             >
+                                <img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png" />
+                            </a>
                             <p class="mt-8 mb-4 text-sm">
                                 <a href="https://shift2-deployimpact.vercel.app/">Privacy Policy</a>
                             </p>

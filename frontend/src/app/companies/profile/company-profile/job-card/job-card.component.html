@@ -1,4 +1,4 @@
-<a class="card w-full h-full bg-base-200 shadow-xl" [routerLink]="['/jobs', job.id]">
+<a class="card w-full h-full shadow-xl bg-info text-neutral" [routerLink]="['/jobs', job.id]">
     <div class="card-body relative">
         <h2 class="card-title">{{ job.title }} - {{ job.jobType | jobTypeLabel }}</h2>
         <p class="break-all">{{ job.location.city.name }} • {{ job.location.type | jobLocationTypeLabel }}</p>

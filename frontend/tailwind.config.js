@@ -6,46 +6,46 @@ module.exports = {
             {
                 light: {
                     'color-scheme': 'light',
-                    'primary-content': '#E0D2FE',
-                    'secondary-content': '#FFD1F4',
-                    'accent-content': '#07312D',
+                    'primary-content': '#c9daff',
+                    'secondary-content': '#e6d8fb',
+                    'accent-content': '#342c5c',
                     'neutral-content': '#D7DDE4',
                     'base-100': '#F6F8FF',
-                    'base-200': '#fafdff',
+                    'base-200': '#fefdfd',
                     'base-300': '#ffffff',
-                    'base-content': '#1f2937',
+                    'base-content': '#342c5c',
 
                     primary: '#4F51B3',
-                    secondary: '#8FAFF5',
-                    accent: '#ED905C',
+                    secondary: '#e6d8fb',
+                    accent: '#f7d2bd',
                     neutral: '#1D1833',
-                    info: '#5CB9ED',
-                    success: '#36d399',
-                    warning: '#fbbd23',
-                    error: '#ED5C5C'
+                    info: '#c9daff',
+                    success: '#84e9c4',
+                    warning: '#fbce60',
+                    error: '#f88f8f'
                 }
             },
             {
                 dark: {
                     'color-scheme': 'dark',
-                    'primary-content': '#ffffff',
-                    'secondary-content': '#ffffff',
-                    'accent-content': '#ffffff',
-                    'neutral-focus': '#242b33',
+                    'primary-content': '#fefdfd',
+                    'secondary-content': '#fefdfd',
+                    'accent-content': '#fefdfd',
+                    'neutral-focus': '#1d1833',
                     'neutral-content': '#A6ADBB',
                     'base-100': '#1d232a',
                     'base-200': '#191e24',
                     'base-300': '#15191e',
                     'base-content': '#A6ADBB',
 
-                    primary: '#6869a4',
-                    secondary: '#8FAFF5',
-                    accent: '#ED905C',
+                    primary: '#6163bf',
+                    secondary: '#d8c2f8',
+                    accent: '#f1bb9c',
                     neutral: '#1D1833',
-                    info: '#5CB9ED',
-                    success: '#36d399',
-                    warning: '#fbbd23',
-                    error: '#ED5C5C'
+                    info: '#a6c0f7',
+                    success: '#84e9c4',
+                    warning: '#fbce60',
+                    error: '#f88f8f'
                 }
             }
         ], // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]

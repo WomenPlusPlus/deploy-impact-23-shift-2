@@ -8,17 +8,21 @@
     <ng-container *ngIf="!vm.loading && !vm.error">
         <ng-container *ngIf="vm.profile as profile">
             <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
-                <a [routerLink]="['/admin', 'companies', profile.id, 'edit']" class="float-right btn">Edit</a>
+                <div class="pb-4">
+                    <a [routerLink]="['/admin', 'companies', profile.id, 'edit']" class="float-right btn">Edit</a>
+                </div>
             </ng-container>
-            <div class="md:flex">
-                <div class="basis-1/4 md:mr-5">
-                    <img
-                        class="object-center object-cover"
-                        loading="lazy"
-                        [alt]="profile.logo?.name || 'logo'"
-                        [src]="profile.logo?.url || 'assets/profile-picture-default-form.png'"
-                    />
-                    <div class="p-5">
+            <div class="md:flex m-10">
+                <div class="basis-1/4 w-full md:mr-5 mb-5 card bg-base-300">
+                    <picture class="w-40 h-40 rounded-full overflow-hidden flex shrink-0 mt-5 mx-auto">
+                        <img
+                            class="object-center object-cover"
+                            loading="lazy"
+                            [alt]="profile.logo?.name || 'logo'"
+                            [src]="profile.logo?.url || 'assets/profile-picture-default-form.png'"
+                        />
+                    </picture>
+                    <div class="py-5 px-10">
                         <h1 class="text-4xl mb-4">{{ profile.name }}</h1>
                         <p class="mb-4">{{ profile.address }}</p>
                         <p class="mb-6">
@@ -29,7 +33,10 @@
                         </p>
                         <div class="my-8 flex">
                             <a class="basis-1/3 text-center" [href]="'mailto:' + profile.contactEmail">
-                                <fa-icon [icon]="faEnvelope"></fa-icon>
+                                <fa-icon
+                                    [icon]="faEnvelope"
+                                    class="inline-block p-5 w-16 h-16 bg-base-100 rounded-full"
+                                ></fa-icon>
                                 <span class="block">Email</span>
                             </a>
                             <a
@@ -39,7 +46,10 @@
                                 rel="noreferrer noopener"
                                 class="basis-1/3 text-center"
                             >
-                                <fa-icon [icon]="faExternalLink"></fa-icon>
+                                <fa-icon
+                                    [icon]="faExternalLink"
+                                    class="inline-block p-5 w-16 h-16 bg-base-100 rounded-full"
+                                ></fa-icon>
                                 <span class="block">LinkedIn</span>
                             </a>
                             <a
@@ -49,7 +59,10 @@
                                 rel="noreferrer noopener"
                                 class="basis-1/3 text-center"
                             >
-                                <fa-icon [icon]="faExternalLink"></fa-icon>
+                                <fa-icon
+                                    [icon]="faExternalLink"
+                                    class="inline-block p-5 w-16 h-16 bg-base-100 rounded-full"
+                                ></fa-icon>
                                 <span class="block">Kununu</span>
                             </a>
                         </div>
@@ -59,17 +72,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="basis-3/4 md:ml-5">
-                    <div class="p-5">
+                <div class="basis-3/4 w-full md:ml-5 mb-5 card bg-base-300">
+                    <div class="p-10">
                         <h2 class="text-2xl mb-4">About</h2>
                         <p>{{ profile.mission }}</p>
                     </div>
                     <div class="divider"></div>
                     <ng-container *ngIf="vm.jobs">
-                        <div class="p-5">
+                        <div class="p-10">
                             <h2 class="text-2xl mb-6">Job Openings</h2>
                             <div
-                                class="grid md:grid-cols-2 2xl:grid-cols-3 grid-rows-auto-[minmax(min-content-15rem)] gap-x-2 gap-y-8 justify-items-center"
+                                class="grid md:grid-cols-2 2xl:grid-cols-3 grid-rows-auto-[minmax(min-content-15rem)] gap-x-4 gap-y-8 justify-items-center"
                             >
                                 <app-job-card
                                     *ngFor="let item of $any(vm.jobs!.items!)"
@@ -81,12 +94,12 @@
                         </div>
                         <div class="divider"></div>
                     </ng-container>
-                    <div class="p-5">
+                    <div class="p-10">
                         <h2 class="text-2xl mb-4">Values</h2>
                         <p>{{ profile.values }}</p>
                     </div>
                     <div class="divider"></div>
-                    <div class="p-5">
+                    <div class="p-10">
                         <h2 class="text-2xl mb-4">Expectations We Offer</h2>
                         <p>{{ profile.expectation }}</p>
                     </div>

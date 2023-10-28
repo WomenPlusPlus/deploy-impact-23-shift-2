@@ -4,7 +4,7 @@
     </ng-container>
     <ng-container *ngIf="!vm.loading && !vm.error">
         <div class="md:flex flex-row flex-wrap justify-between">
-            <section class="p-4 basis-full mb-12 mt-4 card bg-base-200">
+            <section class="p-4 basis-full mb-12 mt-4 card bg-base-300">
                 <ng-container *ngIf="vm.users?.items as users">
                     <section class="p-4 mb-5 flex justify-between items-center">
                         <h1 class="text-3xl">Users in My Association</h1>
@@ -45,7 +45,7 @@
             </section>
 
             <div class="basis-2/5 mb-12">
-                <section class="p-8 basis-2/5 mb-12 card bg-base-200">
+                <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
                         <a [routerLink]="['/associations', id]" class="flex justify-between">
                             View Association Profile
@@ -55,7 +55,7 @@
                 </section>
             </div>
 
-            <section class="p-8 basis-1/2 mb-12 card bg-base-200">
+            <section class="p-8 basis-1/2 mb-12 card bg-base-300">
                 <section class="px-4 mb-5 flex justify-between items-center">
                     <h1 class="text-3xl">Programs Offered</h1>
                     <span class="badge bg-gray-400 text-base-100 badge-md"> 0 in Total </span>

@@ -8,17 +8,21 @@
     <ng-container *ngIf="!vm.loading && !vm.error">
         <ng-container *ngIf="vm.profile as profile">
             <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
-                <a [routerLink]="['/admin', 'associations', profile.id, 'edit']" class="float-right btn">Edit</a>
+                <div class="pb-4">
+                    <a [routerLink]="['/admin', 'associations', profile.id, 'edit']" class="float-right btn">Edit</a>
+                </div>
             </ng-container>
-            <div class="md:flex">
-                <div class="basis-1/4 md:mr-5">
-                    <img
-                        class="object-center object-cover"
-                        loading="lazy"
-                        [alt]="profile.imageUrl?.name || 'logo'"
-                        [src]="profile.imageUrl?.url || 'assets/profile-picture-default-form.png'"
-                    />
-                    <div class="p-5">
+            <div class="md:flex m-10">
+                <div class="basis-1/4 w-full md:mr-5 mb-5 card bg-base-300">
+                    <picture class="w-40 h-40 rounded-full overflow-hidden flex shrink-0 mt-5 mx-auto">
+                        <img
+                            class="object-center object-cover"
+                            loading="lazy"
+                            [alt]="profile.imageUrl?.name || 'logo'"
+                            [src]="profile.imageUrl?.url || 'assets/profile-picture-default-form.png'"
+                        />
+                    </picture>
+                    <div class="py-5 px-10">
                         <h1 class="text-4xl mb-8">{{ profile.name }}</h1>
                         <p class="mb-3 text-xl">Visit Our Website</p>
                         <p class="mb-6">
@@ -29,13 +33,13 @@
                         </p>
                     </div>
                 </div>
-                <div class="basis-3/4 md:ml-5">
-                    <div class="p-5">
+                <div class="basis-3/4 w-full md:ml-5 mb-5 card bg-base-300">
+                    <div class="p-10">
                         <h2 class="text-2xl mb-4">About</h2>
                         <p class="leading-8">{{ profile.focus }}</p>
                     </div>
                     <div class="divider"></div>
-                    <div class="p-5">
+                    <div class="p-10">
                         <h2 class="text-2xl mb-4">Programs Offered</h2>
                         <p class="leading-8">There are no programs created yet.</p>
                     </div>
