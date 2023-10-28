@@ -35,7 +35,7 @@
                         >
                             <picture class="w-12 h-12 rounded-full overflow-hidden flex shrink-0">
                                 <img
-                                    [src]="job.company.imageUrl || 'assets/profile-picture-default-form.png'"
+                                    [src]="job.company.logo?.url || 'assets/profile-picture-default-form.png'"
                                     alt="logo"
                                     class="object-cover"
                                 />
@@ -47,7 +47,7 @@
                                         {{ job.location.city.name }}•{{ job.location.type | jobLocationTypeLabel }}
                                     </span>
                                     <span class="block text-xs ml-auto pt-0.5 shrink-0">{{
-                                        job.creationDate | date
+                                        job.createdAt | date
                                     }}</span>
                                 </div>
                             </div>

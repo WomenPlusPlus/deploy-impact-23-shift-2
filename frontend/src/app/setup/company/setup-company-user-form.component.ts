@@ -75,14 +75,14 @@ export class SetupCompanyUserFormComponent implements OnInit, AfterViewInit {
             name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
             address: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
             logo: this.fb.control<File | null>(null),
-            linkedin: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
-            kununu: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            linkedin: this.fb.control<string | null>(null, [Validators.maxLength(512)]),
+            kununu: this.fb.control<string | null>(null, [Validators.maxLength(512)]),
             phone: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
             email: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
             mission: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
             values: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
             jobtypes: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
-            expectation: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
+            expectation: this.fb.control<string | null>(null, [Validators.maxLength(1024)])
         });
     }
 

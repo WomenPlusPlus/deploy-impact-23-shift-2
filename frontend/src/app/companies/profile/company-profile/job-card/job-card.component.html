@@ -2,6 +2,6 @@
     <div class="card-body relative">
         <h2 class="card-title">{{ job.title }} - {{ job.jobType | jobTypeLabel }}</h2>
         <p class="break-all">{{ job.location.city.name }} • {{ job.location.type | jobLocationTypeLabel }}</p>
-        <p class="break-all mt-5">{{ job.creationDate | date }}</p>
+        <p class="break-all mt-5">{{ job.createdAt | date }}</p>
     </div>
 </a>

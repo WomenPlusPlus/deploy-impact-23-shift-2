@@ -1,3 +1,4 @@
+import { LocalFile } from '@app/common/models/files.model';
 import { JobLocationTypeEnum, JobTypeEnum } from '@app/common/models/jobs.model';
 import { LocationCity } from '@app/common/models/location.model';
 
@@ -7,7 +8,7 @@ export interface Job {
     candidateOverview: string;
     company: JobCompany;
     creator: JobCreator;
-    creationDate: string;
+    createdAt: string;
     experienceYearFrom?: number;
     experienceYearTo?: number;
     employmentLevelFrom?: number;
@@ -26,14 +27,14 @@ export interface JobCompany {
     name: string;
     mission: string;
     values: string;
-    imageUrl: string;
+    logo?: LocalFile;
 }
 
 export interface JobCreator {
     id: number;
     name: string;
     email: string;
-    imageUrl: string;
+    imageUrl?: LocalFile;
 }
 
 export interface JobLocation {
@@ -50,14 +51,8 @@ export interface JobItem {
     title: string;
     jobType: JobTypeEnum;
     offerSalary: number;
-    company: JobCompanyItem;
+    company: JobCompany;
     creator: JobCreator;
-    creationDate: string;
+    createdAt: string;
     location: JobLocation;
-}
-
-export interface JobCompanyItem {
-    id: number;
-    name: string;
-    imageUrl: string;
 }
