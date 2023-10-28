@@ -27,8 +27,8 @@ type JobEntity struct {
 
 type JobView struct {
 	*JobEntity
-	CityID   int    `db:"city_id"`
-	CityName string `db:"city_name"`
+	CityID   *int    `db:"city_id"`
+	CityName *string `db:"city_name"`
 }
 
 func (j *JobEntity) FromCreationRequest(req *CreateJobRequest) error {

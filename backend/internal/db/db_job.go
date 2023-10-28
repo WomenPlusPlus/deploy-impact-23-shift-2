@@ -80,9 +80,9 @@ func (pdb *PostgresDB) DeleteJob(int) error {
 }
 
 func (pdb *PostgresDB) GetAllJobs() ([]*entity.JobView, error) {
-	query := `select jobs.*, job_locations.*
+	query := `select jobs.*, loc.city_id, loc.city_name
 				from jobs
-				left outer join job_locations on jobs.id = job_locations.job_id`
+				left outer join job_locations loc on jobs.id = loc.job_id`
 	rows, err := pdb.db.Queryx(query)
 	if err != nil {
 		return nil, fmt.Errorf("fetching all jobs in db: %w", err)
@@ -157,9 +157,9 @@ func (pdb *PostgresDB) GetLanguagesByJobId(jobId int) (entity.JobLanguagesEntity
 }
 
 func (pdb *PostgresDB) getJobById(tx sqlx.Queryer, id int) (*entity.JobView, error) {
-	query := `select jobs.*, job_locations.*
+	query := `select jobs.*, loc.city_id, loc.city_name
 				from jobs
-				left outer join job_locations on jobs.id = job_locations.job_id
+				left outer join job_locations loc on jobs.id = loc.job_id
 				where jobs.id = $1`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
@@ -170,8 +170,7 @@ func (pdb *PostgresDB) getJobById(tx sqlx.Queryer, id int) (*entity.JobView, err
 	for rows.Next() {
 		view := new(entity.JobView)
 		if err := rows.StructScan(view); err != nil {
-			logrus.Errorf("failed to scan job view from db row: %v", err)
-			return nil, err
+			return nil, fmt.Errorf("failed to scan job view from db row: %v", err)
 		}
 		return view, nil
 	}
@@ -225,7 +224,7 @@ func (pdb *PostgresDB) createJob(tx NamedQuerier, job *entity.JobEntity) (int, e
 }
 
 func (pdb *PostgresDB) insertJobLocation(tx NamedQuerier, record *entity.JobLocationEntity) error {
-	query := `insert into job_languages (job_id, language_id, language_name, language_short_name) values (:job_id, :language_id, :language_name, :language_short_name)`
+	query := `insert into job_locations (job_id, city_id, city_name) values (:job_id, :city_id, :city_name)`
 	if _, err := tx.NamedExec(query, record); err != nil {
 		return err
 	}
@@ -233,7 +232,7 @@ func (pdb *PostgresDB) insertJobLocation(tx NamedQuerier, record *entity.JobLoca
 }
 
 func (pdb *PostgresDB) deleteJobLocation(tx sqlx.Execer, jobId int) error {
-	query := `delete from job_languages where job_id = $1`
+	query := `delete from job_locations where job_id = $1`
 	if _, err := tx.Exec(query, jobId); err != nil {
 		return err
 	}

@@ -11,14 +11,21 @@ import (
 type JobService struct {
 	bucketDB       entity.BucketDB
 	jobDB          entity.JobDB
-	userService    UserService
-	companyService CompanyService
+	userService    *UserService
+	companyService *CompanyService
 }
 
-func NewJobService(bucketDB entity.BucketDB, jobDB entity.JobDB) *JobService {
+func NewJobService(
+	bucketDB entity.BucketDB,
+	jobDB entity.JobDB,
+	userService *UserService,
+	companyService *CompanyService,
+) *JobService {
 	return &JobService{
-		bucketDB: bucketDB,
-		jobDB:    jobDB,
+		bucketDB:       bucketDB,
+		jobDB:          jobDB,
+		userService:    userService,
+		companyService: companyService,
 	}
 }
 
@@ -81,7 +88,7 @@ func (s *JobService) CreateJob(ctx context.Context, req *entity.CreateJobRequest
 			logrus.Tracef("Added job languages to db: id=%d, total=%d", job.ID, len(languages))
 		}
 	} else {
-		logrus.Tracef("No spoken languages added to db: id=%d", job.ID)
+		logrus.Tracef("No job languages added to db: id=%d", job.ID)
 	}
 
 	return &entity.CreateJobResponse{ID: job.ID}, nil

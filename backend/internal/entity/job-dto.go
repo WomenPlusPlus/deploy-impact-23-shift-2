@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"shift/internal/utils"
 	"time"
 )
 
@@ -47,11 +48,11 @@ type JobItemResponse struct {
 	Id          int              `json:"id"`
 	Title       string           `json:"title"`
 	JobType     string           `json:"jobType"`
-	SalaryRange *string          `json:"salaryRange"`
-	Company     *ViewJobCompany  `json:"company"`
-	Creator     *ViewJobCreator  `json:"creator"`
+	SalaryRange *string          `json:"salaryRange,omitempty"`
+	Company     *ViewJobCompany  `json:"company,omitempty"`
+	Creator     *ViewJobCreator  `json:"creator,omitempty"`
 	CreatedAt   time.Time        `json:"createdAt"`
-	Location    *ViewJobLocation `json:"location"`
+	Location    *ViewJobLocation `json:"location,omitempty"`
 }
 
 func (r *JobItemResponse) FromJobView(e *JobView) {
@@ -97,6 +98,7 @@ type ViewJobResponse struct {
 }
 
 func (r *ViewJobResponse) FromJobView(e *JobView) {
+	r.Id = e.ID
 	r.Title = e.Title
 	r.JobType = e.JobType
 	r.SalaryRangeFrom = e.SalaryRangeFrom
@@ -137,7 +139,7 @@ type ViewJobCompany struct {
 	Mission string     `json:"mission"`
 	Name    string     `json:"name"`
 	Values  string     `json:"values"`
-	Logo    *LocalFile `json:"logo"`
+	Logo    *LocalFile `json:"logo,omitempty"`
 	Id      int        `json:"id"`
 }
 
@@ -152,7 +154,7 @@ func (r *ViewJobCompany) FromViewCompanyResponse(e *ViewCompanyResponse) {
 type ViewJobCreator struct {
 	Email    string     `json:"email"`
 	Name     string     `json:"name"`
-	ImageUrl *LocalFile `json:"imageUrl"`
+	ImageUrl *LocalFile `json:"imageUrl,omitempty"`
 	Id       int        `json:"id"`
 }
 
@@ -174,8 +176,8 @@ type ViewJobLocation struct {
 
 func (r *ViewJobLocation) FromJobView(e *JobView) {
 	r.City = ViewJobLocationCity{
-		Id:   e.CityID,
-		Name: e.CityName,
+		Id:   utils.SafeUnwrap(e.CityID),
+		Name: utils.SafeUnwrap(e.CityName),
 	}
 	r.Type = e.LocationType
 }

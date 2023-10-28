@@ -19,8 +19,8 @@ type APIServer struct {
 	userService        *service.UserService
 	associationService *service.AssociationService
 	invitationService  *service.InvitationService
-	companyService *service.CompanyService
-	jobService     *service.JobService
+	companyService     *service.CompanyService
+	jobService         *service.JobService
 }
 
 // NewAPIServer creates a new instance of APIServer with the given address.
@@ -40,15 +40,18 @@ func NewAPIServer(
 
 	associationService := service.NewAssociationService(bucketDB, associationDB)
 	invitationService := service.NewInvitationService(bucketDB, invitationDB)
+	userService := service.NewUserService(bucketDB, userDB, invitationService, associationService)
+	companyService := service.NewCompanyService(bucketDB, companyDB)
+	jobService := service.NewJobService(bucketDB, jobDB, userService, companyService)
 
 	return &APIServer{
 		address:            address,
 		jwtValidator:       jwtValidator,
-		userService:        service.NewUserService(bucketDB, userDB, invitationService, associationService),
+		userService:        userService,
 		associationService: associationService,
 		invitationService:  invitationService,
-		companyService: service.NewCompanyService(bucketDB, companyDB),
-		jobService:     service.NewJobService(bucketDB, jobDB),
+		companyService:     companyService,
+		jobService:         jobService,
 	}
 }
 
@@ -65,6 +68,7 @@ func (s *APIServer) Run() {
 	s.initAssociationRoutes(apiRouter)
 	s.initInvitationRoutes(apiRouter)
 	s.initCompanyRoutes(apiRouter)
+	s.initJobRoutes(apiRouter)
 
 	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
 	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())

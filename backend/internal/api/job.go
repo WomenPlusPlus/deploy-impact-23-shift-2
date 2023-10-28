@@ -28,6 +28,8 @@ func (s *APIServer) initJobRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleDeleteJob)).
 		Methods(http.MethodDelete)
 
+	router.Use(s.AuthenticationMiddleware)
+	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateJob(w http.ResponseWriter, r *http.Request) error {
