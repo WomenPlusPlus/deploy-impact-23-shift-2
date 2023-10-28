@@ -1,16 +1,19 @@
+import { LocalFile } from '@app/common/models/files.model';
+
 export interface CompanyProfileModel {
     id: number;
     name: string;
+    logo?: LocalFile;
+    linkedinUrl?: string;
+    kununuUrl?: string;
+    contactEmail: string;
+    contactPhone: string;
     address: string;
-    logo: string;
-    linkedin: string;
-    kununu: string;
-    phone: string;
-    email: string;
     mission: string;
     values: string;
-    jobtypes: string;
-    expectation: string;
+    jobTypes: string;
+    expectation?: string;
+    createdAt: string;
 }
 
 export interface CompaniesListModel {

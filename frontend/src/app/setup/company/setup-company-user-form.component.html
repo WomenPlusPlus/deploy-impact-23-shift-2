@@ -6,7 +6,7 @@
         <app-company-form
             class="block mt-10"
             [form]="companyForm"
-            [previousImage]="profile.company?.logo || ''"
+            [previousImage]="profile.company?.logo?.url || ''"
         ></app-company-form>
         <div class="sticky flex flex-col bottom-0 pb-4 bg-base-100 w-full">
             <div class="divider mt-0"></div>

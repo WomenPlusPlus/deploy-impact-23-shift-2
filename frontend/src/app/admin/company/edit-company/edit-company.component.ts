@@ -33,7 +33,7 @@ export class EditCompanyComponent implements OnInit {
     form!: FormGroup<CreateCompanyFormGroup>;
     vm$: Observable<CreateCompanyState> = this.editCompanyStore.vm$;
     previousName = '';
-    previousPhotoURL = 'assets/profile-picture-default-form.png';
+    previousPhotoURL?: string;
 
     constructor(
         private readonly fb: FormBuilder,
@@ -50,7 +50,7 @@ export class EditCompanyComponent implements OnInit {
         const formData = new FormData();
         const formValue = this.form.getRawValue();
         for (const key of Object.keys(formValue)) {
-            formData.append(key, formValue[key as keyof CreateCompanyFormGroup]!);
+            formData.append(key, formValue[key as keyof CreateCompanyFormGroup] as string);
         }
         this.editCompanyStore.submitForm(formData);
     }
@@ -60,14 +60,14 @@ export class EditCompanyComponent implements OnInit {
             name: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
             address: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
             logo: this.fb.control<File | null>(null),
-            linkedin: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
-            kununu: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
+            linkedin: this.fb.control<string | null>(null, [Validators.maxLength(512)]),
+            kununu: this.fb.control<string | null>(null, [Validators.maxLength(512)]),
             phone: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(256)]),
             email: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(512)]),
             mission: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
             values: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
             jobtypes: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)]),
-            expectation: this.fb.control<string | null>(null, [Validators.required, Validators.maxLength(1024)])
+            expectation: this.fb.control<string | null>(null, [Validators.maxLength(1024)])
         });
 
         this.id = Number(this.route.snapshot.paramMap.get('id'));
@@ -84,17 +84,17 @@ export class EditCompanyComponent implements OnInit {
                     name: data.name,
                     address: data.address,
                     logo: null,
-                    linkedin: data.linkedin,
-                    kununu: data.kununu,
-                    phone: data.phone,
-                    email: data.email,
+                    linkedin: data.linkedinUrl,
+                    kununu: data.kununuUrl,
+                    phone: data.contactPhone,
+                    email: data.contactEmail,
                     mission: data.mission,
                     values: data.values,
-                    jobtypes: data.jobtypes,
+                    jobtypes: data.jobTypes,
                     expectation: data.expectation
                 });
                 this.previousName = data.name;
-                this.previousPhotoURL = data.logo;
+                this.previousPhotoURL = data.logo?.url;
             });
     }
 }
