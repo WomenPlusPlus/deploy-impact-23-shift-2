@@ -1,10 +1,10 @@
 <div class="flex gap-1">
     <span
-        class="badge text-base-100 badge-md"
-        [class.bg-yellow-400]="kind === userKindEnum.ADMIN"
-        [class.bg-red-400]="kind === userKindEnum.CANDIDATE"
-        [class.bg-blue-400]="kind === userKindEnum.COMPANY"
-        [class.bg-green-600]="kind === userKindEnum.ASSOCIATION"
+        class="badge text-neutral badge-md"
+        [class.bg-warning]="kind === userKindEnum.ADMIN"
+        [class.bg-secondary]="kind === userKindEnum.CANDIDATE"
+        [class.bg-info]="kind === userKindEnum.COMPANY"
+        [class.bg-accent]="kind === userKindEnum.ASSOCIATION"
     >
         {{ kind | userKindLabel }}
     </span>
