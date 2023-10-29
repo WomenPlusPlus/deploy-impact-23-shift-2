@@ -99,30 +99,32 @@
     <button (click)="onToggleMode()">
         <fa-icon [icon]="faEye" class="text-lg drop-shadow-md"></fa-icon>
     </button>
-    <div class="dropdown dropdown-end">
-        <label tabindex="0" class="text-lg drop-shadow-md cursor-pointer px-2">
-            <fa-icon [icon]="faEllipsisV" class="text-lg drop-shadow-md"></fa-icon>
-        </label>
-        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-            <li>
-                <a
-                    [routerLink]="['.', user.id, 'edit']"
-                    [ngClass]="{ 'btn-disabled opacity-50 cursor-not-allowed': disableDeleteAction }"
-                >
-                    Edit
-                </a>
-            </li>
-            <li>
-                <button
-                    [ngClass]="{ 'btn-disabled opacity-50 cursor-not-allowed': disableDeleteAction }"
-                    [disabled]="disableDeleteAction"
-                    (click)="deleteConfirmation.show()"
-                >
-                    Delete
-                </button>
-            </li>
-        </ul>
-    </div>
+    <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="text-lg drop-shadow-md cursor-pointer px-2">
+                <fa-icon [icon]="faEllipsisV" class="text-lg drop-shadow-md"></fa-icon>
+            </label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                <li>
+                    <a
+                        [routerLink]="['.', user.id, 'edit']"
+                        [ngClass]="{ 'btn-disabled opacity-50 cursor-not-allowed': disableDeleteAction }"
+                    >
+                        Edit
+                    </a>
+                </li>
+                <li>
+                    <button
+                        [ngClass]="{ 'btn-disabled opacity-50 cursor-not-allowed': disableDeleteAction }"
+                        [disabled]="disableDeleteAction"
+                        (click)="deleteConfirmation.show()"
+                    >
+                        Delete
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </ng-container>
 </div>
 
 <dialog class="modal" #deleteConfirmation tabindex="0" (keyup.escape)="deleteConfirmation.close()">

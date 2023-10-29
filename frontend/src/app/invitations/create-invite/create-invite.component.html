@@ -2,209 +2,246 @@
     class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-10 mx-auto card bg-base-200 mt-10"
     *ngIf="vm$ | async as vm"
 >
-    <ng-container *ngIf="!vm.submitted; else submittedContainer">
-        <h1 class="text-3xl mb-5">Send an invitation</h1>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <fieldset id="kind" class="md:flex md:items-start w-full my-4 pr-5">
-                <span class="md:w-1/4 label">Select the kind of user:</span>
-                <ul class="md:w-3/4 flex flex-wrap gap-y-3 gap-x-8 py-2">
-                    <li class="inline-block" *ngFor="let userKind of userKinds">
-                        <input
-                            [id]="'kind-' + userKind"
-                            type="radio"
-                            name="kind"
-                            [value]="userKind"
-                            formControlName="kind"
-                            class="radio relative float-left"
-                        />
-                        <label [for]="'kind-' + userKind" class="inline-block pl-[0.5rem] hover:cursor-pointer">{{
-                            userKind | userKindLabel
-                        }}</label>
-                    </li>
-                </ul>
-            </fieldset>
-            <fieldset id="role" class="md:flex md:items-start w-full my-4 pr-5">
-                <span class="md:w-1/4 label">Select the role:</span>
-                <ul class="md:w-3/4 flex flex-wrap gap-y-3 gap-x-8 py-2">
-                    <li class="inline-block" *ngFor="let userRole of userRoles">
-                        <input
-                            *appLet="form.controls.kind.value as kind"
-                            [id]="'role-' + userRole"
-                            type="radio"
-                            name="role"
-                            [value]="userRole"
-                            formControlName="role"
-                            class="radio relative float-left"
-                        />
-                        <label [for]="'role-' + userRole" class="inline-block pl-[0.5rem] hover:cursor-pointer">
-                            {{ userRole | userCompanyRoleLabel }}
-                        </label>
-                    </li>
-                </ul>
-            </fieldset>
-            <ng-container *ngIf="form.controls.kind.value === userKindEnum.ASSOCIATION">
-                <fieldset
-                    id="associations-field"
-                    class="md:flex md:items-start w-full my-4"
-                    *appLet="form.controls.associationId as control"
-                >
-                    <label for="associations" class="label md:w-1/4"> Select the association: </label>
-                    <div class="md:w-3/4 flex flex-col">
-                        <app-select-single
-                            id="associations"
-                            [control]="control"
-                            [options]="
-                                vm.associations | createNewOption: form.controls.role.value === userRoleEnum.ADMIN
-                            "
-                            [searchKeys]="['name']"
-                            bindValue="id"
-                            bindLabel="name"
-                        ></app-select-single>
-                        <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
-                            {{ control.errors | formErrorMessage }}
-                        </span>
-                    </div>
-                </fieldset>
-            </ng-container>
-            <ng-container *ngIf="form.controls.kind.value === userKindEnum.COMPANY">
-                <fieldset
-                    id="companies-field"
-                    class="md:flex md:items-start w-full my-4"
-                    *appLet="form.controls.companyId as control"
-                >
-                    <label for="companies" class="label md:w-1/4"> Select the company: </label>
-                    <div class="md:w-3/4 flex flex-col">
-                        <app-select-single
-                            id="companies"
-                            [control]="control"
-                            [options]="vm.companies | createNewOption: form.controls.role.value === userRoleEnum.ADMIN"
-                            [searchKeys]="['name']"
-                            bindValue="id"
-                            bindLabel="name"
-                        ></app-select-single>
-                        <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">
-                            {{ control.errors | formErrorMessage }}
-                        </span>
-                    </div>
-                </fieldset>
-            </ng-container>
-            <div class="divider"></div>
-            <fieldset
-                id="edit-email"
-                class="md:flex md:items-start w-full my-4"
-                *appLet="form.controls.email as control"
-            >
-                <label for="email" class="label md:w-1/4">Email:</label>
-                <div class="md:w-3/4">
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        formControlName="email"
-                        class="w-full input input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                    />
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.email.errors | formErrorMessage
-                    }}</span>
-                </div>
-            </fieldset>
-            <fieldset
-                id="edit-subject"
-                class="md:flex md:items-start w-full my-4"
-                *appLet="form.controls.subject as control"
-            >
-                <label for="subject" class="label md:w-1/4">Subject:</label>
-                <div class="md:w-3/4">
-                    <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        formControlName="subject"
-                        class="w-full input input-bordered"
-                        [class.input-error]="control.invalid && control.touched"
-                    />
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.subject.errors | formErrorMessage
-                    }}</span>
-                </div>
-            </fieldset>
-            <fieldset
-                id="edit-message"
-                class="md:flex md:items-start w-full my-4"
-                *appLet="form.controls.message as control"
-            >
-                <label for="message" class="label md:w-1/4">Message:</label>
-                <div class="md:w-3/4">
-                    <textarea
-                        id="message"
-                        name="message"
-                        formControlName="message"
-                        rows="8"
-                        class="w-full textarea textarea-bordered resize-y"
-                        [class.textarea-error]="control.invalid && control.touched"
-                    ></textarea>
-                    <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
-                        form.controls.message.errors | formErrorMessage
-                    }}</span>
-                </div>
-            </fieldset>
-            <details class="collapse collapse-arrow bg-base-200 mb-4 rounded-md">
-                <summary class="collapse-title text-xl font-medium">Preview of message</summary>
-                <div class="collapse-content">
-                    <div class="text-center bg-slate-800 p-8">
-                        <a
-                            class="tracking-wider btn btn-ghost normal-case text-xl mb-8 mx-auto text-info"
-                            href="https://shift2-deployimpact.vercel.app/"
-                        >
-                            <img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png" />
-                        </a>
-                        <div class="p-5 bg-white rounded-lg text-neutral">
-                            <h3 class="text-2xl my-5 mx-auto">You have been invited to join Shift2 platform!</h3>
-                            <p class="mx-auto my-4 whitespace-pre-wrap max-w-sm md:max-w-lg">
-                                {{ form.controls.message.value }}
-                            </p>
-                            <a href="https://shift2-deployimpact.vercel.app/" class="btn btn-primary btn-wide my-8"
-                                >Accept Invitation</a
+    <ng-container
+        *ngIf="
+            true | isAuthorized: [userKindEnum.ADMIN, userKindEnum.ASSOCIATION, userKindEnum.COMPANY] | async;
+            else noPermissionContainer
+        "
+    >
+        <ng-container *ngIf="!vm.submitted; else submittedContainer">
+            <h1 class="text-3xl mb-5">Send an invitation</h1>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <fieldset id="kind" class="md:flex md:items-start w-full my-4 pr-5">
+                    <span class="md:w-1/4 label">Select the kind of user:</span>
+                    <ul class="md:w-3/4 flex flex-wrap gap-y-3 gap-x-8 py-2">
+                        <ng-container *ngFor="let userKind of userKinds">
+                            <li
+                                class="inline-block"
+                                *ngIf="
+                                    (userKind == userKindEnum.ADMIN &&
+                                        (true | isAuthorized: userKindEnum.ADMIN | async)) ||
+                                    (userKind == userKindEnum.ASSOCIATION &&
+                                        (false | isAuthorized: userKindEnum.COMPANY | async)) ||
+                                    userKind == userKindEnum.COMPANY || userKind == userKindEnum.CANDIDATE
+                                "
                             >
-                            <p class="mb-4 text-sm">
-                                Not sure why you are receiving this? Visit
-                                <a href="https://shift2-deployimpact.vercel.app/">Shift2</a> for more information.
-                            </p>
-                            <p *ngIf="form.controls.email.value" class="mb-4 text-sm">
-                                This email was sent to {{ form.controls.email.value }}
-                            </p>
+                                <input
+                                    [id]="'kind-' + userKind"
+                                    type="radio"
+                                    name="kind"
+                                    [value]="userKind"
+                                    formControlName="kind"
+                                    class="radio relative float-left"
+                                />
+                                <label
+                                    [for]="'kind-' + userKind"
+                                    class="inline-block pl-[0.5rem] hover:cursor-pointer"
+                                    >{{ userKind | userKindLabel }}</label
+                                >
+                            </li>
+                        </ng-container>
+                    </ul>
+                </fieldset>
+                <fieldset id="role" class="md:flex md:items-start w-full my-4 pr-5">
+                    <span class="md:w-1/4 label">Select the role:</span>
+                    <ul class="md:w-3/4 flex flex-wrap gap-y-3 gap-x-8 py-2">
+                        <li class="inline-block" *ngFor="let userRole of userRoles">
+                            <input
+                                *appLet="form.controls.kind.value as kind"
+                                [id]="'role-' + userRole"
+                                type="radio"
+                                name="role"
+                                [value]="userRole"
+                                formControlName="role"
+                                class="radio relative float-left"
+                            />
+                            <label [for]="'role-' + userRole" class="inline-block pl-[0.5rem] hover:cursor-pointer">
+                                {{ userRole | userCompanyRoleLabel }}
+                            </label>
+                        </li>
+                    </ul>
+                </fieldset>
+                <ng-container *ngIf="form.controls.kind.value === userKindEnum.ASSOCIATION">
+                    <fieldset
+                        id="associations-field"
+                        class="md:flex md:items-start w-full my-4"
+                        *appLet="form.controls.associationId as control"
+                    >
+                        <label for="associations" class="label md:w-1/4"> Select the association: </label>
+                        <div class="md:w-3/4 flex flex-col">
+                            <app-select-single
+                                id="associations"
+                                [control]="control"
+                                [options]="
+                                    vm.associations | createNewOption: form.controls.role.value === userRoleEnum.ADMIN
+                                "
+                                [searchKeys]="['name']"
+                                bindValue="id"
+                                bindLabel="name"
+                            ></app-select-single>
+                            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                                {{ control.errors | formErrorMessage }}
+                            </span>
+                        </div>
+                    </fieldset>
+                </ng-container>
+                <ng-container *ngIf="form.controls.kind.value === userKindEnum.COMPANY">
+                    <fieldset
+                        id="companies-field"
+                        class="md:flex md:items-start w-full my-4"
+                        *appLet="form.controls.companyId as control"
+                    >
+                        <label for="companies" class="label md:w-1/4"> Select the company: </label>
+                        <div class="md:w-3/4 flex flex-col">
+                            <app-select-single
+                                id="companies"
+                                [control]="control"
+                                [options]="
+                                    vm.companies | createNewOption: form.controls.role.value === userRoleEnum.ADMIN
+                                "
+                                [searchKeys]="['name']"
+                                bindValue="id"
+                                bindLabel="name"
+                            ></app-select-single>
+                            <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">
+                                {{ control.errors | formErrorMessage }}
+                            </span>
+                        </div>
+                    </fieldset>
+                </ng-container>
+                <div class="divider"></div>
+                <fieldset
+                    id="edit-email"
+                    class="md:flex md:items-start w-full my-4"
+                    *appLet="form.controls.email as control"
+                >
+                    <label for="email" class="label md:w-1/4">Email:</label>
+                    <div class="md:w-3/4">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            formControlName="email"
+                            class="w-full input input-bordered"
+                            [class.input-error]="control.invalid && control.touched"
+                        />
+                        <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                            form.controls.email.errors | formErrorMessage
+                        }}</span>
+                    </div>
+                </fieldset>
+                <fieldset
+                    id="edit-subject"
+                    class="md:flex md:items-start w-full my-4"
+                    *appLet="form.controls.subject as control"
+                >
+                    <label for="subject" class="label md:w-1/4">Subject:</label>
+                    <div class="md:w-3/4">
+                        <input
+                            type="text"
+                            id="subject"
+                            name="subject"
+                            formControlName="subject"
+                            class="w-full input input-bordered"
+                            [class.input-error]="control.invalid && control.touched"
+                        />
+                        <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                            form.controls.subject.errors | formErrorMessage
+                        }}</span>
+                    </div>
+                </fieldset>
+                <fieldset
+                    id="edit-message"
+                    class="md:flex md:items-start w-full my-4"
+                    *appLet="form.controls.message as control"
+                >
+                    <label for="message" class="label md:w-1/4">Message:</label>
+                    <div class="md:w-3/4">
+                        <textarea
+                            id="message"
+                            name="message"
+                            formControlName="message"
+                            rows="8"
+                            class="w-full textarea textarea-bordered resize-y"
+                            [class.textarea-error]="control.invalid && control.touched"
+                        ></textarea>
+                        <span class="w-full text-error mt-1" *ngIf="control.invalid && control.touched">{{
+                            form.controls.message.errors | formErrorMessage
+                        }}</span>
+                    </div>
+                </fieldset>
+                <details class="collapse collapse-arrow bg-base-200 mb-4 rounded-md">
+                    <summary class="collapse-title text-xl font-medium">Preview of message</summary>
+                    <div class="collapse-content">
+                        <div class="text-center bg-slate-800 p-8">
                             <a
-                                class="tracking-wider btn btn-ghost normal-case text-xl"
+                                class="tracking-wider btn btn-ghost normal-case text-xl mb-8 mx-auto text-info"
                                 href="https://shift2-deployimpact.vercel.app/"
                             >
                                 <img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png" />
                             </a>
-                            <p class="mt-8 mb-4 text-sm">
-                                <a href="https://shift2-deployimpact.vercel.app/">Privacy Policy</a>
-                            </p>
+                            <div class="p-5 bg-white rounded-lg text-neutral">
+                                <h3 class="text-2xl my-5 mx-auto">You have been invited to join Shift2 platform!</h3>
+                                <p class="mx-auto my-4 whitespace-pre-wrap max-w-sm md:max-w-lg">
+                                    {{ form.controls.message.value }}
+                                </p>
+                                <a href="https://shift2-deployimpact.vercel.app/" class="btn btn-primary btn-wide my-8"
+                                    >Accept Invitation</a
+                                >
+                                <p class="mb-4 text-sm">
+                                    Not sure why you are receiving this? Visit
+                                    <a href="https://shift2-deployimpact.vercel.app/">Shift2</a> for more information.
+                                </p>
+                                <p *ngIf="form.controls.email.value" class="mb-4 text-sm">
+                                    This email was sent to {{ form.controls.email.value }}
+                                </p>
+                                <a
+                                    class="tracking-wider btn btn-ghost normal-case text-xl"
+                                    href="https://shift2-deployimpact.vercel.app/"
+                                >
+                                    <img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png" />
+                                </a>
+                                <p class="mt-8 mb-4 text-sm">
+                                    <a href="https://shift2-deployimpact.vercel.app/">Privacy Policy</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
+                </details>
+                <button
+                    class="btn btn-primary btn-wide float-right"
+                    type="submit"
+                    [disabled]="form.invalid || form.pristine || vm.submitting"
+                >
+                    Send
+                </button>
+            </form>
+        </ng-container>
+        <ng-template #submittedContainer>
+            <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+                <div class="mx-auto max-w-screen-sm text-center">
+                    <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
+                        Invite was sent to {{ form.controls.email.value }}!
+                    </p>
+                    <a
+                        [routerLink]="['/']"
+                        class="inline-flex text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                        >Back to Homepage</a
+                    >
                 </div>
-            </details>
-            <button
-                class="btn btn-primary btn-wide float-right"
-                type="submit"
-                [disabled]="form.invalid || form.pristine || vm.submitting"
-            >
-                Send
-            </button>
-        </form>
+            </div>
+        </ng-template>
     </ng-container>
-    <ng-template #submittedContainer>
+    <ng-template #noPermissionContainer>
         <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
             <div class="mx-auto max-w-screen-sm text-center">
-                <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
-                    Invite was sent to {{ form.controls.email.value }}!
+                <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Oh no!</p>
+                <p class="mb-8 text-xl tracking-tight font-bold text-gray-900 md:text-2xl dark:text-white">
+                    It looks like you do not have the permission to send an invite.
                 </p>
                 <a
                     [routerLink]="['/']"
-                    class="inline-flex text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                    class="inline-flex text-white bg-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
                     >Back to Homepage</a
                 >
             </div>

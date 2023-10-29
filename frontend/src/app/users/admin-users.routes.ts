@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { hasUserIDGuard, isAdminGuard } from '@app/common/guards/admin.guard';
+
 const routes: Routes = [
     {
         path: '',
@@ -7,7 +9,8 @@ const routes: Routes = [
     },
     {
         path: 'create',
-        loadComponent: () => import('./form/create-user.component').then((m) => m.CreateUserComponent)
+        loadComponent: () => import('./form/create-user.component').then((m) => m.CreateUserComponent),
+        canActivate: [isAdminGuard]
     },
     {
         path: ':id',
@@ -16,7 +19,8 @@ const routes: Routes = [
     },
     {
         path: ':id/edit',
-        loadComponent: () => import('./form/edit-user.component').then((m) => m.EditUserComponent)
+        loadComponent: () => import('./form/edit-user.component').then((m) => m.EditUserComponent),
+        canActivate: [hasUserIDGuard]
     }
 ];
 

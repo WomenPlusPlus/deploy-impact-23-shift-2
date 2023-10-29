@@ -16,6 +16,7 @@ import { RouterModule } from '@angular/router';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum, UserRoleEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { CreateInviteFormGroup } from '@app/invitations/create-invite/common/models/create-invite.model';
@@ -42,7 +43,8 @@ Shift2 Team`;
         UserCompanyRoleLabelPipe,
         LetDirective,
         SelectSingleComponent,
-        CreateNewOptionPipe
+        CreateNewOptionPipe,
+        IsAuthorizedPipe
     ],
     providers: [CreateInviteStore],
     templateUrl: './create-invite.component.html'

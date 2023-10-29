@@ -48,6 +48,10 @@ const routes: Routes = [
         canActivate: [authenticatedGuard, activatedGuard]
     },
     {
+        path: 'forbidden',
+        loadComponent: () => import('./pages/forbidden/forbidden.component').then((m) => m.ForbiddenComponent)
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'dashboard'
