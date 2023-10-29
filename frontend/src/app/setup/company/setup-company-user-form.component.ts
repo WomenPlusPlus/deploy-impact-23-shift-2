@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 
-import { CreateCompanyFormGroup } from '@app/admin/company/create-company/common/models/create-company.model';
-import { CompanyFormComponent } from '@app/admin/company/form/company-form.component';
 import { ProfileSetup } from '@app/common/models/profile.model';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { CreateCompanyFormGroup } from '@app/companies/create-company/common/models/create-company.model';
+import { CompanyFormComponent } from '@app/companies/form/company-form.component';
 import { SetupCompanyUserFormStore } from '@app/setup/company/setup-company-user-form.store';
 import {
     UserFormCompanyFormGroup,

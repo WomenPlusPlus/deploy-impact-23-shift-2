@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { CreateCompanyFormGroup } from '@app/admin/company/create-company/common/models/create-company.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
+import { CreateCompanyFormGroup } from '@app/companies/create-company/common/models/create-company.model';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 
