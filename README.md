@@ -91,15 +91,15 @@ You can also run it locally, using the following instructions:
   * run `npm start`
 * Now you can visit [http://localhost:4200/](http://localhost:4200/) on your browser to view the SHIFT website.
 
-### Note: 
+> **Note**
 
-The Front-End services are performing HTTP Requests on our [deployed back-end](https://shift2-deployimpact.xyz). If you want to perform HTTP Requests to the local back-end, make sure to change the **API_BASE_URL** in the file *src/frontend/src/environments/environment.ts* to 'http://localhost:8080'
+>The Front-End services are performing HTTP Requests on our [deployed back-end](https://shift2-deployimpact.xyz). If you want to perform HTTP Requests to the local back-end, make sure to change the **API_BASE_URL** in the file *src/frontend/src/environments/environment.ts* to 'http://localhost:8080'
 
-In order to view the content of our website, you are required to login. 
+>In order to view the content of our website, you are required to login. 
 
-We are using [Auth0](https://auth0.com/) for User Authentication.
+>We are using [Auth0](https://auth0.com/) for User Authentication.
 
-[Here](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/credentials.md) are some demo users you can use.
+>[Here](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/credentials.md) are some demo users you can use.
 
 ## :woman_technologist: Team members :man_technologist:
 | Name                                                                         | Role            | GitHub                                            |
