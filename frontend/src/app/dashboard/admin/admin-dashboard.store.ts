@@ -10,7 +10,7 @@ import { CompanyList } from '@app/companies/profile/common/models/company-profil
 import { JobList } from '@app/jobs/common/models/job.model';
 import { JobsService } from '@app/jobs/common/services/jobs.service';
 import { UsersList } from '@app/users/common/models/users-list.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 
 import { AssociationList } from '../common/models/associations.model';
 
@@ -131,7 +131,7 @@ export class AdminDashboardStore extends ComponentStore<DashboardState> {
     );
 
     constructor(
-        private readonly usersService: AdminUsersService,
+        private readonly usersService: UsersService,
         private readonly companiesService: CompaniesService,
         private readonly associationsService: AssociationsService,
         private readonly jobsService: JobsService

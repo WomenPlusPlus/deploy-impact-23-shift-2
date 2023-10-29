@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 import { UserFormSubmissionModel } from '@app/users/form/common/models/user-form.model';
 
 export interface UserFormState {
@@ -48,7 +48,7 @@ export class SetupAdminFormStore extends ComponentStore<UserFormState> {
     );
 
     constructor(
-        private readonly adminUsersService: AdminUsersService,
+        private readonly adminUsersService: UsersService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

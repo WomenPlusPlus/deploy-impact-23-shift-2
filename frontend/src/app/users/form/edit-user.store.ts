@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { UserDetails } from '@app/common/models/users.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 import { EditUserResponse } from '@app/users/form/common/models/edit-user.model';
 
 import { UserFormSubmissionModel } from './common/models/user-form.model';
@@ -73,7 +73,7 @@ export class EditUserStore extends ComponentStore<UserFormState> {
 
     constructor(
         private readonly router: Router,
-        private readonly adminUsersService: AdminUsersService,
+        private readonly adminUsersService: UsersService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

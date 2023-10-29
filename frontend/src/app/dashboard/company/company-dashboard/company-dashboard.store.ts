@@ -10,7 +10,7 @@ import { selectProfile } from '@app/common/stores/auth/auth.reducer';
 import { CompaniesService } from '@app/companies/common/services/companies.service';
 import { JobList } from '@app/jobs/common/models/job.model';
 import { UsersList } from '@app/users/common/models/users-list.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 
 export interface DashboardState {
     jobs: JobList | null;
@@ -96,7 +96,7 @@ export class CompanyDashboardStore extends ComponentStore<DashboardState> {
 
     constructor(
         private readonly store: Store,
-        private readonly usersService: AdminUsersService,
+        private readonly usersService: UsersService,
         private readonly companiesService: CompaniesService
     ) {
         super(initialState);

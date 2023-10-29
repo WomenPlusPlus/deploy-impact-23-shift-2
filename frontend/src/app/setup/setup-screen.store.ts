@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { ProfileSetup } from '@app/common/models/profile.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 
 export interface SetupFormState {
     profile: ProfileSetup | null;
@@ -51,7 +51,7 @@ export class SetupScreenStore extends ComponentStore<SetupFormState> {
     );
 
     constructor(
-        private readonly adminUsersService: AdminUsersService,
+        private readonly adminUsersService: UsersService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

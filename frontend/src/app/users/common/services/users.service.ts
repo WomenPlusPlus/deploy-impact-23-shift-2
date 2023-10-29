@@ -15,7 +15,7 @@ import { UserFormModel } from '@app/users/form/common/models/user-form.model';
 @Injectable({
     providedIn: 'root'
 })
-export class AdminUsersService {
+export class UsersService {
     constructor(private readonly httpClient: HttpClient) {}
 
     getById(id: number): Observable<UserDetails> {

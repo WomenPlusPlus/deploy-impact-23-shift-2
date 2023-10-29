@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { UserKindEnum } from '@app/common/models/users.model';
 import { selectProfile } from '@app/common/stores/auth/auth.reducer';
 import { UsersList } from '@app/users/common/models/users-list.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 
 export interface DashboardState {
     users: UsersList | null;
@@ -75,7 +75,7 @@ export class AssociationDashboardStore extends ComponentStore<DashboardState> {
 
     constructor(
         private readonly store: Store,
-        private readonly usersService: AdminUsersService
+        private readonly usersService: UsersService
     ) {
         super(initialState);
     }

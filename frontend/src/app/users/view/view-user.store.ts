@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { UserDetails, UserStateEnum } from '@app/common/models/users.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 
 export interface ViewUserState {
     user: UserDetails | null;
@@ -90,7 +90,7 @@ export class ViewUserStore extends ComponentStore<ViewUserState> {
     );
 
     constructor(
-        private readonly adminUsersService: AdminUsersService,
+        private readonly adminUsersService: UsersService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

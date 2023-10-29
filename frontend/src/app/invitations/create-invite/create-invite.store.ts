@@ -5,18 +5,18 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { Association } from '@app/common/models/associations.model';
-import { Company } from '@app/common/models/companies.model';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
+import { CompaniesService } from '@app/companies/common/services/companies.service';
+import { CompanyItem } from '@app/companies/profile/common/models/company-profile.model';
+import { AssociationItem } from '@app/dashboard/common/models/associations.model';
 import { InvitationsService } from '@app/invitations/common/services/invitations.service';
 import { CreateInviteFormModel } from '@app/invitations/create-invite/common/models/create-invite.model';
-import { AdminAssociationsService } from '@app/users/common/services/admin-associations.service';
-import { AdminCompaniesService } from '@app/users/common/services/admin-companies.service';
 
 export interface CreateInviteState {
     submitting: boolean;
     submitted: boolean;
-    companies: Company[];
-    associations: Association[];
+    companies: CompanyItem[];
+    associations: AssociationItem[];
 }
 
 const initialState: CreateInviteState = {
@@ -59,9 +59,9 @@ export class CreateInviteStore extends ComponentStore<CreateInviteState> {
     loadCompanies = this.effect((trigger$: Observable<void>) =>
         trigger$.pipe(
             exhaustMap(() =>
-                this.adminCompaniesService.getCompanies().pipe(
+                this.companiesService.getCompaniesList().pipe(
                     tapResponse(
-                        (companies) => this.patchState({ companies }),
+                        (list) => this.patchState({ companies: list.items }),
                         (error) => console.error('Could not load companies: ', error)
                     )
                 )
@@ -72,9 +72,9 @@ export class CreateInviteStore extends ComponentStore<CreateInviteState> {
     loadAssociations = this.effect((trigger$: Observable<void>) =>
         trigger$.pipe(
             exhaustMap(() =>
-                this.adminAssociationsService.getAssociations().pipe(
+                this.associationsService.getAssociationsList().pipe(
                     tapResponse(
-                        (associations) => this.patchState({ associations }),
+                        (list) => this.patchState({ associations: list.items }),
                         (error) => console.error('Could not load associations: ', error)
                     )
                 )
@@ -84,8 +84,8 @@ export class CreateInviteStore extends ComponentStore<CreateInviteState> {
 
     constructor(
         private readonly invitationsService: InvitationsService,
-        private readonly adminCompaniesService: AdminCompaniesService,
-        private readonly adminAssociationsService: AdminAssociationsService,
+        private readonly companiesService: CompaniesService,
+        private readonly associationsService: AssociationsService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

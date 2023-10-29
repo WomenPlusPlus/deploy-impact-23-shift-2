@@ -9,7 +9,7 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 import { UsersListMode, UsersList } from '@app/users/common/models/users-list.model';
-import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UsersService } from '@app/users/common/services/users.service';
 
 export interface UsersListState {
     list: UsersList | null;
@@ -142,7 +142,7 @@ export class UsersListStore extends ComponentStore<UsersListState> {
     );
 
     constructor(
-        private readonly adminUsersService: AdminUsersService,
+        private readonly adminUsersService: UsersService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

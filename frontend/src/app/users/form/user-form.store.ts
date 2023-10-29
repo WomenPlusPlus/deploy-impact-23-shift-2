@@ -4,20 +4,20 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { Association } from '@app/common/models/associations.model';
-import { Company } from '@app/common/models/companies.model';
-import { AdminAssociationsService } from '@app/users/common/services/admin-associations.service';
-import { AdminCompaniesService } from '@app/users/common/services/admin-companies.service';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
+import { CompaniesService } from '@app/companies/common/services/companies.service';
+import { CompanyItem } from '@app/companies/profile/common/models/company-profile.model';
+import { AssociationItem } from '@app/dashboard/common/models/associations.model';
 
 export interface UserFormState {
     loadingCompanies: boolean;
     loadedCompanies: boolean;
     errorCompanies: boolean;
-    companies: Company[];
+    companies: CompanyItem[];
     loadingAssociations: boolean;
     loadedAssociations: boolean;
     errorAssociations: boolean;
-    associations: Association[];
+    associations: AssociationItem[];
 }
 
 const initialState: UserFormState = {
@@ -40,9 +40,14 @@ export class UserFormStore extends ComponentStore<UserFormState> {
         trigger$.pipe(
             tap(() => this.patchState({ loadingCompanies: true, loadedCompanies: false, errorCompanies: false })),
             exhaustMap(() =>
-                this.adminCompaniesService.getCompanies().pipe(
+                this.companiesService.getCompaniesList().pipe(
                     tapResponse(
-                        (companies) => this.patchState({ loadingCompanies: false, loadedCompanies: true, companies }),
+                        (list) =>
+                            this.patchState({
+                                loadingCompanies: false,
+                                loadedCompanies: true,
+                                companies: list.items
+                            }),
                         (error) => {
                             console.error('Could not load companies: ', error);
                             this.patchState({ loadingCompanies: false, errorCompanies: true });
@@ -59,10 +64,14 @@ export class UserFormStore extends ComponentStore<UserFormState> {
                 this.patchState({ loadingAssociations: true, loadedAssociations: false, errorAssociations: false })
             ),
             exhaustMap(() =>
-                this.adminAssociationsService.getAssociations().pipe(
+                this.associationsService.getAssociationsList().pipe(
                     tapResponse(
-                        (associations) =>
-                            this.patchState({ loadingAssociations: false, loadedAssociations: true, associations }),
+                        (list) =>
+                            this.patchState({
+                                loadingAssociations: false,
+                                loadedAssociations: true,
+                                associations: list.items
+                            }),
                         (error) => {
                             console.error('Could not load associations: ', error);
                             this.patchState({ loadingAssociations: false, errorAssociations: true });
@@ -74,8 +83,8 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     );
 
     constructor(
-        private readonly adminCompaniesService: AdminCompaniesService,
-        private readonly adminAssociationsService: AdminAssociationsService
+        private readonly companiesService: CompaniesService,
+        private readonly associationsService: AssociationsService
     ) {
         super(initialState);
     }
