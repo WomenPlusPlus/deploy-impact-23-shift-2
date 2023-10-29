@@ -16,13 +16,7 @@ import {
     DescriptionListItemComponent
 } from '@app/ui/description-list/description-list.component';
 import { UserBadgesComponent } from '@app/ui/user-badges/user-badges.component';
-import {
-    UsersListAssociationModel,
-    UsersListCandidateModel,
-    UsersListCompanyModel,
-    UsersListItemModel,
-    UsersListMode
-} from '@app/users/common/models/users-list.model';
+import { UsersCandidateItem, UsersItem, UsersListMode } from '@app/users/common/models/users-list.model';
 import { UsersListStore } from '@app/users/list/users-list.store';
 
 @Component({
@@ -45,22 +39,14 @@ import { UsersListStore } from '@app/users/list/users-list.store';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserCardComponent {
-    @Input() user!: UsersListItemModel;
+    @Input() user!: UsersItem;
     @Input() mode!: UsersListMode;
     @Input() deleting!: boolean;
 
     @HostBinding('class.relative') classRelative = true;
 
-    $candidate = (user: UsersListItemModel): UsersListCandidateModel => {
-        return user as UsersListCandidateModel;
-    };
-
-    $company = (user: UsersListItemModel): UsersListCompanyModel => {
-        return user as UsersListCompanyModel;
-    };
-
-    $association = (user: UsersListItemModel): UsersListAssociationModel => {
-        return user as UsersListAssociationModel;
+    $candidate = (user: UsersItem): UsersCandidateItem => {
+        return user as UsersCandidateItem;
     };
 
     get disableDeleteAction(): boolean {

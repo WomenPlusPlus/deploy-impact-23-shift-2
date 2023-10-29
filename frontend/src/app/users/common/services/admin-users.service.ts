@@ -7,7 +7,7 @@ import environment from '@envs/environment';
 
 import { ProfileSetup } from '@app/common/models/profile.model';
 import { UserDetails } from '@app/common/models/users.model';
-import { UsersListModel } from '@app/users/common/models/users-list.model';
+import { UsersList } from '@app/users/common/models/users-list.model';
 import { CreateUserResponse } from '@app/users/form/common/models/create-user.model';
 import { EditUserResponse } from '@app/users/form/common/models/edit-user.model';
 import { UserFormModel } from '@app/users/form/common/models/user-form.model';
@@ -22,8 +22,8 @@ export class AdminUsersService {
         return this.httpClient.get<UserDetails>(`${environment.API_BASE_URL}/api/v1/users/${id}`);
     }
 
-    getList(): Observable<UsersListModel> {
-        return this.httpClient.get<UsersListModel>(`${environment.API_BASE_URL}/api/v1/users`);
+    getList(): Observable<UsersList> {
+        return this.httpClient.get<UsersList>(`${environment.API_BASE_URL}/api/v1/users`);
     }
 
     createUser(user: UserFormModel): Observable<CreateUserResponse> {

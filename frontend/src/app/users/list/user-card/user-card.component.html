@@ -20,7 +20,7 @@
                 {{ user.preferredName || user.firstName + ' ' + user.lastName }}
             </div>
             <span class="break-all text-primary min-h-16 mb-4">{{ user.email }}</span>
-            <app-user-badges [kind]="user.kind" [role]="$any(user).role"></app-user-badges>
+            <app-user-badges [kind]="user.kind" [role]="user.role"></app-user-badges>
         </div>
     </div>
 </a>
@@ -38,10 +38,10 @@
             <ng-container data-selector="header">Kind</ng-container>
             {{ user.kind | userKindLabel }}
             <ng-container *ngIf="user.kind === userKindEnum.COMPANY">
-                | {{ $company(user).role | userCompanyRoleLabel }}
+                | {{ user.role! | userCompanyRoleLabel }}
             </ng-container>
             <ng-container *ngIf="user.kind === userKindEnum.ASSOCIATION">
-                | {{ $association(user).role | userAssociationRoleLabel }}
+                | {{ user.role! | userAssociationRoleLabel }}
             </ng-container>
         </app-item>
         <app-item size="sm">

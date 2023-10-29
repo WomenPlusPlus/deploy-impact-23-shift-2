@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { UsersList } from '@app/dashboard/common/models/users.model';
 import { AssociationDasboardService } from '@app/dashboard/common/services/association.service';
+import { UsersList } from '@app/users/common/models/users-list.model';
 
 export interface DashboardState {
     users: UsersList | null;

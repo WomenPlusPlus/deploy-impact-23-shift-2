@@ -8,11 +8,11 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
-import { UsersListMode, UsersListModel } from '@app/users/common/models/users-list.model';
+import { UsersListMode, UsersList } from '@app/users/common/models/users-list.model';
 import { AdminUsersService } from '@app/users/common/services/admin-users.service';
 
 export interface UsersListState {
-    list: UsersListModel | null;
+    list: UsersList | null;
     loading: boolean;
     error: boolean;
     deleting: boolean;
@@ -127,7 +127,7 @@ export class UsersListStore extends ComponentStore<UsersListState> {
         })
     );
     private getListLoadedSuccess = this.updater(
-        (state, list: UsersListModel): UsersListState => ({
+        (state, list: UsersList): UsersListState => ({
             ...state,
             list,
             loading: false
@@ -148,7 +148,7 @@ export class UsersListStore extends ComponentStore<UsersListState> {
         super(initialState);
     }
 
-    private extractFilteredList(list: UsersListModel | null, filters: UsersListFiltersState): UsersListModel | null {
+    private extractFilteredList(list: UsersList | null, filters: UsersListFiltersState): UsersList | null {
         if (!list) {
             return null;
         }

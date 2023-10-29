@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { JobList } from '@app/jobs/common/models/job.model';
+import { UsersList } from '@app/users/common/models/users-list.model';
 
 import { AssociationList } from '../common/models/associations.model';
 import { CompanyList } from '../common/models/company.model';
-import { UsersList } from '../common/models/users.model';
 import { AdminDashboardService } from '../common/services/admin.service';
 
 export interface DashboardState {

@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import environment from '@envs/environment';
 
-import { UsersList } from '../models/users.model';
+import { UsersList } from '@app/users/common/models/users-list.model';
 
 @Injectable({
     providedIn: 'root'

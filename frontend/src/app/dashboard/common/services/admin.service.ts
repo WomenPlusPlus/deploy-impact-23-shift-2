@@ -6,10 +6,10 @@ import { Injectable } from '@angular/core';
 import environment from '@envs/environment';
 
 import { JobList } from '@app/jobs/common/models/job.model';
+import { UsersList } from '@app/users/common/models/users-list.model';
 
 import { AssociationList } from '../models/associations.model';
 import { CompanyList } from '../models/company.model';
-import { UsersList } from '../models/users.model';
 
 @Injectable({
     providedIn: 'root'
