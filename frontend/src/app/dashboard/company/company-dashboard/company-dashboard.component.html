@@ -31,7 +31,7 @@
                                     </td>
                                     <td>{{ job.jobType | jobTypeLabel }}</td>
                                     <td>
-                                        <a [routerLink]="['/admin', 'users', job.creator.id]" class="link">
+                                        <a [routerLink]="['/users', job.creator.id]" class="link">
                                             {{ job.creator.name }} ({{ job.creator.email }})
                                         </a>
                                     </td>
@@ -78,7 +78,7 @@
                             <tbody>
                                 <tr *ngFor="let user of users">
                                     <td>
-                                        <a [routerLink]="['/admin', 'users', user.id]" class="link"
+                                        <a [routerLink]="['/users', user.id]" class="link"
                                             >{{ user.firstName }} {{ user.lastName }} {{ user.preferredName }}</a
                                         >
                                     </td>

@@ -56,7 +56,7 @@
                             <td>{{ job.jobType | jobTypeLabel }}</td>
                             <td>
                                 <span class="block">{{ job.creator.name }}</span>
-                                <a [routerLink]="['/admin', 'users', job.creator.id]" class="link">
+                                <a [routerLink]="['/users', job.creator.id]" class="link">
                                     {{ job.creator.email }}
                                 </a>
                             </td>

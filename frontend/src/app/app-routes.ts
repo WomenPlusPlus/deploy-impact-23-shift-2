@@ -15,6 +15,11 @@ const routes: Routes = [
         canActivate: [authenticatedGuard, invitedGuard]
     },
     {
+        path: 'users',
+        loadChildren: () => import('./users/admin-users.routes'),
+        canActivate: [authenticatedGuard, activatedGuard]
+    },
+    {
         path: 'admin',
         loadChildren: () => import('./admin/admin.routes'),
         canActivate: [authenticatedGuard, activatedGuard]
@@ -42,7 +47,7 @@ const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'admin'
+        redirectTo: 'dashboard'
     },
     {
         path: '**',
