@@ -6,13 +6,13 @@ import { Router } from '@angular/router';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
+import { CompaniesService } from '@app/companies/common/services/companies.service';
 import { JobList } from '@app/jobs/common/models/job.model';
 
-import { CompanyProfileModel } from '../common/models/company-profile.model';
-import { CompanyProfileService } from '../common/services/company-profile.service';
+import { CompanyItem } from '../common/models/company-profile.model';
 
 export interface CompanyProfileState {
-    profile: CompanyProfileModel | null;
+    profile: CompanyItem | null;
     jobs: JobList | null;
     loading: boolean;
     error: boolean;
@@ -38,7 +38,7 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
         trigger$.pipe(
             tap(() => this.profileLoading()),
             exhaustMap((id: number) =>
-                this.companyProfileService.getCompanyInfo(id).pipe(
+                this.companiesService.getCompany(id).pipe(
                     tapResponse(
                         (profile) => this.profileLoadSuccess(profile),
                         () => {
@@ -55,7 +55,7 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
     getJobs = this.effect((trigger$: Observable<number>) =>
         trigger$.pipe(
             exhaustMap((id: number) =>
-                this.companyProfileService.getJobsByCompany(id).pipe(
+                this.companiesService.getJobsByCompany(id).pipe(
                     tapResponse(
                         (jobs) => this.jobsLoadSuccess(jobs),
                         () => this.toast.error('Could not load job listings.')
@@ -73,7 +73,7 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
         })
     );
     private profileLoadSuccess = this.updater(
-        (state, profile: CompanyProfileModel): CompanyProfileState => ({
+        (state, profile: CompanyItem): CompanyProfileState => ({
             ...state,
             profile,
             loading: false
@@ -94,7 +94,7 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
     );
 
     constructor(
-        private readonly companyProfileService: CompanyProfileService,
+        private readonly companiesService: CompaniesService,
         private router: Router,
         private readonly toast: HotToastService
     ) {

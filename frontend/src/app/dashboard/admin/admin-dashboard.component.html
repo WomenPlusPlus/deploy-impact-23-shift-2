@@ -26,7 +26,7 @@
                             <tbody>
                                 <tr *ngFor="let user of users">
                                     <td>
-                                        <a [routerLink]="['/admin', 'users', user.id]" class="link"
+                                        <a [routerLink]="['/users', user.id]" class="link"
                                             >{{ user.firstName }} {{ user.lastName }}</a
                                         >
                                     </td>
@@ -49,7 +49,7 @@
             <div class="basis-2/5 mb-12">
                 <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
-                        <a [routerLink]="['/admin', 'invitations', 'create']" class="flex justify-between">
+                        <a [routerLink]="['/invitations', 'create']" class="flex justify-between">
                             Send an Invitation
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
@@ -57,7 +57,7 @@
                 </section>
                 <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
-                        <a [routerLink]="['/admin', 'users']" class="flex justify-between">
+                        <a [routerLink]="['/users']" class="flex justify-between">
                             Manage All Users
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
@@ -72,7 +72,7 @@
                     </section>
                     <section class="overflow-x-auto">
                         <div class="flex justify-between p-4 bg-base-100 rounded-lg my-4">
-                            <a [routerLink]="['/admin/users']" class="link">All Users</a>
+                            <a [routerLink]="['/users']" class="link">All Users</a>
                             <span class="badge bg-gray-400 text-base-100 badge-md px-4">
                                 {{ vm.users?.items ? vm.users?.items?.length : 0 }}
                             </span>

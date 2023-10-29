@@ -1,12 +1,16 @@
-import { exhaustMap, Observable, tap } from 'rxjs';
+import { exhaustMap, map, Observable, tap, withLatestFrom } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { Store } from '@ngrx/store';
 
-import { UsersList } from '@app/dashboard/common/models/users.model';
-import { CompanyDasboardService } from '@app/dashboard/common/services/company.service';
+import { UserKindEnum } from '@app/common/models/users.model';
+import { selectProfile } from '@app/common/stores/auth/auth.reducer';
+import { CompaniesService } from '@app/companies/common/services/companies.service';
 import { JobList } from '@app/jobs/common/models/job.model';
+import { UsersList } from '@app/users/common/models/users-list.model';
+import { UsersService } from '@app/users/common/services/users.service';
 
 export interface DashboardState {
     jobs: JobList | null;
@@ -35,7 +39,7 @@ export class CompanyDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap((id: number) =>
-                this.service.getJobsByCompany(id).pipe(
+                this.companiesService.getJobsByCompany(id).pipe(
                     tapResponse(
                         (jobs) =>
                             this.patchState({
@@ -53,7 +57,15 @@ export class CompanyDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap(() =>
-                this.service.getUsersByCompany().pipe(
+                this.usersService.getList().pipe(
+                    withLatestFrom(this.store.select(selectProfile)),
+                    map(([users, profile]) => ({
+                        items: !profile
+                            ? []
+                            : users.items.filter(
+                                  (item) => item.kind === UserKindEnum.COMPANY && item.companyId === profile.companyId
+                              )
+                    })),
                     tapResponse(
                         (users) =>
                             this.patchState({
@@ -82,7 +94,11 @@ export class CompanyDashboardStore extends ComponentStore<DashboardState> {
         })
     );
 
-    constructor(private readonly service: CompanyDasboardService) {
+    constructor(
+        private readonly store: Store,
+        private readonly usersService: UsersService,
+        private readonly companiesService: CompaniesService
+    ) {
         super(initialState);
     }
 }

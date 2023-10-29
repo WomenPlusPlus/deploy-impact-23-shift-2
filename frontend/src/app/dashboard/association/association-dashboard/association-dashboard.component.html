@@ -25,7 +25,7 @@
                             <tbody>
                                 <tr *ngFor="let user of users">
                                     <td>
-                                        <a [routerLink]="['/admin', 'users', user.id]" class="link"
+                                        <a [routerLink]="['/users', user.id]" class="link"
                                             >{{ user.firstName }} {{ user.lastName }}</a
                                         >
                                     </td>

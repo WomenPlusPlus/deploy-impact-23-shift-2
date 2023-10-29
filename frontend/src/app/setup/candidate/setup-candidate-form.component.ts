@@ -2,16 +2,16 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 
-import { UserFormCandidateComponent } from '@app/admin/users/form/candidate/user-form-candidate.component';
+import { ProfileSetup } from '@app/common/models/profile.model';
+import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { SetupCandidateFormStore } from '@app/setup/candidate/setup-candidate-form.store';
+import { UserFormCandidateComponent } from '@app/users/form/candidate/user-form-candidate.component';
 import {
     UserFormCandidateFormGroup,
     UserFormComponent,
     UserFormGroup,
     UserFormModel
-} from '@app/admin/users/form/common/models/user-form.model';
-import { ProfileSetup } from '@app/common/models/profile.model';
-import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
-import { SetupCandidateFormStore } from '@app/setup/candidate/setup-candidate-form.store';
+} from '@app/users/form/common/models/user-form.model';
 
 @Component({
     selector: 'app-setup-candidate-form',

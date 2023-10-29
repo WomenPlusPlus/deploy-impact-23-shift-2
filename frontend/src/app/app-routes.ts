@@ -15,9 +15,17 @@ const routes: Routes = [
         canActivate: [authenticatedGuard, invitedGuard]
     },
     {
-        path: 'admin',
-        loadChildren: () => import('./admin/admin.routes'),
+        path: 'users',
+        loadChildren: () => import('./users/admin-users.routes'),
         canActivate: [authenticatedGuard, activatedGuard]
+    },
+    {
+        path: 'invitations',
+        loadChildren: () => import('./invitations/invitations.routes')
+    },
+    {
+        path: 'associations',
+        loadChildren: () => import('./associations/associations.routes')
     },
     {
         path: 'companies',
@@ -42,7 +50,7 @@ const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'admin'
+        redirectTo: 'dashboard'
     },
     {
         path: '**',

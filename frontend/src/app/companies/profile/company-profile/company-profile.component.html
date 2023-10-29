@@ -9,7 +9,7 @@
         <ng-container *ngIf="vm.profile as profile">
             <ng-container *ngIf="true | isAuthorized: userKindEnum.ADMIN | async">
                 <div class="pb-4">
-                    <a [routerLink]="['/admin', 'companies', profile.id, 'edit']" class="float-right btn">Edit</a>
+                    <a [routerLink]="['/companies', profile.id, 'edit']" class="float-right btn">Edit</a>
                 </div>
             </ng-container>
             <div class="md:flex m-10">
@@ -90,7 +90,7 @@
                                     class="max-w-xs w-full relative"
                                 ></app-job-card>
                             </div>
-                            <p class="text-center mt-8 underline"><a href="/jobs">View more</a></p>
+                            <p class="text-center mt-8 underline"><a [routerLink]="['/jobs']">View more</a></p>
                         </div>
                         <div class="divider"></div>
                     </ng-container>

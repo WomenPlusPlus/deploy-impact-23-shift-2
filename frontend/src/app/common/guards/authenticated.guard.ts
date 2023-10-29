@@ -26,7 +26,7 @@ export const notAuthenticatedGuard: CanActivateFn = () => {
     return isAuthenticated$(store).pipe(
         map((authenticated) => {
             if (authenticated) {
-                return router.parseUrl('/admin');
+                return router.parseUrl('/dashboard');
             }
             return true;
         })

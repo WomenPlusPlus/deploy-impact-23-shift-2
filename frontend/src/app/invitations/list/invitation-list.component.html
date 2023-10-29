@@ -1,0 +1,70 @@
+<ng-container *ngIf="vm$ | async as vm">
+    <ng-container *ngIf="vm.error">
+        <app-content-error class="block h-screen/2-s"></app-content-error>
+    </ng-container>
+    <ng-container *ngIf="vm.loading">
+        <app-content-loading class="block h-screen/2-s"></app-content-loading>
+    </ng-container>
+    <ng-container *ngIf="!vm.loading && !vm.error">
+        <ng-container *ngIf="vm.list?.items as invites">
+            <header class="p-4 mb-5 flex flex-wrap items-center gap-x-10 gap-y-4">
+                <h1 class="text-5xl">Invites</h1>
+                <a class="btn btn-sm btn-primary mt-2" [routerLink]="['/invitations', 'create']">Invite new user</a>
+                <div class="grid justify-items-end px-4 ml-auto w-full sm:w-auto">
+                    <article class="grid justify-items-center">
+                        <span class="text-5xl">{{ invites.length || 0 }}</span>
+                        <span class="text-lg">In total</span>
+                    </article>
+                </div>
+            </header>
+            <section class="p-4 flex flex-wrap gap-x-10 gap-y-4">
+                <label class="flex items-center gap-2">
+                    <span>Show only my invites</span>
+                    <input
+                        type="checkbox"
+                        class="checkbox checkbox-sm"
+                        [ngModel]="vm.onlyMine"
+                        (ngModelChange)="onMyInvitesChange(!vm.onlyMine)"
+                    />
+                </label>
+                <input
+                    *appLet="vm.searchTerm as searchTerm"
+                    type="search"
+                    placeholder="Search"
+                    class="input input-bordered input-sm ml-auto rounded w-full sm:w-80"
+                    [class.input-error]="searchTerm.length && searchTerm.length < 3"
+                    [ngModel]="searchTerm"
+                    (ngModelChange)="onSearchTermChange($event)"
+                />
+            </section>
+            <section class="overflow-x-auto max-w-full">
+                <table class="table table-lg">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Email</th>
+                            <th>Category</th>
+                            <th>Sent</th>
+                            <th>Expire</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let invite of invites">
+                            <th>
+                                <a [routerLink]="['/invites', invite.id]" class="link">#{{ invite.id }}</a>
+                            </th>
+                            <td>{{ invite.email }}</td>
+                            <td>
+                                <app-user-badges [kind]="invite.kind" [role]="invite.role"></app-user-badges>
+                            </td>
+                            <td class="whitespace-nowrap">{{ invite.createdAt | date }}</td>
+                            <td class="whitespace-nowrap">{{ invite.expireAt | date }}</td>
+                            <td>{{ invite.state | inviteStatusLabel: invite.expireAt | lowercase }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </ng-container>
+    </ng-container>
+</ng-container>

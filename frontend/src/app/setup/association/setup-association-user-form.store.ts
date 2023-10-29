@@ -5,12 +5,9 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminAssociationService } from '@app/admin/associations/common/services/admin-association.service';
-import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
-import {
-    UserFormAssociationFormModel,
-    UserFormSubmissionModel
-} from '@app/admin/users/form/common/models/user-form.model';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
+import { UsersService } from '@app/users/common/services/users.service';
+import { UserFormAssociationFormModel, UserFormSubmissionModel } from '@app/users/form/common/models/user-form.model';
 
 export interface UserFormState {
     submitting: boolean;
@@ -71,8 +68,8 @@ export class SetupAssociationUserFormStore extends ComponentStore<UserFormState>
     );
 
     constructor(
-        private readonly adminUsersService: AdminUsersService,
-        private readonly adminAssociationService: AdminAssociationService,
+        private readonly adminUsersService: UsersService,
+        private readonly associationsService: AssociationsService,
         private readonly toast: HotToastService
     ) {
         super(initialState);
@@ -82,6 +79,6 @@ export class SetupAssociationUserFormStore extends ComponentStore<UserFormState>
         if (associationId) {
             return of(associationId);
         }
-        return this.adminAssociationService.createAssociation(association).pipe(map(({ id }) => id));
+        return this.associationsService.createAssociation(association).pipe(map(({ id }) => id));
     }
 }

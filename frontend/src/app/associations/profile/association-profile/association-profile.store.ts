@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { AssociationProfileModel } from '@app/associations/common/models/association-profile.model';
-import { AssociationProfileService } from '@app/associations/common/services/association-profile.service';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
 
 export interface AssociationProfileState {
     profile: AssociationProfileModel | null;
@@ -33,7 +33,7 @@ export class AssociationProfileStore extends ComponentStore<AssociationProfileSt
         trigger$.pipe(
             tap(() => this.profileLoading()),
             exhaustMap((id: number) =>
-                this.associationProfileService.getAssociationInfo(id).pipe(
+                this.associationsService.getAssociation(id).pipe(
                     tapResponse(
                         (profile) => this.profileLoadSuccess(profile),
                         () => {
@@ -70,7 +70,7 @@ export class AssociationProfileStore extends ComponentStore<AssociationProfileSt
     );
 
     constructor(
-        private readonly associationProfileService: AssociationProfileService,
+        private readonly associationsService: AssociationsService,
         private router: Router,
         private readonly toast: HotToastService
     ) {

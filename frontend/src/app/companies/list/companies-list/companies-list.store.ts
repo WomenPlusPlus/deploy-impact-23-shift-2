@@ -1,17 +1,17 @@
 import { HotToastService } from '@ngneat/hot-toast';
 import Fuse from 'fuse.js';
 import { pick } from 'lodash';
-import { Observable, exhaustMap, tap } from 'rxjs';
+import { exhaustMap, Observable, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { CompaniesListModel } from '@app/companies/profile/common/models/company-profile.model';
-import { CompanyProfileService } from '@app/companies/profile/common/services/company-profile.service';
+import { CompaniesService } from '@app/companies/common/services/companies.service';
+import { CompanyList } from '@app/companies/profile/common/models/company-profile.model';
 
 export interface CompaniesListState {
-    list: CompaniesListModel | null;
+    list: CompanyList | null;
     loading: boolean;
     error: boolean;
     deleting: boolean;
@@ -101,7 +101,7 @@ export class CompaniesListStore extends ComponentStore<CompaniesListState> {
         })
     );
     private getListLoadedSuccess = this.updater(
-        (state, list: CompaniesListModel): CompaniesListState => ({
+        (state, list: CompanyList): CompaniesListState => ({
             ...state,
             list,
             loading: false
@@ -116,13 +116,13 @@ export class CompaniesListStore extends ComponentStore<CompaniesListState> {
     );
 
     constructor(
-        private readonly companiesService: CompanyProfileService,
+        private readonly companiesService: CompaniesService,
         private readonly toast: HotToastService
     ) {
         super(initialState);
     }
 
-    private extractFilteredList(list: CompaniesListModel | null, searchString: string): CompaniesListModel | null {
+    private extractFilteredList(list: CompanyList | null, searchString: string): CompanyList | null {
         if (!list) {
             return null;
         }
