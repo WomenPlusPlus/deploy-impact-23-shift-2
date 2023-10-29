@@ -17,18 +17,16 @@ type UserService struct {
 	associationService *AssociationService
 }
 
-func NewUserService(
-	bucketDB entity.BucketDB,
-	userDB entity.UserDB,
-	invitationService *InvitationService,
-	associationService *AssociationService,
-) *UserService {
+func NewUserService(bucketDB entity.BucketDB, userDB entity.UserDB) *UserService {
 	return &UserService{
-		bucketDB:           bucketDB,
-		userDB:             userDB,
-		invitationService:  invitationService,
-		associationService: associationService,
+		bucketDB: bucketDB,
+		userDB:   userDB,
 	}
+}
+
+func (s *UserService) Inject(invitationService *InvitationService, associationService *AssociationService) {
+	s.invitationService = invitationService
+	s.associationService = associationService
 }
 
 func (s *UserService) CreateUser(req *entity.CreateUserRequest) (*entity.CreateUserResponse, error) {
@@ -121,6 +119,19 @@ func (s *UserService) GetUserByCompanyUserId(companyUserId int) (*entity.ViewUse
 		return nil, fmt.Errorf("getting user record by company user id: %w", err)
 	}
 	return s.getCompanyUserByUserId(user.ID)
+}
+
+func (s *UserService) GetUserIdsByCompanyId(companyId int) ([]int, error) {
+	users, err := s.userDB.GetUserRecordsByCompanyId(companyId)
+	if err != nil {
+		return nil, fmt.Errorf("getting user records by company id: %w", err)
+	}
+
+	res := make([]int, len(users))
+	for i, user := range users {
+		res[i] = user.ID
+	}
+	return res, nil
 }
 
 func (s *UserService) GetUserRecordByEmail(email string) (*entity.UserRecordResponse, error) {

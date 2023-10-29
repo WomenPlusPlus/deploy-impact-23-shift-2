@@ -15,18 +15,16 @@ type JobService struct {
 	companyService *CompanyService
 }
 
-func NewJobService(
-	bucketDB entity.BucketDB,
-	jobDB entity.JobDB,
-	userService *UserService,
-	companyService *CompanyService,
-) *JobService {
+func NewJobService(bucketDB entity.BucketDB, jobDB entity.JobDB) *JobService {
 	return &JobService{
-		bucketDB:       bucketDB,
-		jobDB:          jobDB,
-		userService:    userService,
-		companyService: companyService,
+		bucketDB: bucketDB,
+		jobDB:    jobDB,
 	}
+}
+
+func (s *JobService) Inject(userService *UserService, companyService *CompanyService) {
+	s.userService = userService
+	s.companyService = companyService
 }
 
 func (s *JobService) CreateJob(ctx context.Context, req *entity.CreateJobRequest) (*entity.CreateJobResponse, error) {

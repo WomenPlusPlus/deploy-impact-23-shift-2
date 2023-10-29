@@ -19,6 +19,7 @@ type CompanyEntity struct {
 	Values       string    `db:"values"`
 	JobTypes     string    `db:"job_types"`
 	Expectation  *string   `db:"expectation"`
+	Deleted      bool      `db:"deleted"`
 	CreatedAt    time.Time `db:"created_at"`
 }
 

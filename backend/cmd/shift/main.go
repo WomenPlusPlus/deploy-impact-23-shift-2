@@ -22,6 +22,7 @@ func main() {
 	} else {
 		logrus.SetLevel(logrus.TraceLevel)
 		logrus.Info("Setup log level to TRACE")
+		logrus.SetReportCaller(true)
 	}
 
 	ctx := context.Background()

@@ -86,6 +86,32 @@ func (pdb *PostgresDB) GetUserRecordByCompanyUserId(companyUserId int) (*entity.
 	return nil, fmt.Errorf("could not find user record view: company_user_id=%d", companyUserId)
 }
 
+func (pdb *PostgresDB) GetUserRecordsByCompanyId(companyId int) ([]*entity.UserRecordView, error) {
+	query := `select users.id, kind, email, state, users.created_at
+				from users
+				inner join company_users on users.id = company_users.user_id
+				inner join companies on company_users.company_id = companies.id
+				where companies.id = $1`
+	rows, err := pdb.db.Queryx(query, companyId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	res := make([]*entity.UserRecordView, 0)
+
+	for rows.Next() {
+		view := new(entity.UserRecordView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user record view from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users

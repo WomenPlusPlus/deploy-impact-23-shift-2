@@ -181,6 +181,10 @@ func IsInternalServerError(err error) bool {
 	return isInternalServerError
 }
 
+type ResponseMessage struct {
+	Message string
+}
+
 func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger := logrus.New()
