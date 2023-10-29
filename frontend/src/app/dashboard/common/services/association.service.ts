@@ -14,7 +14,6 @@ export class AssociationDasboardService {
     constructor(private readonly httpClient: HttpClient) {}
 
     getUsersByAssociation(): Observable<UsersList> {
-        // get users with the specified Association ID
         return this.httpClient.get<UsersList>(`${environment.API_BASE_URL}/api/v1/users`);
     }
 }

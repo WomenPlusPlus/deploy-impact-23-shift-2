@@ -14,12 +14,10 @@ export class AdminCompanyService {
     constructor(private readonly httpClient: HttpClient) {}
 
     createCompany(payload: FormData): Observable<{ id: number }> {
-        // post company data to back
         return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/companies`, payload);
     }
 
     editCompany(payload: FormData, id: number): Observable<void> {
-        // update company data to back end
         return this.httpClient.put<void>(`${environment.API_BASE_URL}/api/v1/companies/${id}`, payload);
     }
 
