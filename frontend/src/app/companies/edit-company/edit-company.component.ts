@@ -72,7 +72,7 @@ export class EditCompanyComponent implements OnInit {
 
         this.id = Number(this.route.snapshot.paramMap.get('id'));
         if (!this.id) {
-            this.router.navigate(['/admin', 'companies']);
+            this.router.navigate(['/companies']);
             return;
         }
 
