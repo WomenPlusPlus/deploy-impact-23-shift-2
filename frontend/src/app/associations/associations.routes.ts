@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 const routes: Routes = [
     {
-        path: '',
+        path: 'create',
         loadComponent: () =>
             import('./create-association/create-association.component').then((m) => m.CreateAssociationComponent)
     },

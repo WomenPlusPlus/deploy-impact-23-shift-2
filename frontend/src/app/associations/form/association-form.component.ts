@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { CreateAssociationFormGroup } from '@app/admin/associations/create-association/common/models/create-association.model';
+import { CreateAssociationFormGroup } from '@app/associations/create-association/common/models/create-association.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 

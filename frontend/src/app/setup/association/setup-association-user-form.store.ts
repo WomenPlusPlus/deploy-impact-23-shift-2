@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminAssociationService } from '@app/admin/associations/common/services/admin-association.service';
+import { AdminAssociationService } from '@app/associations/common/services/admin-association.service';
 import { AdminUsersService } from '@app/users/common/services/admin-users.service';
 import { UserFormAssociationFormModel, UserFormSubmissionModel } from '@app/users/form/common/models/user-form.model';
 

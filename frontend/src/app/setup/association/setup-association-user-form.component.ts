@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 
-import { CreateAssociationFormGroup } from '@app/admin/associations/create-association/common/models/create-association.model';
-import { AssociationFormComponent } from '@app/admin/associations/form/association-form.component';
+import { CreateAssociationFormGroup } from '@app/associations/create-association/common/models/create-association.model';
+import { AssociationFormComponent } from '@app/associations/form/association-form.component';
 import { ProfileSetup } from '@app/common/models/profile.model';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { SetupAssociationUserFormStore } from '@app/setup/association/setup-association-user-form.store';
