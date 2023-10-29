@@ -142,6 +142,11 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 			State:         user.State,
 		}
 
+		if user.State != UserStateActive {
+			r.Items[i] = item
+			continue
+		}
+
 		switch user.Kind {
 		case UserKindAssociation:
 			item.Role = *user.AssociationUserItemView.Role
@@ -262,6 +267,10 @@ func (r *ViewUserResponse) FromUserItemView(e *UserItemView) {
 	r.LinkedInUrl = utils.SafeUnwrap(e.LinkedInUrl)
 	r.GithubUrl = utils.SafeUnwrap(e.GithubUrl)
 	r.PortfolioUrl = utils.SafeUnwrap(e.PortfolioUrl)
+
+	if e.State != UserStateActive {
+		return
+	}
 
 	switch e.Kind {
 	case UserKindAssociation:

@@ -106,13 +106,12 @@ func (s *APIServer) handleEditUser(w http.ResponseWriter, r *http.Request) error
 }
 
 func (s *APIServer) handleDeleteUser(w http.ResponseWriter, r *http.Request) error {
-	// TODO:
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
 
-	if _, err := s.userService.GetUserById(id); err != nil {
-		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	if err := s.userService.DeleteUserById(id); err != nil {
+		return WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: err.Error()})
 	}
 
-	return WriteJSONResponse(w, http.StatusOK, "User deleted successfully")
+	return WriteJSONResponse(w, http.StatusOK, ResponseMessage{"user deleted successfully"})
 }

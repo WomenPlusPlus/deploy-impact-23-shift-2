@@ -74,18 +74,70 @@ func (pdb *PostgresDB) AssignJobLanguages(jobId int, locations entity.JobLanguag
 	return nil
 }
 
-func (pdb *PostgresDB) DeleteJob(int) error {
-	// TODO
-	panic("unimplemented")
+func (pdb *PostgresDB) DeleteJob(id int) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	if err := pdb.deleteJobCascade(tx, id); err != nil {
+		return err
+	}
+
+	query := "update jobs set deleted=true where id=$1"
+	res, err := tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete job query: %w", err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("could not find job %d to delete", id)
+	}
+
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit company user deletion in db: %v", err)
+		return err
+	}
+	return nil
 }
 
 func (pdb *PostgresDB) GetAllJobs() ([]*entity.JobView, error) {
 	query := `select jobs.*, loc.city_id, loc.city_name
 				from jobs
-				left outer join job_locations loc on jobs.id = loc.job_id`
+				left outer join job_locations loc on jobs.id = loc.job_id
+				where deleted=false`
 	rows, err := pdb.db.Queryx(query)
 	if err != nil {
 		return nil, fmt.Errorf("fetching all jobs in db: %w", err)
+	}
+	defer rows.Close()
+
+	res := make([]*entity.JobView, 0)
+
+	for rows.Next() {
+		view := new(entity.JobView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan job view from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
+func (pdb *PostgresDB) GetAllJobsByCompany(companyId int) ([]*entity.JobView, error) {
+	query := `select jobs.*, loc.city_id, loc.city_name
+				from jobs
+				inner join company_users on jobs.creator_id = company_users.company_id
+				inner join companies on company_users.company_id = companies.id
+				left outer join job_locations loc on jobs.id = loc.job_id
+				where companies.id = $1 and jobs.deleted=false`
+	rows, err := pdb.db.Queryx(query, companyId)
+	if err != nil {
+		return nil, fmt.Errorf("fetching all jobs for company id %d in db: %w", companyId, err)
 	}
 	defer rows.Close()
 
@@ -160,7 +212,7 @@ func (pdb *PostgresDB) getJobById(tx sqlx.Queryer, id int) (*entity.JobView, err
 	query := `select jobs.*, loc.city_id, loc.city_name
 				from jobs
 				left outer join job_locations loc on jobs.id = loc.job_id
-				where jobs.id = $1`
+				where jobs.id = $1 and deleted=false`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		return nil, fmt.Errorf("fetching job id=%d in db: %w", id, err)
@@ -271,6 +323,50 @@ func (pdb *PostgresDB) deleteJobLanguages(tx sqlx.Execer, jobId int) error {
 	query := `delete from job_languages where job_id = $1`
 	if _, err := tx.Exec(query, jobId); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteJobsByCreatorId(tx QueryerExecer, creatorId int) error {
+	query := "update jobs set deleted=true where id=$1 returning id"
+	rows, err := tx.Queryx(query, creatorId)
+	if err != nil {
+		return fmt.Errorf("delete job by creator id query: %w", err)
+	}
+	defer rows.Close()
+
+	ids := make([]int, 0)
+	for rows.Next() {
+		view := new(struct {
+			Id int `db:"id"`
+		})
+		if err := rows.StructScan(&view); err != nil {
+			logrus.Errorf("failed to scan job id from db row: %v", err)
+			return err
+		}
+		ids = append(ids, view.Id)
+	}
+
+	for _, id := range ids {
+		if err := pdb.deleteJobCascade(tx, id); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (pdb *PostgresDB) deleteJobCascade(tx sqlx.Execer, id int) error {
+	if err := pdb.deleteJobLocation(tx, id); err != nil {
+		return fmt.Errorf("delete job location: %w", err)
+	}
+
+	if err := pdb.deleteJobSkills(tx, id); err != nil {
+		return fmt.Errorf("delete job skills: %w", err)
+	}
+
+	if err := pdb.deleteJobLanguages(tx, id); err != nil {
+		return fmt.Errorf("delete job languages: %w", err)
 	}
 	return nil
 }

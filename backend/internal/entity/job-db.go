@@ -7,6 +7,7 @@ type JobDB interface {
 	AssignJobLanguages(jobId int, locations JobLanguagesEntity) error
 	DeleteJob(int) error
 	GetAllJobs() ([]*JobView, error)
+	GetAllJobsByCompany(companyId int) ([]*JobView, error)
 	GetJobById(int) (*JobView, error)
 	GetSkillsByJobId(int) (JobSkillsEntity, error)
 	GetLanguagesByJobId(int) (JobLanguagesEntity, error)

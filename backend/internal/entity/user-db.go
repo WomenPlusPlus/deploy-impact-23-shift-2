@@ -14,7 +14,10 @@ type UserDB interface {
 	GetCompanyUserByUserId(int) (*UserItemView, error)
 	CreateUser(*UserEntity) (*UserEntity, error)
 	EditUser(int, *UserEntity) (*UserEntity, error)
-	DeleteUser(int) error
+	DeleteAdminUser(int) error
+	DeleteAssociationUser(int) error
+	DeleteCandidateUser(int) error
+	DeleteCompanyUser(int) error
 	CreateAssociationUser(*AssociationUserEntity) (*AssociationUserEntity, error)
 	EditAssociationUser(int, *AssociationUserEntity) (*AssociationUserEntity, error)
 	CreateCandidate(*CandidateEntity) (*CandidateEntity, error)
