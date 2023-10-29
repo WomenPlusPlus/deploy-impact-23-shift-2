@@ -79,14 +79,13 @@ func (s *APIServer) handleViewCompany(w http.ResponseWriter, r *http.Request) er
 	return WriteJSONResponse(w, http.StatusOK, company)
 }
 
-// TODO
 func (s *APIServer) handleDeleteCompany(w http.ResponseWriter, r *http.Request) error {
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
 
-	if _, err := s.companyService.GetCompanyById(id); err != nil {
-		return WriteJSONResponse(w, http.StatusNotFound, apiError{Error: err.Error()})
+	if err := s.companyService.DeleteCompanyById(id); err != nil {
+		return WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: err.Error()})
 	}
 
-	return WriteJSONResponse(w, http.StatusOK, "company deleted successfully")
+	return WriteJSONResponse(w, http.StatusOK, ResponseMessage{"company deleted successfully"})
 }

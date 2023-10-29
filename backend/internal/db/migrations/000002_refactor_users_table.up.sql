@@ -72,6 +72,7 @@ create table if not exists companies
     values        varchar(4096) not null,
     job_types     varchar(512)  not null,
     expectation   varchar(512),
+    deleted       bool                   default false,
     created_at    timestamp     not null default CURRENT_TIMESTAMP
 );
 

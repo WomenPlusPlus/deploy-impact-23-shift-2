@@ -11,7 +11,7 @@ import (
 )
 
 func (pdb *PostgresDB) DeleteCompany(id int) error {
-	query := "DELETE FROM companies WHERE id = $1"
+	query := "update companies set deleted=true WHERE id = $1"
 	res, err := pdb.db.Exec(query, id)
 
 	if err == nil {
@@ -24,7 +24,7 @@ func (pdb *PostgresDB) DeleteCompany(id int) error {
 }
 
 func (pdb *PostgresDB) getCompanyById(tx sqlx.Queryer, id int) (*entity.CompanyEntity, error) {
-	query := `select * from companies where id = $1`
+	query := `select * from companies where id = $1 and deleted=false`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get company with id=%d in db: %v", id, err)
@@ -44,7 +44,7 @@ func (pdb *PostgresDB) getCompanyById(tx sqlx.Queryer, id int) (*entity.CompanyE
 }
 
 func (pdb *PostgresDB) GetCompanyById(id int) (*entity.CompanyEntity, error) {
-	query := `select * from companies where id = $1`
+	query := `select * from companies where id = $1 and deleted=false`
 	rows, err := pdb.db.Queryx(query, id)
 	if err != nil {
 		return nil, fmt.Errorf("fetching company id=%d in db: %w", id, err)
@@ -67,7 +67,7 @@ func (pdb *PostgresDB) GetCompanyByCompanyUserId(companyUserId int) (*entity.Com
 	query := `select companies.*
 				from companies
 				inner join company_users on companies.id = company_users.company_id
-				where company_users.id = $1`
+				where company_users.id = $1 and companies.deleted=false`
 	rows, err := pdb.db.Queryx(query, companyUserId)
 	if err != nil {
 		return nil, fmt.Errorf("fetching company by company user id=%d in db: %w", companyUserId, err)
@@ -144,7 +144,7 @@ func (pdb *PostgresDB) CreateCompany(company *entity.CompanyEntity) (*entity.Com
 func (pdb *PostgresDB) GetAllCompanies() ([]*entity.CompanyEntity, error) {
 	res := make([]*entity.CompanyEntity, 0)
 
-	query := `select * from companies`
+	query := `select * from companies where deleted=false`
 	rows, err := pdb.db.Queryx(query)
 	if err != nil {
 		return nil, fmt.Errorf("fetching companies in db: %w", err)

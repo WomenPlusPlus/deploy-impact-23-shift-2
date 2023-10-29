@@ -11,8 +11,9 @@ import (
 )
 
 type CompanyService struct {
-	bucketDB  entity.BucketDB
-	companyDB entity.CompanyDB
+	bucketDB     entity.BucketDB
+	companyDB    entity.CompanyDB
+	usersService *UserService
 }
 
 func NewCompanyService(bucketDB entity.BucketDB, companyDB entity.CompanyDB) *CompanyService {
@@ -20,6 +21,10 @@ func NewCompanyService(bucketDB entity.BucketDB, companyDB entity.CompanyDB) *Co
 		bucketDB:  bucketDB,
 		companyDB: companyDB,
 	}
+}
+
+func (s *CompanyService) Inject(usersService *UserService) {
+	s.usersService = usersService
 }
 
 func (s *CompanyService) CreateCompany(req *entity.CreateCompanyRequest) (*entity.CreateCompanyResponse, error) {
@@ -83,6 +88,22 @@ func (s *CompanyService) GetCompanyByCompanyUserId(companyUserId int) (*entity.V
 	}
 
 	return res, nil
+}
+
+func (s *CompanyService) DeleteCompanyById(id int) error {
+	usersIds, err := s.usersService.GetUserIdsByCompanyId(id)
+	if err != nil {
+		return fmt.Errorf("finding users from company being deleting: %w", err)
+	}
+	if len(usersIds) > 0 {
+		return fmt.Errorf("still have users on company")
+	}
+
+	if err := s.companyDB.DeleteCompany(id); err != nil {
+		return fmt.Errorf("deleting company by id: %w", err)
+	}
+
+	return nil
 }
 
 func (s *CompanyService) createCompany(req *entity.CreateCompanyRequest) (*entity.CreateCompanyResponse, error) {

@@ -40,9 +40,13 @@ func NewAPIServer(
 
 	associationService := service.NewAssociationService(bucketDB, associationDB)
 	invitationService := service.NewInvitationService(bucketDB, invitationDB)
-	userService := service.NewUserService(bucketDB, userDB, invitationService, associationService)
+	userService := service.NewUserService(bucketDB, userDB)
 	companyService := service.NewCompanyService(bucketDB, companyDB)
-	jobService := service.NewJobService(bucketDB, jobDB, userService, companyService)
+	jobService := service.NewJobService(bucketDB, jobDB)
+
+	userService.Inject(invitationService, associationService)
+	companyService.Inject(userService)
+	jobService.Inject(userService, companyService)
 
 	return &APIServer{
 		address:            address,
