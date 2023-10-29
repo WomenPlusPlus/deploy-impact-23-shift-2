@@ -26,9 +26,4 @@ export class AdminCompanyService {
     getCompany(id: number): Observable<CompanyProfileModel> {
         return this.httpClient.get<CompanyProfileModel>(`${environment.API_BASE_URL}/api/v1/companies/${id}`);
     }
-
-    deleteCompany(id: number): Observable<void> {
-        // post company data to back end
-        return this.httpClient.delete<void>(`${environment.API_BASE_URL}/api/v1/companies/${id}`);
-    }
 }

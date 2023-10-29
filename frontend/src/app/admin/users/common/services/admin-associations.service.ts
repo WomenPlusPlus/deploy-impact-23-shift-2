@@ -1,9 +1,12 @@
-import { Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import environment from '@envs/environment';
+
 import { Association } from '@app/common/models/associations.model';
+import { AssociationList } from '@app/dashboard/common/models/associations.model';
 
 @Injectable({
     providedIn: 'root'
@@ -12,10 +15,8 @@ export class AdminAssociationsService {
     constructor(private readonly httpClient: HttpClient) {}
 
     getAssociations(): Observable<Association[]> {
-        // TODO: replace by API call.
-        return of([
-            { id: 1, name: 'Association 1' },
-            { id: 2, name: 'Association 2' }
-        ]);
+        return this.httpClient
+            .get<AssociationList>(`${environment.API_BASE_URL}/api/v1/associations`)
+            .pipe(map(({ items }) => items));
     }
 }
