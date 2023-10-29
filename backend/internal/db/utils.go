@@ -6,6 +6,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type QueryerExecer interface {
+	sqlx.Queryer
+	sqlx.Execer
+}
+
 type NamedQuerier interface {
 	NamedExec(query string, arg interface{}) (sql.Result, error)
 	PrepareNamed(query string) (*sqlx.NamedStmt, error)

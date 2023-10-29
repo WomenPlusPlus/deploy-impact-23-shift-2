@@ -27,16 +27,148 @@ func NewPostgresDB() *PostgresDB {
 	}
 }
 
-func (s *PostgresDB) DeleteUser(id int) error {
-	query := "DELETE FROM users WHERE id = $1"
-	res, err := s.db.Exec(query, id)
+func (pdb *PostgresDB) DeleteAdminUser(id int) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
 
-	if err == nil {
-		_, err := res.RowsAffected()
-		if err == nil {
-			/* check count and return true/false */
-			return err
-		}
+	if err := pdb.deleteJobsByCreatorId(tx, id); err != nil {
+		return fmt.Errorf("delete company user jobs: %w", err)
+	}
+
+	query := "update users set state='DELETED' where id=$1 and kind='ADMIN'"
+	res, err := pdb.db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete user of admin kind: %w", err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("could not find admin %d to delete", id)
+	}
+
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit admin deletion in db: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) DeleteAssociationUser(id int) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	query := "delete from association_users where user_id=$1"
+	res, err := tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete association user: %w", err)
+	}
+
+	query = "update users set state='DELETED' where id=$1 and kind='ASSOCIATION'"
+	res, err = tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete user of association user kind: %w", err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("could not find association user %d to delete", id)
+	}
+
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit association user deletion in db: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) DeleteCandidateUser(id int) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	if err := pdb.deleteCandidateSkillsByUserId(tx, id); err != nil {
+		return fmt.Errorf("deleting candidate skills: % by user idv", err)
+	}
+
+	if err := pdb.deleteCandidateSpokenLanguagesByUserId(tx, id); err != nil {
+		return fmt.Errorf("deleting candidate spoken languages:  by user id%v", err)
+	}
+
+	if err := pdb.deleteCandidateSeekLocationsByUserId(tx, id); err != nil {
+		return fmt.Errorf("deleting candidate seek locations:  by user id%v", err)
+	}
+
+	if err := pdb.deleteCandidateEducationHistoryListByUserId(tx, id); err != nil {
+		return fmt.Errorf("deleting candidate education history list by user id: %v", err)
+	}
+
+	if err := pdb.deleteCandidateEmploymentHistoryListByUserId(tx, id); err != nil {
+		return fmt.Errorf("deleting candidate employment history list by user id: %v", err)
+	}
+
+	query := "delete from candidates where user_id=$1"
+	res, err := tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete candidate: %w", err)
+	}
+
+	query = "update users set state='DELETED' where id=$1 and kind='CANDIDATE'"
+	res, err = tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete user of candidate kind: %w", err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("could not find candidate %d to delete", id)
+	}
+
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit candidate deletion in db: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) DeleteCompanyUser(id int) error {
+	tx := pdb.db.MustBegin()
+	defer tx.Rollback()
+
+	if err := pdb.deleteJobsByCreatorId(tx, id); err != nil {
+		return fmt.Errorf("delete company user jobs: %w", err)
+	}
+
+	query := "delete from company_users where user_id=$1"
+	res, err := tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete company user: %w", err)
+	}
+
+	query = "update users set state='DELETED' where id=$1 and kind='COMPANY'"
+	res, err = tx.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("delete user of company user kind: %w", err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("could not find company user %d to delete", id)
+	}
+
+	if err := tx.Commit(); err != nil {
+		logrus.Errorf("failed to commit company user deletion in db: %v", err)
+		return err
 	}
 	return nil
 }
@@ -44,7 +176,7 @@ func (s *PostgresDB) DeleteUser(id int) error {
 func (pdb *PostgresDB) GetUserRecord(id int) (*entity.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users
-				where id = $1`
+				where id = $1 and state = 'ACTIVE'`
 	rows, err := pdb.db.Queryx(query, id)
 	if err != nil {
 		return nil, err
@@ -67,7 +199,7 @@ func (pdb *PostgresDB) GetUserRecordByCompanyUserId(companyUserId int) (*entity.
 	query := `select users.id, kind, email, state, created_at
 				from users
 				inner join company_users on users.id = company_users.user_id
-				where company_users.id = $1`
+				where company_users.id = $1 and state = 'ACTIVE'`
 	rows, err := pdb.db.Queryx(query, companyUserId)
 	if err != nil {
 		return nil, err
@@ -91,7 +223,7 @@ func (pdb *PostgresDB) GetUserRecordsByCompanyId(companyId int) ([]*entity.UserR
 				from users
 				inner join company_users on users.id = company_users.user_id
 				inner join companies on company_users.company_id = companies.id
-				where companies.id = $1`
+				where companies.id = $1 and state = 'ACTIVE'`
 	rows, err := pdb.db.Queryx(query, companyId)
 	if err != nil {
 		return nil, err
@@ -117,7 +249,7 @@ func (pdb *PostgresDB) GetUserRecordsByAssociationId(associationId int) ([]*enti
 				from users
 				inner join association_users on users.id = association_users.user_id
 				inner join associations on association_users.association_id = associations.id
-				where associations.id = $1`
+				where associations.id = $1 and state = 'ACTIVE'`
 	rows, err := pdb.db.Queryx(query, associationId)
 	if err != nil {
 		return nil, err
@@ -1278,6 +1410,14 @@ func (pdb *PostgresDB) deleteCandidateSkills(tx sqlx.Execer, candidateId int) er
 	return nil
 }
 
+func (pdb *PostgresDB) deleteCandidateSkillsByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_skills using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateSpokenLanguages(tx NamedQuerier, records entity.CandidateSpokenLanguagesEntity) error {
 	query := `insert into candidate_spoken_languages (candidate_id, language_id, language_name, language_short_name, level) values (:candidate_id, :language_id, :language_name, :language_short_name, :level)`
 	for _, record := range records {
@@ -1291,6 +1431,14 @@ func (pdb *PostgresDB) insertCandidateSpokenLanguages(tx NamedQuerier, records e
 func (pdb *PostgresDB) deleteCandidateSpokenLanguages(tx sqlx.Execer, candidateId int) error {
 	query := `delete from candidate_spoken_languages where candidate_id = $1`
 	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateSpokenLanguagesByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_spoken_languages using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
 		return err
 	}
 	return nil
@@ -1314,6 +1462,14 @@ func (pdb *PostgresDB) deleteCandidateSeekLocations(tx sqlx.Execer, candidateId 
 	return nil
 }
 
+func (pdb *PostgresDB) deleteCandidateSeekLocationsByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_seek_locations using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateCV(tx NamedQuerier, record *entity.CandidateCVEntity) error {
 	query := `insert into candidate_cvs (candidate_id, cv_url) values (:candidate_id, :cv_url)`
 	if _, err := tx.NamedExec(query, record); err != nil {
@@ -1325,6 +1481,14 @@ func (pdb *PostgresDB) insertCandidateCV(tx NamedQuerier, record *entity.Candida
 func (pdb *PostgresDB) deleteCandidateCV(tx sqlx.Execer, candidateId int) error {
 	query := `delete from candidate_cvs where candidate_id = $1`
 	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateCVByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_cvs using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
 		return err
 	}
 	return nil
@@ -1348,6 +1512,14 @@ func (pdb *PostgresDB) deleteCandidateAttachments(tx sqlx.Execer, candidateId in
 	return nil
 }
 
+func (pdb *PostgresDB) deleteCandidateAttachmentsByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_attachments using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateVideo(tx NamedQuerier, record *entity.CandidateVideoEntity) error {
 	query := `insert into candidate_videos (candidate_id, video_url) values (:candidate_id, :video_url)`
 	if _, err := tx.NamedExec(query, record); err != nil {
@@ -1359,6 +1531,14 @@ func (pdb *PostgresDB) insertCandidateVideo(tx NamedQuerier, record *entity.Cand
 func (pdb *PostgresDB) deleteCandidateVideo(tx sqlx.Execer, candidateId int) error {
 	query := `delete from candidate_videos where candidate_id = $1`
 	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateVideoByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_videos using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
 		return err
 	}
 	return nil
@@ -1382,6 +1562,14 @@ func (pdb *PostgresDB) deleteCandidateEducationHistoryList(tx sqlx.Execer, candi
 	return nil
 }
 
+func (pdb *PostgresDB) deleteCandidateEducationHistoryListByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_education_history using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) insertCandidateEmploymentHistoryList(tx NamedQuerier, records entity.CandidateEmploymentHistoryListEntity) error {
 	query := `insert into candidate_employment_history (candidate_id, title, description, company, from_date, to_date) values (:candidate_id, :title, :description, :company, :from_date, :to_date)`
 	for _, record := range records {
@@ -1395,6 +1583,14 @@ func (pdb *PostgresDB) insertCandidateEmploymentHistoryList(tx NamedQuerier, rec
 func (pdb *PostgresDB) deleteCandidateEmploymentHistoryList(tx sqlx.Execer, candidateId int) error {
 	query := `delete from candidate_employment_history where candidate_id = $1`
 	if _, err := tx.Exec(query, candidateId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pdb *PostgresDB) deleteCandidateEmploymentHistoryListByUserId(tx sqlx.Execer, userId int) error {
+	query := `delete from candidate_employment_history using candidates where candidates.user_id = $1`
+	if _, err := tx.Exec(query, userId); err != nil {
 		return err
 	}
 	return nil

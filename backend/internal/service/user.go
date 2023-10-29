@@ -76,7 +76,7 @@ func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 
 	ctx := context.Background()
 	for _, user := range users {
-		if user.ImageUrl == nil {
+		if user.ImageUrl == nil || user.State != entity.UserStateActive {
 			continue
 		}
 		imageUrl, err := s.bucketDB.SignUrl(ctx, *user.ImageUrl)
@@ -271,6 +271,38 @@ func (s *UserService) SetupProfile(req *entity.CreateUserRequest) (*entity.Creat
 	}
 
 	return res, nil
+}
+
+func (s *UserService) DeleteUserById(id int) error {
+	user, err := s.userDB.GetUserRecord(id)
+	if err != nil {
+		return fmt.Errorf("getting user record: %w", err)
+	}
+
+	switch user.Kind {
+	case entity.UserKindAdmin:
+		if err := s.userDB.DeleteAdminUser(user.ID); err != nil {
+			return fmt.Errorf("deleting admin: %w", err)
+		}
+		return nil
+	case entity.UserKindAssociation:
+		if err := s.userDB.DeleteAssociationUser(user.ID); err != nil {
+			return fmt.Errorf("deleting association user: %w", err)
+		}
+		return nil
+	case entity.UserKindCandidate:
+		if err := s.userDB.DeleteCandidateUser(user.ID); err != nil {
+			return fmt.Errorf("deleting candidate: %w", err)
+		}
+		return nil
+	case entity.UserKindCompany:
+		if err := s.userDB.DeleteCompanyUser(user.ID); err != nil {
+			return fmt.Errorf("deleting company user: %w", err)
+		}
+		return nil
+	}
+
+	return fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
 }
 
 func (s *UserService) getProfileByEmail(email string) (*entity.ProfileResponse, error) {
