@@ -4,15 +4,16 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
+import { JobList } from '@app/jobs/common/models/job.model';
+
 import { AssociationList } from '../common/models/associations.model';
 import { CompanyList } from '../common/models/company.model';
-import { JobListings } from '../common/models/jobs.model';
 import { UsersList } from '../common/models/users.model';
 import { AdminDashboardService } from '../common/services/admin.service';
 
 export interface DashboardState {
     companies: CompanyList | null;
-    jobs: JobListings | null;
+    jobs: JobList | null;
     associations: AssociationList | null;
     users: UsersList | null;
     loading: boolean;
