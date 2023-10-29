@@ -1,18 +1,6 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-    faBrain,
-    faBuilding,
-    faCircleInfo,
-    faEnvelope,
-    faList,
-    faListCheck,
-    faSheetPlastic,
-    faSitemap,
-    faSquareCaretLeft,
-    faSquareCaretRight,
-    faUser,
-    faChartLine
-} from '@fortawesome/free-solid-svg-icons';
+import { faSquareCaretLeft, faSquareCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { filter, map, Observable } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import {
@@ -23,9 +11,16 @@ import {
     Input,
     NgZone,
     OnChanges,
+    OnInit,
     Output
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+import { Store } from '@ngrx/store';
+
+import { selectProfile } from '@app/common/stores/auth/auth.reducer';
+import { MenuItem } from '@app/core/menu/common/models/menu.model';
+import { MENU_ITEMS_BY_KIND } from '@app/core/menu/common/utils/menu-items.util';
 
 @Component({
     selector: 'app-menu',
@@ -35,28 +30,25 @@ import { RouterModule } from '@angular/router';
     templateUrl: './menu.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MenuComponent implements OnChanges {
+export class MenuComponent implements OnInit, OnChanges {
     @Input() expanded = true;
     @Input() showExpanded = true;
     @Output() expandedChange = new EventEmitter<boolean>();
 
-    protected readonly faEnvelope = faEnvelope;
-    protected readonly faBuilding = faBuilding;
-    protected readonly faSitemap = faSitemap;
-    protected readonly faUser = faUser;
-    protected readonly faBrain = faBrain;
-    protected readonly faCircleInfo = faCircleInfo;
-    protected readonly faListCheck = faListCheck;
-    protected readonly faList = faList;
+    items$!: Observable<MenuItem[]>;
+
     protected readonly faSquareCaretLeft = faSquareCaretLeft;
     protected readonly faSquareCaretRight = faSquareCaretRight;
-    protected readonly faSheetPlastic = faSheetPlastic;
-    protected readonly faChartLine = faChartLine;
 
     constructor(
         private readonly el: ElementRef<HTMLElement>,
-        private readonly zone: NgZone
+        private readonly zone: NgZone,
+        private readonly store: Store
     ) {}
+
+    ngOnInit(): void {
+        this.initSubscriptions();
+    }
 
     ngOnChanges(): void {
         this.zone.runOutsideAngular(() => setTimeout(() => this.checkOpenLink(), 500));
@@ -80,5 +72,12 @@ export class MenuComponent implements OnChanges {
         if (el) {
             (el.querySelector('details summary') as HTMLDetailsElement)?.click();
         }
+    }
+
+    private initSubscriptions(): void {
+        this.items$ = this.store.select(selectProfile).pipe(
+            filter(Boolean),
+            map(({ kind }) => MENU_ITEMS_BY_KIND[kind])
+        );
     }
 }
