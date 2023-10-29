@@ -5,10 +5,10 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminInvitationsService } from '@app/admin/invitations/common/services/admin-invitations.service';
-import { CreateInviteFormModel } from '@app/admin/invitations/create-invite/common/models/create-invite.model';
 import { Association } from '@app/common/models/associations.model';
 import { Company } from '@app/common/models/companies.model';
+import { AdminInvitationsService } from '@app/invitations/common/services/admin-invitations.service';
+import { CreateInviteFormModel } from '@app/invitations/create-invite/common/models/create-invite.model';
 import { AdminAssociationsService } from '@app/users/common/services/admin-associations.service';
 import { AdminCompaniesService } from '@app/users/common/services/admin-companies.service';
 

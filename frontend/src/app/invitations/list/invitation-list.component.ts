@@ -5,11 +5,11 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { InvitationListState, InvitationListStore } from '@app/admin/invitations/list/invitation-list.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { InviteStatusLabelPipe } from '@app/common/pipes/invite-status-label/invite-status-label.pipe';
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
 import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
+import { InvitationListState, InvitationListStore } from '@app/invitations/list/invitation-list.store';
 import { ContentErrorComponent } from '@app/ui/content-error/content-error.component';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
 import { UserBadgesComponent } from '@app/ui/user-badges/user-badges.component';

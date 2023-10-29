@@ -13,14 +13,14 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { CreateInviteFormGroup } from '@app/admin/invitations/create-invite/common/models/create-invite.model';
-import { CreateNewOptionPipe } from '@app/admin/invitations/create-invite/common/pipes/create-new-option/create-new-option.pipe';
-import { CreateInviteState, CreateInviteStore } from '@app/admin/invitations/create-invite/create-invite.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum, UserRoleEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { CreateInviteFormGroup } from '@app/invitations/create-invite/common/models/create-invite.model';
+import { CreateNewOptionPipe } from '@app/invitations/create-invite/common/pipes/create-new-option/create-new-option.pipe';
+import { CreateInviteState, CreateInviteStore } from '@app/invitations/create-invite/create-invite.store';
 import { SelectSingleComponent } from '@app/ui/select-single/select-single.component';
 
 const DEFAULT_INVITATION_SUBJECT = 'You have been invited to Shift2';

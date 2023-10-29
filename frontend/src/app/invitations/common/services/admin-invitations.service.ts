@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 
 import environment from '@envs/environment';
 
-import { CreateInviteFormModel } from '@app/admin/invitations/create-invite/common/models/create-invite.model';
 import { InvitationList } from '@app/common/models/invitation.model';
+import { CreateInviteFormModel } from '@app/invitations/create-invite/common/models/create-invite.model';
 
 @Injectable({
     providedIn: 'root'

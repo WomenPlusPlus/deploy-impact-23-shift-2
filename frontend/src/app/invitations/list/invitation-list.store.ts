@@ -7,10 +7,10 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 
-import { AdminInvitationsService } from '@app/admin/invitations/common/services/admin-invitations.service';
 import { InvitationList } from '@app/common/models/invitation.model';
 import { Profile } from '@app/common/models/profile.model';
 import { profile$ } from '@app/common/utils/auth.util';
+import { AdminInvitationsService } from '@app/invitations/common/services/admin-invitations.service';
 
 export interface InvitationListState {
     list: InvitationList | null;
