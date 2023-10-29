@@ -28,6 +28,10 @@ func (s *APIServer) initCompanyRoutes(router *mux.Router) {
 		Handler(makeHTTPHandleFunc(s.handleDeleteCompany)).
 		Methods(http.MethodDelete)
 
+	router.Path("/{id}/jobs").
+		Handler(makeHTTPHandleFunc(s.handleGetCompanyJobs)).
+		Methods(http.MethodGet)
+
 	router.Use(s.AuthenticationMiddleware)
 	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 
@@ -61,7 +65,7 @@ func (s *APIServer) handleListCompanies(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *APIServer) handleViewCompany(w http.ResponseWriter, r *http.Request) error {
-	logrus.Debugln("View comapny handler running")
+	logrus.Debugln("View company handler running")
 
 	idStr := mux.Vars(r)["id"]
 	id, err := strconv.Atoi(idStr)
@@ -71,6 +75,25 @@ func (s *APIServer) handleViewCompany(w http.ResponseWriter, r *http.Request) er
 	}
 
 	company, err := s.companyService.GetCompanyById(id)
+	if err != nil {
+		WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return nil
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, company)
+}
+
+func (s *APIServer) handleGetCompanyJobs(w http.ResponseWriter, r *http.Request) error {
+	logrus.Debugln("Get company jobs handler running")
+
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		WriteErrorResponse(w, http.StatusBadRequest, "invalid value for parameter id")
+		return nil
+	}
+
+	company, err := s.jobService.GetJobsByCompanyId(id)
 	if err != nil {
 		WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return nil
