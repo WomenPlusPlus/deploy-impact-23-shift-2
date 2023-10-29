@@ -9,9 +9,7 @@
         <ng-container *ngIf="vm.list?.items as invites">
             <header class="p-4 mb-5 flex flex-wrap items-center gap-x-10 gap-y-4">
                 <h1 class="text-5xl">Invites</h1>
-                <a class="btn btn-sm btn-primary mt-2" [routerLink]="['/admin', 'invitations', 'create']"
-                    >Invite new user</a
-                >
+                <a class="btn btn-sm btn-primary mt-2" [routerLink]="['/invitations', 'create']">Invite new user</a>
                 <div class="grid justify-items-end px-4 ml-auto w-full sm:w-auto">
                     <article class="grid justify-items-center">
                         <span class="text-5xl">{{ invites.length || 0 }}</span>
