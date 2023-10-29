@@ -82,9 +82,6 @@ func (s *APIServer) Run() {
 	s.initCompanyRoutes(apiRouter)
 	s.initJobRoutes(apiRouter)
 
-	// TODO: temporary, only to demonstrate the authorization abilities - delete it and the handlers later.
-	s.initAuthorizationRoutes(apiRouter.PathPrefix("/authorization").Subrouter())
-
 	router.PathPrefix("").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)

@@ -128,9 +128,9 @@ type ListUsersResponse struct {
 	Items []ListUserResponse `json:"items"`
 }
 
-func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
-	r.Items = make([]ListUserResponse, len(v))
-	for i, user := range v {
+func (r *ListUsersResponse) FromUsersView(v []*UserItemView, admin bool) {
+	r.Items = make([]ListUserResponse, 0)
+	for _, user := range v {
 		item := ListUserResponse{
 			ID:            user.UserEntity.ID,
 			Kind:          user.Kind,
@@ -142,8 +142,12 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 			State:         user.State,
 		}
 
+		if !admin && user.Kind == UserRoleAdmin {
+			continue
+		}
+
 		if user.State != UserStateActive {
-			r.Items[i] = item
+			r.Items = append(r.Items, item)
 			continue
 		}
 
@@ -171,7 +175,7 @@ func (r *ListUsersResponse) FromUsersView(v []*UserItemView) {
 			}
 		}
 
-		r.Items[i] = item
+		r.Items = append(r.Items, item)
 	}
 }
 
