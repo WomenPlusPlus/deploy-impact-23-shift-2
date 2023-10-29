@@ -4,9 +4,11 @@ import (
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"log"
 	"net/http"
+	"os"
 	"shift/internal/entity"
 	"shift/internal/service"
 	cauth "shift/pkg/auth"
+	golocation "shift/pkg/go-location"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -65,6 +67,11 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.Use(CORSMiddleware)
 	router.Use(mux.CORSMethodMiddleware(router))
+
+	if os.Getenv("LOAD_LOCATIONS_API") == "true" {
+		logrus.Infof("Loading locations API locally")
+		golocation.InitRoutes(router)
+	}
 
 	apiRouter := router.PathPrefix("/api/v1").Subrouter()
 
