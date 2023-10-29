@@ -5,9 +5,10 @@ import { Injectable } from '@angular/core';
 
 import environment from '@envs/environment';
 
+import { JobList } from '@app/jobs/common/models/job.model';
+
 import { AssociationList } from '../models/associations.model';
 import { CompanyList } from '../models/company.model';
-import { JobListings } from '../models/jobs.model';
 import { UsersList } from '../models/users.model';
 
 @Injectable({
@@ -28,7 +29,7 @@ export class AdminDashboardService {
         return this.httpClient.get<AssociationList>(`${environment.API_BASE_URL}/api/v1/associations`);
     }
 
-    getJobs(): Observable<JobListings> {
-        return this.httpClient.get<JobListings>(`${environment.API_BASE_URL}/api/v1/jobs`);
+    getJobs(): Observable<JobList> {
+        return this.httpClient.get<JobList>(`${environment.API_BASE_URL}/api/v1/jobs`);
     }
 }

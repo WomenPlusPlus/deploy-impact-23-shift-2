@@ -4,12 +4,12 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { JobListings } from '@app/dashboard/common/models/jobs.model';
 import { UsersList } from '@app/dashboard/common/models/users.model';
 import { CompanyDasboardService } from '@app/dashboard/common/services/company.service';
+import { JobList } from '@app/jobs/common/models/job.model';
 
 export interface DashboardState {
-    jobs: JobListings | null;
+    jobs: JobList | null;
     users: UsersList | null;
     loading: boolean;
     error: boolean;
