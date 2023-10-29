@@ -65,7 +65,7 @@ export class EditAssociationComponent implements OnInit {
 
         this.id = Number(this.route.snapshot.paramMap.get('id'));
         if (!this.id) {
-            this.router.navigate(['/admin/associations']);
+            this.router.navigate(['/associations']);
             return;
         }
 

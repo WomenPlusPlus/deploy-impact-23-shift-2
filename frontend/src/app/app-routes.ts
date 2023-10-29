@@ -25,6 +25,10 @@ const routes: Routes = [
         canActivate: [authenticatedGuard, activatedGuard]
     },
     {
+        path: 'associations',
+        loadChildren: () => import('./associations/associations.routes')
+    },
+    {
         path: 'companies',
         loadChildren: () => import('./companies/companies.routes'),
         canActivate: [authenticatedGuard, activatedGuard]
