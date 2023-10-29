@@ -10,7 +10,7 @@ import (
 )
 
 func (s *APIServer) initAssociationRoutes(router *mux.Router) {
-	router = router.PathPrefix("/admin/associations").Subrouter()
+	router = router.PathPrefix("/associations").Subrouter()
 
 	router.Path("").
 		Handler(makeHTTPHandleFunc(s.handleListAssociations)).
@@ -23,6 +23,10 @@ func (s *APIServer) initAssociationRoutes(router *mux.Router) {
 	router.Path("/{id}").
 		Handler(makeHTTPHandleFunc(s.handleViewAssociation)).
 		Methods(http.MethodGet)
+
+	router.Path("/{id}").
+		Handler(makeHTTPHandleFunc(s.handleViewAssociation)).
+		Methods(http.MethodDelete)
 
 }
 
@@ -70,5 +74,4 @@ func (s *APIServer) handleViewAssociation(w http.ResponseWriter, r *http.Request
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, assoc)
-
 }

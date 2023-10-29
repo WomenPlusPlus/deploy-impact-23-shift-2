@@ -14,4 +14,4 @@ create table if not exists invites
     expire_at  timestamp    not null,
     created_at timestamp    not null default CURRENT_TIMESTAMP,
     constraint fk_creator foreign key (creator_id) references users (id)
-)
+);
