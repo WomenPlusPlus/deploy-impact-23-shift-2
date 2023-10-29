@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
+import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.pipe';
 import { UserAssociationRoleLabelPipe } from '@app/common/pipes/user-association-role-label/user-association-role-label.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
@@ -33,7 +34,8 @@ import { UsersListStore } from '@app/users/list/users-list.store';
         UserAssociationRoleLabelPipe,
         UserCompanyRoleLabelPipe,
         UserStateLabelPipe,
-        UserBadgesComponent
+        UserBadgesComponent,
+        IsAuthorizedPipe
     ],
     templateUrl: './user-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
