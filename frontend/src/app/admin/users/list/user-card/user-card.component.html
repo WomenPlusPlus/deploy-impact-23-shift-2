@@ -2,6 +2,8 @@
     class="card w-full h-full bg-base-200 shadow-xl"
     [class.opacity-60]="user.state === userStateEnum.ANONYMOUS"
     [class.opacity-30]="user.state === userStateEnum.DELETED"
+    [class.cursor-not-allowed]="user.state !== userStateEnum.ACTIVE"
+    [class.pointer-events-none]="user.state !== userStateEnum.ACTIVE"
     [routerLink]="['.', user.id]"
 >
     <div class="card-body px-8 pt-12 pb-8 flex flex-row gap-4 relative">
