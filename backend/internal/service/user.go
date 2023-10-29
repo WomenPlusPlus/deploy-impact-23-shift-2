@@ -134,6 +134,19 @@ func (s *UserService) GetUserIdsByCompanyId(companyId int) ([]int, error) {
 	return res, nil
 }
 
+func (s *UserService) GetUserIdsByAssociationId(companyId int) ([]int, error) {
+	users, err := s.userDB.GetUserRecordsByAssociationId(companyId)
+	if err != nil {
+		return nil, fmt.Errorf("getting user records by association id: %w", err)
+	}
+
+	res := make([]int, len(users))
+	for i, user := range users {
+		res[i] = user.ID
+	}
+	return res, nil
+}
+
 func (s *UserService) GetUserRecordByEmail(email string) (*entity.UserRecordResponse, error) {
 	user, err := s.userDB.GetUserRecordByEmail(email)
 	if err != nil {

@@ -4,6 +4,7 @@ type UserDB interface {
 	GetUserRecord(int) (*UserRecordView, error)
 	GetUserRecordByCompanyUserId(int) (*UserRecordView, error)
 	GetUserRecordsByCompanyId(int) ([]*UserRecordView, error)
+	GetUserRecordsByAssociationId(int) ([]*UserRecordView, error)
 	GetUserRecordByEmail(string) (*UserRecordView, error)
 	GetProfileByEmail(string) (*UserProfileView, error)
 	GetAllUsers() ([]*UserItemView, error)

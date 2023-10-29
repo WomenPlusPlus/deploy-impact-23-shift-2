@@ -112,6 +112,32 @@ func (pdb *PostgresDB) GetUserRecordsByCompanyId(companyId int) ([]*entity.UserR
 	return res, nil
 }
 
+func (pdb *PostgresDB) GetUserRecordsByAssociationId(associationId int) ([]*entity.UserRecordView, error) {
+	query := `select users.id, kind, email, state, users.created_at
+				from users
+				inner join association_users on users.id = association_users.user_id
+				inner join associations on association_users.association_id = associations.id
+				where associations.id = $1`
+	rows, err := pdb.db.Queryx(query, associationId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	res := make([]*entity.UserRecordView, 0)
+
+	for rows.Next() {
+		view := new(entity.UserRecordView)
+		if err := rows.StructScan(view); err != nil {
+			logrus.Errorf("failed to scan user record view from db row: %v", err)
+			return nil, err
+		}
+		res = append(res, view)
+	}
+
+	return res, nil
+}
+
 func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordView, error) {
 	query := `select id, kind, email, state, created_at
 				from users
@@ -135,7 +161,7 @@ func (pdb *PostgresDB) GetUserRecordByEmail(email string) (*entity.UserRecordVie
 }
 
 func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationEntity, error) {
-	query := `select * from associations where id = $1`
+	query := `select * from associations where id = $1 and deleted = false`
 	rows, err := s.db.Queryx(query, id)
 	if err != nil {
 		return nil, err
@@ -242,7 +268,7 @@ func (pdb *PostgresDB) GetAllUsers() ([]*entity.UserItemView, error) {
 func (pdb *PostgresDB) GetAllAssociations() ([]*entity.AssociationEntity, error) {
 	res := make([]*entity.AssociationEntity, 0)
 
-	query := `select * from associations`
+	query := `select * from associations where deleted = false`
 
 	rows, err := pdb.db.Queryx(query)
 
@@ -343,7 +369,7 @@ func (pdb *PostgresDB) GetUserById(id int) (*entity.UserItemView, error) {
 }
 
 func (pdb *PostgresDB) GetAssociationById(id int) (*entity.AssociationEntity, error) {
-	query := `select * from associations where id = $1`
+	query := `select * from associations where id = $1 and deleted = false`
 	rows, err := pdb.db.Queryx(query, id)
 	if err != nil {
 		return nil, fmt.Errorf("fetching association id=%d in db: %w", id, err)
@@ -569,6 +595,24 @@ func (pdb *PostgresDB) AssignAssociationLogo(id int, logoUrl string) error {
 	return nil
 }
 
+func (pdb *PostgresDB) DeleteAssociation(id int) error {
+	query := "update associations set deleted=true WHERE id = $1"
+	res, err := pdb.db.Exec(query, id)
+
+	if err != nil {
+		return err
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("association not found")
+	}
+	return nil
+}
+
 func (pdb *PostgresDB) CreateInvitation(inv *entity.InvitationEntity) (*entity.InvitationEntity, error) {
 	tx := pdb.db.MustBegin()
 	defer tx.Rollback()
@@ -606,7 +650,7 @@ func (pdb *PostgresDB) SetInvitationTicket(id int, ticket string) error {
 }
 
 func (pdb *PostgresDB) getAssociationById(tx sqlx.Queryer, id int) (*entity.AssociationEntity, error) {
-	query := `select * from associations where id = $1`
+	query := `select * from associations where id = $1 and deleted = false`
 	rows, err := tx.Queryx(query, id)
 	if err != nil {
 		logrus.Debugf("failed to get association with id=%d in db: %v", id, err)

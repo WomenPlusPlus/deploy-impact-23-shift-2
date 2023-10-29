@@ -25,7 +25,7 @@ func (s *APIServer) initAssociationRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Path("/{id}").
-		Handler(makeHTTPHandleFunc(s.handleViewAssociation)).
+		Handler(makeHTTPHandleFunc(s.handleDeleteAssociation)).
 		Methods(http.MethodDelete)
 
 }
@@ -74,4 +74,15 @@ func (s *APIServer) handleViewAssociation(w http.ResponseWriter, r *http.Request
 	}
 
 	return WriteJSONResponse(w, http.StatusOK, assoc)
+}
+
+func (s *APIServer) handleDeleteAssociation(w http.ResponseWriter, r *http.Request) error {
+	idStr := mux.Vars(r)["id"]
+	id, _ := strconv.Atoi(idStr)
+
+	if err := s.associationService.DeleteAssociation(id); err != nil {
+		return WriteJSONResponse(w, http.StatusInternalServerError, apiError{Error: err.Error()})
+	}
+
+	return WriteJSONResponse(w, http.StatusOK, ResponseMessage{"association deleted successfully"})
 }

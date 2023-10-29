@@ -6,6 +6,7 @@ type AssociationEntity struct {
 	Logo       *string `db:"logo_url"`
 	WebsiteUrl string  `db:"website_url"`
 	Focus      string  `db:"focus"`
+	Deleted    bool    `db:"deleted"`
 	CreatedAt  string  `db:"created_at"`
 }
 

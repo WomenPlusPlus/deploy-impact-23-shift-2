@@ -14,11 +14,16 @@ func (pdb *PostgresDB) DeleteCompany(id int) error {
 	query := "update companies set deleted=true WHERE id = $1"
 	res, err := pdb.db.Exec(query, id)
 
-	if err == nil {
-		_, err := res.RowsAffected()
-		if err == nil {
-			return err
-		}
+	if err != nil {
+		return err
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("company not found")
 	}
 	return nil
 }

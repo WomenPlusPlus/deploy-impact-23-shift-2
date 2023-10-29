@@ -44,6 +44,7 @@ func NewAPIServer(
 	companyService := service.NewCompanyService(bucketDB, companyDB)
 	jobService := service.NewJobService(bucketDB, jobDB)
 
+	associationService.Inject(userService)
 	userService.Inject(invitationService, associationService)
 	companyService.Inject(userService)
 	jobService.Inject(userService, companyService)
