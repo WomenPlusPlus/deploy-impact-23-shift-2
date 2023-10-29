@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import environment from '@envs/environment';
 
-import { CompaniesListModel, CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
+import { CompanyList, CompanyItem } from '@app/companies/profile/common/models/company-profile.model';
 import { JobList } from '@app/jobs/common/models/job.model';
 
 @Injectable({
@@ -22,12 +22,12 @@ export class CompaniesService {
         return this.httpClient.put<void>(`${environment.API_BASE_URL}/api/v1/companies/${id}`, payload);
     }
 
-    getCompany(id: number): Observable<CompanyProfileModel> {
-        return this.httpClient.get<CompanyProfileModel>(`${environment.API_BASE_URL}/api/v1/companies/${id}`);
+    getCompany(id: number): Observable<CompanyItem> {
+        return this.httpClient.get<CompanyItem>(`${environment.API_BASE_URL}/api/v1/companies/${id}`);
     }
 
-    getCompaniesList(): Observable<CompaniesListModel> {
-        return this.httpClient.get<CompaniesListModel>(`${environment.API_BASE_URL}/api/v1/companies`);
+    getCompaniesList(): Observable<CompanyList> {
+        return this.httpClient.get<CompanyList>(`${environment.API_BASE_URL}/api/v1/companies`);
     }
 
     deleteCompany(id: number): Observable<void> {

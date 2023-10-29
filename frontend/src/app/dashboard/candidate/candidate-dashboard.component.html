@@ -7,7 +7,7 @@
             <section class="p-4 basis-full mb-12 mt-4 card bg-base-200">
                 <ng-container *ngIf="vm.jobs?.items as jobs">
                     <section class="p-4 mb-5 flex justify-between items-center">
-                        <h1 class="text-3xl">Shortlisted Jobs</h1>
+                        <h1 class="text-3xl">Jobs Listing</h1>
                         <div class="grid justify-items-center px-4">
                             <span class="text-5xl">{{ jobs.length || 0 }}</span>
                             <span class="text-lg">In total</span>
@@ -46,7 +46,7 @@
                 <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
                         <a [routerLink]="['/users', id]" class="flex justify-between">
-                            View My Profile
+                            View my profile
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
                     </div>
@@ -54,7 +54,7 @@
                 <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
                         <a [routerLink]="['/associations']" class="flex justify-between">
-                            Find Associations
+                            Find associations
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
                     </div>
@@ -65,7 +65,7 @@
                 <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
                         <a [routerLink]="['/jobs']" class="flex justify-between">
-                            Search for Job Listings
+                            Search for more jobs
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
                     </div>
@@ -73,7 +73,7 @@
                 <section class="p-8 basis-2/5 mb-12 card bg-base-300">
                     <div class="text-3xl">
                         <a [routerLink]="['/companies']" class="flex justify-between">
-                            Find Companies
+                            Find companies
                             <fa-icon [icon]="faArrowRight"></fa-icon>
                         </a>
                     </div>

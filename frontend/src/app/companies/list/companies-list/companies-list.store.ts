@@ -8,10 +8,10 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { CompaniesService } from '@app/companies/common/services/companies.service';
-import { CompaniesListModel } from '@app/companies/profile/common/models/company-profile.model';
+import { CompanyList } from '@app/companies/profile/common/models/company-profile.model';
 
 export interface CompaniesListState {
-    list: CompaniesListModel | null;
+    list: CompanyList | null;
     loading: boolean;
     error: boolean;
     deleting: boolean;
@@ -101,7 +101,7 @@ export class CompaniesListStore extends ComponentStore<CompaniesListState> {
         })
     );
     private getListLoadedSuccess = this.updater(
-        (state, list: CompaniesListModel): CompaniesListState => ({
+        (state, list: CompanyList): CompaniesListState => ({
             ...state,
             list,
             loading: false
@@ -122,7 +122,7 @@ export class CompaniesListStore extends ComponentStore<CompaniesListState> {
         super(initialState);
     }
 
-    private extractFilteredList(list: CompaniesListModel | null, searchString: string): CompaniesListModel | null {
+    private extractFilteredList(list: CompanyList | null, searchString: string): CompanyList | null {
         if (!list) {
             return null;
         }

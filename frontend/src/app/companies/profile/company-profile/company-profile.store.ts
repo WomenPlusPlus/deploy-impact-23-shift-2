@@ -9,10 +9,10 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { CompaniesService } from '@app/companies/common/services/companies.service';
 import { JobList } from '@app/jobs/common/models/job.model';
 
-import { CompanyProfileModel } from '../common/models/company-profile.model';
+import { CompanyItem } from '../common/models/company-profile.model';
 
 export interface CompanyProfileState {
-    profile: CompanyProfileModel | null;
+    profile: CompanyItem | null;
     jobs: JobList | null;
     loading: boolean;
     error: boolean;
@@ -73,7 +73,7 @@ export class CompanyProfileStore extends ComponentStore<CompanyProfileState> {
         })
     );
     private profileLoadSuccess = this.updater(
-        (state, profile: CompanyProfileModel): CompanyProfileState => ({
+        (state, profile: CompanyItem): CompanyProfileState => ({
             ...state,
             profile,
             loading: false

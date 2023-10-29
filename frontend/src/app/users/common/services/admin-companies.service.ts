@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import environment from '@envs/environment';
 
 import { Company } from '@app/common/models/companies.model';
-import { CompanyList } from '@app/dashboard/common/models/company.model';
+import { CompanyList } from '@app/companies/profile/common/models/company-profile.model';
 
 @Injectable({
     providedIn: 'root'

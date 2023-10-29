@@ -5,8 +5,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { JobList } from '@app/jobs/common/models/job.model';
-
-import { AdminDashboardService } from '../common/services/admin.service';
+import { JobsService } from '@app/jobs/common/services/jobs.service';
 
 export interface DashboardState {
     jobs: JobList | null;
@@ -32,7 +31,7 @@ export class CandidateDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap(() =>
-                this.service.getJobs().pipe(
+                this.jobsService.getList().pipe(
                     tapResponse(
                         (jobs) =>
                             this.patchState({
@@ -61,7 +60,7 @@ export class CandidateDashboardStore extends ComponentStore<DashboardState> {
         })
     );
 
-    constructor(private readonly service: AdminDashboardService) {
+    constructor(private readonly jobsService: JobsService) {
         super(initialState);
     }
 }

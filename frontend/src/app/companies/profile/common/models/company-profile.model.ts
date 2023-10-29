@@ -1,6 +1,6 @@
 import { LocalFile } from '@app/common/models/files.model';
 
-export interface CompanyProfileModel {
+export interface CompanyItem {
     id: number;
     name: string;
     logo?: LocalFile;
@@ -16,6 +16,6 @@ export interface CompanyProfileModel {
     createdAt: string;
 }
 
-export interface CompaniesListModel {
-    items: CompanyProfileModel[];
+export interface CompanyList {
+    items: CompanyItem[];
 }

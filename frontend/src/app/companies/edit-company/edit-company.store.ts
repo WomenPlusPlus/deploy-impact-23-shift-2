@@ -5,12 +5,12 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
+import { CompanyItem } from '@app/companies/profile/common/models/company-profile.model';
 
 import { CompaniesService } from '../common/services/companies.service';
 
 export interface EditCompanyState {
-    profile: CompanyProfileModel | null;
+    profile: CompanyItem | null;
     submitting: boolean;
     submitted: boolean;
 }
@@ -48,7 +48,7 @@ export class EditCompanyStore extends ComponentStore<EditCompanyState> {
         )
     );
 
-    getValues(id: number): Observable<CompanyProfileModel> {
+    getValues(id: number): Observable<CompanyItem> {
         return this.companiesService.getCompany(id);
     }
 

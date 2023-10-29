@@ -4,12 +4,15 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
+import { AssociationsService } from '@app/associations/common/services/associations.service';
+import { CompaniesService } from '@app/companies/common/services/companies.service';
+import { CompanyList } from '@app/companies/profile/common/models/company-profile.model';
 import { JobList } from '@app/jobs/common/models/job.model';
+import { JobsService } from '@app/jobs/common/services/jobs.service';
 import { UsersList } from '@app/users/common/models/users-list.model';
+import { AdminUsersService } from '@app/users/common/services/admin-users.service';
 
 import { AssociationList } from '../common/models/associations.model';
-import { CompanyList } from '../common/models/company.model';
-import { AdminDashboardService } from '../common/services/admin.service';
 
 export interface DashboardState {
     companies: CompanyList | null;
@@ -44,7 +47,7 @@ export class AdminDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap(() =>
-                this.service.getUsers().pipe(
+                this.usersService.getList().pipe(
                     tapResponse(
                         (users) =>
                             this.patchState({
@@ -62,7 +65,7 @@ export class AdminDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap(() =>
-                this.service.getCompanies().pipe(
+                this.companiesService.getCompaniesList().pipe(
                     tapResponse(
                         (companies) =>
                             this.patchState({
@@ -80,7 +83,7 @@ export class AdminDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap(() =>
-                this.service.getJobs().pipe(
+                this.jobsService.getList().pipe(
                     tapResponse(
                         (jobs) =>
                             this.patchState({
@@ -98,7 +101,7 @@ export class AdminDashboardStore extends ComponentStore<DashboardState> {
         trigger$.pipe(
             tap(() => this.dashboardLoading()),
             exhaustMap(() =>
-                this.service.getAssociations().pipe(
+                this.associationsService.getAssociationsList().pipe(
                     tapResponse(
                         (associations) =>
                             this.patchState({
@@ -127,7 +130,12 @@ export class AdminDashboardStore extends ComponentStore<DashboardState> {
         })
     );
 
-    constructor(private readonly service: AdminDashboardService) {
+    constructor(
+        private readonly usersService: AdminUsersService,
+        private readonly companiesService: CompaniesService,
+        private readonly associationsService: AssociationsService,
+        private readonly jobsService: JobsService
+    ) {
         super(initialState);
     }
 }

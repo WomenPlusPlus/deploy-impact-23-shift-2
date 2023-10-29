@@ -10,7 +10,7 @@ import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.
 import { UserAssociationRoleLabelPipe } from '@app/common/pipes/user-association-role-label/user-association-role-label.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
-import { CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
+import { CompanyItem } from '@app/companies/profile/common/models/company-profile.model';
 
 import { CompaniesListStore } from '../companies-list.store';
 
@@ -29,7 +29,7 @@ import { CompaniesListStore } from '../companies-list.store';
     templateUrl: './company-card.component.html'
 })
 export class CompanyCardComponent {
-    @Input() company!: CompanyProfileModel;
+    @Input() company!: CompanyItem;
     @Input() deleting!: boolean;
 
     protected readonly faEllipsisV = faEllipsisV;
