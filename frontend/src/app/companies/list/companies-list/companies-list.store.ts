@@ -68,7 +68,7 @@ export class CompaniesListStore extends ComponentStore<CompaniesListState> {
                             const items = this.state().list?.items || [];
                             this.patchState({
                                 deleting: false,
-                                list: { items }
+                                list: { items: items.filter((item) => item.id !== id) }
                             });
                         },
                         () => {
