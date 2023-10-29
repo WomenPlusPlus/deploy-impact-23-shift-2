@@ -42,15 +42,66 @@
 * [The database schema](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
 
 ## :books: Third-party libraries
-* TODO
-* List them
+For the Front-End: 
+* [Tailwind CSS framework](https://tailwindcss.com/) 
+* [DaisyUI - component library for Tailwind CSS](https://daisyui.com/)
+* [RxJS - Reactive Extensions Library for JavaScript](  https://rxjs.dev/)
+* [NGRX - Reactive State for Angular](https://ngrx.io/) 
 
 ## :memo: License file
 * [GNU General Public License v3.0](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/LICENSE)  
 
 ## :computer: Getting started
-* TODO
-* How to run and install the project
+This project has a deployed version, which you can view [here](https://shift2-deployimpact.vercel.app/).
+
+You can also run it locally, using the following instructions:
+
+### Back-End Prerequisites:
+* [Go](https://go.dev/doc/install)
+* [Migrate for go](https://github.com/golang-migrate/migrate)
+* [Docker](https://docs.docker.com/get-docker/)
+
+### Front-End Prerequisites:
+* [Node.js](https://nodejs.org/en)
+* [npm package manager](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (which is installed with Node.js by default)
+* [Angular CLI](https://angular.io/guide/setup-local#install-the-angular-cli)
+
+### Instructions
+
+* Clone the repository on your computer. You can find instructions for that [here](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-ssh-urls)
+* Go the src folder of the project using `cd src`
+* Install the necessary packages using `npm i`
+* For the Back-End:
+  * Go to the src/backend folder using `cd backend`
+  * `SET POSTGRESQL_URL='postgres://postgres:shift2023@0.0.0.0:5432/postgres?sslmode=disable'`
+  * `make DATA_PATH=/any/path/to/data docker-run-db` where you can specify any path on your computer 
+  * run `migrate -database ${POSTGRESQL_URL} -path internal/db/migrations up` only the 1st time, to get all the changes from the db
+  * `make run`
+  * Now the backend is running on [http://localhost:8080/](http://localhost:8080/)
+* For the Front-End:
+  * In another terminal, on the src folder run `npm i --prefix frontend`
+  * Go to the src/frontend folder using `cd frontend`
+  * run `npm start`
+* Now you can visit [http://localhost:4200/](http://localhost:4200/) on your browser to view the SHIFT website.
+
+### Note: 
+
+The Front-End services are performing HTTP Requests on our [deployed back-end](https://shift2-deployimpact.xyz). If you want to perform HTTP Requests to the local back-end, make sure to change the **API_BASE_URL** in the file *src/frontend/src/environments/environment.ts* to 'http://localhost:8080'
+
+In order to view the content of our website, you are required to login. 
+
+We are using [Auth0](https://auth0.com/) for User Authentication.
+
+Here are some demo users you can use:
+
+| User Role        | Email                                 | Password          |
+|------------------|---------------------------------------|-------------------|
+|Site Administrator|shift2.deployimpact+admin@gmail.com    |`ebu@GKZ2zqw1eth9amx`|
+|Company Admin     |shift2.deployimpact+compadmin@gmail.com|`wyt3epa@jvh7axk8JZW`|
+|Company User      |shift2.deployimpact+compuser@gmail.com |`bhn*pjt*EMR7euy6amy`|
+|Association Admin |shift2.deployimpact+assadmin@gmail.com |`bdp4QEW9cdx.arf-crd`|
+|Association User  |shift2.deployimpact+assuser@gmail.com  |`czx2gdq!UVB6frt_wnq`|
+|Candidate         |shift2.deployimpact+candidate@gmail.com|`qhn6rct_dcb9zah3AVU`|
 
 ## :woman_technologist: Team members :man_technologist:
 | Name                                                                         | Role            | GitHub                                            |
