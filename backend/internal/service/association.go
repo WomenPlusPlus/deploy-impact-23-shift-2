@@ -13,6 +13,7 @@ import (
 type AssociationService struct {
 	bucketDB      entity.BucketDB
 	associationDB entity.AssociationDB
+	usersService  *UserService
 }
 
 func NewAssociationService(bucketDB entity.BucketDB, associationDB entity.AssociationDB) *AssociationService {
@@ -20,6 +21,10 @@ func NewAssociationService(bucketDB entity.BucketDB, associationDB entity.Associ
 		bucketDB:      bucketDB,
 		associationDB: associationDB,
 	}
+}
+
+func (s *AssociationService) Inject(usersService *UserService) {
+	s.usersService = usersService
 }
 
 func (s *AssociationService) CreateAssociation(req *entity.CreateAssociationRequest) (*entity.CreateAssociationResponse, error) {
@@ -78,17 +83,20 @@ func (s *AssociationService) ListAssociations() (*entity.ListAssociationsRespons
 	return res, nil
 }
 
-func (s *AssociationService) DeleteAssociation(id int) (*entity.ListAssociationsResponse, error) {
-	// TODO
-	associations, err := s.associationDB.GetAllAssociations()
+func (s *AssociationService) DeleteAssociation(id int) error {
+	usersIds, err := s.usersService.GetUserIdsByAssociationId(id)
 	if err != nil {
-		return nil, fmt.Errorf("getting all associations: %w", err)
+		return fmt.Errorf("finding users from association being deleting: %w", err)
 	}
-	logrus.Tracef("Get all associations from db: total=%d", len(associations))
+	if len(usersIds) > 0 {
+		return fmt.Errorf("still have users on association")
+	}
 
-	res := new(entity.ListAssociationsResponse)
+	if err := s.associationDB.DeleteAssociation(id); err != nil {
+		return fmt.Errorf("deleting association by id: %w", err)
+	}
 
-	return res, nil
+	return nil
 }
 
 func (s *AssociationService) saveLogo(associationId int, logoHeader *multipart.FileHeader) error {
