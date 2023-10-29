@@ -7,7 +7,7 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { Association } from '@app/common/models/associations.model';
 import { Company } from '@app/common/models/companies.model';
-import { AdminInvitationsService } from '@app/invitations/common/services/admin-invitations.service';
+import { InvitationsService } from '@app/invitations/common/services/invitations.service';
 import { CreateInviteFormModel } from '@app/invitations/create-invite/common/models/create-invite.model';
 import { AdminAssociationsService } from '@app/users/common/services/admin-associations.service';
 import { AdminCompaniesService } from '@app/users/common/services/admin-companies.service';
@@ -39,7 +39,7 @@ export class CreateInviteStore extends ComponentStore<CreateInviteState> {
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             exhaustMap((payload) =>
-                this.adminInvitationsService.invite(payload).pipe(
+                this.invitationsService.invite(payload).pipe(
                     tapResponse(
                         () => this.patchState({ submitting: false, submitted: true }),
                         () => {
@@ -83,7 +83,7 @@ export class CreateInviteStore extends ComponentStore<CreateInviteState> {
     );
 
     constructor(
-        private readonly adminInvitationsService: AdminInvitationsService,
+        private readonly invitationsService: InvitationsService,
         private readonly adminCompaniesService: AdminCompaniesService,
         private readonly adminAssociationsService: AdminAssociationsService,
         private readonly toast: HotToastService

@@ -11,7 +11,7 @@ import { CreateInviteFormModel } from '@app/invitations/create-invite/common/mod
 @Injectable({
     providedIn: 'root'
 })
-export class AdminInvitationsService {
+export class InvitationsService {
     constructor(private readonly httpClient: HttpClient) {}
 
     invite(payload: CreateInviteFormModel): Observable<void> {

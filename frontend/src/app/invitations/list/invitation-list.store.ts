@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { InvitationList } from '@app/common/models/invitation.model';
 import { Profile } from '@app/common/models/profile.model';
 import { profile$ } from '@app/common/utils/auth.util';
-import { AdminInvitationsService } from '@app/invitations/common/services/admin-invitations.service';
+import { InvitationsService } from '@app/invitations/common/services/invitations.service';
 
 export interface InvitationListState {
     list: InvitationList | null;
@@ -102,7 +102,7 @@ export class InvitationListStore extends ComponentStore<InvitationListState> {
 
     constructor(
         private readonly store: Store,
-        private readonly invitationsService: AdminInvitationsService
+        private readonly invitationsService: InvitationsService
     ) {
         super(initialState);
     }
