@@ -20,11 +20,12 @@
 <!-- TOC -->
 
 ## :bulb: Our Solution
-* TODO
-* Describe it
-* ...
-* Matching algorithm:
-  * A matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs. It was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md). 
+
+An invite-only web application where candidates can search for jobs, and companies can easily shortlist candidates for specific positions.
+
+The backend runs on Google Cloud and is powered by Golang, while the frontend is built with Angular and deployed via Vercel. Nginx is used for routing, PostgreSQL and SQLite are used for data storage, and Auth0 is used for safe user administration. We use a load balancer for the domain to guarantee HTTPS.
+
+As for the matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs, unfortunately was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md).
 
 ## :dart: Site Map
 * [The site map design](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
@@ -67,6 +68,8 @@ You can also run it locally, using the following instructions:
 * [Go](https://go.dev/doc/install)
 * [Migrate for go](https://github.com/golang-migrate/migrate)
 * [Docker](https://docs.docker.com/get-docker/)
+* [PostgreSQL Docker](https://hub.docker.com/_/postgres)
+* [Go Location](https://github.com/ichtrojan/go-location)
 
 ### Front-End Prerequisites:
 * [Node.js](https://nodejs.org/en)
@@ -81,7 +84,8 @@ You can also run it locally, using the following instructions:
 * For the Back-End:
   * Go to the src/backend folder using `cd backend`
   * `SET POSTGRESQL_URL='postgres://postgres:shift2023@0.0.0.0:5432/postgres?sslmode=disable'`
-  * `make DATA_PATH=/any/path/to/data docker-run-db` where you can specify any path on your computer 
+  * `make DATA_PATH=/any/path/to/data docker-run-db` where you can specify any path on your computer
+  * Now the database is running on port :5432
   * run `migrate -database ${POSTGRESQL_URL} -path internal/db/migrations up` only the 1st time, to get all the changes from the db
   * `make run`
   * Now the backend is running on [http://localhost:8080/](http://localhost:8080/)
