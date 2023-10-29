@@ -1,14 +1,14 @@
 import { HotToastService } from '@ngneat/hot-toast';
 import Fuse from 'fuse.js';
 import { pick } from 'lodash';
-import { Observable, exhaustMap, tap } from 'rxjs';
+import { exhaustMap, Observable, tap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
+import { CompaniesService } from '@app/companies/common/services/companies.service';
 import { CompaniesListModel } from '@app/companies/profile/common/models/company-profile.model';
-import { CompanyProfileService } from '@app/companies/profile/common/services/company-profile.service';
 
 export interface CompaniesListState {
     list: CompaniesListModel | null;
@@ -116,7 +116,7 @@ export class CompaniesListStore extends ComponentStore<CompaniesListState> {
     );
 
     constructor(
-        private readonly companiesService: CompanyProfileService,
+        private readonly companiesService: CompaniesService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

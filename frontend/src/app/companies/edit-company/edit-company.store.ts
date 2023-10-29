@@ -7,7 +7,7 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
 
-import { AdminCompanyService } from '../common/services/admin-company.service';
+import { CompaniesService } from '../common/services/companies.service';
 
 export interface EditCompanyState {
     profile: CompanyProfileModel | null;
@@ -33,7 +33,7 @@ export class EditCompanyStore extends ComponentStore<EditCompanyState> {
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             exhaustMap((payload, id) =>
-                this.adminCompanyService.editCompany(payload, id).pipe(
+                this.companiesService.editCompany(payload, id).pipe(
                     tapResponse(
                         () => this.patchState({ submitting: false, submitted: true }),
                         () => {
@@ -49,11 +49,11 @@ export class EditCompanyStore extends ComponentStore<EditCompanyState> {
     );
 
     getValues(id: number): Observable<CompanyProfileModel> {
-        return this.adminCompanyService.getCompany(id);
+        return this.companiesService.getCompany(id);
     }
 
     constructor(
-        private readonly adminCompanyService: AdminCompanyService,
+        private readonly companiesService: CompaniesService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

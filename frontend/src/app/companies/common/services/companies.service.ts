@@ -5,17 +5,24 @@ import { Injectable } from '@angular/core';
 
 import environment from '@envs/environment';
 
+import { CompaniesListModel, CompanyProfileModel } from '@app/companies/profile/common/models/company-profile.model';
 import { JobList } from '@app/jobs/common/models/job.model';
-
-import { CompaniesListModel, CompanyProfileModel } from '../models/company-profile.model';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CompanyProfileService {
+export class CompaniesService {
     constructor(private readonly httpClient: HttpClient) {}
 
-    getCompanyInfo(id: number): Observable<CompanyProfileModel> {
+    createCompany(payload: FormData): Observable<{ id: number }> {
+        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/companies`, payload);
+    }
+
+    editCompany(payload: FormData, id: number): Observable<void> {
+        return this.httpClient.put<void>(`${environment.API_BASE_URL}/api/v1/companies/${id}`, payload);
+    }
+
+    getCompany(id: number): Observable<CompanyProfileModel> {
         return this.httpClient.get<CompanyProfileModel>(`${environment.API_BASE_URL}/api/v1/companies/${id}`);
     }
 

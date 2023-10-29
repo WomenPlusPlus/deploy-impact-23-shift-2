@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminCompanyService } from '@app/companies/common/services/admin-company.service';
+import { CompaniesService } from '@app/companies/common/services/companies.service';
 import { AdminUsersService } from '@app/users/common/services/admin-users.service';
 import { UserFormCompanyFormModel, UserFormSubmissionModel } from '@app/users/form/common/models/user-form.model';
 
@@ -69,7 +69,7 @@ export class SetupCompanyUserFormStore extends ComponentStore<UserFormState> {
 
     constructor(
         private readonly adminUsersService: AdminUsersService,
-        private readonly adminCompanyService: AdminCompanyService,
+        private readonly companiesService: CompaniesService,
         private readonly toast: HotToastService
     ) {
         super(initialState);
@@ -79,6 +79,6 @@ export class SetupCompanyUserFormStore extends ComponentStore<UserFormState> {
         if (companyId) {
             return of(companyId);
         }
-        return this.adminCompanyService.createCompany(company).pipe(map(({ id }) => id));
+        return this.companiesService.createCompany(company).pipe(map(({ id }) => id));
     }
 }

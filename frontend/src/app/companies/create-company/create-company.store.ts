@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminCompanyService } from '../common/services/admin-company.service';
+import { CompaniesService } from '../common/services/companies.service';
 
 export interface CreateCompanyState {
     submitting: boolean;
@@ -28,7 +28,7 @@ export class CreateCompanyStore extends ComponentStore<CreateCompanyState> {
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             exhaustMap((payload) =>
-                this.adminCompanyService.createCompany(payload).pipe(
+                this.companiesService.createCompany(payload).pipe(
                     tapResponse(
                         () => this.patchState({ submitting: false, submitted: true }),
                         () => {
@@ -44,7 +44,7 @@ export class CreateCompanyStore extends ComponentStore<CreateCompanyState> {
     );
 
     constructor(
-        private readonly adminCompanyService: AdminCompanyService,
+        private readonly companiesService: CompaniesService,
         private readonly toast: HotToastService
     ) {
         super(initialState);
