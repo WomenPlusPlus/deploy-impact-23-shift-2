@@ -10,6 +10,8 @@ build:
 	@go build -o bin/$(BINARY_NAME) ./cmd/$(BINARY_NAME)
 run: build
 	@go run ./cmd/$(BINARY_NAME)
+test:
+	go test -v ./...
 docker-build:
 	@docker build -t $(BINARY_NAME) .
 docker-run:
