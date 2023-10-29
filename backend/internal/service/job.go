@@ -111,6 +111,25 @@ func (s *JobService) GetAllJobs() (*entity.ListJobsResponse, error) {
 	return res, nil
 }
 
+func (s *JobService) GetJobsByCompanyId(id int) (*entity.ListJobsResponse, error) {
+	jobs, err := s.jobDB.GetAllJobsByCompany(id)
+	if err != nil {
+		return nil, fmt.Errorf("getting all jobs for company %d: %w", id, err)
+	}
+	logrus.Tracef("Get all jobs for company %d from db: total=%d", id, len(jobs))
+
+	res := new(entity.ListJobsResponse)
+	res.Items = make([]*entity.JobItemResponse, len(jobs))
+	for i, job := range jobs {
+		item, err := s.getJobItemResponse(job)
+		if err != nil {
+			return nil, err
+		}
+		res.Items[i] = item
+	}
+	return res, nil
+}
+
 func (s *JobService) GetJobById(id int) (*entity.ViewJobResponse, error) {
 	job, err := s.jobDB.GetJobById(id)
 	if err != nil {
@@ -125,14 +144,14 @@ func (s *JobService) getJobItemResponse(job *entity.JobView) (*entity.JobItemRes
 	res := new(entity.JobItemResponse)
 	res.FromJobView(job)
 
-	user, err := s.userService.GetUserByCompanyUserId(job.CreatorID)
+	user, err := s.userService.GetUserById(job.CreatorID)
 	if err != nil {
 		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
 	}
 	res.Creator = new(entity.ViewJobCreator)
 	res.Creator.FromViewUserResponse(user)
 
-	company, err := s.companyService.GetCompanyByCompanyUserId(job.CreatorID)
+	company, err := s.companyService.GetCompanyByUserId(job.CreatorID)
 	if err != nil {
 		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
 	}
@@ -157,14 +176,14 @@ func (s *JobService) getViewJobResponse(job *entity.JobView) (*entity.ViewJobRes
 	}
 	res.FromLanguagesEntity(languages)
 
-	user, err := s.userService.GetUserByCompanyUserId(job.CreatorID)
+	user, err := s.userService.GetUserById(job.CreatorID)
 	if err != nil {
 		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
 	}
 	res.Creator = new(entity.ViewJobCreator)
 	res.Creator.FromViewUserResponse(user)
 
-	company, err := s.companyService.GetCompanyByCompanyUserId(job.CreatorID)
+	company, err := s.companyService.GetCompanyByUserId(job.CreatorID)
 	if err != nil {
 		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
 	}

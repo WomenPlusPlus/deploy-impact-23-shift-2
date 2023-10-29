@@ -74,10 +74,10 @@ func (s *CompanyService) GetCompanyById(id int) (*entity.ViewCompanyResponse, er
 	return res, nil
 }
 
-func (s *CompanyService) GetCompanyByCompanyUserId(companyUserId int) (*entity.ViewCompanyResponse, error) {
+func (s *CompanyService) GetCompanyByUserId(userId int) (*entity.ViewCompanyResponse, error) {
 	res := new(entity.ViewCompanyResponse)
 
-	company, err := s.companyDB.GetCompanyByCompanyUserId(companyUserId)
+	company, err := s.companyDB.GetCompanyByUserId(userId)
 	if err != nil {
 		return nil, fmt.Errorf("getting company by company user id: %w", err)
 	}

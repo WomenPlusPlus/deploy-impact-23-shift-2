@@ -131,7 +131,7 @@ func (pdb *PostgresDB) GetAllJobs() ([]*entity.JobView, error) {
 func (pdb *PostgresDB) GetAllJobsByCompany(companyId int) ([]*entity.JobView, error) {
 	query := `select jobs.*, loc.city_id, loc.city_name
 				from jobs
-				inner join company_users on jobs.creator_id = company_users.company_id
+				inner join company_users on jobs.creator_id = company_users.user_id
 				inner join companies on company_users.company_id = companies.id
 				left outer join job_locations loc on jobs.id = loc.job_id
 				where companies.id = $1 and jobs.deleted=false`
