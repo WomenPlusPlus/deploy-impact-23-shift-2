@@ -67,7 +67,7 @@ func (s *UserService) EditUser(id int, req *entity.EditUserRequest) (*entity.Cre
 	}
 }
 
-func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
+func (s *UserService) ListUsers(admin bool) (*entity.ListUsersResponse, error) {
 	users, err := s.userDB.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("getting all users: %w", err)
@@ -89,7 +89,7 @@ func (s *UserService) ListUsers() (*entity.ListUsersResponse, error) {
 	}
 
 	res := new(entity.ListUsersResponse)
-	res.FromUsersView(users)
+	res.FromUsersView(users, admin)
 	return res, nil
 }
 

@@ -123,6 +123,14 @@ func AuthorizationCase(next http.Handler, key entity.ContextKey, values ...strin
 	}
 }
 
+func AuthorizationDefault(next http.Handler) func(http.ResponseWriter, *http.Request) bool {
+	return func(w http.ResponseWriter, r *http.Request) bool {
+		logrus.Tracef("Authorized user: default")
+		next.ServeHTTP(w, r)
+		return true
+	}
+}
+
 type apiFunc func(http.ResponseWriter, *http.Request) error
 
 type apiError struct {

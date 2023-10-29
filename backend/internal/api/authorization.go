@@ -1,48 +1,25 @@
 package api
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
+	"context"
+	"fmt"
 	"shift/internal/entity"
 )
 
-// TODO: delete later
-func (s *APIServer) initAuthorizationRoutes(router *mux.Router) {
-	router = router.PathPrefix("/authorization").Subrouter()
+func UserResourcePermission(ctx context.Context, id int) (bool, error) {
+	kind, ok := ctx.Value(entity.ContextKeyKind).(string)
+	if !ok {
+		return false, fmt.Errorf("invalid value for user kind context")
+	}
+	
+	if kind == entity.UserKindAdmin {
+		return true, nil
+	}
 
-	router.Path("").
-		Handler(
-			AuthorizationSwitch(
-				AuthorizationCase(makeHTTPHandleFunc(s.handleAdminAuthorization), entity.ContextKeyKind, entity.UserKindAdmin),
-				AuthorizationCase(
-					AuthorizationHandler(
-						makeHTTPHandleFunc(s.handleEntityAuthorization),
-						entity.ContextKeyRole,
-						entity.UserRoleAdmin,
-					),
-					entity.ContextKeyKind,
-					entity.UserKindAssociation,
-					entity.UserKindCompany,
-				),
-				AuthorizationCase(makeHTTPHandleFunc(s.handleCandidateAuthorization), entity.ContextKeyKind, entity.UserKindCandidate),
-			),
-		).
-		Methods(http.MethodPost)
-
-	router.Use(s.AuthenticationMiddleware)
-}
-
-// TODO: delete later
-func (s *APIServer) handleAdminAuthorization(w http.ResponseWriter, _ *http.Request) error {
-	return WriteJSONResponse(w, http.StatusOK, struct{ Message string }{"Admin"})
-}
-
-// TODO: delete later
-func (s *APIServer) handleCandidateAuthorization(w http.ResponseWriter, _ *http.Request) error {
-	return WriteJSONResponse(w, http.StatusOK, struct{ Message string }{"Candidate"})
-}
-
-// TODO: delete later
-func (s *APIServer) handleEntityAuthorization(w http.ResponseWriter, _ *http.Request) error {
-	return WriteJSONResponse(w, http.StatusOK, struct{ Message string }{"Other"})
+	userId, ok := ctx.Value(entity.ContextKeyUserId).(int)
+	if !ok {
+		return false, fmt.Errorf("invalid value for user id context")
+	}
+	
+	return userId == id, nil
 }

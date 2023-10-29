@@ -21,7 +21,7 @@ func (s *APIServer) initInvitationRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Use(s.AuthenticationMiddleware)
-	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
+	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindAssociation))
 }
 
 func (s *APIServer) handleCreateInvitation(w http.ResponseWriter, r *http.Request) error {

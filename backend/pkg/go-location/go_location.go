@@ -19,14 +19,14 @@ var (
 	database  *sql.DB
 )
 
-//App - This houses the unexported database, so that it wont be tampered with outside this packaage
+// App - This houses the unexported database, so that it wont be tampered with outside this packaage
 type App struct {
 	database *sql.DB
 }
 
-//New - Create a new instance of the go-location package
+// New - Create a new instance of the go-location package
 func New() (*App, error) {
-	database, err := sql.Open("sqlite3", "../location.sqlite")
+	database, err := sql.Open("sqlite3", "./pkg/go-location/location.sqlite")
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func New() (*App, error) {
 	return app, nil
 }
 
-//AllCountries - Function to return the list of available countries.
+// AllCountries - Function to return the list of available countries.
 func (app *App) AllCountries() ([]Country, error) {
 	//at this point, we assume that the application has been initialized successfully.
 	database := app.database
@@ -52,7 +52,7 @@ func (app *App) AllCountries() ([]Country, error) {
 	return countries, nil
 }
 
-//AllStates - Function to return all the available states.
+// AllStates - Function to return all the available states.
 func (app *App) AllStates() ([]State, error) {
 	database := app.database
 
@@ -80,7 +80,7 @@ func (app *App) AllStates() ([]State, error) {
 	return states, err
 }
 
-//AllCities - Function to return all the available cities
+// AllCities - Function to return all the available cities
 func (app *App) AllCities() ([]City, error) {
 	database := app.database
 
@@ -109,7 +109,7 @@ func (app *App) AllCities() ([]City, error) {
 	return cities, err
 }
 
-//GetCountry - function to retrieve the country details
+// GetCountry - function to retrieve the country details
 func (app *App) GetCountry(countryID int) Country {
 	database := app.database
 
@@ -137,7 +137,7 @@ func (app *App) GetCountry(countryID int) Country {
 	return country
 }
 
-//GetCity - function to retrieve the city information
+// GetCity - function to retrieve the city information
 func (app *App) GetCity(cityID int) (*City, error) {
 	database = app.database
 
@@ -165,7 +165,7 @@ func (app *App) GetCity(cityID int) (*City, error) {
 	return &city, nil
 }
 
-//GetState - Function to retrieve the states information
+// GetState - Function to retrieve the states information
 func (app *App) GetState(stateID int) (*State, error) {
 	database := app.database
 
@@ -191,7 +191,7 @@ func (app *App) GetState(stateID int) (*State, error) {
 	return &state, nil
 }
 
-//GetCountryStates - Function to retrieve the states related to a country
+// GetCountryStates - Function to retrieve the states related to a country
 func (app *App) GetCountryStates(countryID int) ([]State, error) {
 	database := app.database
 	statement, err := database.Query("SELECT * FROM states WHERE country_id = ?", countryID)
@@ -217,7 +217,7 @@ func (app *App) GetCountryStates(countryID int) ([]State, error) {
 	return states, nil
 }
 
-//GetStateCites - function to retrieve the citites that are present within a state
+// GetStateCites - function to retrieve the citites that are present within a state
 func (app *App) GetStateCites(stateID int) ([]City, error) {
 	database = app.database
 
@@ -245,7 +245,7 @@ func (app *App) GetStateCites(stateID int) ([]City, error) {
 	return cities, nil
 }
 
-//GetLanguages - function to retrieve all the languages 
+// GetLanguages - function to retrieve all the languages
 func (app *App) GetLanguages() ([]Language, error) {
 	return languages, nil
 }

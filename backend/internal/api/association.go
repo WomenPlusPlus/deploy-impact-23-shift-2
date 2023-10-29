@@ -17,7 +17,7 @@ func (s *APIServer) initAssociationRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Path("").
-		Handler(makeHTTPHandleFunc(s.handleCreateAssociation)).
+		Handler(AuthorizationHandler(makeHTTPHandleFunc(s.handleCreateAssociation), entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindAssociation)).
 		Methods(http.MethodPost)
 
 	router.Path("/{id}").
@@ -25,9 +25,10 @@ func (s *APIServer) initAssociationRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Path("/{id}").
-		Handler(makeHTTPHandleFunc(s.handleDeleteAssociation)).
+		Handler(AuthorizationHandler(makeHTTPHandleFunc(s.handleDeleteAssociation), entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindAssociation)).
 		Methods(http.MethodDelete)
 
+	router.Use(s.AuthenticationMiddleware)
 }
 
 func (s *APIServer) handleCreateAssociation(w http.ResponseWriter, r *http.Request) error {

@@ -13,7 +13,7 @@ func (s *APIServer) initJobRoutes(router *mux.Router) {
 	router = router.PathPrefix("/jobs").Subrouter()
 
 	router.Path("").
-		Handler(makeHTTPHandleFunc(s.handleCreateJob)).
+		Handler(AuthorizationHandler(makeHTTPHandleFunc(s.handleCreateJob), entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindCompany)).
 		Methods(http.MethodPost)
 
 	router.Path("").
@@ -25,11 +25,10 @@ func (s *APIServer) initJobRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Path("/{id}").
-		Handler(makeHTTPHandleFunc(s.handleDeleteJob)).
+		Handler(AuthorizationHandler(makeHTTPHandleFunc(s.handleDeleteJob), entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindCompany)).
 		Methods(http.MethodDelete)
 
 	router.Use(s.AuthenticationMiddleware)
-	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 }
 
 func (s *APIServer) handleCreateJob(w http.ResponseWriter, r *http.Request) error {

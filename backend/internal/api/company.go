@@ -13,7 +13,7 @@ func (s *APIServer) initCompanyRoutes(router *mux.Router) {
 	router = router.PathPrefix("/companies").Subrouter()
 
 	router.Path("").
-		Handler(makeHTTPHandleFunc(s.handleCreateCompany)).
+		Handler(AuthorizationHandler(makeHTTPHandleFunc(s.handleCreateCompany), entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindCompany)).
 		Methods(http.MethodPost)
 
 	router.Path("").
@@ -25,7 +25,7 @@ func (s *APIServer) initCompanyRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Path("/{id}").
-		Handler(makeHTTPHandleFunc(s.handleDeleteCompany)).
+		Handler(AuthorizationHandler(makeHTTPHandleFunc(s.handleDeleteCompany), entity.ContextKeyKind, entity.UserKindAdmin, entity.UserKindCompany)).
 		Methods(http.MethodDelete)
 
 	router.Path("/{id}/jobs").
@@ -33,7 +33,6 @@ func (s *APIServer) initCompanyRoutes(router *mux.Router) {
 		Methods(http.MethodGet)
 
 	router.Use(s.AuthenticationMiddleware)
-	router.Use(AuthorizationMiddleware(entity.ContextKeyKind, entity.UserKindAdmin))
 
 }
 
