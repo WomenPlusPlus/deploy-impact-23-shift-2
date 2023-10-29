@@ -17,7 +17,6 @@ export class CompanyDasboardService {
     constructor(private readonly httpClient: HttpClient) {}
 
     getJobsByCompany(id: number): Observable<JobListings> {
-        // get jobs with the specified Company ID
         //return this.httpClient.get<JobListings>(`${environment.API_BASE_URL}/api/v1/jobs/company/${id}`);
         return of({
             items: [
@@ -80,7 +79,6 @@ export class CompanyDasboardService {
     }
 
     getUsersByCompany(): Observable<UsersList> {
-        // get users with the specified Company ID
         return this.httpClient.get<UsersList>(`${environment.API_BASE_URL}/api/v1/users`);
     }
 }

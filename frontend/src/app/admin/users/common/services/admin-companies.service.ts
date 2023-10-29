@@ -1,9 +1,12 @@
-import { Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import environment from '@envs/environment';
+
 import { Company } from '@app/common/models/companies.model';
+import { CompanyList } from '@app/dashboard/common/models/company.model';
 
 @Injectable({
     providedIn: 'root'
@@ -12,10 +15,8 @@ export class AdminCompaniesService {
     constructor(private readonly httpClient: HttpClient) {}
 
     getCompanies(): Observable<Company[]> {
-        // TODO: replace by API call.
-        return of([
-            { id: 1, name: 'Company 1' },
-            { id: 2, name: 'Company 2' }
-        ]);
+        return this.httpClient
+            .get<CompanyList>(`${environment.API_BASE_URL}/api/v1/companies`)
+            .pipe(map(({ items }) => items));
     }
 }
