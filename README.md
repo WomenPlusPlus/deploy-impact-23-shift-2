@@ -46,6 +46,9 @@
 * [The database schema](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
 
 ## :books: Third-party libraries
+For the Back-End: 
+* [Auth0](https://auth0.com/)
+
 For the Front-End: 
 * [Tailwind CSS framework](https://tailwindcss.com/) 
 * [DaisyUI - component library for Tailwind CSS](https://daisyui.com/)
