@@ -2,25 +2,28 @@ package entity
 
 import (
 	"fmt"
-	"shift/internal/utils"
 	"time"
 )
 
 type ProfileResponse struct {
-	ID        int       `json:"id,omitempty"`
-	Kind      string    `json:"kind"`
-	Role      string    `json:"role,omitempty"`
-	Name      string    `json:"name,omitempty"`
-	Email     string    `json:"email"`
-	Avatar    *string   `json:"avatar,omitempty"`
-	State     string    `json:"state"`
-	CreatedAt time.Time `json:"created_at"`
+	ID            int       `json:"id,omitempty"`
+	Kind          string    `json:"kind"`
+	Role          *string   `json:"role,omitempty"`
+	AssociationId *int      `json:"associationId,omitempty"`
+	CompanyId     *int      `json:"companyId,omitempty"`
+	Name          string    `json:"name,omitempty"`
+	Email         string    `json:"email"`
+	Avatar        *string   `json:"avatar,omitempty"`
+	State         string    `json:"state"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (r *ProfileResponse) FromUserProfileView(v *UserProfileView) {
 	r.ID = v.ID
 	r.Kind = v.Kind
 	r.Role = v.Role
+	r.AssociationId = v.AssociationId
+	r.CompanyId = v.CompanyId
 	r.Email = v.Email
 	r.Avatar = v.ImageUrl
 	r.State = v.State
@@ -35,7 +38,7 @@ func (r *ProfileResponse) FromUserProfileView(v *UserProfileView) {
 
 func (r *ProfileResponse) FromInvitationView(e *InvitationItemView) {
 	r.Kind = e.Kind
-	r.Role = utils.SafeUnwrap(e.Role)
+	r.Role = e.Role
 	r.Email = e.Email
 	r.State = UserStateInvited
 	r.CreatedAt = e.CreatedAt

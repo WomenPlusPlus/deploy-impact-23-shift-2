@@ -113,14 +113,6 @@ func (s *UserService) GetUserById(id int) (*entity.ViewUserResponse, error) {
 	return nil, fmt.Errorf("could not identify user kind: id=%d, kind=%s", user.ID, user.Kind)
 }
 
-func (s *UserService) GetUserByCompanyUserId(companyUserId int) (*entity.ViewUserResponse, error) {
-	user, err := s.userDB.GetUserRecordByCompanyUserId(companyUserId)
-	if err != nil {
-		return nil, fmt.Errorf("getting user record by company user id: %w", err)
-	}
-	return s.getCompanyUserByUserId(user.ID)
-}
-
 func (s *UserService) GetUserIdsByCompanyId(companyId int) ([]int, error) {
 	users, err := s.userDB.GetUserRecordsByCompanyId(companyId)
 	if err != nil {
@@ -317,13 +309,13 @@ func (s *UserService) getProfileByEmail(email string) (*entity.ProfileResponse, 
 		if err != nil {
 			return nil, fmt.Errorf("getting association by user id: %w", err)
 		}
-		user.Role = utils.SafeUnwrap(associationUser.AssociationUserItemView.Role)
+		user.Role = associationUser.AssociationUserItemView.Role
 	case entity.UserKindCompany:
 		companyUser, err := s.userDB.GetCompanyUserByUserId(user.ID)
 		if err != nil {
 			return nil, fmt.Errorf("getting company user by user id: %w", err)
 		}
-		user.Role = utils.SafeUnwrap(companyUser.CompanyUserItemView.Role)
+		user.Role = companyUser.CompanyUserItemView.Role
 	}
 
 	res := new(entity.ProfileResponse)

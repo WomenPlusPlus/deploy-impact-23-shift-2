@@ -313,9 +313,22 @@ func (s *PostgresDB) GetAssociationRecord(id int) (*entity.AssociationEntity, er
 }
 
 func (pdb *PostgresDB) GetProfileByEmail(email string) (*entity.UserProfileView, error) {
-	query := `select users.id, kind, first_name, last_name, preferred_name, email, state, created_at, image_url
+	query := `select
+    				users.id,
+    				kind,
+    				first_name,
+    				last_name,
+    				preferred_name,
+    				email,
+    				state,
+    				created_at,
+    				image_url,
+    				association_users.association_id,
+    				company_users.company_id
 				from users
 				left outer join user_photos on users.id = user_photos.user_id
+				left outer join association_users on users.id = association_users.user_id
+				left outer join company_users on users.id = company_users.user_id
 				where email = $1`
 	rows, err := pdb.db.Queryx(query, email)
 	if err != nil {

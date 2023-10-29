@@ -4,6 +4,8 @@ import { CompanyProfileModel } from '@app/companies/profile/common/models/compan
 
 export interface Profile {
     id: number;
+    companyId?: number;
+    associationId?: number;
     name: string;
     email: string;
     avatar: string;

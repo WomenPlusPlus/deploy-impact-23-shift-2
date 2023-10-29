@@ -366,7 +366,9 @@ type UserRecordView struct {
 type UserProfileView struct {
 	ID            int       `db:"id"`
 	Kind          string    `db:"kind"`
-	Role          string    `db:"role"`
+	Role          *string   `db:"role"`
+	AssociationId *int      `db:"association_id"`
+	CompanyId     *int      `db:"company_id"`
 	FirstName     string    `db:"first_name"`
 	LastName      string    `db:"last_name"`
 	PreferredName *string   `db:"preferred_name"`

@@ -68,14 +68,14 @@ func (pdb *PostgresDB) GetCompanyById(id int) (*entity.CompanyEntity, error) {
 	return nil, fmt.Errorf("could not find company: id=%d", id)
 }
 
-func (pdb *PostgresDB) GetCompanyByCompanyUserId(companyUserId int) (*entity.CompanyEntity, error) {
+func (pdb *PostgresDB) GetCompanyByUserId(userId int) (*entity.CompanyEntity, error) {
 	query := `select companies.*
 				from companies
 				inner join company_users on companies.id = company_users.company_id
-				where company_users.id = $1 and companies.deleted=false`
-	rows, err := pdb.db.Queryx(query, companyUserId)
+				where company_users.user_id = $1 and companies.deleted=false`
+	rows, err := pdb.db.Queryx(query, userId)
 	if err != nil {
-		return nil, fmt.Errorf("fetching company by company user id=%d in db: %w", companyUserId, err)
+		return nil, fmt.Errorf("fetching company by user id=%d in db: %w", userId, err)
 	}
 	defer rows.Close()
 
@@ -88,7 +88,7 @@ func (pdb *PostgresDB) GetCompanyByCompanyUserId(companyUserId int) (*entity.Com
 		return view, nil
 	}
 
-	return nil, fmt.Errorf("could not find company: company_user_id=%d", companyUserId)
+	return nil, fmt.Errorf("could not find company: company_user_id=%d", userId)
 }
 
 func (pdb *PostgresDB) createCompany(tx NamedQuerier, company *entity.CompanyEntity) (int, error) {
