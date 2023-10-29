@@ -6,9 +6,9 @@ import { Router } from '@angular/router';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
-import { EditUserResponse } from '@app/admin/users/form/common/models/edit-user.model';
 import { UserDetails } from '@app/common/models/users.model';
+import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { EditUserResponse } from '@app/users/form/common/models/edit-user.model';
 
 import { UserFormSubmissionModel } from './common/models/user-form.model';
 

@@ -7,9 +7,9 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { UsersListMode, UsersListModel } from '@app/admin/users/common/models/users-list.model';
-import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
+import { UsersListMode, UsersListModel } from '@app/users/common/models/users-list.model';
+import { AdminUsersService } from '@app/users/common/services/admin-users.service';
 
 export interface UsersListState {
     list: UsersListModel | null;

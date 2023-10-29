@@ -4,17 +4,17 @@ import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms'
 
 import { CreateCompanyFormGroup } from '@app/admin/company/create-company/common/models/create-company.model';
 import { CompanyFormComponent } from '@app/admin/company/form/company-form.component';
+import { ProfileSetup } from '@app/common/models/profile.model';
+import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { SetupCompanyUserFormStore } from '@app/setup/company/setup-company-user-form.store';
 import {
     UserFormCompanyFormGroup,
     UserFormComponent,
     UserFormGroup,
     UserFormModel
-} from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
-import { ProfileSetup } from '@app/common/models/profile.model';
-import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
-import { SetupCompanyUserFormStore } from '@app/setup/company/setup-company-user-form.store';
+} from '@app/users/form/common/models/user-form.model';
+import { UserFormGenericComponent } from '@app/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/users/form/user-form.store';
 
 @Component({
     selector: 'app-setup-company-user-form',

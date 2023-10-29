@@ -3,17 +3,17 @@ import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { UserFormAssociationComponent } from '@app/admin/users/form/association/user-form-association.component';
-import { UserFormCandidateComponent } from '@app/admin/users/form/candidate/user-form-candidate.component';
-import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormCompanyComponent } from '@app/admin/users/form/company/user-form-company.component';
-import { CreateUserStore } from '@app/admin/users/form/create-user.store';
-import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { UserFormAssociationComponent } from '@app/users/form/association/user-form-association.component';
+import { UserFormCandidateComponent } from '@app/users/form/candidate/user-form-candidate.component';
+import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/users/form/common/models/user-form.model';
+import { UserFormCompanyComponent } from '@app/users/form/company/user-form-company.component';
+import { CreateUserStore } from '@app/users/form/create-user.store';
+import { UserFormGenericComponent } from '@app/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/users/form/user-form.store';
 
 @Component({
     selector: 'app-create-user',

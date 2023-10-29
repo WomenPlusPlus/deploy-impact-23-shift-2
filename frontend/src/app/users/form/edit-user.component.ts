@@ -5,20 +5,6 @@ import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
-import { UserFormAssociationComponent } from '@app/admin/users/form/association/user-form-association.component';
-import { UserFormCandidateComponent } from '@app/admin/users/form/candidate/user-form-candidate.component';
-import {
-    UserFormAssociationFormGroup,
-    UserFormCandidateFormGroup,
-    UserFormCompanyFormGroup,
-    UserFormComponent,
-    UserFormGroup,
-    UserFormModel
-} from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormCompanyComponent } from '@app/admin/users/form/company/user-form-company.component';
-import { EditUserStore } from '@app/admin/users/form/edit-user.store';
-import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import {
     AssociationUserDetails,
@@ -32,6 +18,20 @@ import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-l
 import { toInputDateValue } from '@app/common/utils/date.util';
 import { ContentErrorComponent } from '@app/ui/content-error/content-error.component';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
+import { UserFormAssociationComponent } from '@app/users/form/association/user-form-association.component';
+import { UserFormCandidateComponent } from '@app/users/form/candidate/user-form-candidate.component';
+import {
+    UserFormAssociationFormGroup,
+    UserFormCandidateFormGroup,
+    UserFormCompanyFormGroup,
+    UserFormComponent,
+    UserFormGroup,
+    UserFormModel
+} from '@app/users/form/common/models/user-form.model';
+import { UserFormCompanyComponent } from '@app/users/form/company/user-form-company.component';
+import { EditUserStore } from '@app/users/form/edit-user.store';
+import { UserFormGenericComponent } from '@app/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/users/form/user-form.store';
 
 @Component({
     selector: 'app-edit-user',

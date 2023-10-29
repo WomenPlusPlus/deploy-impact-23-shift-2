@@ -9,14 +9,14 @@ import { RouterModule } from '@angular/router';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 
-import { UsersFiltersComponent } from '@app/admin/users/list/users-filters/users-filters.component';
-import { UsersListStore } from '@app/admin/users/list/users-list.store';
 import { UserAssociationRoleLabelPipe } from '@app/common/pipes/user-association-role-label/user-association-role-label.pipe';
 import { UserCompanyRoleLabelPipe } from '@app/common/pipes/user-company-role-label/user-company-role-label.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { authFeature } from '@app/common/stores/auth/auth.reducer';
 import { ContentErrorComponent } from '@app/ui/content-error/content-error.component';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
+import { UsersFiltersComponent } from '@app/users/list/users-filters/users-filters.component';
+import { UsersListStore } from '@app/users/list/users-list.store';
 
 import { UserCardComponent } from './user-card/user-card.component';
 

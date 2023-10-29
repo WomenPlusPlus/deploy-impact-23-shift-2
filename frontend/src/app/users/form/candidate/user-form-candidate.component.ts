@@ -9,19 +9,6 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 
 import { Store } from '@ngrx/store';
 
-import {
-    CandidateEducationHistoryFormGroup,
-    CandidateEducationHistoryFormModel,
-    CandidateEmploymentHistoryFormGroup,
-    CandidateEmploymentHistoryFormModel,
-    CandidateSkillsFormGroup,
-    CandidateSkillsFormModel,
-    CandidateSpokenLanguagesFormGroup,
-    CandidateSpokenLanguagesFormModel,
-    UserFormCandidateFormGroup,
-    UserFormCandidateFormModel,
-    UserFormComponent
-} from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { CompanySizeEnum } from '@app/common/models/companies.model';
 import { LocalFile } from '@app/common/models/files.model';
@@ -42,6 +29,19 @@ import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
 import { fileUrl } from '@app/common/utils/file.util';
 import { FileItemComponent } from '@app/ui/file-item/file-item.component';
+import {
+    CandidateEducationHistoryFormGroup,
+    CandidateEducationHistoryFormModel,
+    CandidateEmploymentHistoryFormGroup,
+    CandidateEmploymentHistoryFormModel,
+    CandidateSkillsFormGroup,
+    CandidateSkillsFormModel,
+    CandidateSpokenLanguagesFormGroup,
+    CandidateSpokenLanguagesFormModel,
+    UserFormCandidateFormGroup,
+    UserFormCandidateFormModel,
+    UserFormComponent
+} from '@app/users/form/common/models/user-form.model';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 

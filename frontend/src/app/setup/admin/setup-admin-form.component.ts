@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 
-import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
 import { ProfileSetup } from '@app/common/models/profile.model';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
 import { SetupAdminFormStore } from '@app/setup/admin/setup-admin-form.store';
+import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/users/form/common/models/user-form.model';
+import { UserFormGenericComponent } from '@app/users/form/generic/user-form-generic.component';
 
 @Component({
     selector: 'app-setup-admin-form',

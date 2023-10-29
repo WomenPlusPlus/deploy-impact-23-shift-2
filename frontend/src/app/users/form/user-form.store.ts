@@ -4,10 +4,10 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminAssociationsService } from '@app/admin/users/common/services/admin-associations.service';
-import { AdminCompaniesService } from '@app/admin/users/common/services/admin-companies.service';
 import { Association } from '@app/common/models/associations.model';
 import { Company } from '@app/common/models/companies.model';
+import { AdminAssociationsService } from '@app/users/common/services/admin-associations.service';
+import { AdminCompaniesService } from '@app/users/common/services/admin-companies.service';
 
 export interface UserFormState {
     loadingCompanies: boolean;

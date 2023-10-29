@@ -6,10 +6,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { UsersListStore } from '@app/admin/users/list/users-list.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum } from '@app/common/models/users.model';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { UsersListStore } from '@app/users/list/users-list.store';
 
 @Component({
     selector: 'app-users-filters',

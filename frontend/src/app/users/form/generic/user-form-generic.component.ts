@@ -6,13 +6,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/admin/users/form/common/models/user-form.model';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { LocalFile } from '@app/common/models/files.model';
 import { UserKindEnum } from '@app/common/models/users.model';
 import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-error-message.pipe';
 import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.pipe';
 import { fileUrl } from '@app/common/utils/file.util';
+import { UserFormComponent, UserFormGroup, UserFormModel } from '@app/users/form/common/models/user-form.model';
 
 const DEFAULT_PHOTO_URL = 'assets/profile-picture-default-form.png';
 

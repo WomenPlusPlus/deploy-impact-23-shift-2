@@ -5,14 +5,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import {
-    UsersListAssociationModel,
-    UsersListCandidateModel,
-    UsersListCompanyModel,
-    UsersListItemModel,
-    UsersListMode
-} from '@app/admin/users/common/models/users-list.model';
-import { UsersListStore } from '@app/admin/users/list/users-list.store';
 import { LetDirective } from '@app/common/directives/let/let.directive';
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 import { UserAssociationRoleLabelPipe } from '@app/common/pipes/user-association-role-label/user-association-role-label.pipe';
@@ -24,6 +16,14 @@ import {
     DescriptionListItemComponent
 } from '@app/ui/description-list/description-list.component';
 import { UserBadgesComponent } from '@app/ui/user-badges/user-badges.component';
+import {
+    UsersListAssociationModel,
+    UsersListCandidateModel,
+    UsersListCompanyModel,
+    UsersListItemModel,
+    UsersListMode
+} from '@app/users/common/models/users-list.model';
+import { UsersListStore } from '@app/users/list/users-list.store';
 
 @Component({
     selector: 'app-user-card',

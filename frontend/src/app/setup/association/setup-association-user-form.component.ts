@@ -4,17 +4,17 @@ import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms'
 
 import { CreateAssociationFormGroup } from '@app/admin/associations/create-association/common/models/create-association.model';
 import { AssociationFormComponent } from '@app/admin/associations/form/association-form.component';
+import { ProfileSetup } from '@app/common/models/profile.model';
+import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
+import { SetupAssociationUserFormStore } from '@app/setup/association/setup-association-user-form.store';
 import {
     UserFormAssociationFormGroup,
     UserFormComponent,
     UserFormGroup,
     UserFormModel
-} from '@app/admin/users/form/common/models/user-form.model';
-import { UserFormGenericComponent } from '@app/admin/users/form/generic/user-form-generic.component';
-import { UserFormStore } from '@app/admin/users/form/user-form.store';
-import { ProfileSetup } from '@app/common/models/profile.model';
-import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
-import { SetupAssociationUserFormStore } from '@app/setup/association/setup-association-user-form.store';
+} from '@app/users/form/common/models/user-form.model';
+import { UserFormGenericComponent } from '@app/users/form/generic/user-form-generic.component';
+import { UserFormStore } from '@app/users/form/user-form.store';
 
 @Component({
     selector: 'app-setup-association-user-form',

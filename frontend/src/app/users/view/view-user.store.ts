@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
 import { UserDetails, UserStateEnum } from '@app/common/models/users.model';
+import { AdminUsersService } from '@app/users/common/services/admin-users.service';
 
 export interface ViewUserState {
     user: UserDetails | null;

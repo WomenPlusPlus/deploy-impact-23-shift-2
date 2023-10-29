@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
-import { CreateUserResponse } from '@app/admin/users/form/common/models/create-user.model';
+import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { CreateUserResponse } from '@app/users/form/common/models/create-user.model';
 
 import { UserFormSubmissionModel } from './common/models/user-form.model';
 

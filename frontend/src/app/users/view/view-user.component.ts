@@ -5,8 +5,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
-import { ViewCandidateSectionsComponent } from '@app/admin/users/view/candidate/view-candidate-sections.component';
-import { ViewUserStore } from '@app/admin/users/view/view-user.store';
 import { UserKindEnum, UserStateEnum } from '@app/common/models/users.model';
 import { CompanySizePipe } from '@app/common/pipes/company-size/company-size.pipe';
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
@@ -16,6 +14,8 @@ import { UserStateLabelPipe } from '@app/common/pipes/user-state-label/user-stat
 import { WorkPermitPipe } from '@app/common/pipes/work-permit/work-permit.pipe';
 import { ContentErrorComponent } from '@app/ui/content-error/content-error.component';
 import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading.component';
+import { ViewCandidateSectionsComponent } from '@app/users/view/candidate/view-candidate-sections.component';
+import { ViewUserStore } from '@app/users/view/view-user.store';
 
 @Component({
     selector: 'app-view-user',

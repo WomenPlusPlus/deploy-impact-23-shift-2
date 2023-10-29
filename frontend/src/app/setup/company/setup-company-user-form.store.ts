@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { AdminCompanyService } from '@app/admin/company/common/services/admin-company.service';
-import { AdminUsersService } from '@app/admin/users/common/services/admin-users.service';
-import { UserFormCompanyFormModel, UserFormSubmissionModel } from '@app/admin/users/form/common/models/user-form.model';
+import { AdminUsersService } from '@app/users/common/services/admin-users.service';
+import { UserFormCompanyFormModel, UserFormSubmissionModel } from '@app/users/form/common/models/user-form.model';
 
 export interface UserFormState {
     submitting: boolean;
