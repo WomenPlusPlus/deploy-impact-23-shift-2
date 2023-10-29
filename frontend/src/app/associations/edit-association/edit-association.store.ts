@@ -6,8 +6,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { AssociationProfileModel } from '@app/associations/common/models/association-profile.model';
-
-import { AdminAssociationService } from '../common/services/admin-association.service';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
 
 export interface EditAssociationState {
     profile: AssociationProfileModel | null;
@@ -33,7 +32,7 @@ export class EditAssociationStore extends ComponentStore<EditAssociationState> {
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             exhaustMap((payload, id) =>
-                this.adminAssociationService.editAssociation(payload, id).pipe(
+                this.associationsService.editAssociation(payload, id).pipe(
                     tapResponse(
                         () => this.patchState({ submitting: false, submitted: true }),
                         () => {
@@ -49,11 +48,11 @@ export class EditAssociationStore extends ComponentStore<EditAssociationState> {
     );
 
     getValues(id: number): Observable<AssociationProfileModel> {
-        return this.adminAssociationService.getAssociation(id);
+        return this.associationsService.getAssociation(id);
     }
 
     constructor(
-        private readonly adminAssociationService: AdminAssociationService,
+        private readonly associationsService: AssociationsService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

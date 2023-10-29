@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
 import { AssociationsListModel } from '@app/associations/common/models/association-profile.model';
-import { AssociationProfileService } from '@app/associations/common/services/association-profile.service';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
 
 export interface AssociationsListState {
     list: AssociationsListModel | null;
@@ -116,7 +116,7 @@ export class AssociationsListStore extends ComponentStore<AssociationsListState>
     );
 
     constructor(
-        private readonly associationsService: AssociationProfileService,
+        private readonly associationsService: AssociationsService,
         private readonly toast: HotToastService
     ) {
         super(initialState);

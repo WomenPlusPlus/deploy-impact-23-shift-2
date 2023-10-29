@@ -10,10 +10,18 @@ import { AssociationProfileModel, AssociationsListModel } from '../models/associ
 @Injectable({
     providedIn: 'root'
 })
-export class AssociationProfileService {
+export class AssociationsService {
     constructor(private readonly httpClient: HttpClient) {}
 
-    getAssociationInfo(id: number): Observable<AssociationProfileModel> {
+    createAssociation(payload: FormData): Observable<{ id: number }> {
+        return this.httpClient.post<{ id: number }>(`${environment.API_BASE_URL}/api/v1/associations`, payload);
+    }
+
+    editAssociation(payload: FormData, id: number): Observable<void> {
+        return this.httpClient.put<void>(`${environment.API_BASE_URL}/api/v1/associations/${id}`, payload);
+    }
+
+    getAssociation(id: number): Observable<AssociationProfileModel> {
         return this.httpClient.get<AssociationProfileModel>(`${environment.API_BASE_URL}/api/v1/associations/${id}`);
     }
 

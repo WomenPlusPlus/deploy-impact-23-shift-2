@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 
-import { AdminAssociationService } from '../common/services/admin-association.service';
+import { AssociationsService } from '@app/associations/common/services/associations.service';
 
 export interface CreateAssociationState {
     submitting: boolean;
@@ -28,7 +28,7 @@ export class CreateAssociationStore extends ComponentStore<CreateAssociationStat
         trigger$.pipe(
             tap(() => this.patchState({ submitting: true, submitted: false })),
             exhaustMap((payload) =>
-                this.adminAssociationService.createAssociation(payload).pipe(
+                this.associationsService.createAssociation(payload).pipe(
                     tapResponse(
                         () => this.patchState({ submitting: false, submitted: true }),
                         () => {
@@ -44,7 +44,7 @@ export class CreateAssociationStore extends ComponentStore<CreateAssociationStat
     );
 
     constructor(
-        private readonly adminAssociationService: AdminAssociationService,
+        private readonly associationsService: AssociationsService,
         private readonly toast: HotToastService
     ) {
         super(initialState);
