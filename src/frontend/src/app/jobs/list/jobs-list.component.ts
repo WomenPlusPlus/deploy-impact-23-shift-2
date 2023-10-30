@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { LetDirective } from '@app/common/directives/let/let.directive';
+import { UserKindEnum } from '@app/common/models/users.model';
+import { IsAuthorizedPipe } from '@app/common/pipes/is-authorized/is-authorized.pipe';
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
 import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
 import { UserKindLabelPipe } from '@app/common/pipes/user-kind-label/user-kind-label.pipe';
@@ -25,7 +27,8 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
         ContentLoadingComponent,
         FormsModule,
         LetDirective,
-        UserKindLabelPipe
+        UserKindLabelPipe,
+        IsAuthorizedPipe
     ],
     providers: [JobsListStore],
     templateUrl: './jobs-list.component.html',
@@ -33,6 +36,8 @@ import { ContentLoadingComponent } from '@app/ui/content-loading/content-loading
 })
 export class JobsListComponent implements OnInit {
     vm$: Observable<JobsListState> = this.jobListStore.vm$;
+
+    protected readonly userKindEnum = UserKindEnum;
 
     constructor(private readonly jobListStore: JobsListStore) {}
 
