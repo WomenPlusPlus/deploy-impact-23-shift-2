@@ -22,7 +22,8 @@
                                         (true | isAuthorized: userKindEnum.ADMIN | async)) ||
                                     (userKind == userKindEnum.ASSOCIATION &&
                                         (false | isAuthorized: userKindEnum.COMPANY | async)) ||
-                                    userKind == userKindEnum.COMPANY || userKind == userKindEnum.CANDIDATE
+                                    userKind == userKindEnum.COMPANY ||
+                                    userKind == userKindEnum.CANDIDATE
                                 "
                             >
                                 <input
