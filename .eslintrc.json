@@ -1,0 +1,4 @@
+{
+    "extends": "src/frontend/.eslintrc.json",
+    "ignorePatterns": ["src/backend/**/*"]
+}
