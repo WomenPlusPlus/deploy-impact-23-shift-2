@@ -1,4 +1,0 @@
-{
-    "extends": "frontend/.eslintrc.json",
-    "ignorePatterns": ["backend/**/*"]
-}

@@ -1,6 +1,8 @@
 <div class="w-full navbar">
     <ng-content></ng-content>
-    <a class="btn btn-ghost normal-case text-xl"><img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png" /></a>
+    <a class="btn btn-ghost normal-case text-xl" [routerLink]="['/']"
+        ><img alt="SHIFT 2" class="h-full" src="assets/shift2-logo.png"
+    /></a>
     <div class="ml-auto dropdown dropdown-end" *ngIf="profile$ | async as profile">
         <label tabindex="0" class="btn btn-ghost rounded-full avatar flex-row pr-0">
             <span>{{ profile.name }}</span>

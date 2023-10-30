@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import { Store } from '@ngrx/store';
 
@@ -12,7 +13,7 @@ import { selectProfile } from '@app/common/stores/auth/auth.reducer';
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterModule],
     templateUrl: './navbar.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
