@@ -16,7 +16,6 @@ type CreateJobRequest struct {
 	SalaryRangeTo   *int     `json:"salaryRangeTo,omitempty"`
 	ExperienceFrom  *int     `json:"experienceFrom,omitempty"`
 	ExperienceTo    *int     `json:"experienceTo,omitempty"`
-	CompanyId       int      `json:"companyId"`
 	Benefits        string   `json:"benefits"`
 	City            struct {
 		Id   int    `json:"id"`

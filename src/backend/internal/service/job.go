@@ -146,14 +146,15 @@ func (s *JobService) getJobItemResponse(job *entity.JobView) (*entity.JobItemRes
 
 	user, err := s.userService.GetUserById(job.CreatorID)
 	if err != nil {
-		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
+		return nil, fmt.Errorf("could not get user by company user %d for job %d: %w", job.CreatorID, job.ID, err)
 	}
 	res.Creator = new(entity.ViewJobCreator)
 	res.Creator.FromViewUserResponse(user)
 
 	company, err := s.companyService.GetCompanyByUserId(job.CreatorID)
 	if err != nil {
-		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
+		logrus.Tracef("Company not found for job %d: %v", job.ID, err)
+		return res, nil
 	}
 	res.Company = new(entity.ViewJobCompany)
 	res.Company.FromViewCompanyResponse(company)
@@ -185,7 +186,8 @@ func (s *JobService) getViewJobResponse(job *entity.JobView) (*entity.ViewJobRes
 
 	company, err := s.companyService.GetCompanyByUserId(job.CreatorID)
 	if err != nil {
-		return nil, fmt.Errorf("could not get company by company user %d for job %d: %w", job.CreatorID, job.ID, err)
+		logrus.Tracef("Company not found for job %d: %v", job.ID, err)
+		return res, nil
 	}
 	res.Company = new(entity.ViewJobCompany)
 	res.Company.FromViewCompanyResponse(company)
