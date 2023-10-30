@@ -1,0 +1,191 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Shift Invitation Email</title>
+        <style type="text/css">
+            body {
+                width: 100%;
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+                -webkit-font-smoothing: antialiased;
+                font-family: Georgia, Times, serif;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            .logo {
+                width: 100vw;
+                text-align: center;
+            }
+
+            @media only screen and (max-width: 640px) {
+                .deviceWidth {
+                    width: 440px !important;
+                    padding: 0;
+                }
+
+                .center {
+                    text-align: center !important;
+                }
+            }
+
+            @media only screen and (max-width: 479px) {
+                .deviceWidth {
+                    width: 280px !important;
+                    padding: 0;
+                }
+            }
+        </style>
+    </head>
+    <body style="margin: 0; padding: 0">
+        <!-- Wrapper -->
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="margin-bottom: 100px">
+            <tr>
+                <td width="100%" valign="top" bgcolor="#1E293B" style="padding-top: 20px">
+                    <!-- Start Header-->
+                    <table
+                        width="580"
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        align="center"
+                        class="deviceWidth"
+                        style="margin: 0 auto; border-radius: 10px 10px 0 0; background-color: transparent"
+                    >
+                        <tr>
+                            <td width="100%">
+                                <!-- Logo -->
+                                <table border="0" cellpadding="0" cellspacing="0" align="left" class="deviceWidth">
+                                    <tr>
+                                        <td style="padding: 10px 20px" class="logo center">
+                                            <a href="https://shift2-deployimpact.vercel.app/">
+                                                <!-- SVG -->
+                                                <svg
+                                                    style="width: 100px"
+                                                    width="157"
+                                                    height="30"
+                                                    viewBox="0 0 157 30"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <!-- SVG Path Data -->
+                                                </svg>
+                                                <!-- END SVG -->
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!-- End Logo -->
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- End Header -->
+
+                    <!-- Content -->
+                    <table
+                        width="580"
+                        class="deviceWidth"
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        style="margin: 0 auto; border-radius: 10px"
+                    >
+                        <tr>
+                            <td
+                                style="padding: 20px; border-radius: 10px; text-align: center; width: 100%"
+                                bgcolor="#ffffff"
+                            >
+                                <h1
+                                    style="
+                                        color: #a5adba;
+                                        font-size: 1.5rem;
+                                        font-family: Arial, Helvetica, sans-serif;
+                                        margin: 0;
+                                    "
+                                >
+                                    {{ .Subject }}
+                                </h1>
+                                <p style="color: #a5adba; font-size: 1rem; font-family: Arial, Helvetica, sans-serif">
+                                    {{ .Message }}
+                                </p>
+
+                                <!-- Signature -->
+                                <p style="color: #a5adba; font-size: 1rem; font-family: Arial, Helvetica, sans-serif">
+                                    Thanks,<br />Shift2 Team
+                                </p>
+                                <hr style="border: solid #a5adba43 1px; width: 50px" />
+
+                                <!-- Accept Invitation button -->
+                                <a href="{{ .Url }}" style="text-decoration: none">
+                                    <button
+                                        style="
+                                            color: white;
+                                            background-color: #585993;
+                                            border: 0;
+                                            padding: 1rem 2.5rem;
+                                            border-radius: 10px;
+                                            font-family: Arial, Helvetica, sans-serif;
+                                            font-size: 1rem;
+                                            font-weight: 600;
+                                            text-transform: uppercase;
+                                        "
+                                    >
+                                        Accept Invitation
+                                    </button>
+                                </a>
+                                <!-- End Accept Invitation button -->
+
+                                <!-- Additional Information -->
+                                <p
+                                    style="
+                                        color: #a5adba;
+                                        font-size: 0.875rem;
+                                        font-family: Arial, Helvetica, sans-serif;
+                                        margin: 2rem 0;
+                                    "
+                                >
+                                    Not sure why you are receiving this? Visit Shift2 for more information.
+                                </p>
+                                <p
+                                    style="
+                                        color: #a5adba;
+                                        font-size: 0.875rem;
+                                        font-family: Arial, Helvetica, sans-serif;
+                                    "
+                                >
+                                    This email was sent to {{ .Email }}
+                                </p>
+
+                                <!-- Shift 2 Logo -->
+                                <a href="https://shift2-deployimpact.vercel.app/" style="text-decoration: none">
+                                    <div
+                                        style="
+                                            color: #a5adba;
+                                            background-color: transparent;
+                                            border: 0;
+                                            padding: 1rem;
+                                            border-radius: 10px;
+                                            font-family: Arial, Helvetica, sans-serif;
+                                            font-size: 1.25rem;
+                                            font-weight: 600;
+                                            text-transform: uppercase;
+                                        "
+                                    >
+                                        SHIFT 2
+                                    </div>
+                                </a>
+                                <!-- End Shift 2 Logo -->
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- End Content -->
+                </td>
+            </tr>
+        </table>
+        <!-- End Wrapper -->
+    </body>
+</html>
