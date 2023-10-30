@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
 
+import { isAdminGuard } from '@app/common/guards/admin.guard';
+import { isRelatedToCompany } from '@app/common/guards/related-user.guard';
+
 const routes: Routes = [
     {
         path: 'create',
-        loadComponent: () => import('./create-company/create-company.component').then((m) => m.CreateCompanyComponent)
+        loadComponent: () => import('./create-company/create-company.component').then((m) => m.CreateCompanyComponent),
+        canActivate: [isAdminGuard]
     },
     {
         path: ':id',
@@ -14,7 +18,8 @@ const routes: Routes = [
     },
     {
         path: ':id/edit',
-        loadComponent: () => import('./edit-company/edit-company.component').then((m) => m.EditCompanyComponent)
+        loadComponent: () => import('./edit-company/edit-company.component').then((m) => m.EditCompanyComponent),
+        canActivate: [isRelatedToCompany]
     },
     {
         path: '',

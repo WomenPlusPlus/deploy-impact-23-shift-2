@@ -1,10 +1,14 @@
 import { Routes } from '@angular/router';
 
+import { isAdminGuard } from '@app/common/guards/admin.guard';
+import { isRelatedToAssociation } from '@app/common/guards/related-user.guard';
+
 const routes: Routes = [
     {
         path: 'create',
         loadComponent: () =>
-            import('./create-association/create-association.component').then((m) => m.CreateAssociationComponent)
+            import('./create-association/create-association.component').then((m) => m.CreateAssociationComponent),
+        canActivate: [isAdminGuard]
     },
     {
         path: ':id',
@@ -16,7 +20,8 @@ const routes: Routes = [
     {
         path: ':id/edit',
         loadComponent: () =>
-            import('./edit-association/edit-association.component').then((m) => m.EditAssociationComponent)
+            import('./edit-association/edit-association.component').then((m) => m.EditAssociationComponent),
+        canActivate: [isRelatedToAssociation]
     },
     {
         path: '',
