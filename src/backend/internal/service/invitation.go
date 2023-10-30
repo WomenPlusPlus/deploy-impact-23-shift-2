@@ -1,8 +1,12 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"github.com/go-gomail/gomail"
+	"html/template"
+	"os"
 	"shift/internal/entity"
 	"shift/internal/utils"
 	cauth "shift/pkg/auth"
@@ -55,6 +59,10 @@ func (s *InvitationService) CreateInvitation(ctx context.Context, req *entity.Cr
 		}
 	}
 
+	if err := s.sendHTMLEmail(req, ticket); err != nil {
+		logrus.Errorf("Sending invitation email: %v", err)
+	}
+
 	return &entity.CreateInvitationResponse{ID: inv.ID}, nil
 }
 
@@ -93,4 +101,48 @@ func (s *InvitationService) GetAllInvitation() (*entity.InvitationListResponse, 
 	res.Items = items
 
 	return res, nil
+}
+
+func (s *InvitationService) sendHTMLEmail(req *entity.CreateInvitationRequest, url string) error {
+	body, err := parseHTMLTemplate("./assets/email.html", req, url)
+	if err != nil {
+		return fmt.Errorf("HTML template parsing failed: %v", err)
+	}
+
+	m := gomail.NewMessage()
+	m.SetHeader("From", os.Getenv("EMAIL_PROVIDER_SENDER"))
+	m.SetHeader("To", req.Email)
+	m.SetHeader("Subject", req.Subject)
+	m.SetBody("text/html", body.String())
+
+	d := gomail.NewDialer(
+		os.Getenv("EMAIL_PROVIDER_SERVER"),
+		utils.ParseInt(os.Getenv("EMAIL_PROVIDER_PORT")),
+		os.Getenv("EMAIL_PROVIDER_USERNAME"),
+		os.Getenv("EMAIL_PROVIDER_PASSWORD"),
+	)
+
+	if err := d.DialAndSend(m); err != nil {
+		logrus.Errorf("Failed to send email: %v", err)
+		return err
+	}
+	return nil
+}
+
+func parseHTMLTemplate(templateFile string, req *entity.CreateInvitationRequest, url string) (bytes.Buffer, error) {
+	var body bytes.Buffer
+	t, err := template.ParseFiles(templateFile)
+	if err != nil {
+		return bytes.Buffer{}, fmt.Errorf("parsing html template: %w", err)
+	}
+	if err := t.Execute(
+		&body,
+		struct {
+			*entity.CreateInvitationRequest
+			Url string
+		}{req, url},
+	); err != nil {
+		return bytes.Buffer{}, fmt.Errorf("executing the email template: %w", err)
+	}
+	return body, nil
 }

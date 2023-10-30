@@ -21,6 +21,14 @@ func JSONFromStringOpt[T any](value string, target *T) error {
 	return json.NewDecoder(strings.NewReader(value)).Decode(target)
 }
 
+func ParseInt(input string) int {
+	value, err := strconv.Atoi(input)
+	if err != nil {
+		return 0
+	}
+	return value
+}
+
 func Atoi(input string, target *int) error {
 	if input == "" {
 		return errors.New("empty value")

@@ -49,6 +49,8 @@ As for the matching algorithm for candidates to recommend jobs and for companies
 ## :books: Third-party libraries
 For the Back-End: 
 * [Auth0](https://auth0.com/)
+* [Go Location](https://github.com/ichtrojan/go-location)
+* [Brevo (Email Provider)](https://app.brevo.com/)
 
 For the Front-End: 
 * [Tailwind CSS framework](https://tailwindcss.com/) 
@@ -69,7 +71,6 @@ You can also run it locally, using the following instructions:
 * [Migrate for go](https://github.com/golang-migrate/migrate)
 * [Docker](https://docs.docker.com/get-docker/)
 * [PostgreSQL Docker](https://hub.docker.com/_/postgres)
-* [Go Location](https://github.com/ichtrojan/go-location)
 
 ### Front-End Prerequisites:
 * [Node.js](https://nodejs.org/en)
