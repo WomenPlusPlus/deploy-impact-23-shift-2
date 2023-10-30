@@ -79,19 +79,18 @@ You can also run it locally, using the following instructions:
 ### Instructions:
 
 * Clone the repository on your computer. You can find instructions for that [here](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-ssh-urls)
-* Go the src folder of the project using `cd src`
-* Install the necessary packages using `npm i`
+* On the root folder of the project, run `npm i`
 * For the Back-End:
-  * Go to the src/backend folder using `cd backend`
+  * Go to the backend folder using `cd src/backend`
   * `SET POSTGRESQL_URL='postgres://postgres:shift2023@0.0.0.0:5432/postgres?sslmode=disable'`
   * `make DATA_PATH=/any/path/to/data docker-run-db` where you can specify any path on your computer
   * Now the database is running on port :5432
   * run `migrate -database ${POSTGRESQL_URL} -path internal/db/migrations up` only the 1st time, to get all the changes from the db
   * `make run`
-  * Now the backend is running on [http://localhost:8080/](http://localhost:8080/)
+  * Now the backend is running on http://localhost:8080/
 * For the Front-End:
-  * In another terminal, on the src folder run `npm i --prefix frontend`
-  * Go to the src/frontend folder using `cd frontend`
+  * In another terminal, from the root folder of the project run `npm i --prefix src/frontend`
+  * Go to the frontend folder using `cd src/frontend`
   * run `npm start`
 * Now you can visit [http://localhost:4200/](http://localhost:4200/) on your browser to view the SHIFT website.
 
@@ -103,7 +102,7 @@ In order to view the content of our website, you are required to login.
 
 We are using [Auth0](https://auth0.com/) for User Authentication.
 
-[Here](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/credentials.md) are some demo users you can use.
+[Here](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/credentials.md) you can find some demo users you can use.
 
 ## :woman_technologist: Team members :man_technologist:
 | Name                                                                         | Role            | GitHub                                            |
