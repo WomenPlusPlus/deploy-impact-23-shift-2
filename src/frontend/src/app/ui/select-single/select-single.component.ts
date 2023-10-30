@@ -1,8 +1,8 @@
-import { Subscription } from 'rxjs';
+import { debounceTime, Observable, Subscription } from 'rxjs';
 
 import { CdkFixedSizeVirtualScroll, CdkVirtualForOf, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { LetDirective } from '@app/common/directives/let/let.directive';
@@ -41,8 +41,11 @@ export class SelectSingleComponent<T> implements OnInit, OnDestroy {
     @Input() bindValue?: string;
     @Input() inputSize = 20;
     @Input() searchKeys: string[] = [];
+    @Input() clearOnSelect = false;
+    @Output() valueChange = new EventEmitter<Control<T, typeof this.bindValue> | null>();
 
     searchControl!: FormControl<string | null>;
+    searchValue$!: Observable<string | null>;
 
     private readonly subscriptions: Subscription[] = [];
 
@@ -61,13 +64,18 @@ export class SelectSingleComponent<T> implements OnInit, OnDestroy {
         this.control.markAsTouched();
         this.control.setValue(this.bindValue ? value[this.bindValue as keyof T] : (value as any));
 
-        this.searchControl.setValue(this.bindLabel ? value[this.bindLabel as keyof T] : (value as any));
+        if (this.clearOnSelect) {
+            this.searchControl.setValue(null);
+        } else {
+            this.searchControl.setValue(this.bindLabel ? value[this.bindLabel as keyof T] : (value as any));
+        }
     }
 
     onDeselect(): void {
         if (this.control.value) {
             this.control.markAsTouched();
             this.control.setValue(null);
+            this.searchControl.setValue(null);
         }
     }
 
@@ -76,6 +84,12 @@ export class SelectSingleComponent<T> implements OnInit, OnDestroy {
     }
 
     private initSubscriptions(): void {
-        this.subscriptions.push(this.control.valueChanges.subscribe(() => this.searchControl.reset()));
+        this.searchValue$ = this.searchControl.valueChanges.pipe(debounceTime(300));
+        this.subscriptions.push(
+            this.control.valueChanges.subscribe((value) => {
+                this.valueChange.emit(value);
+                this.searchControl.setValue(null);
+            })
+        );
     }
 }

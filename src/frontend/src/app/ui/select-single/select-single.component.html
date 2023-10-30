@@ -14,8 +14,8 @@
         tabindex="0"
         class="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box max-h-[32rem] overflow-auto flex-nowrap w-full"
     >
-        <cdk-virtual-scroll-viewport itemSize="20" class="h-72">
-            <li *cdkVirtualFor="let result of options | filterFuse: searchControl.valueChanges : searchKeys">
+        <cdk-virtual-scroll-viewport itemSize="36" class="h-72">
+            <li *cdkVirtualFor="let result of options | filterFuse: searchValue$ : searchKeys">
                 <button type="button" (click)="onSelect(result.item)">
                     {{ bindLabel ? result.item[bindLabel] : result.item }}
                 </button>

@@ -1,0 +1,294 @@
+<div
+    class="flex flex-col items-stretch justify-center lg:max-w-screen-lg p-10 mx-auto card bg-base-200 mt-10"
+    *ngIf="vm$ | async as vm"
+>
+    <ng-container *ngIf="!vm.submitted; else submittedContainer">
+        <form (ngSubmit)="onSubmit()">
+            <ng-container [ngTemplateOutlet]="formContainer"></ng-container>
+            <button
+                class="btn btn-primary btn-wide float-right"
+                type="submit"
+                [disabled]="form.invalid || form.pristine || vm.submitting"
+            >
+                Save
+            </button>
+        </form>
+    </ng-container>
+    <ng-template #submittedContainer>
+        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+            <div class="mx-auto max-w-screen-sm text-center">
+                <p class="mb-8 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
+                    New job {{ form.controls.title.value }} was created!
+                </p>
+                <a
+                    [routerLink]="['/']"
+                    class="inline-flex text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4"
+                    >Back to Homepage</a
+                >
+            </div>
+        </div>
+    </ng-template>
+</div>
+
+<ng-template #formContainer>
+    <ng-container [formGroup]="form">
+        <span class="block text-3xl mx-3 mt-8 mb-12">Tell us about the Role</span>
+        <fieldset id="job-type" class="form-control w-full mt-4 mb-6" *appLet="form.controls.jobType as control">
+            <span class="block mb-3 text-lg">Job type<span class="text-red-400">*</span>:</span>
+            <div class="flex flex-wrap lg:flex-nowrap gap-6">
+                <label class="flex items-center gap-2" *ngFor="let jobType of jobTypes">
+                    <input
+                        type="radio"
+                        class="radio radio-md"
+                        name="jobType"
+                        formControlName="jobType"
+                        [value]="jobType"
+                    />
+                    <span>{{ jobType | jobTypeLabel }}</span>
+                </label>
+            </div>
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="job-title" class="form-control w-full my-4" *appLet="form.controls.title as control">
+            <label for="title" class="block mb-3 text-lg">Job title<span class="text-red-400">*</span>:</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                formControlName="title"
+                class="w-full input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="job-location-type"
+            class="form-control w-full mt-4 mb-6"
+            *appLet="form.controls.locationType as control"
+        >
+            <span class="block mb-3 text-lg">Work model<span class="text-red-400">*</span>:</span>
+            <div class="flex flex-wrap lg:flex-nowrap gap-6">
+                <label class="flex items-center gap-2" *ngFor="let jobLocationType of jobLocationTypes">
+                    <input
+                        type="radio"
+                        class="radio radio-md"
+                        name="locationType"
+                        formControlName="locationType"
+                        [value]="jobLocationType"
+                    />
+                    <span>{{ jobLocationType | jobLocationTypeLabel }}</span>
+                </label>
+            </div>
+            <span class="text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="job-startDate" class="form-control w-full my-4" *appLet="form.controls.startDate as control">
+            <label for="startDate" class="block mb-3 text-lg">Start date:</label>
+            <input
+                type="date"
+                id="startDate"
+                name="startDate"
+                formControlName="startDate"
+                class="input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="job-employmentLevel"
+            class="form-control w-full my-4"
+            *appLet="form.controls.employmentLevel as control"
+        >
+            <label for="employmentLevel" class="block mb-3 text-lg">Employment level:</label>
+            <input
+                type="text"
+                id="employmentLevel"
+                name="employmentLevel"
+                formControlName="employmentLevel"
+                class="w-full input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="job-experience" class="form-control w-full my-4" *appLet="form.controls.experience as control">
+            <label for="experience" class="block mb-3 text-lg">Experience years:</label>
+            <input
+                type="text"
+                id="experience"
+                name="experience"
+                formControlName="experience"
+                class="w-full input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="job-salaryRange" class="form-control w-full my-4" *appLet="form.controls.salaryRange as control">
+            <label for="salaryRange" class="block mb-3 text-lg">Salary range:</label>
+            <input
+                type="text"
+                id="salaryRange"
+                name="salaryRange"
+                formControlName="salaryRange"
+                class="w-full input input-bordered"
+                [class.input-error]="control.invalid && control.touched"
+            />
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="job-city" class="form-control w-full my-4" *appLet="form.controls.city as control">
+            <label for="city" class="block mb-3 text-lg">Location (city)<span class="text-red-400">*</span>:</label>
+            <app-select-single
+                id="city"
+                [control]="control"
+                [options]="cities$ | async"
+                [searchKeys]="['name']"
+                bindLabel="name"
+            ></app-select-single>
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <section class="form-control w-full my-4">
+            <fieldset id="job-languages" class="form-control w-full" *appLet="languagesForm as control">
+                <label for="languages" class="block mb-3 text-lg">Languages<span class="text-red-400">*</span>:</label>
+                <app-select-single
+                    id="languages"
+                    bindLabel="name"
+                    [control]="control"
+                    [options]="languages$ | async"
+                    [searchKeys]="['name']"
+                    [clearOnSelect]="true"
+                    (valueChange)="onAddLanguage()"
+                ></app-select-single>
+            </fieldset>
+            <ul class="flex flex-wrap gap-2 p-4 empty:hidden">
+                <li *ngFor="let language of languages; let index = index">
+                    <span class="badge badge-lg badge-outline">
+                        {{ language.name }} ({{ language.shortName }})
+                        <button type="button" class="ml-2" (click)="onRemoveLanguage(index)">
+                            <fa-icon [icon]="faRemove" class="text-sm"></fa-icon>
+                        </button>
+                    </span>
+                </li>
+            </ul>
+        </section>
+        <fieldset
+            id="job-candidateOverview"
+            class="form-control w-full my-4"
+            *appLet="form.controls.candidateOverview as control"
+        >
+            <label for="candidateOverview" class="block mb-3 text-lg"
+                >Candidate overview<span class="text-red-400">*</span>:</label
+            >
+            <textarea
+                id="candidateOverview"
+                name="candidateOverview"
+                formControlName="candidateOverview"
+                rows="5"
+                class="w-full textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
+            ></textarea>
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <section class="form-control w-full my-4">
+            <fieldset id="job-skills" class="form-control w-full" *appLet="skillsForm as control">
+                <label for="skills" class="block mb-3 text-lg"
+                    >Candidate skills<span class="text-red-400">*</span>:</label
+                >
+                <div class="flex gap-4">
+                    <input
+                        type="text"
+                        id="skills"
+                        name="skills"
+                        [formControl]="control"
+                        class="w-full input input-bordered"
+                    />
+                    <button
+                        type="button"
+                        class="btn btn-primary-7 w-full md:w-14"
+                        [disabled]="control.invalid"
+                        (click)="onAddSkill()"
+                    >
+                        <fa-icon [icon]="faAdd"></fa-icon>
+                    </button>
+                </div>
+            </fieldset>
+            <ul class="flex flex-wrap gap-2 p-4 empty:hidden">
+                <li *ngFor="let skill of skills; let index = index">
+                    <span class="badge badge-lg badge-outline">
+                        {{ skill }}
+                        <button type="button" class="ml-2" (click)="onRemoveSkill(index)">
+                            <fa-icon [icon]="faRemove" class="text-sm"></fa-icon>
+                        </button>
+                    </span>
+                </li>
+            </ul>
+        </section>
+        <fieldset id="job-benefits" class="form-control w-full my-4" *appLet="form.controls.benefits as control">
+            <label for="benefits" class="block mb-3 text-lg"
+                >Offered benefits<span class="text-red-400">*</span>:</label
+            >
+            <textarea
+                id="benefits"
+                name="benefits"
+                formControlName="benefits"
+                rows="5"
+                class="w-full textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
+            ></textarea>
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset id="job-overview" class="form-control w-full my-4" *appLet="form.controls.overview as control">
+            <label for="overview" class="block mb-3 text-lg"
+                >Position overview<span class="text-red-400">*</span>:</label
+            >
+            <textarea
+                id="overview"
+                name="overview"
+                formControlName="overview"
+                rows="5"
+                class="w-full textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
+            ></textarea>
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+        <fieldset
+            id="job-rolesAndResponsibility"
+            class="form-control w-full my-4"
+            *appLet="form.controls.rolesAndResponsibility as control"
+        >
+            <label for="rolesAndResponsibility" class="block mb-3 text-lg"
+                >Roles and responsibilities<span class="text-red-400">*</span>:</label
+            >
+            <textarea
+                id="rolesAndResponsibility"
+                name="rolesAndResponsibility"
+                formControlName="rolesAndResponsibility"
+                rows="5"
+                class="w-full textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
+            ></textarea>
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
+    </ng-container>
+</ng-template>

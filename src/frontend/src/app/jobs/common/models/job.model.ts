@@ -6,7 +6,7 @@ export interface Job {
     id: number;
     benefits?: string;
     candidateOverview: string;
-    company: JobCompany;
+    company?: JobCompany;
     creator: JobCreator;
     createdAt: string;
     experienceYearFrom?: number;

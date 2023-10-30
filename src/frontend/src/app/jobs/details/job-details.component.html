@@ -14,7 +14,10 @@
             <header class="flex flex-col-reverse md:flex-row justify-between gap-8 py-4">
                 <section>
                     <span class="block text-3xl mb-4">{{ job.title }}</span>
-                    <a class="block link mb-1" [routerLink]="['/companies', job.company.id]">{{ job.company.name }}</a>
+                    <a *ngIf="job.company" class="block link mb-1" [routerLink]="['/companies', job.company.id]">{{
+                        job.company.name
+                    }}</a>
+                    <span *ngIf="!job.company" class="block link mb-1">N/A</span>
                     <div class="flex gap-x-2 mb-4">
                         <span>{{ job.location.city.name }}</span>
                         <span>•</span>
@@ -66,17 +69,19 @@
                 <span class="font-bold mr-1">Skills:</span>
                 <span class="badge badge-accent" *ngFor="let skill of job.skills">{{ skill }}</span>
             </section>
-            <div class="divider"></div>
-            <section class="py-4">
-                <span class="block mb-6 text-xl font-bold">Company Mission</span>
-                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.mission"></p>
-            </section>
+            <ng-container *ngIf="job.company">
+                <div class="divider"></div>
+                <section class="py-4">
+                    <span class="block mb-6 text-xl font-bold">Company Mission</span>
+                    <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.mission"></p>
+                </section>
+            </ng-container>
             <div class="divider"></div>
             <section class="py-4 after:block after:clear-both">
                 <span class="block mb-4 text-xl font-bold">Overview</span>
                 <div class="w-32 h-32 rounded-full overflow-hidden flex float-left m-4">
                     <img
-                        [src]="job.company.logo?.url || 'assets/profile-picture-default-form.png'"
+                        [src]="job.company?.logo?.url || 'assets/profile-picture-default-form.png'"
                         alt="company-logo"
                         class="object-cover"
                     />
@@ -98,11 +103,13 @@
                 <span class="block mb-6 text-xl font-bold">Benefits</span>
                 <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.benefits"></p>
             </section>
-            <div class="divider"></div>
-            <section class="py-4">
-                <span class="block mb-6 text-xl font-bold">Company Values</span>
-                <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.values"></p>
-            </section>
+            <ng-container *ngIf="job.company">
+                <div class="divider"></div>
+                <section class="py-4">
+                    <span class="block mb-6 text-xl font-bold">Company Values</span>
+                    <p class="prose max-w-none prose-headings pl-4" [innerHTML]="job.company.values"></p>
+                </section>
+            </ng-container>
         </ng-container>
     </ng-template>
 </ng-container>

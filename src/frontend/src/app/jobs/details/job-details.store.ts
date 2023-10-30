@@ -32,18 +32,23 @@ export class JobDetailsStore extends ComponentStore<JobDetailsState> {
             if (!job) {
                 return job;
             }
-            return {
+            const result = {
                 ...job,
-                company: {
-                    ...job.company,
-                    mission: sanitize(marked.parse(job.company.mission)),
-                    values: sanitize(marked.parse(job.company.values))
-                },
                 benefits: job.benefits && sanitize(marked.parse(job.benefits)),
                 candidateOverview: sanitize(marked.parse(job.candidateOverview)),
                 overview: sanitize(marked.parse(job.overview)),
                 rolesAndResponsibility: sanitize(marked.parse(job.rolesAndResponsibility))
             };
+            if (job.company) {
+                Object.assign(result, {
+                    company: {
+                        ...job.company,
+                        mission: sanitize(marked.parse(job.company.mission)),
+                        values: sanitize(marked.parse(job.company.values))
+                    }
+                });
+            }
+            return result;
         }),
         loading: this.select((state) => state.loading),
         error: this.select((state) => state.error)
