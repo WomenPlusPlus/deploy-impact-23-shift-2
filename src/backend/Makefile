@@ -16,7 +16,7 @@ docker-build:
 	@docker build -t $(BINARY_NAME) .
 docker-run:
 	docker run -d --name=app -p 28016:28016 -v /home/shift2_deployimpact/app:/app --net=host shift2/server:0.0.5
-docker-migrate:
+docker-migrate-up:
 	migrate -database ${POSTGRESQL_URL} -path internal/db/migrations up
 docker-stop:
 	docker stop app && docker rm app
