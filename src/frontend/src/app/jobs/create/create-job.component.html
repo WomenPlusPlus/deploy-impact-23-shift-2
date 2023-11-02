@@ -184,6 +184,22 @@
                 </li>
             </ul>
         </section>
+        <fieldset id="job-overview" class="form-control w-full my-4" *appLet="form.controls.overview as control">
+            <label for="overview" class="block mb-3 text-lg"
+                >Position overview<span class="text-red-400">*</span>:</label
+            >
+            <textarea
+                id="overview"
+                name="overview"
+                formControlName="overview"
+                rows="5"
+                class="w-full textarea textarea-bordered resize-y"
+                [class.textarea-error]="control.invalid && control.touched"
+            ></textarea>
+            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
+                {{ control.errors | formErrorMessage }}
+            </span>
+        </fieldset>
         <fieldset
             id="job-candidateOverview"
             class="form-control w-full my-4"
@@ -246,22 +262,6 @@
                 id="benefits"
                 name="benefits"
                 formControlName="benefits"
-                rows="5"
-                class="w-full textarea textarea-bordered resize-y"
-                [class.textarea-error]="control.invalid && control.touched"
-            ></textarea>
-            <span class="block text-error mt-1" *ngIf="control.invalid && control.touched">
-                {{ control.errors | formErrorMessage }}
-            </span>
-        </fieldset>
-        <fieldset id="job-overview" class="form-control w-full my-4" *appLet="form.controls.overview as control">
-            <label for="overview" class="block mb-3 text-lg"
-                >Position overview<span class="text-red-400">*</span>:</label
-            >
-            <textarea
-                id="overview"
-                name="overview"
-                formControlName="overview"
                 rows="5"
                 class="w-full textarea textarea-bordered resize-y"
                 [class.textarea-error]="control.invalid && control.touched"

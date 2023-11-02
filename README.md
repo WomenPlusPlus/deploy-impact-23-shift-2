@@ -106,14 +106,14 @@ We are using [Auth0](https://auth0.com/) for User Authentication.
 [Here](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/credentials.md) you can find some demo users you can use.
 
 ## :woman_technologist: Team members :man_technologist:
-| Name                                                                         | Role            | GitHub                                            |
-|------------------------------------------------------------------------------|-----------------|---------------------------------------------------|
-| [Adamantia Milia](https://www.linkedin.com/in/adamantia-milia/)              | Frontend        | [mandyjker](https://github.com/mandyjker)         |
-| [Adrianna Zielińska](https://www.linkedin.com/in/adriannazielinska/)         | Backend, Data Science    | [adriannaziel](https://github.com/adriannaziel)   |
-| [Bianca Alves](https://www.linkedin.com/in/biancaalves/)                     | Project Manager | [biancamnalves](https://github.com/biancamnalves) |
-| [Hannah Rüfenacht](https://www.linkedin.com/in/hannahrufenacht/)             | UX/UI           | [hrrenee15](https://github.com/hrrenee15)         |
-| [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)              | Backend         | [istvzsig](https://github.com/istvzsig)           |
-| [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/) | Fullstack       | [jotar910](https://github.com/jotar910)           |
+| Name                                                                 | Role              | GitHub                                            |
+|----------------------------------------------------------------------|-------------------|---------------------------------------------------|
+| [Adamantia Milia](https://www.linkedin.com/in/adamantia-milia/)      | Frontend          | [mandyjker](https://github.com/mandyjker)         |
+| [Adrianna Zielińska](https://www.linkedin.com/in/adriannazielinska/) | Backend, Data Science | [adriannaziel](https://github.com/adriannaziel)   |
+| [Bianca Alves](https://www.linkedin.com/in/biancaalves/)             | Project Manager   | [biancamnalves](https://github.com/biancamnalves) |
+| [Hannah Rüfenacht](https://www.linkedin.com/in/hannahrufenacht/)     | UX/UI             | [hrrenee15](https://github.com/hrrenee15)         |
+| [Istvan Zsigmond](https://www.linkedin.com/in/istvan-zsigmond/)      | Backend           | [istvzsig](https://github.com/istvzsig)           |
+| [João Rodrigues](https://www.linkedin.com/in/joaor-dev/)             | Fullstack         | [jotar910](https://github.com/jotar910)           |
 
 ## :pushpin: Further development
 * For any further development, please contact [João Rodrigues](https://www.linkedin.com/in/jo%C3%A3o-rodrigues-84268613b/).
