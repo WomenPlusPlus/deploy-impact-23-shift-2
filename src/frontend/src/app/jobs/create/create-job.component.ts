@@ -16,7 +16,6 @@ import { FormErrorMessagePipe } from '@app/common/pipes/form-error-message/form-
 import { JobLocationTypePipe } from '@app/common/pipes/job-location-type/job-location-type.pipe';
 import { JobTypePipe } from '@app/common/pipes/job-type/job-type.pipe';
 import { selectLanguages, selectLocationCities } from '@app/common/stores/location/location.reducer';
-import { toInputDateValue } from '@app/common/utils/date.util';
 import { CreateJobState, CreateJobStore } from '@app/jobs/create/common/create-job.store';
 import { CreateJobFormGroup } from '@app/jobs/create/common/models/create-job.model';
 import { SelectSingleComponent } from '@app/ui/select-single/select-single.component';
@@ -132,7 +131,7 @@ export class CreateJobComponent implements OnInit {
             candidateOverview: value.candidateOverview || '',
             overview: value.overview || '',
             rolesAndResponsibility: value.rolesAndResponsibility || '',
-            startDate: value.startDate ? toInputDateValue(value.startDate) : null
+            startDate: value.startDate ? new Date(value.startDate).toISOString() : null
         });
     }
 
