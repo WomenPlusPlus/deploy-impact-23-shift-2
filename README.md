@@ -1,7 +1,11 @@
+<p align="center">
+  <img src="https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/shift2_team_visual.png"/>
+</p>
+
 # SHIFT Project - Team 2
 
 <p align="center">
-  <img src="https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/logo.png" alt="Shift2"/>
+  <img src="https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/logo.png"/>
 </p>
 
 ## :bookmark_tabs: Table of Contents
