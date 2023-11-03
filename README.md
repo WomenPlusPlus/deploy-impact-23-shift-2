@@ -47,7 +47,7 @@ You can view some demo videos showcasing the basic features of our implementatio
 | SQLX        |NgRX      |          |               |             |
 
 ## :sparkles: Architecture
-* [The architecture diagram](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/architecture.jpg)
+* [The architecture diagram](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/architecture.png)
 
 ## :game_die: Database
 * [The database schema](https://miro.com/app/board/uXjVNfUchWk=/?share_link_id=4352832909)
