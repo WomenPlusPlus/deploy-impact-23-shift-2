@@ -31,7 +31,9 @@ The backend runs on Google Cloud and is powered by Golang, while the frontend is
 
 As for the matching algorithm for candidates to recommend jobs and for companies to recommend candidates for jobs, unfortunately was not implemented due to time and capacity constraints, however, the idea can be found in [matching.md file](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/matching.md).
 
-You can view some demo videos showcasing the basic features of our implementation [inside the `docs/demo` folder](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/demo).
+A presentation of our project can be found in the [inside the `docs` folder](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs). 
+
+Also, you can view some demo videos showcasing the basic features of our implementation [inside the `docs/demo` folder](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/demo).
 
 ## :dart: Site Map
 * [The site map design](https://github.com/WomenPlusPlus/deploy-impact-23-shift-2/blob/main/docs/site_map.png)
